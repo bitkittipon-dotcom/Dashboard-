@@ -9,15 +9,48 @@
 body { font-family: 'Noto Sans Thai', Sarabun, sans-serif; background: #F8F7F4; color: #1C1917; min-height: 100vh; }
 
 /* TOP BAR */
-.topbar { background: #1C1917; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; height: 54px; position: sticky; top: 0; z-index: 100; }
+.topbar { background: #1C1917; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; height: 54px; position: sticky; top: 0; z-index: 100; max-width: 100vw; box-sizing: border-box; }
 .topbar-left { display: flex; align-items: center; gap: 10px; }
 .topbar-icon { width: 34px; height: 34px; background: #F59E0B; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink:0; }
 .topbar-title { color: #FAFAF9; font-weight: 800; font-size: 14px; line-height: 1.2; }
 .topbar-sub { color: #57534E; font-size: 10px; }
-.tab-btns { display: flex; gap: 3px; flex-shrink:0; }
-.tab-btn { padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; border: none; cursor: pointer; font-family: inherit; transition: all .2s; white-space:nowrap; }
+.tab-btns { display: flex; gap: 3px; align-items:center; flex-shrink:0; overflow:visible; }
+.tab-btn { padding: 5px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; border: none; cursor: pointer; font-family: inherit; transition: all .2s; white-space:nowrap; }
 .tab-btn.active { background: #F59E0B; color: #1C1917; }
 .tab-btn:not(.active) { background: #292524; color: #78716C; }
+/* Settings dropdown */
+.settings-dropdown {
+  position:absolute;
+  top:calc(100% + 6px);
+  right:0;
+  background:#1C1917;
+  border:1px solid #292524;
+  border-radius:14px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.4);
+  z-index:500;
+  min-width:170px;
+  overflow:hidden;
+  display:none;
+  flex-direction:column;
+}
+.settings-dropdown.open { display:flex; }
+.settings-dd-item {
+  padding:11px 16px;
+  font-size:13px;
+  font-weight:600;
+  color:#D6D3D1;
+  cursor:pointer;
+  border:none;
+  background:transparent;
+  text-align:left;
+  font-family:inherit;
+  border-bottom:1px solid #292524;
+  transition:background .15s;
+  white-space:nowrap;
+}
+.settings-dd-item:last-child { border-bottom:none; }
+.settings-dd-item:hover { background:#292524; color:#fff; }
+.settings-dd-item.active { color:#F59E0B; }
 
 /* DAY TABS */
 .day-tabs { background: #fff; border-bottom: 1px solid #E7E5E4; padding: 0 12px; display: flex; align-items: center; overflow-x: auto; scrollbar-width: none; gap: 2px; }
@@ -70,7 +103,7 @@ body { font-family: 'Noto Sans Thai', Sarabun, sans-serif; background: #F8F7F4; 
 .group-count { color: rgba(255,255,255,.55); font-size: 9px; text-align: right; }
 
 /* ITEM ROWS */
-.item-row { display: flex; align-items: center; padding: 8px 12px; gap: 7px; border-bottom: 1px solid #F5F5F4; }
+.item-row { position: relative; overflow: hidden; display: flex; align-items: center; padding: 8px 12px; gap: 7px; border-bottom: 1px solid #F5F5F4; }
 .item-row:last-child { border-bottom: none; }
 .status-btn { width: 26px; height: 26px; border-radius: 50%; border: 2px solid; cursor: pointer; flex-shrink: 0; font-size: 11px; display: flex; align-items: center; justify-content: center; transition: all .15s; background: transparent; -webkit-tap-highlight-color: transparent; }
 .item-info { flex: 1; min-width: 0; }
@@ -127,7 +160,7 @@ tr:last-child td { border-bottom: none; }
   .group-header .group-label { font-size: 10px !important; }
   .group-total-text { font-size: 12px !important; }
   .group-count { font-size: 9px !important; }
-  .item-row { padding: 5px 6px !important; gap: 4px !important; }
+  .item-row { position: relative; overflow: hidden; padding: 5px 6px !important; gap: 4px !important; }
   .item-name { font-size: 11px !important; max-width: 65px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .item-note { font-size: 9px !important; display:none; }
   .item-amount { font-size: 11px !important; }
@@ -317,6 +350,22 @@ tr:last-child td { border-bottom: none; }
   flex-shrink:0;
 }
 
+/* ── Pay animation: ทั้ง row เขียว → fade out ──────────────────── */
+@keyframes payFill {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.pay-green-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(34,197,94,0.22);
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 2;
+  animation: payFill 0.2s ease forwards;
+}
+.item-row { position: relative; overflow: hidden; }
+
 </style>
 </head>
 <body>
@@ -333,11 +382,19 @@ tr:last-child td { border-bottom: none; }
   <div class="tab-btns">
     <button class="tab-btn active" id="tabBoardBtn">บอร์ด</button>
     <button class="tab-btn" id="tabUnpaidBtn">🔴 ค้างชำระ</button>
-    <button class="tab-btn" id="tabSummaryBtn">สรุปรวม</button>
-    <button class="tab-btn" id="tabClosedBtn">✅ ปิดยอด</button>
     <button class="tab-btn" id="tabCustBtn">👥 ลูกค้า</button>
-    <button class="tab-btn" id="tabAnalyticsBtn">📊 วิเคราะห์</button>
-    <button onclick="openDataMgr()" style="background:#292524;border:none;border-radius:20px;padding:5px 10px;font-size:11px;font-weight:600;color:#78716C;cursor:pointer;font-family:inherit;">⚙️</button>
+    <!-- ⚙️ Gear dropdown -->
+    <div style="position:relative;overflow:visible;">
+      <button id="settingsGearBtn" onclick="toggleSettingsDropdown()" style="background:#292524;border:none;border-radius:20px;padding:5px 11px;font-size:13px;font-weight:600;color:#78716C;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:4px;">
+        ⚙️
+      </button>
+      <div class="settings-dropdown" id="settingsDropdown">
+        <button class="settings-dd-item" id="ddSummaryBtn">📊 สรุปรวม</button>
+        <button class="settings-dd-item" id="ddClosedBtn">✅ ปิดยอด</button>
+        <button class="settings-dd-item" id="ddAnalyticsBtn">📈 วิเคราะห์</button>
+        <button class="settings-dd-item" id="ddManageBtn">🗂️ จัดการข้อมูล</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -726,6 +783,7 @@ tr:last-child td { border-bottom: none; }
     <div style="padding:0 18px 18px;display:flex;gap:8px;">
       <button onclick="closeEditItemModal()" style="padding:11px 16px;border-radius:9px;border:1px solid #E7E5E4;background:transparent;font-size:14px;cursor:pointer;">ยกเลิก</button>
       <button id="editItemCustBtn" onclick="editItemCustAction()" style="padding:11px 14px;border-radius:9px;border:none;background:#EFF6FF;color:#0369A1;font-weight:700;font-size:13px;cursor:pointer;">👤 ตรวจสอบ...</button>
+      <button id="revertUnpaidBtn" onclick="revertItemToUnpaid()" style="display:none;padding:10px 14px;border-radius:9px;border:1.5px solid #FECACA;background:#FEF2F2;color:#991B1B;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;">↩️ ยังไม่ชำระ</button>
       <button onclick="saveEditItem()" style="flex:1;padding:11px;border-radius:9px;border:none;background:#F59E0B;color:#1C1917;font-weight:700;font-size:14px;cursor:pointer;">💾 บันทึก</button>
     </div>
   </div>
@@ -943,8 +1001,31 @@ const fmt = n => Number(n||0).toLocaleString("th-TH",{minimumFractionDigits:0,ma
 // ── Tab Buttons ───────────────────────────────────────────────────
 document.getElementById("tabBoardBtn").addEventListener("click",   () => switchTab("board"));
 document.getElementById("tabUnpaidBtn").addEventListener("click",  () => switchTab("unpaid"));
-document.getElementById("tabSummaryBtn").addEventListener("click", () => switchTab("summary"));
-document.getElementById("tabClosedBtn").addEventListener("click",  () => switchTab("closed"));
+document.getElementById("tabCustBtn").addEventListener("click", () => switchTab("cust"));
+
+// ⚙️ Gear dropdown items
+document.getElementById("ddSummaryBtn").addEventListener("click",   () => { switchTab("summary");   closeSettingsDropdown(); });
+document.getElementById("ddClosedBtn").addEventListener("click",    () => { switchTab("closed");    closeSettingsDropdown(); });
+document.getElementById("ddAnalyticsBtn").addEventListener("click", () => { switchTab("analytics"); closeSettingsDropdown(); });
+document.getElementById("ddManageBtn").addEventListener("click",    () => { openDataMgr();          closeSettingsDropdown(); });
+
+// ปิด dropdown เมื่อคลิกนอก
+document.addEventListener("click", (e) => {
+  if (!document.getElementById("settingsGearBtn")?.contains(e.target) &&
+      !document.getElementById("settingsDropdown")?.contains(e.target)) {
+    closeSettingsDropdown();
+  }
+});
+
+function toggleSettingsDropdown() {
+  const dd = document.getElementById("settingsDropdown");
+  if (!dd) return;
+  dd.classList.toggle("open");
+}
+function closeSettingsDropdown() {
+  const dd = document.getElementById("settingsDropdown");
+  if (dd) dd.classList.remove("open");
+}
 
 // ── Add Day Buttons ───────────────────────────────────────────────
 document.getElementById("confirmDayBtn").addEventListener("click", confirmAddDay);
@@ -955,8 +1036,7 @@ document.getElementById("newDayInput").addEventListener("keydown", e => { if (e.
 document.getElementById("modalSaveBtn").addEventListener("click",   saveEditDay);
 document.getElementById("modalCancelBtn").addEventListener("click", closeEditModal);
 document.getElementById("modalDeleteBtn").addEventListener("click", deleteDay);
-document.getElementById("tabCustBtn").addEventListener("click", () => switchTab("cust"));
-document.getElementById("tabAnalyticsBtn").addEventListener("click", () => switchTab("analytics"));
+// (tabCustBtn and tabAnalyticsBtn handled above)
 
 db.ref("customers").on("value", snap => {
   cmCustomers = snap.val() || {};
@@ -1264,13 +1344,21 @@ function renderBoard() {
             osc.start(); osc.stop(ctx.currentTime+0.12);
           } catch(e){}
           setTimeout(() => { statusBtn.style.transform = "scale(1)"; }, 120);
-          // ข้อ 4: อัปเดต Firebase ทันที — UI หน่วง 2s แล้ว whoosh + slide-out
+          // ข้อ 2: อัปเดต Firebase ทันที + progress bar 1.5s + fade-out + เสียง
           const next = S_CYCLE[(S_CYCLE.indexOf(item.status)+1)%3];
           db.ref(`days/${activeDay}/${g.key}/${key}/status`).set(next);
           if (next === "ชำระแล้ว") {
+            // progress bar overlay
+            const overlay = document.createElement("div");
+            overlay.className = "pay-progress-overlay";
+            const bar = document.createElement("div");
+            bar.className = "pay-progress-bar";
+            overlay.appendChild(bar);
+            row.appendChild(overlay);
+            // หลัง 1.5s: เสียง + fade-out
             setTimeout(() => {
-              playSoundWhoosh();
-              row.style.transition = "opacity .4s ease, transform .4s ease, max-height .5s ease, padding .5s ease";
+              playSoundComplete();
+              row.style.transition = "opacity .7s ease, transform .7s ease, max-height .7s ease, padding .7s ease, margin .7s ease";
               row.style.overflow   = "hidden";
               row.style.maxHeight  = row.offsetHeight + "px";
               requestAnimationFrame(() => {
@@ -1278,8 +1366,9 @@ function renderBoard() {
                 row.style.transform = "translateX(80px)";
                 row.style.maxHeight = "0";
                 row.style.padding   = "0";
+                row.style.margin    = "0";
               });
-            }, 2000);
+            }, 1500);
           }
         });
 
@@ -2050,10 +2139,21 @@ function switchTab(tab) {
 
   document.getElementById("tabBoardBtn").classList.toggle("active",  tab==="board");
   document.getElementById("tabUnpaidBtn").classList.toggle("active", tab==="unpaid");
-  document.getElementById("tabSummaryBtn").classList.toggle("active",tab==="summary");
-  document.getElementById("tabClosedBtn").classList.toggle("active", tab==="closed");
-  document.getElementById("tabCustBtn").classList.toggle("active", tab==="cust");
-  document.getElementById("tabAnalyticsBtn").classList.toggle("active", tab==="analytics");
+  document.getElementById("tabCustBtn").classList.toggle("active",   tab==="cust");
+  // ⚙️ gear btn ไฮไลต์เมื่ออยู่ใน sub-tabs
+  const subTabs = ["summary","closed","analytics"];
+  const gearBtn = document.getElementById("settingsGearBtn");
+  if (gearBtn) {
+    gearBtn.style.background = subTabs.includes(tab) ? "#F59E0B" : "#292524";
+    gearBtn.style.color      = subTabs.includes(tab) ? "#1C1917" : "#78716C";
+  }
+  // ไฮไลต์ dropdown item
+  ["ddSummaryBtn","ddClosedBtn","ddAnalyticsBtn","ddManageBtn"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove("active");
+  });
+  const ddMap = {summary:"ddSummaryBtn",closed:"ddClosedBtn",analytics:"ddAnalyticsBtn"};
+  if (ddMap[tab]) document.getElementById(ddMap[tab])?.classList.add("active");
 
   if(tab==="board")   renderBoard();
   if(tab==="unpaid")  renderUnpaid();
@@ -2067,7 +2167,6 @@ function switchTab(tab) {
   // ข้อ 1: ซ่อน/แสดง sticky date box
   const sdb3=document.getElementById("stickyDateBox");
   if(sdb3) sdb3.style.display = tab==="board" ? "block" : "none";
-
 }
 const FRUIT_IMGS = {
   "อิดอ": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii01NSAtODAgMTEwIDExMCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIj4KICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjAiIHJ4PSI0MiIgcnk9IjM4IiBmaWxsPSIjQjg5MjRBIi8+CiAgPGVsbGlwc2UgY3g9Ii01IiBjeT0iLTUiIHJ4PSIzMiIgcnk9IjI4IiBmaWxsPSIjRDRBQTYwIi8+CiAgPGVsbGlwc2UgY3g9Ii05IiBjeT0iLTkiIHJ4PSIyMCIgcnk9IjE3IiBmaWxsPSIjRUREMDgwIi8+CiAgPGVsbGlwc2UgY3g9Ii00IiBjeT0iMyIgcng9IjgiIHJ5PSI3IiBmaWxsPSIjMUEwQzAwIiBvcGFjaXR5PSIwLjgiLz4KICA8ZWxsaXBzZSBjeD0iLTIiIGN5PSIxIiByeD0iMyIgcnk9IjMiIGZpbGw9IiM4QjY5MTQiIG9wYWNpdHk9IjAuNSIvPgogIDxwYXRoIGQ9Ik0wLC0zOCBRNiwtNTAgMTAsLTYwIiBzdHJva2U9IiM0QTdBMjAiIHN0cm9rZS13aWR0aD0iMi41IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8ZWxsaXBzZSBjeD0iMTMiIGN5PSItNjQiIHJ4PSIxMSIgcnk9IjYiIGZpbGw9IiM1QThBMzAiIHRyYW5zZm9ybT0icm90YXRlKC0yMCwxMywtNjQpIi8+CiAgPGVsbGlwc2UgY3g9IjQiIGN5PSItNjYiIHJ4PSI5IiByeT0iNSIgZmlsbD0iIzRBN0EyOCIgdHJhbnNmb3JtPSJyb3RhdGUoMTAsNCwtNjYpIi8+Cjwvc3ZnPg==",
@@ -2597,6 +2696,68 @@ function playSoundSuccess() {
   } catch(e){}
 }
 
+
+function playLoadingComplete() {
+  // เสียง "pop" นุ่มๆ แบบ iOS success — minimalist 2 โน้ต
+  try {
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const t = ctx.currentTime;
+    // โน้ตที่ 1 (อุ่น)
+    const o1=ctx.createOscillator(), g1=ctx.createGain();
+    o1.connect(g1); g1.connect(ctx.destination);
+    o1.type="sine"; o1.frequency.value=523; // C5
+    g1.gain.setValueAtTime(0,t); g1.gain.linearRampToValueAtTime(0.25,t+0.01);
+    g1.gain.exponentialRampToValueAtTime(0.001,t+0.22);
+    o1.start(t); o1.stop(t+0.22);
+    // โน้ตที่ 2 (สูงขึ้น)
+    const o2=ctx.createOscillator(), g2=ctx.createGain();
+    o2.connect(g2); g2.connect(ctx.destination);
+    o2.type="sine"; o2.frequency.value=784; // G5
+    g2.gain.setValueAtTime(0,t+0.1); g2.gain.linearRampToValueAtTime(0.2,t+0.12);
+    g2.gain.exponentialRampToValueAtTime(0.001,t+0.35);
+    o2.start(t+0.1); o2.stop(t+0.35);
+  } catch(e){}
+}
+
+
+// ── ข้อ 2: เสียง Loading Complete (นุ่มนวล minimalist) ─────────
+function playSoundComplete() {
+  try {
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const t = ctx.currentTime;
+    // เสียง 2 โน้ต นุ่มๆ คล้าย iOS success
+    const notes = [[523, t, t+0.12], [784, t+0.1, t+0.28]];
+    notes.forEach(([freq, start, end]) => {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(0.18, start+0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, end);
+      osc.start(start); osc.stop(end);
+    });
+  } catch(e){}
+}
+
+// ── ข้อ 3: Revert item to unpaid ─────────────────────────────────
+function revertItemToUnpaid() {
+  if (!_editItemCtx) return;
+  const {dayKey, grpKey, itemKey} = _editItemCtx;
+  const path = allDays[dayKey] ? `days/${dayKey}/${grpKey}/${itemKey}/status`
+                               : `closed/${dayKey}/${grpKey}/${itemKey}/status`;
+  db.ref(path).set("รอชำระ").then(() => {
+    // อัปเดต local cache
+    if (allDays[dayKey]?.[grpKey]?.[itemKey])   allDays[dayKey][grpKey][itemKey].status   = "รอชำระ";
+    if (allClosed[dayKey]?.[grpKey]?.[itemKey]) allClosed[dayKey][grpKey][itemKey].status = "รอชำระ";
+    closeEditItemModal();
+    if (activeTab==="board")   renderBoard();
+    if (activeTab==="unpaid")  renderUnpaid();
+    if (activeTab==="summary") renderSummary();
+  }).catch(e => alert("ไม่สามารถเปลี่ยนสถานะได้: "+e.message));
+}
+
 function playSoundWhoosh() {
   try {
     const ctx = new (window.AudioContext||window.webkitAudioContext)();
@@ -2838,6 +2999,24 @@ function editItemPickColor(btn) {
   if(nameInp && prev) prev.textContent = nameInp.value || "ตัวอย่าง";
 }
 
+
+// ── ข้อ 3: Revert item to pending ────────────────────────────────
+function revertItemToPending() {
+  if (!_editItemCtx) return;
+  const {dayKey, grpKey, itemKey} = _editItemCtx;
+  const ref = allDays[dayKey] ? `days/${dayKey}/${grpKey}/${itemKey}/status`
+                              : `closed/${dayKey}/${grpKey}/${itemKey}/status`;
+  db.ref(ref).set("รอชำระ").then(() => {
+    // อัปเดต local cache
+    if (allDays[dayKey]?.[grpKey]?.[itemKey])   allDays[dayKey][grpKey][itemKey].status   = "รอชำระ";
+    if (allClosed[dayKey]?.[grpKey]?.[itemKey]) allClosed[dayKey][grpKey][itemKey].status = "รอชำระ";
+    closeEditItemModal();
+    // refresh board
+    if (activeTab==="board") renderBoard();
+    if (activeTab==="unpaid") renderUnpaid();
+  });
+}
+
 function openEditItemModal(dayKey, grpKey, itemKey, item) {
   _editItemCtx = {dayKey, grpKey, itemKey};
   _editItemColor = item.nameColor || "#1C1917";
@@ -2861,8 +3040,11 @@ function openEditItemModal(dayKey, grpKey, itemKey, item) {
   if(a)  a.onkeydown  = e => { if(e.key==="Enter"){e.preventDefault();nt?.focus();} };
   if(nt) nt.onkeydown = e => { if(e.key==="Enter"){e.preventDefault();saveEditItem();} };
   document.getElementById("editItemModal").style.display = "flex";
-  editItemUpdateCustBtn(); // ข้อ 8: ตรวจสอบทันทีที่เปิด
+  editItemUpdateCustBtn();
   if(n) n.addEventListener("input", editItemUpdateCustBtn);
+  // ข้อ 3: แสดงปุ่ม revert ถ้า item ชำระแล้ว
+  const revertBtn = document.getElementById("revertUnpaidBtn");
+  if (revertBtn) revertBtn.style.display = item.status==="ชำระแล้ว" ? "inline-flex" : "none";
   setTimeout(() => n?.focus(), 80);
 }
 
