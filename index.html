@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>ร้านทศพร ตั้ง — บอร์ดรอชำระเงิน</title>
+<title>ทศพร ผลไม้</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Noto Sans Thai', Sarabun, sans-serif; background: #F8F7F4; color: #1C1917; min-height: 100vh; }
@@ -375,8 +375,7 @@ tr:last-child td { border-bottom: none; }
   <div class="topbar-left">
     <div class="topbar-icon">🏪</div>
     <div>
-      <div class="topbar-title">ร้านทศพร ตั้ง</div>
-      <div class="topbar-sub">ตลาดผลไม้รวม A-401</div>
+      <div class="topbar-title">ทศพร ผลไม้</div>
     </div>
   </div>
   <div class="tab-btns">
@@ -397,6 +396,71 @@ tr:last-child td { border-bottom: none; }
     </div>
   </div>
 </div>
+
+
+<!-- ══════════════════════════════════════════════
+     FULL CALENDAR MODAL
+══════════════════════════════════════════════════ -->
+<div id="calModal" style="position:fixed;inset:0;z-index:800;display:none;align-items:center;justify-content:center;padding:16px;">
+  <!-- backdrop blur -->
+  <div id="calBackdrop" onclick="closeCal()" style="position:absolute;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);"></div>
+  <!-- modal card -->
+  <div style="position:relative;z-index:1;background:#fff;border-radius:22px;width:100%;max-width:360px;box-shadow:0 16px 60px rgba(0,0,0,.25);overflow:hidden;animation:calPop .2s ease;">
+    <!-- header -->
+    <div style="padding:16px 18px 10px;border-bottom:1px solid #F5F5F4;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-weight:800;font-size:15px;color:#1C1917;">📅 เลือกวันที่</div>
+        <button onclick="closeCal()" style="background:#F5F5F4;border:none;border-radius:50%;width:28px;height:28px;font-size:13px;cursor:pointer;">✕</button>
+      </div>
+      <!-- year + month selectors -->
+      <div style="display:flex;gap:8px;">
+        <select id="calYearSel" onchange="renderCalGrid()" style="flex:1;padding:7px 10px;border-radius:9px;border:1.5px solid #E7E5E4;font-size:13px;font-weight:700;font-family:inherit;outline:none;cursor:pointer;background:#fff;"></select>
+        <select id="calMonthSel" onchange="renderCalGrid()" style="flex:1;padding:7px 10px;border-radius:9px;border:1.5px solid #E7E5E4;font-size:13px;font-weight:700;font-family:inherit;outline:none;cursor:pointer;background:#fff;"></select>
+      </div>
+    </div>
+    <!-- day-of-week header -->
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);padding:8px 12px 0;gap:2px;" id="calDowRow">
+      <div style="text-align:center;font-size:10px;font-weight:700;color:#A8A29E;">อา</div>
+      <div style="text-align:center;font-size:10px;font-weight:700;color:#A8A29E;">จ</div>
+      <div style="text-align:center;font-size:10px;font-weight:700;color:#A8A29E;">อ</div>
+      <div style="text-align:center;font-size:10px;font-weight:700;color:#A8A29E;">พ</div>
+      <div style="text-align:center;font-size:10px;font-weight:700;color:#A8A29E;">พฤ</div>
+      <div style="text-align:center;font-size:10px;font-weight:700;color:#A8A29E;">ศ</div>
+      <div style="text-align:center;font-size:10px;font-weight:700;color:#A8A29E;">ส</div>
+    </div>
+    <!-- date grid -->
+    <div id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);padding:4px 12px 8px;gap:2px;"></div>
+    <!-- footer -->
+    <div style="padding:10px 16px 16px;border-top:1px solid #F5F5F4;display:flex;gap:8px;">
+      <button onclick="calGoToday()" style="flex:1;padding:11px;border-radius:10px;border:none;background:#F59E0B;color:#1C1917;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">วันนี้</button>
+      <button onclick="closeCal()" style="padding:11px 16px;border-radius:10px;border:1px solid #E7E5E4;background:transparent;font-size:14px;cursor:pointer;font-family:inherit;">ปิด</button>
+    </div>
+  </div>
+</div>
+<style>
+@keyframes calPop { from{transform:scale(.88);opacity:0} to{transform:scale(1);opacity:1} }
+.cal-cell {
+  aspect-ratio: 1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .15s;
+  color:#57534E;
+}
+.cal-cell:hover { background:#F5F5F4; }
+.cal-cell.today { background:#FEF3C7; color:#92400E; font-weight:800; }
+.cal-cell.active-day { background:#F59E0B !important; color:#1C1917 !important; font-weight:800; }
+.cal-cell.has-data { font-weight:700; }
+.cal-cell.all-paid  { color:#16A34A !important; font-weight:800; }
+.cal-cell.credit-pending { color:#0369A1 !important; font-weight:800; }  /* ฟ้า: อื่นๆครบ แต่เชื่อค้าง */
+.cal-cell.other-pending  { color:#DC2626 !important; font-weight:800; }  /* แดง: หมวดอื่นค้าง */
+.cal-cell.empty { cursor:default; }
+.cal-cell.other-month { opacity:.3; cursor:default; pointer-events:none; }
+</style>
 
 <!-- DAY TABS -->
 <div class="day-tabs" id="dayTabs"></div>
@@ -793,7 +857,7 @@ tr:last-child td { border-bottom: none; }
 <!-- STICKY DATE BOX (Liquid Glass) -->
 <div id="stickyDateBox" style="
   position:fixed;
-  top:58px;
+  top:106px;
   left:50%;
   transform:translateX(-50%);
   z-index:150;
@@ -803,14 +867,14 @@ tr:last-child td { border-bottom: none; }
   -webkit-backdrop-filter:blur(12px);
   border:1px solid rgba(255,255,255,0.35);
   border-radius:20px;
-  padding:4px 16px;
+  padding:5px 18px;
   box-shadow:0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.4);
   pointer-events:none;
   white-space:nowrap;
 ">
   <span id="stickyDateText" style="
     color:#fff;
-    font-size:8.4px;
+    font-size:10px;
     font-weight:700;
     letter-spacing:0.06em;
     text-shadow:0 1px 3px rgba(0,0,0,0.3);
@@ -1073,6 +1137,158 @@ db.ref("closed").on("value", snap => {
 });
 
 // ── Day Tabs ──────────────────────────────────────────────────────
+
+// ══════════════════════════════════════════════════════════
+// FULL CALENDAR MODAL
+// ══════════════════════════════════════════════════════════
+const THAI_MONTHS = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน",
+                     "กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+
+// แปลง "dd-mm-yy" → {day, month, year (AD)}
+function parseDayKey(k) {
+  if (!k) return null;
+  const p = k.split("-");
+  if (p.length !== 3) return null;
+  const dd = parseInt(p[0]), mm = parseInt(p[1]);
+  const yy = parseInt(p[2]);
+  const yr = yy < 100 ? (yy + 2500 - 543) : yy - 543; // พ.ศ.→ค.ศ.
+  return { day: dd, month: mm, year: yr };
+}
+
+// คำนวณสถานะของวันนั้น
+// return: "all-paid" | "credit-pending" | "other-pending" | null
+function getDayStatus(dayKey) {
+  const data = allDays[dayKey] || allClosed[dayKey] || null;
+  if (!data) return null;
+  let allGroupsPaid = true, creditPending = false, otherPending = false;
+  GROUPS.forEach(g => {
+    const items = Object.values(data[g.key]||{});
+    if (!items.length) return;
+    const hasWait = items.some(x => x.status === "รอชำระ");
+    if (hasWait) {
+      allGroupsPaid = false;
+      if (g.key === "credit") creditPending = true;
+      else otherPending = true;
+    }
+  });
+  if (allGroupsPaid) return "all-paid";
+  if (!otherPending && creditPending) return "credit-pending"; // ฟ้า
+  if (otherPending) return "other-pending"; // แดง
+  return null;
+}
+
+function openCal() {
+  const modal = document.getElementById("calModal");
+  modal.style.display = "flex";
+  // populate year selector (ปีที่มีข้อมูล ± 1)
+  const yearSel = document.getElementById("calYearSel");
+  const monthSel = document.getElementById("calMonthSel");
+  const now = new Date();
+  const curBE = now.getFullYear() + 543;
+  // หาปีที่มีข้อมูล
+  const allKeys = [...Object.keys(allDays), ...Object.keys(allClosed)];
+  const yearsSet = new Set([curBE]);
+  allKeys.forEach(k => {
+    const p = parseDayKey(k);
+    if (p) yearsSet.add(p.year + 543);
+  });
+  const years = [...yearsSet].sort((a,b)=>b-a);
+  yearSel.innerHTML = years.map(y => `<option value="${y}" ${y===curBE?"selected":""}>${y}</option>`).join("");
+
+  monthSel.innerHTML = THAI_MONTHS.map((m,i) =>
+    `<option value="${i+1}" ${i+1===now.getMonth()+1?"selected":""}>${m}</option>`
+  ).join("");
+
+  // ถ้า activeDay → ไปหน้านั้น
+  if (activeDay) {
+    const p = parseDayKey(activeDay);
+    if (p) {
+      yearSel.value  = p.year + 543;
+      monthSel.value = p.month;
+    }
+  }
+  renderCalGrid();
+}
+
+function closeCal() {
+  document.getElementById("calModal").style.display = "none";
+}
+
+function calGoToday() {
+  const now = new Date();
+  const yearSel  = document.getElementById("calYearSel");
+  const monthSel = document.getElementById("calMonthSel");
+  yearSel.value  = now.getFullYear() + 543;
+  monthSel.value = now.getMonth() + 1;
+  renderCalGrid();
+}
+
+function renderCalGrid() {
+  const yearSel  = document.getElementById("calYearSel");
+  const monthSel = document.getElementById("calMonthSel");
+  const beYear   = parseInt(yearSel.value);
+  const month    = parseInt(monthSel.value);
+  const adYear   = beYear - 543;
+  const grid     = document.getElementById("calGrid");
+  const now      = new Date();
+
+  // วันแรกและวันสุดท้ายของเดือน
+  const firstDay = new Date(adYear, month-1, 1);
+  const lastDay  = new Date(adYear, month, 0);
+  const startDow = firstDay.getDay(); // 0=อา
+
+  grid.innerHTML = "";
+
+  // เซลว่างก่อนวันแรก
+  for (let i=0; i<startDow; i++) {
+    const blank = document.createElement("div");
+    blank.className = "cal-cell empty";
+    grid.appendChild(blank);
+  }
+
+  for (let d=1; d<=lastDay.getDate(); d++) {
+    const dd = String(d).padStart(2,"0");
+    const mm = String(month).padStart(2,"0");
+    const yy = String(beYear).slice(-2);
+    const key = `${dd}-${mm}-${yy}`;
+
+    const cell = document.createElement("div");
+    cell.className = "cal-cell";
+    cell.textContent = d;
+
+    // วันนี้
+    const isToday = (d===now.getDate() && month===now.getMonth()+1 && adYear===now.getFullYear());
+    if (isToday) cell.classList.add("today");
+
+    // วันที่ active
+    if (key === activeDay) cell.classList.add("active-day");
+
+    // สถานะข้อมูล
+    const status = getDayStatus(key);
+    if (status) {
+      cell.classList.add("has-data");
+      cell.classList.add(status);
+      // dot indicator ใต้ตัวเลข
+      const dot = document.createElement("div");
+      dot.style.cssText = `width:4px;height:4px;border-radius:50%;position:absolute;bottom:3px;left:50%;transform:translateX(-50%);background:${
+        status==="all-paid"?"#16A34A":status==="credit-pending"?"#0369A1":"#DC2626"};`;
+      cell.style.position = "relative";
+      cell.appendChild(dot);
+    }
+
+    cell.addEventListener("click", () => {
+      if (!allDays[key] && !allClosed[key]) return; // ไม่มีข้อมูลวันนั้น
+      activeDay = key; openForm = null;
+      const days = Object.keys(allDays).sort();
+      renderDayTabs(days);
+      closeCal();
+      switchTab("board");
+    });
+
+    grid.appendChild(cell);
+  }
+}
+
 function renderDayTabs(days) {
   const el = document.getElementById("dayTabs");
   el.innerHTML = "";
@@ -1081,20 +1297,20 @@ function renderDayTabs(days) {
     btn.className = "day-tab" + (d===activeDay?" active":"");
     btn.textContent = "📅 "+d;
 
-    // เช็คสถานะการชำระของวันนั้น
-    const dayData = allDays[d] || {};
-    const allItems = GROUPS.flatMap(g => Object.values(dayData[g.key]||{}));
-    const hasItems = allItems.length > 0;
-    const allPaid  = hasItems && allItems.every(c => c.status === "ชำระแล้ว");
-    const anyWait  = allItems.some(c => c.status === "รอชำระ");
-
-    if (d !== activeDay) {
-      if (hasItems && allPaid) {
-        btn.style.color = "#16A34A"; // เขียว — ชำระครบแล้ว
-        btn.style.fontWeight = "600";
-      } else if (anyWait) {
-        btn.style.color = "#DC2626"; // แดง — ยังมีค้างอยู่
-        btn.style.fontWeight = "600";
+    // ── ใช้ getDayStatus() เดียวกับปฏิทิน ──────────────────────
+    const status = getDayStatus(d);
+    const COLOR_MAP = {
+      "all-paid":      "#16A34A",  // เขียว
+      "credit-pending":"#0369A1",  // ฟ้า
+      "other-pending": "#DC2626",  // แดง
+    };
+    if (status) {
+      const col = COLOR_MAP[status];
+      btn.style.color      = col;
+      btn.style.fontWeight = "700";
+      // active day: underline ใช้สีเดิม (#F59E0B) แต่ตัวหนังสือเปลี่ยนสีตาม status
+      if (d === activeDay) {
+        btn.style.borderBottomColor = col;
       }
     }
 
@@ -1151,6 +1367,14 @@ function renderDayTabs(days) {
       });
   });
   el.appendChild(addBtn);
+
+  // ── ปุ่มปฏิทิน (มุมขวาสุด) ─────────────────────────
+  const calBtn = document.createElement("button");
+  calBtn.className = "day-cal-btn";
+  calBtn.textContent = "📅";
+  calBtn.title = "เปิดปฏิทิน";
+  calBtn.addEventListener("click", openCal);
+  el.appendChild(calBtn);
 }
 
 function confirmAddDay() {
@@ -1293,8 +1517,10 @@ function renderBoard() {
       body.innerHTML = `<div class="empty-row">ยังไม่มีรายการ</div>`;
     } else {
       // ข้อ 12: แยก paid vs unpaid
-      const paidItems    = sortedArr.filter(([,x]) => x.status==="ชำระแล้ว");
-      const unpaidItems  = sortedArr.filter(([,x]) => x.status!=="ชำระแล้ว");
+      const paidItems  = sortedArr.filter(([,x]) => x.status==="ชำระแล้ว")
+        // ข้อ 2,4: เรียงตาม paidAt — จ่ายก่อนแสดงก่อน (เก่าสุดอยู่ซ้าย)
+        .sort(([,a],[,b]) => (a.paidAt||0) - (b.paidAt||0));
+      const unpaidItems = sortedArr.filter(([,x]) => x.status!=="ชำระแล้ว");
 
       // แถว paid chips
       if (paidItems.length > 0) {
@@ -1344,31 +1570,44 @@ function renderBoard() {
             osc.start(); osc.stop(ctx.currentTime+0.12);
           } catch(e){}
           setTimeout(() => { statusBtn.style.transform = "scale(1)"; }, 120);
-          // ข้อ 2: อัปเดต Firebase ทันที + progress bar 1.5s + fade-out + เสียง
           const next = S_CYCLE[(S_CYCLE.indexOf(item.status)+1)%3];
-          db.ref(`days/${activeDay}/${g.key}/${key}/status`).set(next);
+
           if (next === "ชำระแล้ว") {
-            // progress bar overlay
+            // ── บันทึก status + paidAt timestamp พร้อมกัน ──────────
+            db.ref(`days/${activeDay}/${g.key}/${key}`).update({
+              status: "ชำระแล้ว",
+              paidAt: Date.now()   // ข้อ 1,3: timestamp ปัจจุบันเสมอ
+            });
+
+            // overlay สีเขียวทั้ง row
             const overlay = document.createElement("div");
-            overlay.className = "pay-progress-overlay";
-            const bar = document.createElement("div");
-            bar.className = "pay-progress-bar";
-            overlay.appendChild(bar);
+            overlay.className = "pay-green-overlay";
             row.appendChild(overlay);
-            // หลัง 1.5s: เสียง + fade-out
+            row.style.transition = "background .2s ease";
+            row.style.background = "rgba(34,197,94,0.12)";
+
+            // หลัง 1.5s: เสียง + fade+slide ออกขวา (0.7s)
             setTimeout(() => {
-              playSoundComplete();
-              row.style.transition = "opacity .7s ease, transform .7s ease, max-height .7s ease, padding .7s ease, margin .7s ease";
+              playLoadingComplete();
+              const h = row.offsetHeight;
               row.style.overflow   = "hidden";
-              row.style.maxHeight  = row.offsetHeight + "px";
+              row.style.maxHeight  = h + "px";
+              row.style.transition = "opacity .7s ease, transform .7s ease, max-height .7s ease, padding .7s ease, margin .7s ease";
               requestAnimationFrame(() => {
                 row.style.opacity   = "0";
-                row.style.transform = "translateX(80px)";
+                row.style.transform = "translateX(100px)";
                 row.style.maxHeight = "0";
                 row.style.padding   = "0";
                 row.style.margin    = "0";
               });
             }, 1500);
+
+          } else {
+            // status อื่น — เปลี่ยนปกติ, ล้าง paidAt ถ้ากู้คืน
+            const updates = { status: next };
+            if (next === "รอชำระ") updates.paidAt = null; // ข้อ 3: reset timestamp
+            db.ref(`days/${activeDay}/${g.key}/${key}`).update(updates);
+            setTimeout(()=>{ statusBtn.style.transform="scale(1)"; statusBtn.disabled=false; },120);
           }
         });
 
@@ -1428,18 +1667,14 @@ function renderBoard() {
           amtEl.style.fontWeight = "800";
         }
 
-        if (isLeft && billCount >= 2) {
-          row.appendChild(makeBadge(billCount));
-        }
+        // badge อยู่ระหว่างปุ่มติ๊ก กับ ชื่อ (ทุกกลุ่ม)
         row.appendChild(statusBtn);
+        if (billCount >= 2) row.appendChild(makeBadge(billCount));
         row.appendChild(info);
         row.appendChild(amtEl);
         row.appendChild(badge);
         row.appendChild(editBtn);
         row.appendChild(delBtn);
-        if (!isLeft && billCount >= 2) {
-          row.appendChild(makeBadge(billCount));
-        }
         body.appendChild(row);
       });
     }
@@ -2745,9 +2980,9 @@ function playSoundComplete() {
 function revertItemToUnpaid() {
   if (!_editItemCtx) return;
   const {dayKey, grpKey, itemKey} = _editItemCtx;
-  const path = allDays[dayKey] ? `days/${dayKey}/${grpKey}/${itemKey}/status`
-                               : `closed/${dayKey}/${grpKey}/${itemKey}/status`;
-  db.ref(path).set("รอชำระ").then(() => {
+  const path = allDays[dayKey] ? `days/${dayKey}/${grpKey}/${itemKey}`
+                               : `closed/${dayKey}/${grpKey}/${itemKey}`;
+  db.ref(path).update({ status: "รอชำระ", paidAt: null }).then(() => {
     // อัปเดต local cache
     if (allDays[dayKey]?.[grpKey]?.[itemKey])   allDays[dayKey][grpKey][itemKey].status   = "รอชำระ";
     if (allClosed[dayKey]?.[grpKey]?.[itemKey]) allClosed[dayKey][grpKey][itemKey].status = "รอชำระ";
