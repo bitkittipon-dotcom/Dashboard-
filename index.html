@@ -366,6 +366,51 @@ tr:last-child td { border-bottom: none; }
 }
 .item-row { position: relative; overflow: hidden; }
 
+
+/* ── BASKET TAB ────────────────────────────────────────── */
+.bk-subtab {
+  flex:1; padding:10px 6px; border:none; background:transparent;
+  font-size:12px; font-weight:600; color:#A8A29E; cursor:pointer;
+  font-family:inherit; border-bottom:2px solid transparent;
+  transition:all .15s; white-space:nowrap;
+}
+.bk-subtab.active { color:#1C1917; border-bottom-color:#F59E0B; }
+
+/* freeze table */
+.bk-table { border-collapse:collapse; font-size:11px; }
+.bk-table th, .bk-table td {
+  border:1px solid #E7E5E4; padding:5px 7px;
+  white-space:nowrap; font-family:inherit;
+}
+.bk-freeze { position:sticky; left:0; z-index:10; background:#fff; }
+.bk-th-name { background:#1C1917 !important; color:#fff; font-weight:700; min-width:90px; }
+.bk-th-total { background:#F59E0B !important; color:#1C1917; font-weight:700; min-width:70px; }
+.bk-th-day { background:#F5F5F4; font-weight:700; text-align:center; }
+.bk-sub-label { font-size:9px; color:#A8A29E; }
+.bk-cell-out   { color:#DC2626; font-weight:600; }
+.bk-cell-in    { color:#16A34A; font-weight:600; }
+.bk-cell-bal-warn { background:#FEF2F2 !important; color:#DC2626; font-weight:700; }
+.bk-col-even   { background:#fff; }
+.bk-col-odd    { background:#f9fafb; }
+.bk-add-btn {
+  display:flex; align-items:center; justify-content:center; gap:5px;
+  padding:10px; margin:12px 14px; border-radius:10px;
+  border:1.5px dashed #D6D3D1; background:transparent; color:#78716C;
+  font-size:13px; cursor:pointer; font-family:inherit; width:calc(100% - 28px);
+}
+
+/* order table */
+.bk-order-table { width:100%; border-collapse:collapse; font-size:12px; }
+.bk-order-table th {
+  background:#1C1917; color:#fff; padding:8px 10px;
+  text-align:left; font-size:11px; font-weight:700;
+}
+.bk-order-table td { padding:8px 10px; border-bottom:1px solid #F5F5F4; }
+.bk-order-table tr:nth-child(odd)  td { background:#fff; }
+.bk-order-table tr:nth-child(even) td { background:#f9fafb; }
+.bk-status-wait { background:#F5F5F4; color:#78716C; padding:3px 9px; border-radius:99px; font-size:10px; font-weight:700; }
+.bk-status-paid { background:#DCFCE7; color:#16A34A; padding:3px 9px; border-radius:99px; font-size:10px; font-weight:700; }
+
 </style>
 </head>
 <body>
@@ -381,13 +426,14 @@ tr:last-child td { border-bottom: none; }
   <div class="tab-btns">
     <button class="tab-btn active" id="tabBoardBtn">บอร์ด</button>
     <button class="tab-btn" id="tabUnpaidBtn">🔴 ค้างชำระ</button>
-    <button class="tab-btn" id="tabCustBtn">👥 ลูกค้า</button>
+    <button class="tab-btn" id="tabBasketBtn">🧺 ตะกร้า</button>
     <!-- ⚙️ Gear dropdown -->
     <div style="position:relative;overflow:visible;">
       <button id="settingsGearBtn" onclick="toggleSettingsDropdown()" style="background:#292524;border:none;border-radius:20px;padding:5px 11px;font-size:13px;font-weight:600;color:#78716C;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:4px;">
         ⚙️
       </button>
       <div class="settings-dropdown" id="settingsDropdown">
+        <button class="settings-dd-item" id="ddCustBtn">👥 ลูกค้า</button>
         <button class="settings-dd-item" id="ddSummaryBtn">📊 สรุปรวม</button>
         <button class="settings-dd-item" id="ddClosedBtn">✅ ปิดยอด</button>
         <button class="settings-dd-item" id="ddAnalyticsBtn">📈 วิเคราะห์</button>
@@ -936,6 +982,26 @@ tr:last-child td { border-bottom: none; }
 
 
   <!-- CUSTOMER TAB -->
+
+  <!-- ████████ ตะกร้า TAB ████████ -->
+  <div id="basketTab" style="display:none;padding:0 0 80px;">
+
+    <!-- MONTH SELECTOR -->
+    <div style="background:#fff;border-bottom:1px solid #E7E5E4;padding:10px 14px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:90;">
+      <button onclick="bkPrevMonth()" style="padding:5px 10px;border-radius:8px;border:1px solid #E7E5E4;background:#fff;cursor:pointer;font-size:14px;">‹</button>
+      <div id="bkMonthLabel" style="flex:1;text-align:center;font-weight:700;font-size:14px;color:#1C1917;"></div>
+      <button onclick="bkNextMonth()" style="padding:5px 10px;border-radius:8px;border:1px solid #E7E5E4;background:#fff;cursor:pointer;font-size:14px;">›</button>
+    </div>
+
+    <!-- SUB-TAB -->
+    <div style="display:flex;gap:0;border-bottom:2px solid #E7E5E4;background:#fff;">
+      <button class="bk-subtab active" id="bkTabCutter" onclick="bkSwitchSub('cutter')">✂️ คนตัด</button>
+    </div>
+
+    <!-- TABLE CONTAINER -->
+    <div id="bkContent" style="overflow:auto;-webkit-overflow-scrolling:touch;"></div>
+  </div>
+
   <div id="custTab" style="display:none;">
     <div class="quiet-box" id="cmQuietSection" style="display:none;">
       <div class="quiet-head" onclick="cmToggleQuiet()">
@@ -1065,9 +1131,10 @@ const fmt = n => Number(n||0).toLocaleString("th-TH",{minimumFractionDigits:0,ma
 // ── Tab Buttons ───────────────────────────────────────────────────
 document.getElementById("tabBoardBtn").addEventListener("click",   () => switchTab("board"));
 document.getElementById("tabUnpaidBtn").addEventListener("click",  () => switchTab("unpaid"));
-document.getElementById("tabCustBtn").addEventListener("click", () => switchTab("cust"));
+document.getElementById("tabBasketBtn").addEventListener("click", () => switchTab("basket"));
 
 // ⚙️ Gear dropdown items
+document.getElementById("ddCustBtn").addEventListener("click",      () => { switchTab("cust");      closeSettingsDropdown(); });
 document.getElementById("ddSummaryBtn").addEventListener("click",   () => { switchTab("summary");   closeSettingsDropdown(); });
 document.getElementById("ddClosedBtn").addEventListener("click",    () => { switchTab("closed");    closeSettingsDropdown(); });
 document.getElementById("ddAnalyticsBtn").addEventListener("click", () => { switchTab("analytics"); closeSettingsDropdown(); });
@@ -1488,6 +1555,12 @@ function renderBoard() {
 
     const div = document.createElement("div");
     div.className = "group-card";
+    // ถ้าทุกรายการชำระครบ → เปลี่ยนพื้นหลัง card
+    const allGroupPaid = arr.length > 0 && gPaid === arr.length;
+    if (allGroupPaid) {
+      div.style.background = "#8EB69B";
+      div.style.borderColor = "#6fa085";
+    }
 
     // header
     const hdr = document.createElement("div");
@@ -2363,7 +2436,331 @@ async function reopenDay(d) {
   switchTab("board");
 }
 
+
+// ══════════════════════════════════════════════════════════════════
+// BASKET MODULE
+// ══════════════════════════════════════════════════════════════════
+const BK_MONTHS_TH = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.",
+                       "ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+let bkYear, bkMonth, bkSubTab = "cutter";
+let bkCutters   = []; // [{id,name}]
+let bkCustomers = []; // [{id,name}]
+let bkData      = {}; // {yyyy-mm: {cutter:{id:{dd:{out,in}}}}, customer:{...}}
+let bkOrders    = []; // [{id,dateKey,name,basket,status,paidAt}]
+
+function bkInit() {
+  const now = new Date();
+  bkYear  = now.getFullYear();
+  bkMonth = now.getMonth() + 1;
+  bkRender();
+}
+
+function bkPrevMonth() { bkMonth--; if(bkMonth<1){bkMonth=12;bkYear--;} bkRender(); }
+function bkNextMonth() { bkMonth++; if(bkMonth>12){bkMonth=1;bkYear++;} bkRender(); }
+
+function bkUpdateLabel() {
+  const el = document.getElementById("bkMonthLabel");
+  if(el) el.textContent = `${BK_MONTHS_TH[bkMonth-1]} ${bkYear + 543}`;
+}
+
+function bkSwitchSub(sub) {
+  bkSubTab = sub;
+  ["cutter","customer","order"].forEach(s => {
+    const btn = document.getElementById("bkTab" + s.charAt(0).toUpperCase() + s.slice(1));
+    if(btn) btn.className = "bk-subtab" + (s===sub?" active":"");
+  });
+  bkRender();
+}
+
+function bkRender() {
+  bkUpdateLabel();
+  if(bkSubTab==="order")    bkRenderOrder();
+  else                      bkRenderMatrix(bkSubTab);
+}
+
+// ── Cutter/Customer Matrix ─────────────────────────────────────
+function bkGetDaysInMonth(y,m) {
+  return new Date(y,m,0).getDate();
+}
+
+function bkMonthKey() { return `${bkYear}-${String(bkMonth).padStart(2,"0")}`; }
+
+function bkGetData(type,personId,dd) {
+  const mk = bkMonthKey();
+  return (bkData[mk]?.[type]?.[personId]?.[dd]) || {out:0,in:0};
+}
+
+function bkSetData(type,personId,dd,field,val) {
+  const mk = bkMonthKey();
+  if(!bkData[mk]) bkData[mk]={};
+  if(!bkData[mk][type]) bkData[mk][type]={};
+  if(!bkData[mk][type][personId]) bkData[mk][type][personId]={};
+  if(!bkData[mk][type][personId][dd]) bkData[mk][type][personId][dd]={out:0,in:0};
+  bkData[mk][type][personId][dd][field]=parseFloat(val)||0;
+  bkSaveLocal();
+  bkRender();
+}
+
+function bkSaveLocal() {
+  try { localStorage.setItem("bk_data",JSON.stringify(bkData)); } catch(e){}
+  try { localStorage.setItem("bk_cutters",JSON.stringify(bkCutters)); } catch(e){}
+  try { localStorage.setItem("bk_customers",JSON.stringify(bkCustomers)); } catch(e){}
+  try { localStorage.setItem("bk_orders",JSON.stringify(bkOrders)); } catch(e){}
+}
+
+function bkLoadLocal() {
+  try { const d=localStorage.getItem("bk_data"); if(d) bkData=JSON.parse(d); } catch(e){}
+  try { const d=localStorage.getItem("bk_cutters"); if(d) bkCutters=JSON.parse(d); } catch(e){}
+  try { const d=localStorage.getItem("bk_customers"); if(d) bkCustomers=JSON.parse(d); } catch(e){}
+  try { const d=localStorage.getItem("bk_orders"); if(d) bkOrders=JSON.parse(d); } catch(e){}
+}
+
+function bkRenderMatrix(type) {
+  const container = document.getElementById("bkContent");
+  if(!container) return;
+  const people = type==="cutter" ? bkCutters : bkCustomers;
+  const days   = bkGetDaysInMonth(bkYear, bkMonth);
+  const now    = new Date();
+  const todayD = (now.getFullYear()===bkYear && now.getMonth()+1===bkMonth) ? now.getDate() : 0;
+
+  // คำนวณ balance per person
+  function calcBalance(personId, upToDay) {
+    let bal = 0;
+    for(let d=1; d<=upToDay; d++) {
+      const dd = String(d).padStart(2,"0");
+      const entry = bkGetData(type, personId, dd);
+      bal += (entry.out||0) - (entry.in||0);
+    }
+    return bal;
+  }
+
+  let html = `<div style="overflow:auto;-webkit-overflow-scrolling:touch;max-height:calc(100vh - 160px);">
+  <table class="bk-table" id="bkMatrix">
+  <thead><tr>
+    <th class="bk-freeze bk-th-name" rowspan="2">ชื่อ</th>
+    <th class="bk-freeze bk-th-total" style="left:90px;" rowspan="2">ยอดค้าง<br>ปัจจุบัน</th>`;
+
+  for(let d=1; d<=days; d++) {
+    const isEven = d%2===0;
+    const isToday = d===todayD;
+    const bg = isToday ? "#FEF3C7" : isEven ? "#f9fafb" : "#fff";
+    html += `<th class="bk-th-day" colspan="3" style="background:${bg};${isToday?"border-bottom:2px solid #F59E0B;":""}">${d}</th>`;
+  }
+  html += `</tr><tr>`;
+  for(let d=1; d<=days; d++) {
+    const isEven = d%2===0;
+    const bg = isEven ? "#f9fafb" : "#fff";
+    html += `<th style="background:${bg};text-align:center;"><span class="bk-sub-label">ออก</span></th>
+             <th style="background:${bg};text-align:center;"><span class="bk-sub-label">คืน</span></th>
+             <th style="background:${bg};text-align:center;"><span class="bk-sub-label">ค้าง</span></th>`;
+  }
+  html += `</tr></thead><tbody>`;
+
+  people.forEach((person, pi) => {
+    const currentBal = calcBalance(person.id, days);
+    html += `<tr>
+      <td class="bk-freeze" style="left:0;background:#fff;min-width:90px;">
+        <div style="display:flex;align-items:center;gap:4px;">
+          <span style="flex:1;font-weight:700;">${person.name}</span>
+          <button onclick="bkEditPerson('${type}','${person.id}')" style="border:none;background:transparent;cursor:pointer;font-size:11px;padding:1px 3px;">✏️</button>
+          <button onclick="bkDeletePerson('${type}','${person.id}')" style="border:none;background:transparent;cursor:pointer;font-size:11px;padding:1px 3px;color:#FCA5A5;">✕</button>
+          <button onclick="bkMovePerson('${type}','${pi}',-1)" style="border:none;background:transparent;cursor:pointer;font-size:10px;padding:1px 2px;">↑</button>
+          <button onclick="bkMovePerson('${type}','${pi}',1)" style="border:none;background:transparent;cursor:pointer;font-size:10px;padding:1px 2px;">↓</button>
+        </div>
+      </td>
+      <td class="bk-freeze" style="left:90px;text-align:center;${currentBal>0?"background:#FEF2F2;color:#DC2626;font-weight:700;":"background:#F0FDF4;color:#16A34A;font-weight:700;"}">
+        ${currentBal}
+      </td>`;
+
+    let runBal = 0;
+    for(let d=1; d<=days; d++) {
+      const dd = String(d).padStart(2,"0");
+      const entry = bkGetData(type, person.id, dd);
+      const out = entry.out||0, inp = entry.in||0;
+      runBal += out - inp;
+      const isEven = d%2===0;
+      const bg = isEven ? "background:#f9fafb;" : "background:#fff;";
+      const balClass = runBal > 0 ? "bk-cell-bal-warn" : "";
+      html += `
+        <td class="${bg ? "" : ""}" style="${bg}text-align:center;">
+          <input type="number" value="${out||""}" placeholder="-"
+            onchange="bkSetData('${type}','${person.id}','${dd}','out',this.value)"
+            style="width:36px;border:none;background:transparent;text-align:center;font-family:inherit;font-size:11px;color:#DC2626;font-weight:${out?"600":"400"};">
+        </td>
+        <td style="${bg}text-align:center;">
+          <input type="number" value="${inp||""}" placeholder="-"
+            onchange="bkSetData('${type}','${person.id}','${dd}','in',this.value)"
+            style="width:36px;border:none;background:transparent;text-align:center;font-family:inherit;font-size:11px;color:#16A34A;font-weight:${inp?"600":"400"};">
+        </td>
+        <td class="${balClass}" style="${bg}text-align:center;min-width:36px;">${runBal > 0 ? runBal : ""}</td>`;
+    }
+    // ปุ่มสรุปรายเดือน
+    html += `<td style="text-align:center;"><button onclick="bkShowSummary('${type}','${person.id}','${person.name}')"
+      style="border:none;background:#EFF6FF;color:#0369A1;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:700;cursor:pointer;">สรุป</button></td>`;
+    html += `</tr>`;
+  });
+
+  html += `</tbody></table></div>`;
+
+  container.innerHTML = html;
+
+  // ปุ่มเพิ่มรายชื่อ
+  const addBtn = document.createElement("button");
+  addBtn.className = "bk-add-btn";
+  addBtn.textContent = `＋ เพิ่ม${type==="cutter"?"คนตัด":"ลูกค้า"}`;
+  addBtn.onclick = () => bkAddPerson(type);
+  container.appendChild(addBtn);
+}
+
+// ── Person CRUD ─────────────────────────────────────────────────
+function bkAddPerson(type) {
+  const name = prompt(`ชื่อ${type==="cutter"?"คนตัด":"ลูกค้า"}ใหม่:`);
+  if(!name || !name.trim()) return;
+  const list = type==="cutter" ? bkCutters : bkCustomers;
+  list.push({id: "bk"+Date.now(), name: name.trim()});
+  bkSaveLocal(); bkRender();
+}
+
+function bkEditPerson(type, id) {
+  const list = type==="cutter" ? bkCutters : bkCustomers;
+  const p = list.find(x=>x.id===id); if(!p) return;
+  const name = prompt("แก้ไขชื่อ:", p.name);
+  if(!name || !name.trim()) return;
+  p.name = name.trim();
+  bkSaveLocal(); bkRender();
+}
+
+function bkDeletePerson(type, id) {
+  if(!confirm("ลบรายชื่อนี้?")) return;
+  if(type==="cutter") bkCutters = bkCutters.filter(x=>x.id!==id);
+  else bkCustomers = bkCustomers.filter(x=>x.id!==id);
+  bkSaveLocal(); bkRender();
+}
+
+function bkMovePerson(type, idx, dir) {
+  const list = type==="cutter" ? bkCutters : bkCustomers;
+  const newIdx = parseInt(idx) + dir;
+  if(newIdx < 0 || newIdx >= list.length) return;
+  [list[idx], list[newIdx]] = [list[newIdx], list[idx]];
+  bkSaveLocal(); bkRender();
+}
+
+function bkShowSummary(type, id, name) {
+  const mk = bkMonthKey();
+  const days = bkGetDaysInMonth(bkYear, bkMonth);
+  let totalOut=0, totalIn=0;
+  let detail = "";
+  for(let d=1; d<=days; d++) {
+    const dd = String(d).padStart(2,"0");
+    const e = bkGetData(type, id, dd);
+    if(e.out||e.in) {
+      totalOut+=e.out||0; totalIn+=e.in||0;
+      detail += `วันที่ ${d}: ออก ${e.out||0}, คืน ${e.in||0}\n`;
+    }
+  }
+  alert(`สรุป ${name} เดือน ${BK_MONTHS_TH[bkMonth-1]} ${bkYear+543}\n${"─".repeat(30)}\n${detail}\nออกรวม: ${totalOut}  คืนรวม: ${totalIn}  ค้างสุทธิ: ${totalOut-totalIn}`);
+}
+
+// ── ORDER TABLE ──────────────────────────────────────────────────
+function bkRenderOrder() {
+  const container = document.getElementById("bkContent");
+  if(!container) return;
+  const mk = bkMonthKey();
+  const monthOrders = bkOrders.filter(o => o.dateKey && o.dateKey.startsWith(`${bkYear}-${String(bkMonth).padStart(2,"0")}`));
+
+  let html = `<div style="overflow:auto;max-height:calc(100vh-160px);">
+  <table class="bk-order-table">
+  <thead><tr>
+    <th style="min-width:90px;">วันที่</th>
+    <th style="min-width:100px;">รายชื่อ</th>
+    <th style="min-width:70px;text-align:center;">ตะกร้า</th>
+    <th style="min-width:80px;text-align:center;">สถานะ</th>
+    <th style="width:32px;"></th>
+  </tr></thead><tbody>`;
+
+  if(monthOrders.length===0) {
+    html += `<tr><td colspan="5" style="text-align:center;padding:24px;color:#A8A29E;">ยังไม่มีรายการ</td></tr>`;
+  } else {
+    // group by dateKey for alternating row bg
+    const dateKeys = [...new Set(monthOrders.map(o=>o.dateKey))].sort();
+    dateKeys.forEach((dk, di) => {
+      const dayOrders = monthOrders.filter(o=>o.dateKey===dk);
+      const bg = di%2===0 ? "#fff" : "#f9fafb";
+      dayOrders.forEach((order, oi) => {
+        const isPaid = order.status==="จ่าย";
+        html += `<tr style="background:${bg};">
+          <td style="font-weight:600;font-size:11px;${oi>0?"opacity:0":""}"
+            onclick="${oi===0?`bkEditOrderDate('${order.id}')`:""}" style="cursor:${oi===0?"pointer":"default"};">
+            ${oi===0 ? `<span style="cursor:pointer;text-decoration:underline;text-decoration-style:dotted;">${dk.split("-").slice(2).join("")+"-"+BK_MONTHS_TH[parseInt(dk.split("-")[1])-1]}</span>` : ""}
+          </td>
+          <td onclick="bkEditOrderName('${order.id}')" style="cursor:pointer;font-weight:600;">${order.name}</td>
+          <td onclick="bkEditOrderBasket('${order.id}')" style="text-align:center;cursor:pointer;font-weight:700;">${order.basket||"-"}</td>
+          <td style="text-align:center;">
+            <span class="${isPaid?"bk-status-paid":"bk-status-wait"}" onclick="bkToggleOrderStatus('${order.id}')" style="cursor:pointer;">
+              ${isPaid?"✓ จ่าย":"รอเก็บ"}
+            </span>
+          </td>
+          <td><button onclick="bkDeleteOrder('${order.id}')" style="border:none;background:transparent;cursor:pointer;color:#FCA5A5;font-size:13px;">✕</button></td>
+        </tr>`;
+      });
+    });
+  }
+  html += `</tbody></table></div>`;
+  container.innerHTML = html;
+
+  // ปุ่มเพิ่มรายการ
+  const addBtn = document.createElement("button");
+  addBtn.className = "bk-add-btn";
+  addBtn.textContent = "＋ เพิ่มรายการ";
+  addBtn.onclick = bkAddOrder;
+  container.appendChild(addBtn);
+}
+
+function bkAddOrder() {
+  const now = new Date();
+  const dk = `${bkYear}-${String(bkMonth).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+  const name = prompt("ชื่อลูกค้า:");
+  if(!name||!name.trim()) return;
+  const basket = prompt("จำนวนตะกร้า:");
+  bkOrders.push({
+    id: "ord"+Date.now(),
+    dateKey: dk,
+    name: name.trim(),
+    basket: parseFloat(basket)||0,
+    status: "รอเก็บ"
+  });
+  bkSaveLocal(); bkRender();
+}
+
+function bkEditOrderDate(id) {
+  const o = bkOrders.find(x=>x.id===id); if(!o) return;
+  const v = prompt("แก้ไขวันที่ (YYYY-MM-DD):", o.dateKey);
+  if(v&&v.trim()) { o.dateKey=v.trim(); bkSaveLocal(); bkRender(); }
+}
+function bkEditOrderName(id) {
+  const o = bkOrders.find(x=>x.id===id); if(!o) return;
+  const v = prompt("แก้ไขชื่อ:", o.name);
+  if(v&&v.trim()) { o.name=v.trim(); bkSaveLocal(); bkRender(); }
+}
+function bkEditOrderBasket(id) {
+  const o = bkOrders.find(x=>x.id===id); if(!o) return;
+  const v = prompt("จำนวนตะกร้า:", o.basket);
+  if(v!==null) { o.basket=parseFloat(v)||0; bkSaveLocal(); bkRender(); }
+}
+function bkToggleOrderStatus(id) {
+  const o = bkOrders.find(x=>x.id===id); if(!o) return;
+  o.status = o.status==="จ่าย" ? "รอเก็บ" : "จ่าย";
+  if(o.status==="จ่าย") o.paidAt=Date.now();
+  bkSaveLocal(); bkRender();
+}
+function bkDeleteOrder(id) {
+  if(!confirm("ลบรายการนี้?")) return;
+  bkOrders = bkOrders.filter(x=>x.id!==id);
+  bkSaveLocal(); bkRender();
+}
+
 function switchTab(tab) {
+  activeTab = tab;
   activeTab = tab;
   document.getElementById("boardTab").style.display   = tab==="board"?"block":"none";
   document.getElementById("unpaidTab").style.display  = tab==="unpaid"?"block":"none";
@@ -2371,6 +2768,8 @@ function switchTab(tab) {
   document.getElementById("closedTab").style.display  = tab==="closed"?"block":"none";
   document.getElementById("custTab").style.display    = tab==="cust"?"block":"none";
   document.getElementById("analyticsTab").style.display = tab==="analytics"?"block":"none";
+  document.getElementById("basketTab").style.display   = tab==="basket"?"block":"none";
+  if(tab==="basket") bkRender();
 
   document.getElementById("tabBoardBtn").classList.toggle("active",  tab==="board");
   document.getElementById("tabUnpaidBtn").classList.toggle("active", tab==="unpaid");
@@ -3365,6 +3764,10 @@ const SCAN_GRP_COLOR = {
 };
 
 // ── key management ─────────────────────────────────────────────────
+// โหลด basket data
+bkLoadLocal();
+bkInit();
+
 // โหลด Gemini API Key จาก localStorage (จำถาวร)
 try {
   const saved = localStorage.getItem("gemini_api_key");
