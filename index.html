@@ -384,7 +384,7 @@ tr:last-child td { border-bottom: none; }
 }
 .bk-freeze { position:sticky; left:0; z-index:10; background:#fff; }
 .bk-th-name { background:#1C1917 !important; color:#fff; font-weight:700; min-width:90px; }
-.bk-th-total { background:#F59E0B !important; color:#1C1917; font-weight:700; min-width:70px; }
+.bk-th-total { background:#F59E0B !important; color:#1C1917; font-weight:700; min-width:48px; max-width:56px; }
 .bk-th-day { background:#F5F5F4; font-weight:700; text-align:center; }
 .bk-sub-label { font-size:9px; color:#A8A29E; }
 .bk-cell-out   { color:#DC2626; font-weight:600; }
@@ -2586,6 +2586,65 @@ function bkLoadLocal() {
   });
 }
 
+
+// ── Person options popup ────────────────────────────────────────
+function bkPersonOptions(type, id, idx) {
+  // สร้าง bottom sheet ขึ้นมา
+  const existing = document.getElementById("bkPersonOptModal");
+  if(existing) existing.remove();
+  const people = type==="cutter" ? bkCutters : bkCustomers;
+  const p = people.find(x=>x.id===id); if(!p) return;
+  const i = parseInt(idx);
+  const overlay = document.createElement("div");
+  overlay.id = "bkPersonOptModal";
+  overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9000;display:flex;align-items:flex-end;justify-content:center;";
+  overlay.onclick = (e) => { if(e.target===overlay) overlay.remove(); };
+  overlay.innerHTML = `
+    <div style="background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:400px;padding:16px 0 24px;animation:calPop .2s ease;">
+      <div style="padding:0 18px 12px;border-bottom:1px solid #F5F5F4;text-align:center;">
+        <div style="font-weight:800;font-size:16px;color:#1C1917;">${p.name}</div>
+        <div style="font-size:11px;color:#A8A29E;margin-top:2px;">${type==="cutter"?"✂️ คนตัด":"👤 ลูกค้า"}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0;">
+        <button onclick="bkEditPersonInline('${type}','${id}');document.getElementById('bkPersonOptModal').remove();"
+          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;">
+          ✏️ แก้ไขชื่อ
+        </button>
+        <button onclick="bkMovePerson('${type}','${i}',-1);document.getElementById('bkPersonOptModal').remove();"
+          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;${i===0?'opacity:.3;pointer-events:none;':''}">
+          ↑ ขึ้นไป
+        </button>
+        <button onclick="bkMovePerson('${type}','${i}',1);document.getElementById('bkPersonOptModal').remove();"
+          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;${i>=people.length-1?'opacity:.3;pointer-events:none;':''}">
+          ↓ ลงไป
+        </button>
+        <button onclick="bkDeletePersonConfirm('${type}','${id}');document.getElementById('bkPersonOptModal').remove();"
+          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;color:#DC2626;font-weight:600;">
+          🗑️ ลบรายชื่อ
+        </button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+function bkEditPersonInline(type, id) {
+  const list = type==="cutter" ? bkCutters : bkCustomers;
+  const p = list.find(x=>x.id===id); if(!p) return;
+  const name = prompt("แก้ไขชื่อ:", p.name);
+  if(!name||!name.trim()) return;
+  p.name = name.trim();
+  bkSaveLocal(); bkRender();
+}
+
+function bkDeletePersonConfirm(type, id) {
+  const list = type==="cutter" ? bkCutters : bkCustomers;
+  const p = list.find(x=>x.id===id); if(!p) return;
+  if(!confirm(`ลบ "${p.name}"?`)) return;
+  if(type==="cutter") bkCutters = bkCutters.filter(x=>x.id!==id);
+  else bkCustomers = bkCustomers.filter(x=>x.id!==id);
+  bkSaveLocal(); bkRender();
+}
+
 function bkRenderMatrix(type) {
   const container = document.getElementById("bkContent");
   if(!container) return;
@@ -2643,7 +2702,7 @@ function bkRenderMatrix(type) {
   <table class="bk-table" id="bkMatrix">
   <thead><tr>
     <th class="bk-freeze bk-th-name" rowspan="2">ชื่อ</th>
-    <th class="bk-freeze bk-th-total" style="left:90px;" rowspan="2">ยอดค้าง<br>ปัจจุบัน</th>
+    <th class="bk-freeze bk-th-total" style="left:90px;min-width:48px;max-width:56px;" rowspan="2">ยอดค้าง</th>
     <th rowspan="2" style="background:#FFF9C4;border:1px solid #F59E0B;text-align:center;font-size:10px;font-weight:700;color:#92400E;min-width:46px;white-space:nowrap;">↩<br>ยกมา</th>`;
 
   for(let d=1; d<=days; d++) {
@@ -2657,7 +2716,7 @@ function bkRenderMatrix(type) {
     const isEven = d%2===0;
     const bg = isEven ? "#ebebeb" : "#fff";
     html += `<th style="background:${bg};text-align:center;"><span class="bk-sub-label" style="color:#1E3A8A;font-weight:700;">ออก</span></th>
-             <th style="background:${bg};text-align:center;"><span class="bk-sub-label">คืน</span></th>
+             <th style="background:${bg};text-align:center;"><span class="bk-sub-label" style="color:#16A34A;font-weight:700;">เก็บ</span></th>
              <th style="background:${bg};text-align:center;"><span class="bk-sub-label">ค้าง</span></th>`;
   }
   html += `</tr></thead><tbody>`;
@@ -2669,13 +2728,10 @@ function bkRenderMatrix(type) {
 
     html += `<tr>
       <td class="bk-freeze" style="left:0;background:#fff;min-width:90px;">
-        <div style="display:flex;align-items:center;gap:4px;">
-          <span style="flex:1;font-weight:700;">${person.name}</span>
-          <button onclick="bkEditPerson('${type}','${person.id}')" style="border:none;background:transparent;cursor:pointer;font-size:11px;padding:1px 3px;">✏️</button>
-          <button onclick="bkDeletePerson('${type}','${person.id}')" style="border:none;background:transparent;cursor:pointer;font-size:11px;padding:1px 3px;color:#FCA5A5;">✕</button>
-          <button onclick="bkMovePerson('${type}','${pi}',-1)" style="border:none;background:transparent;cursor:pointer;font-size:10px;padding:1px 2px;">↑</button>
-          <button onclick="bkMovePerson('${type}','${pi}',1)" style="border:none;background:transparent;cursor:pointer;font-size:10px;padding:1px 2px;">↓</button>
-        </div>
+        <span onclick="bkPersonOptions('${type}','${person.id}','${pi}')"
+          style="font-weight:700;cursor:pointer;padding:4px 2px;display:block;text-decoration:underline;text-decoration-style:dotted;text-decoration-color:#A8A29E;">
+          ${person.name}
+        </span>
       </td>
       <td data-total="${type}-${person.id}" class="bk-freeze" style="left:90px;text-align:center;${currentBal>0?"background:#FEF2F2;color:#DC2626;font-weight:700;":"background:#F0FDF4;color:#16A34A;font-weight:700;"}">
         ${currentBal}
