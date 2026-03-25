@@ -1000,6 +1000,14 @@ tr:last-child td { border-bottom: none; }
 
     <!-- TABLE CONTAINER -->
     <div id="bkContent" style="overflow:auto;-webkit-overflow-scrolling:touch;"></div>
+    <!-- Order table below -->
+    <div id="bkOrderSection" style="margin-top:0;border-top:3px solid #E7E5E4;">
+      <div style="background:#1C1917;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="color:#fff;font-weight:700;font-size:13px;">🧺 สั่งตะกร้า</div>
+        <button onclick="bkAddOrder()" style="background:#F59E0B;border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">＋ เพิ่ม</button>
+      </div>
+      <div id="bkOrderContent"></div>
+    </div>
   </div>
 
   <div id="custTab" style="display:none;">
@@ -2448,10 +2456,13 @@ let bkCustomers = []; // [{id,name}]
 let bkData      = {}; // {yyyy-mm: {cutter:{id:{dd:{out,in}}}}, customer:{...}}
 let bkOrders    = []; // [{id,dateKey,name,basket,status,paidAt}]
 
+let bkScrolledToToday = false; // scroll วันปัจจุบันเฉพาะครั้งแรก
+
 function bkInit() {
   const now = new Date();
   bkYear  = now.getFullYear();
   bkMonth = now.getMonth() + 1;
+  bkScrolledToToday = false; // reset ทุกครั้งที่ init
   bkRender();
 }
 
@@ -2474,8 +2485,8 @@ function bkSwitchSub(sub) {
 
 function bkRender() {
   bkUpdateLabel();
-  if(bkSubTab==="order")    bkRenderOrder();
-  else                      bkRenderMatrix(bkSubTab);
+  bkRenderMatrix("cutter"); // ตารางคนตัดเสมอ
+  bkRenderOrderBelow();     // ตารางสั่งตะกร้าใต้ตาราง
 }
 
 // ── Cutter/Customer Matrix ─────────────────────────────────────
@@ -2490,6 +2501,52 @@ function bkGetData(type,personId,dd) {
   return (bkData[mk]?.[type]?.[personId]?.[dd]) || {out:0,in:0};
 }
 
+// อัปเดต balance cells ใน row เดียว ไม่ scroll ไปไหน
+function bkUpdateRowBalance(type, personId) {
+  const days = bkGetDaysInMonth(bkYear, bkMonth);
+  // ── ต้องนำ carry-over จากเดือนก่อนมาเริ่มด้วย ──────────────────
+  // ทบสะสมทุกเดือนย้อนหลัง
+  let carry = 0;
+  {
+    let checkY = bkYear, checkM = bkMonth - 1;
+    let emptyMonths = 0;
+    while(emptyMonths < 2) {
+      if(checkM < 1) { checkM = 12; checkY--; }
+      const mk2 = `${checkY}-${String(checkM).padStart(2,"0")}`;
+      const days2 = bkGetDaysInMonth(checkY, checkM);
+      let hasData = false, monthBal = 0;
+      for(let d=1; d<=days2; d++) {
+        const dd = String(d).padStart(2,"0");
+        const e = bkData[mk2]?.[type]?.[personId]?.[dd];
+        if(e){ hasData=true; monthBal+=(e.out||0)-(e.in||0); }
+      }
+      emptyMonths = hasData ? 0 : emptyMonths+1;
+      carry += monthBal;
+      checkM--;
+      if(bkYear - checkY > 5) break;
+    }
+  }
+  let runBal = carry;
+  for (let d = 1; d <= days; d++) {
+    const dd = String(d).padStart(2,"0");
+    const entry = bkGetData(type, personId, dd);
+    runBal += (entry.out||0) - (entry.in||0);
+    const cell = document.querySelector(`[data-bal="${type}-${personId}-${dd}"]`);
+    if (cell) {
+      cell.textContent = runBal > 0 ? runBal : "";
+      cell.className = runBal > 0 ? "bk-cell-bal-warn" : "";
+      cell.style.background = runBal > 0 ? "#FEF2F2" : "";
+    }
+  }
+  // อัปเดต current total cell
+  const totalCell = document.querySelector(`[data-total="${type}-${personId}"]`);
+  if (totalCell) {
+    totalCell.textContent = runBal;
+    totalCell.style.background = runBal > 0 ? "#FEF2F2" : "#F0FDF4";
+    totalCell.style.color = runBal > 0 ? "#DC2626" : "#16A34A";
+  }
+}
+
 function bkSetData(type,personId,dd,field,val) {
   const mk = bkMonthKey();
   if(!bkData[mk]) bkData[mk]={};
@@ -2498,21 +2555,35 @@ function bkSetData(type,personId,dd,field,val) {
   if(!bkData[mk][type][personId][dd]) bkData[mk][type][personId][dd]={out:0,in:0};
   bkData[mk][type][personId][dd][field]=parseFloat(val)||0;
   bkSaveLocal();
-  bkRender();
+  // อัปเดตเฉพาะ balance cells ของ row นี้ — ไม่ re-render ทั้งตาราง
+  bkUpdateRowBalance(type, personId);
 }
 
+// ── Basket: save/load via Firebase ──────────────────────────────
 function bkSaveLocal() {
-  try { localStorage.setItem("bk_data",JSON.stringify(bkData)); } catch(e){}
-  try { localStorage.setItem("bk_cutters",JSON.stringify(bkCutters)); } catch(e){}
-  try { localStorage.setItem("bk_customers",JSON.stringify(bkCustomers)); } catch(e){}
-  try { localStorage.setItem("bk_orders",JSON.stringify(bkOrders)); } catch(e){}
+  bkSaving = true; // บอก listener ว่าเราเป็นคนบันทึกเอง ไม่ต้อง re-render
+  const payload = {
+    cutters:   JSON.stringify(bkCutters||[]),
+    customers: JSON.stringify(bkCustomers||[]),
+    orders:    JSON.stringify(bkOrders||[]),
+    data:      JSON.stringify(bkData||{})
+  };
+  db.ref("basket").set(payload).catch(()=>{ bkSaving = false; });
 }
+
+let bkSaving = false; // flag ป้องกัน re-render ตอนบันทึกเอง
 
 function bkLoadLocal() {
-  try { const d=localStorage.getItem("bk_data"); if(d) bkData=JSON.parse(d); } catch(e){}
-  try { const d=localStorage.getItem("bk_cutters"); if(d) bkCutters=JSON.parse(d); } catch(e){}
-  try { const d=localStorage.getItem("bk_customers"); if(d) bkCustomers=JSON.parse(d); } catch(e){}
-  try { const d=localStorage.getItem("bk_orders"); if(d) bkOrders=JSON.parse(d); } catch(e){}
+  db.ref("basket").on("value", snap => {
+    const d = snap.val() || {};
+    try { bkCutters   = JSON.parse(d.cutters   || "[]"); } catch(e){ bkCutters=[]; }
+    try { bkCustomers = JSON.parse(d.customers || "[]"); } catch(e){ bkCustomers=[]; }
+    try { bkOrders    = JSON.parse(d.orders    || "[]"); } catch(e){ bkOrders=[]; }
+    try { bkData      = JSON.parse(d.data      || "{}"); } catch(e){ bkData={}; }
+    // ไม่ re-render ถ้าเราเป็นคนบันทึกเอง (แค่อัปเดต balance in-place)
+    if (activeTab === "basket" && !bkSaving) bkRender();
+    bkSaving = false;
+  });
 }
 
 function bkRenderMatrix(type) {
@@ -2524,8 +2595,42 @@ function bkRenderMatrix(type) {
   const todayD = (now.getFullYear()===bkYear && now.getMonth()+1===bkMonth) ? now.getDate() : 0;
 
   // คำนวณ balance per person
+  // ── ยอดยกมาจากเดือนก่อน ─────────────────────────────────────
+  function getPrevMonthCarryOver(personId) {
+    // ทบสะสมทุกเดือนย้อนหลัง จนกว่าจะไม่มีข้อมูลติดกัน 2 เดือน
+    let totalCarry = 0;
+    let checkY = bkYear, checkM = bkMonth - 1;
+    let emptyMonths = 0;
+    while (emptyMonths < 2) {
+      if(checkM < 1) { checkM = 12; checkY--; }
+      const mk = `${checkY}-${String(checkM).padStart(2,"0")}`;
+      const days = bkGetDaysInMonth(checkY, checkM);
+      let monthBal = 0;
+      let hasData = false;
+      for(let d=1; d<=days; d++) {
+        const dd = String(d).padStart(2,"0");
+        const e = (bkData[mk]?.[type]?.[personId]?.[dd]);
+        if(e) {
+          hasData = true;
+          monthBal += (e.out||0) - (e.in||0);
+        }
+      }
+      if(!hasData) {
+        emptyMonths++;
+      } else {
+        emptyMonths = 0; // reset ถ้าเจอข้อมูล
+      }
+      totalCarry += monthBal;
+      checkM--;
+      // หยุดถ้าย้อนหลังเกิน 5 ปี
+      if(bkYear - checkY > 5) break;
+    }
+    return totalCarry;
+  }
+
   function calcBalance(personId, upToDay) {
-    let bal = 0;
+    const carry = getPrevMonthCarryOver(personId);
+    let bal = carry;
     for(let d=1; d<=upToDay; d++) {
       const dd = String(d).padStart(2,"0");
       const entry = bkGetData(type, personId, dd);
@@ -2538,19 +2643,20 @@ function bkRenderMatrix(type) {
   <table class="bk-table" id="bkMatrix">
   <thead><tr>
     <th class="bk-freeze bk-th-name" rowspan="2">ชื่อ</th>
-    <th class="bk-freeze bk-th-total" style="left:90px;" rowspan="2">ยอดค้าง<br>ปัจจุบัน</th>`;
+    <th class="bk-freeze bk-th-total" style="left:90px;" rowspan="2">ยอดค้าง<br>ปัจจุบัน</th>
+    <th rowspan="2" style="background:#FFF9C4;border:1px solid #F59E0B;text-align:center;font-size:10px;font-weight:700;color:#92400E;min-width:46px;white-space:nowrap;">↩<br>ยกมา</th>`;
 
   for(let d=1; d<=days; d++) {
     const isEven = d%2===0;
     const isToday = d===todayD;
-    const bg = isToday ? "#FEF3C7" : isEven ? "#f9fafb" : "#fff";
+    const bg = isToday ? "#FEF3C7" : isEven ? "#ebebeb" : "#fff";
     html += `<th class="bk-th-day" colspan="3" style="background:${bg};${isToday?"border-bottom:2px solid #F59E0B;":""}">${d}</th>`;
   }
   html += `</tr><tr>`;
   for(let d=1; d<=days; d++) {
     const isEven = d%2===0;
-    const bg = isEven ? "#f9fafb" : "#fff";
-    html += `<th style="background:${bg};text-align:center;"><span class="bk-sub-label">ออก</span></th>
+    const bg = isEven ? "#ebebeb" : "#fff";
+    html += `<th style="background:${bg};text-align:center;"><span class="bk-sub-label" style="color:#1E3A8A;font-weight:700;">ออก</span></th>
              <th style="background:${bg};text-align:center;"><span class="bk-sub-label">คืน</span></th>
              <th style="background:${bg};text-align:center;"><span class="bk-sub-label">ค้าง</span></th>`;
   }
@@ -2558,6 +2664,9 @@ function bkRenderMatrix(type) {
 
   people.forEach((person, pi) => {
     const currentBal = calcBalance(person.id, days);
+    const carry = getPrevMonthCarryOver(person.id);
+    let runBal = carry;
+
     html += `<tr>
       <td class="bk-freeze" style="left:0;background:#fff;min-width:90px;">
         <div style="display:flex;align-items:center;gap:4px;">
@@ -2568,31 +2677,32 @@ function bkRenderMatrix(type) {
           <button onclick="bkMovePerson('${type}','${pi}',1)" style="border:none;background:transparent;cursor:pointer;font-size:10px;padding:1px 2px;">↓</button>
         </div>
       </td>
-      <td class="bk-freeze" style="left:90px;text-align:center;${currentBal>0?"background:#FEF2F2;color:#DC2626;font-weight:700;":"background:#F0FDF4;color:#16A34A;font-weight:700;"}">
+      <td data-total="${type}-${person.id}" class="bk-freeze" style="left:90px;text-align:center;${currentBal>0?"background:#FEF2F2;color:#DC2626;font-weight:700;":"background:#F0FDF4;color:#16A34A;font-weight:700;"}">
         ${currentBal}
+      </td>
+      <td style="text-align:center;background:${carry>0?"#FEF2F2":carry<0?"#F0FDF4":"#FAFAF9"};font-weight:${carry!==0?"700":"400"};color:${carry>0?"#DC2626":carry<0?"#16A34A":"#A8A29E"};font-size:11px;border:1px solid #F0E68C;">
+        ${carry !== 0 ? carry : ""}
       </td>`;
-
-    let runBal = 0;
     for(let d=1; d<=days; d++) {
       const dd = String(d).padStart(2,"0");
       const entry = bkGetData(type, person.id, dd);
       const out = entry.out||0, inp = entry.in||0;
       runBal += out - inp;
       const isEven = d%2===0;
-      const bg = isEven ? "background:#f9fafb;" : "background:#fff;";
+      const bg = isEven ? "background:#ebebeb;" : "background:#fff;";
       const balClass = runBal > 0 ? "bk-cell-bal-warn" : "";
       html += `
-        <td class="${bg ? "" : ""}" style="${bg}text-align:center;">
+        <td style="${bg}text-align:center;">
           <input type="number" value="${out||""}" placeholder="-"
             onchange="bkSetData('${type}','${person.id}','${dd}','out',this.value)"
-            style="width:36px;border:none;background:transparent;text-align:center;font-family:inherit;font-size:11px;color:#DC2626;font-weight:${out?"600":"400"};">
+            style="width:36px;border:none;background:transparent;text-align:center;font-family:inherit;font-size:11px;color:#1E3A8A;font-weight:${out?"600":"400"};">
         </td>
         <td style="${bg}text-align:center;">
           <input type="number" value="${inp||""}" placeholder="-"
             onchange="bkSetData('${type}','${person.id}','${dd}','in',this.value)"
             style="width:36px;border:none;background:transparent;text-align:center;font-family:inherit;font-size:11px;color:#16A34A;font-weight:${inp?"600":"400"};">
         </td>
-        <td class="${balClass}" style="${bg}text-align:center;min-width:36px;">${runBal > 0 ? runBal : ""}</td>`;
+        <td data-bal="${type}-${person.id}-${dd}" class="${balClass}" style="${bg}text-align:center;min-width:36px;">${runBal > 0 ? runBal : ""}</td>`;
     }
     // ปุ่มสรุปรายเดือน
     html += `<td style="text-align:center;"><button onclick="bkShowSummary('${type}','${person.id}','${person.name}')"
@@ -2603,6 +2713,19 @@ function bkRenderMatrix(type) {
   html += `</tbody></table></div>`;
 
   container.innerHTML = html;
+
+  // scroll ไปวันปัจจุบันเฉพาะครั้งแรกที่เปิด
+  if (!bkScrolledToToday && todayD > 0) {
+    bkScrolledToToday = true;
+    setTimeout(() => {
+      const table = document.getElementById("bkMatrix");
+      if (!table) return;
+      // offset: ชื่อ(1) + ยอดค้าง(1) + ยกมา(1) + วันก่อนหน้า = todayD-1 cols
+      const ths = table.querySelectorAll("thead tr:first-child th");
+      const todayTh = ths[2 + todayD]; // index 3..N
+      if (todayTh) todayTh.scrollIntoView({inline:"center", block:"nearest"});
+    }, 150);
+  }
 
   // ปุ่มเพิ่มรายชื่อ
   const addBtn = document.createElement("button");
@@ -2662,6 +2785,71 @@ function bkShowSummary(type, id, name) {
 }
 
 // ── ORDER TABLE ──────────────────────────────────────────────────
+
+function bkRenderOrderBelow() {
+  const container = document.getElementById("bkOrderContent");
+  if(!container) return;
+  const monthOrders = bkOrders.filter(o => o.dateKey &&
+    o.dateKey.startsWith(`${bkYear}-${String(bkMonth).padStart(2,"0")}`));
+  
+  // fix: padStart(2,"0") not "00"
+  const prefix = `${bkYear}-${String(bkMonth).padStart(2,"0")}`;
+  const filtered = bkOrders.filter(o => o.dateKey && o.dateKey.startsWith(prefix));
+
+  if(filtered.length === 0) {
+    container.innerHTML = `<div style="text-align:center;padding:20px;color:#A8A29E;font-size:13px;">ยังไม่มีรายการสั่งตะกร้า<br><span style="font-size:11px;">กด ＋ เพิ่ม เพื่อเพิ่มรายการ</span></div>`;
+    return;
+  }
+
+  const dateKeys = [...new Set(filtered.map(o=>o.dateKey))].sort();
+  let html = `<table class="bk-order-table" style="width:100%"><thead><tr>
+    <th style="min-width:85px;">วันที่</th>
+    <th>รายชื่อ</th>
+    <th style="min-width:65px;text-align:center;">ตะกร้า</th>
+    <th style="min-width:80px;text-align:center;">สถานะ</th>
+    <th style="width:28px;"></th>
+  </tr></thead><tbody>`;
+
+  dateKeys.forEach((dk, di) => {
+    const dayOrders = filtered.filter(o=>o.dateKey===dk);
+    const bg = di%2===0 ? "#fff" : "#f5f5f5";
+    dayOrders.forEach((order, oi) => {
+      const isPaid = order.status==="จ่าย";
+      // แปลง dateKey เป็นวันที่อ่านง่าย
+      const parts = dk.split("-");
+      const displayDate = `${parseInt(parts[2])}-${BK_MONTHS_TH[parseInt(parts[1])-1]}`;
+      html += `<tr style="background:${bg};">
+        <td style="font-size:11px;font-weight:600;cursor:pointer;"
+          onclick="${oi===0?`bkEditOrderDate('${order.id}')`:""}"
+          title="${oi===0?'กดเพื่อแก้ไขหรือลบวันที่':''}">
+          ${oi===0 ? `<span style="text-decoration:underline;text-decoration-style:dotted;color:#0369A1;">${displayDate}</span>` : ""}
+        </td>
+        <td onclick="bkEditOrderName('${order.id}')" 
+          style="cursor:pointer;font-weight:600;" title="กดเพื่อแก้ไขหรือลบ">
+          ${order.name}
+        </td>
+        <td onclick="bkEditOrderBasket('${order.id}')"
+          style="text-align:center;cursor:pointer;font-weight:700;" title="กดเพื่อแก้ไข">
+          ${order.basket||"-"}
+        </td>
+        <td style="text-align:center;">
+          <span class="${isPaid?"bk-status-paid":"bk-status-wait"}" 
+            onclick="bkToggleOrderStatus('${order.id}')" style="cursor:pointer;">
+            ${isPaid?"✓ จ่าย":"รอเก็บ"}
+          </span>
+        </td>
+        <td>
+          <button onclick="bkDeleteOrder('${order.id}')"
+            style="border:none;background:transparent;cursor:pointer;color:#FCA5A5;font-size:13px;padding:2px 4px;">✕</button>
+        </td>
+      </tr>`;
+    });
+  });
+
+  html += `</tbody></table>`;
+  container.innerHTML = html;
+}
+
 function bkRenderOrder() {
   const container = document.getElementById("bkContent");
   if(!container) return;
@@ -2734,8 +2922,14 @@ function bkAddOrder() {
 
 function bkEditOrderDate(id) {
   const o = bkOrders.find(x=>x.id===id); if(!o) return;
-  const v = prompt("แก้ไขวันที่ (YYYY-MM-DD):", o.dateKey);
-  if(v&&v.trim()) { o.dateKey=v.trim(); bkSaveLocal(); bkRender(); }
+  const action = prompt(`วันที่: ${o.dateKey}\nพิมพ์วันที่ใหม่ (YYYY-MM-DD) หรือพิมพ์ "ลบ" เพื่อลบรายการนี้:`, o.dateKey);
+  if(!action) return;
+  if(action.trim()==="ลบ") {
+    bkOrders = bkOrders.filter(x=>x.id!==id);
+  } else {
+    o.dateKey = action.trim();
+  }
+  bkSaveLocal(); bkRender();
 }
 function bkEditOrderName(id) {
   const o = bkOrders.find(x=>x.id===id); if(!o) return;
@@ -2773,7 +2967,6 @@ function switchTab(tab) {
 
   document.getElementById("tabBoardBtn").classList.toggle("active",  tab==="board");
   document.getElementById("tabUnpaidBtn").classList.toggle("active", tab==="unpaid");
-  document.getElementById("tabCustBtn").classList.toggle("active",   tab==="cust");
   // ⚙️ gear btn ไฮไลต์เมื่ออยู่ใน sub-tabs
   const subTabs = ["summary","closed","analytics"];
   const gearBtn = document.getElementById("settingsGearBtn");
@@ -3764,7 +3957,7 @@ const SCAN_GRP_COLOR = {
 };
 
 // ── key management ─────────────────────────────────────────────────
-// โหลด basket data
+// โหลด basket data จาก Firebase (sync ทุกอุปกรณ์)
 bkLoadLocal();
 bkInit();
 
