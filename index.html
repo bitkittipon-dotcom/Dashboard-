@@ -383,7 +383,7 @@ tr:last-child td { border-bottom: none; }
   white-space:nowrap; font-family:inherit;
 }
 .bk-freeze { position:sticky; left:0; z-index:10; background:#fff; }
-.bk-th-name { background:#1C1917 !important; color:#fff; font-weight:700; min-width:90px; }
+.bk-th-name { background:#1C1917 !important; color:#fff; font-weight:700; min-width:45px; max-width:70px; }
 .bk-th-total { background:#F59E0B !important; color:#1C1917; font-weight:700; min-width:48px; max-width:56px; }
 .bk-th-day { background:#F5F5F4; font-weight:700; text-align:center; }
 .bk-sub-label { font-size:9px; color:#A8A29E; }
@@ -993,17 +993,26 @@ tr:last-child td { border-bottom: none; }
       <button onclick="bkNextMonth()" style="padding:5px 10px;border-radius:8px;border:1px solid #E7E5E4;background:#fff;cursor:pointer;font-size:14px;">›</button>
     </div>
 
-    <!-- SUB-TAB -->
-    <div style="display:flex;gap:0;border-bottom:2px solid #E7E5E4;background:#fff;">
+    <!-- SUB-TAB + กลับ -->
+    <div style="display:flex;align-items:center;gap:0;border-bottom:2px solid #E7E5E4;background:#fff;">
       <button class="bk-subtab active" id="bkTabCutter" onclick="bkSwitchSub('cutter')">✂️ คนตัด</button>
+      <div style="flex:1;"></div>
+      <button onclick="bkScrollCutterToToday()"
+        style="margin:4px 10px;background:#BAE6FD;border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:#0369A1;">
+        กลับ
+      </button>
     </div>
 
     <!-- TABLE CONTAINER -->
     <div id="bkContent" style="overflow:auto;-webkit-overflow-scrolling:touch;"></div>
     <!-- Order table below -->
     <div id="bkOrderSection" style="margin-top:0;border-top:3px solid #E7E5E4;">
-      <div style="background:#1C1917;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
-        <div style="color:#fff;font-weight:700;font-size:13px;">🧺 สั่งตะกร้า</div>
+      <div style="background:#1C1917;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <div style="color:#fff;font-weight:700;font-size:13px;flex:1;">🧺 เก็บตะกร้า</div>
+        <button onclick="bkScrollOrderToToday()" 
+          style="background:#BAE6FD;border:none;border-radius:8px;padding:5px 11px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:#0369A1;">
+          กลับ
+        </button>
         <button onclick="bkAddOrder()" style="background:#F59E0B;border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">＋ เพิ่ม</button>
       </div>
       <div id="bkOrderContent"></div>
@@ -2544,6 +2553,7 @@ function bkUpdateRowBalance(type, personId) {
     totalCell.textContent = runBal;
     totalCell.style.background = runBal > 0 ? "#FEF2F2" : "#F0FDF4";
     totalCell.style.color = runBal > 0 ? "#DC2626" : "#16A34A";
+    totalCell.style.fontWeight = "700";
   }
 }
 
@@ -2645,6 +2655,53 @@ function bkDeletePersonConfirm(type, id) {
   bkSaveLocal(); bkRender();
 }
 
+// ── ปุ่มกลับ: scroll ไปวันที่ปัจจุบัน ──────────────────────────
+function bkScrollCutterToToday() {
+  const now = new Date();
+  // ถ้าอยู่คนละเดือน → กลับมาเดือนปัจจุบันก่อน
+  if(now.getFullYear()!==bkYear || now.getMonth()+1!==bkMonth) {
+    bkYear  = now.getFullYear();
+    bkMonth = now.getMonth()+1;
+    bkScrolledToToday = false; // reset เพื่อให้ scroll ใหม่
+    bkRender();
+    return;
+  }
+  const todayD = now.getDate();
+  const table = document.getElementById("bkMatrix");
+  if(!table) return;
+  const ths = table.querySelectorAll("thead tr:first-child th");
+  const todayTh = ths[2 + todayD];
+  if(todayTh) todayTh.scrollIntoView({inline:"center", block:"nearest", behavior:"smooth"});
+}
+
+function bkScrollOrderToToday() {
+  const now = new Date();
+  // ถ้าอยู่คนละเดือน → กลับมาเดือนปัจจุบันก่อน แล้ว render ใหม่
+  if(now.getFullYear()!==bkYear || now.getMonth()+1!==bkMonth) {
+    bkYear  = now.getFullYear();
+    bkMonth = now.getMonth()+1;
+    bkRender();
+    // หลัง render ให้ scroll ไปด้านล่าง (order section)
+    setTimeout(()=>{
+      const sec = document.getElementById("bkOrderSection");
+      if(sec) sec.scrollIntoView({block:"start", behavior:"smooth"});
+    }, 200);
+    return;
+  }
+  const todayD = String(now.getDate()).padStart(2,"0");
+  const orderContent = document.getElementById("bkOrderContent");
+  if(!orderContent) return;
+  const rows = orderContent.querySelectorAll("tr");
+  for(const row of rows) {
+    const td = row.querySelector("td");
+    if(td && td.textContent.includes(parseInt(todayD)+"-")) {
+      td.scrollIntoView({block:"center", behavior:"smooth"});
+      return;
+    }
+  }
+  orderContent.scrollIntoView({block:"start", behavior:"smooth"});
+}
+
 function bkRenderMatrix(type) {
   const container = document.getElementById("bkContent");
   if(!container) return;
@@ -2702,7 +2759,7 @@ function bkRenderMatrix(type) {
   <table class="bk-table" id="bkMatrix">
   <thead><tr>
     <th class="bk-freeze bk-th-name" rowspan="2">ชื่อ</th>
-    <th class="bk-freeze bk-th-total" style="left:90px;min-width:48px;max-width:56px;" rowspan="2">ยอดค้าง</th>
+    <th class="bk-freeze bk-th-total" style="left:45px;min-width:48px;max-width:56px;" rowspan="2">ยอดค้าง</th>
     <th rowspan="2" style="background:#FFF9C4;border:1px solid #F59E0B;text-align:center;font-size:10px;font-weight:700;color:#92400E;min-width:46px;white-space:nowrap;">↩<br>ยกมา</th>`;
 
   for(let d=1; d<=days; d++) {
@@ -2727,13 +2784,13 @@ function bkRenderMatrix(type) {
     let runBal = carry;
 
     html += `<tr>
-      <td class="bk-freeze" style="left:0;background:#fff;min-width:90px;">
+      <td class="bk-freeze" style="left:0;background:#fff;min-width:45px;max-width:70px;">
         <span onclick="bkPersonOptions('${type}','${person.id}','${pi}')"
           style="font-weight:700;cursor:pointer;padding:4px 2px;display:block;text-decoration:underline;text-decoration-style:dotted;text-decoration-color:#A8A29E;">
           ${person.name}
         </span>
       </td>
-      <td data-total="${type}-${person.id}" class="bk-freeze" style="left:90px;text-align:center;${currentBal>0?"background:#FEF2F2;color:#DC2626;font-weight:700;":"background:#F0FDF4;color:#16A34A;font-weight:700;"}">
+      <td data-total="${type}-${person.id}" class="bk-freeze" style="left:45px;text-align:center;min-width:48px;font-weight:700;${currentBal>0?'background:#FEF2F2;color:#DC2626;':'background:#F0FDF4;color:#16A34A;'}">
         ${currentBal}
       </td>
       <td style="text-align:center;background:${carry>0?"#FEF2F2":carry<0?"#F0FDF4":"#FAFAF9"};font-weight:${carry!==0?"700":"400"};color:${carry>0?"#DC2626":carry<0?"#16A34A":"#A8A29E"};font-size:11px;border:1px solid #F0E68C;">
@@ -2825,19 +2882,109 @@ function bkMovePerson(type, idx, dir) {
 }
 
 function bkShowSummary(type, id, name) {
-  const mk = bkMonthKey();
   const days = bkGetDaysInMonth(bkYear, bkMonth);
+
+  // คำนวณ carry-over จากเดือนก่อน (สะสมทุกเดือน)
+  let carry = 0;
+  {
+    let checkY = bkYear, checkM = bkMonth - 1;
+    let emptyCount = 0;
+    while(emptyCount < 2) {
+      if(checkM < 1) { checkM=12; checkY--; }
+      const mk2 = `${checkY}-${String(checkM).padStart(2,"0")}`;
+      const days2 = bkGetDaysInMonth(checkY, checkM);
+      let has=false, bal=0;
+      for(let d=1;d<=days2;d++){
+        const e=bkData[mk2]?.[type]?.[id]?.[String(d).padStart(2,"0")];
+        if(e){has=true;bal+=(e.out||0)-(e.in||0);}
+      }
+      emptyCount = has?0:emptyCount+1;
+      carry+=bal; checkM--;
+      if(bkYear-checkY>5) break;
+    }
+  }
+
+  // สร้างข้อมูลต่อวัน
+  let rows = [];
+  let runBal = carry;
   let totalOut=0, totalIn=0;
-  let detail = "";
   for(let d=1; d<=days; d++) {
     const dd = String(d).padStart(2,"0");
     const e = bkGetData(type, id, dd);
-    if(e.out||e.in) {
-      totalOut+=e.out||0; totalIn+=e.in||0;
-      detail += `วันที่ ${d}: ออก ${e.out||0}, คืน ${e.in||0}\n`;
-    }
+    const out=e.out||0, inn=e.in||0;
+    runBal += out - inn;
+    totalOut+=out; totalIn+=inn;
+    if(out||inn) rows.push({d, out, inn, bal:runBal});
   }
-  alert(`สรุป ${name} เดือน ${BK_MONTHS_TH[bkMonth-1]} ${bkYear+543}\n${"─".repeat(30)}\n${detail}\nออกรวม: ${totalOut}  คืนรวม: ${totalIn}  ค้างสุทธิ: ${totalOut-totalIn}`);
+
+  // สร้าง modal
+  const existing = document.getElementById("bkSummaryModal");
+  if(existing) existing.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id = "bkSummaryModal";
+  overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9500;display:flex;align-items:center;justify-content:center;padding:16px;";
+  overlay.onclick = (e)=>{ if(e.target===overlay) overlay.remove(); };
+
+  const tableRows = rows.map((r,i) => `
+    <tr style="background:${i%2===0?"#fff":"#f9fafb"};">
+      <td style="padding:8px 12px;font-weight:600;color:#334155;">วันที่ ${r.d}</td>
+      <td style="padding:8px 12px;text-align:center;color:#1E3A8A;font-weight:700;">${r.out}</td>
+      <td style="padding:8px 12px;text-align:center;color:#16A34A;font-weight:700;">${r.inn}</td>
+      <td style="padding:8px 12px;text-align:center;font-weight:800;color:${r.bal>0?"#DC2626":"#16A34A"};">${r.bal}</td>
+    </tr>`).join("");
+
+  const carryRow = carry !== 0 ? `
+    <tr style="background:#FFF9C4;">
+      <td colspan="3" style="padding:7px 12px;font-size:11px;color:#92400E;font-weight:600;">↩ ยอดยกมาจากเดือนก่อน</td>
+      <td style="padding:7px 12px;text-align:center;font-weight:800;color:${carry>0?"#DC2626":"#16A34A"};">${carry>0?"+"+carry:carry}</td>
+    </tr>` : "";
+
+  overlay.innerHTML = `
+    <div style="background:#fff;border-radius:18px;width:100%;max-width:360px;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.2);">
+      <!-- header -->
+      <div style="background:#1C1917;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="color:#fff;font-weight:800;font-size:15px;">${name}</div>
+          <div style="color:#A8A29E;font-size:11px;margin-top:2px;">สรุป ${BK_MONTHS_TH[bkMonth-1]} ${bkYear+543}</div>
+        </div>
+        <button onclick="document.getElementById('bkSummaryModal').remove()"
+          style="background:rgba(255,255,255,.15);border:none;border-radius:50%;width:28px;height:28px;color:#fff;cursor:pointer;font-size:14px;">✕</button>
+      </div>
+      <!-- table -->
+      <div style="overflow-y:auto;max-height:55vh;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;font-family:inherit;">
+          <thead>
+            <tr style="background:#F8FAFC;border-bottom:2px solid #E7E5E4;">
+              <th style="padding:8px 12px;text-align:left;font-size:11px;color:#78716C;font-weight:700;">วัน</th>
+              <th style="padding:8px 12px;text-align:center;font-size:11px;color:#1E3A8A;font-weight:700;">ออก</th>
+              <th style="padding:8px 12px;text-align:center;font-size:11px;color:#16A34A;font-weight:700;">เก็บ</th>
+              <th style="padding:8px 12px;text-align:center;font-size:11px;color:#78716C;font-weight:700;">ค้าง</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${carryRow}
+            ${tableRows || '<tr><td colspan="4" style="text-align:center;padding:20px;color:#A8A29E;">ไม่มีข้อมูลในเดือนนี้</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+      <!-- footer summary -->
+      <div style="padding:12px 16px;background:#F8FAFC;border-top:2px solid #E7E5E4;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;">
+        <div>
+          <div style="font-size:10px;color:#78716C;">ออกรวม</div>
+          <div style="font-size:16px;font-weight:800;color:#1E3A8A;">${totalOut}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:#78716C;">เก็บรวม</div>
+          <div style="font-size:16px;font-weight:800;color:#16A34A;">${totalIn}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:#78716C;">ค้างสุทธิ</div>
+          <div style="font-size:16px;font-weight:800;color:${runBal>0?"#DC2626":"#16A34A"};">${runBal}</div>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
 }
 
 // ── ORDER TABLE ──────────────────────────────────────────────────
