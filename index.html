@@ -408,8 +408,9 @@ tr:last-child td { border-bottom: none; }
 .bk-order-table td { padding:8px 10px; border-bottom:1px solid #F5F5F4; }
 .bk-order-table tr:nth-child(odd)  td { background:#fff; }
 .bk-order-table tr:nth-child(even) td { background:#f9fafb; }
-.bk-status-wait { background:#F5F5F4; color:#78716C; padding:3px 9px; border-radius:99px; font-size:10px; font-weight:700; }
-.bk-status-paid { background:#DCFCE7; color:#16A34A; padding:3px 9px; border-radius:99px; font-size:10px; font-weight:700; }
+.bk-status-wait   { background:#F5F5F4; color:#78716C; padding:3px 9px; border-radius:99px; font-size:10px; font-weight:700; cursor:pointer; }
+.bk-status-pending { background:#DBEAFE; color:#1D4ED8; padding:3px 9px; border-radius:99px; font-size:10px; font-weight:700; cursor:pointer; }
+.bk-status-paid    { background:#DCFCE7; color:#16A34A; padding:3px 9px; border-radius:99px; font-size:10px; font-weight:700; cursor:pointer; }
 
 </style>
 </head>
@@ -1016,6 +1017,13 @@ tr:last-child td { border-bottom: none; }
         <button onclick="bkAddOrder()" style="background:#F59E0B;border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">＋ เพิ่ม</button>
       </div>
       <div id="bkOrderContent"></div>
+    </div>
+    <!-- โอนคืนตะกร้า -->
+    <div id="bkReturnSection" style="margin-top:0;border-top:3px solid #E7E5E4;">
+      <div style="background:#0369A1;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <div style="color:#fff;font-weight:700;font-size:13px;flex:1;">🔄 โอนคืนตะกร้า</div>
+      </div>
+      <div id="bkReturnContent"></div>
     </div>
   </div>
 
@@ -2991,66 +2999,60 @@ function bkShowSummary(type, id, name) {
 
 function bkRenderOrderBelow() {
   const container = document.getElementById("bkOrderContent");
+  const container2 = document.getElementById("bkReturnContent");
   if(!container) return;
-  const monthOrders = bkOrders.filter(o => o.dateKey &&
-    o.dateKey.startsWith(`${bkYear}-${String(bkMonth).padStart(2,"0")}`));
-  
-  // fix: padStart(2,"0") not "00"
   const prefix = `${bkYear}-${String(bkMonth).padStart(2,"0")}`;
   const filtered = bkOrders.filter(o => o.dateKey && o.dateKey.startsWith(prefix));
 
-  if(filtered.length === 0) {
-    container.innerHTML = `<div style="text-align:center;padding:20px;color:#A8A29E;font-size:13px;">ยังไม่มีรายการสั่งตะกร้า<br><span style="font-size:11px;">กด ＋ เพิ่ม เพื่อเพิ่มรายการ</span></div>`;
-    return;
+  // แยก 3 กลุ่ม
+  const waiting  = filtered.filter(o => o.status==="รอเก็บ" || o.status==="รอจ่าย");
+  const paid     = filtered.filter(o => o.status==="จ่าย")
+                            .sort((a,b)=>(a.paidAt||0)-(b.paidAt||0));
+
+  // ── helper สร้างแถว ───────────────────────────────────────
+  function makeRow(order, oi, dk, bg) {
+    const parts = dk.split("-");
+    const displayDate = `${parseInt(parts[2])}-${BK_MONTHS_TH[parseInt(parts[1])-1]}`;
+    return `<tr style="background:${bg};">
+      <td style="font-size:11px;font-weight:600;" onclick="${oi===0?`bkEditOrderDate('${order.id}')`:""}" title="${oi===0?'กดแก้ไข/ลบวันที่':''}">
+        ${oi===0?`<span style="text-decoration:underline;text-decoration-style:dotted;color:#0369A1;cursor:pointer;">${displayDate}</span>`:""}
+      </td>
+      <td onclick="bkEditOrderName('${order.id}')" style="cursor:pointer;font-weight:600;">${order.name}</td>
+      <td onclick="bkEditOrderBasket('${order.id}')" style="text-align:center;cursor:pointer;font-weight:700;">${order.basket||"-"}</td>
+      <td style="text-align:center;">${bkStatusBadge(order)}</td>
+      <td><button onclick="bkDeleteOrder('${order.id}')" style="border:none;background:transparent;cursor:pointer;color:#FCA5A5;font-size:13px;padding:2px 4px;">✕</button></td>
+    </tr>`;
   }
 
-  const dateKeys = [...new Set(filtered.map(o=>o.dateKey))].sort();
-  let html = `<table class="bk-order-table" style="width:100%"><thead><tr>
-    <th style="min-width:85px;">วันที่</th>
-    <th>รายชื่อ</th>
-    <th style="min-width:65px;text-align:center;">ตะกร้า</th>
-    <th style="min-width:80px;text-align:center;">สถานะ</th>
-    <th style="width:28px;"></th>
-  </tr></thead><tbody>`;
-
-  dateKeys.forEach((dk, di) => {
-    const dayOrders = filtered.filter(o=>o.dateKey===dk);
-    const bg = di%2===0 ? "#fff" : "#f5f5f5";
-    dayOrders.forEach((order, oi) => {
-      const isPaid = order.status==="จ่าย";
-      // แปลง dateKey เป็นวันที่อ่านง่าย
-      const parts = dk.split("-");
-      const displayDate = `${parseInt(parts[2])}-${BK_MONTHS_TH[parseInt(parts[1])-1]}`;
-      html += `<tr style="background:${bg};">
-        <td style="font-size:11px;font-weight:600;cursor:pointer;"
-          onclick="${oi===0?`bkEditOrderDate('${order.id}')`:""}"
-          title="${oi===0?'กดเพื่อแก้ไขหรือลบวันที่':''}">
-          ${oi===0 ? `<span style="text-decoration:underline;text-decoration-style:dotted;color:#0369A1;">${displayDate}</span>` : ""}
-        </td>
-        <td onclick="bkEditOrderName('${order.id}')" 
-          style="cursor:pointer;font-weight:600;" title="กดเพื่อแก้ไขหรือลบ">
-          ${order.name}
-        </td>
-        <td onclick="bkEditOrderBasket('${order.id}')"
-          style="text-align:center;cursor:pointer;font-weight:700;" title="กดเพื่อแก้ไข">
-          ${order.basket||"-"}
-        </td>
-        <td style="text-align:center;">
-          <span class="${isPaid?"bk-status-paid":"bk-status-wait"}" 
-            onclick="bkToggleOrderStatus('${order.id}')" style="cursor:pointer;">
-            ${isPaid?"✓ จ่าย":"รอเก็บ"}
-          </span>
-        </td>
-        <td>
-          <button onclick="bkDeleteOrder('${order.id}')"
-            style="border:none;background:transparent;cursor:pointer;color:#FCA5A5;font-size:13px;padding:2px 4px;">✕</button>
-        </td>
-      </tr>`;
+  function makeTable(orders) {
+    if(!orders.length) return `<div style="text-align:center;padding:16px;color:#A8A29E;font-size:12px;">ไม่มีรายการ</div>`;
+    const dateKeys = [...new Set(orders.map(o=>o.dateKey))].sort();
+    let rows = "";
+    dateKeys.forEach((dk,di) => {
+      orders.filter(o=>o.dateKey===dk).forEach((order,oi) => {
+        rows += makeRow(order, oi, dk, di%2===0?"#fff":"#f5f5f5");
+      });
     });
-  });
+    return `<table class="bk-order-table" style="width:100%">
+      <thead><tr>
+        <th style="min-width:80px;">วันที่</th><th>รายชื่อ</th>
+        <th style="min-width:60px;text-align:center;">ตะกร้า</th>
+        <th style="min-width:78px;text-align:center;">สถานะ</th>
+        <th style="width:28px;"></th>
+      </tr></thead><tbody>${rows}</tbody></table>`;
+  }
 
-  html += `</tbody></table>`;
-  container.innerHTML = html;
+  // ── ตาราง 1: รอเก็บ / รอจ่าย ─────────────────────────────
+  container.innerHTML = waiting.length
+    ? makeTable(waiting)
+    : `<div style="text-align:center;padding:16px;color:#A8A29E;font-size:12px;">ไม่มีรายการค้าง ✅</div>`;
+
+  // ── ตาราง 2: โอนคืนตะกร้า (จ่ายแล้ว) ──────────────────────
+  if(container2) {
+    container2.innerHTML = paid.length
+      ? makeTable(paid)
+      : `<div style="text-align:center;padding:16px;color:#A8A29E;font-size:12px;">ยังไม่มีรายการที่จ่ายแล้ว</div>`;
+  }
 }
 
 function bkRenderOrder() {
@@ -3144,10 +3146,19 @@ function bkEditOrderBasket(id) {
   const v = prompt("จำนวนตะกร้า:", o.basket);
   if(v!==null) { o.basket=parseFloat(v)||0; bkSaveLocal(); bkRender(); }
 }
+function bkStatusBadge(order) {
+  const s = order.status||"รอเก็บ";
+  const cls = s==="จ่าย"?"bk-status-paid":s==="รอจ่าย"?"bk-status-pending":"bk-status-wait";
+  const label = s==="จ่าย"?"✓ จ่าย":s==="รอจ่าย"?"⏳ รอจ่าย":"รอเก็บ";
+  return `<span class="${cls}" onclick="bkToggleOrderStatus('${order.id}')">${label}</span>`;
+}
+
 function bkToggleOrderStatus(id) {
   const o = bkOrders.find(x=>x.id===id); if(!o) return;
-  o.status = o.status==="จ่าย" ? "รอเก็บ" : "จ่าย";
+  const cycle = {"รอเก็บ":"รอจ่าย", "รอจ่าย":"จ่าย", "จ่าย":"รอเก็บ"};
+  o.status = cycle[o.status] || "รอเก็บ";
   if(o.status==="จ่าย") o.paidAt=Date.now();
+  else delete o.paidAt; // reset ถ้าย้อนกลับ
   bkSaveLocal(); bkRender();
 }
 function bkDeleteOrder(id) {
