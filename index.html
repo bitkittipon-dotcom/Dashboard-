@@ -84,7 +84,7 @@ body { font-family: 'Noto Sans Thai', Sarabun, sans-serif; background: #F8F7F4; 
 /* CONTENT */
 .content { padding: 14px 14px 60px; max-width: 900px; margin: 0 auto; }
 .summary-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
-.summary-card { background: #fff; border-radius: 14px; padding: 12px 14px; border: 1px solid #E7E5E4; }
+.summary-card { background: #fff; border-radius: 14px; padding: 12px 14px; border: 1px solid #E7E5E4; text-align: center; }
 .sc-label { font-size: 10px; color: #A8A29E; font-weight: 700; letter-spacing: .5px; margin-bottom: 4px; }
 .sc-value { font-size: 16px; font-weight: 900; line-height: 1; }
 .sc-sub { font-size: 10px; color: #D6D3D1; margin-top: 4px; }
@@ -411,6 +411,7 @@ tr:last-child td { border-bottom: none; }
 .bk-status-wait   { background:#F5F5F4; color:#78716C; padding:3px 9px; border-radius:99px; font-size:10px; font-weight:700; cursor:pointer; }
 .bk-status-pending { background:#DBEAFE; color:#1D4ED8; padding:3px 9px; border-radius:99px; font-size:10px; font-weight:700; cursor:pointer; }
 .bk-status-paid    { background:#DCFCE7; color:#16A34A; padding:3px 9px; border-radius:99px; font-size:10px; font-weight:700; cursor:pointer; }
+.bk-status-deduct  { background:#FEE2E2; color:#991B1B; padding:3px 9px; border-radius:99px; font-size:10px; font-weight:700; cursor:pointer; }
 
 </style>
 </head>
@@ -901,7 +902,7 @@ tr:last-child td { border-bottom: none; }
 </div>
 
 
-<!-- STICKY DATE BOX (Liquid Glass) -->
+<!-- STICKY DATE NAV — กล่องกว้างคงที่ วันที่ width คงที่กึ่งกลาง ปุ่มไม่ขยับ -->
 <div id="stickyDateBox" style="
   position:fixed;
   top:106px;
@@ -909,40 +910,72 @@ tr:last-child td { border-bottom: none; }
   transform:translateX(-50%);
   z-index:150;
   display:none;
-  background:rgba(255,255,255,0.18);
+  background:rgba(255,255,255,0.72);
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
-  border:1px solid rgba(255,255,255,0.35);
+  border:1px solid rgba(255,255,255,0.55);
   border-radius:20px;
-  padding:5px 18px;
-  box-shadow:0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.4);
-  pointer-events:none;
-  white-space:nowrap;
+  box-shadow:0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.6);
+  pointer-events:auto;
+  align-items:center;
+  gap:0;
+  padding:4px 6px;
+  width:340px;
+  box-sizing:border-box;
 ">
+  <!-- ปุ่ม < — ขนาดคงที่ -->
+  <button onclick="boardNavDay(-1)" style="
+    flex-shrink:0;width:30px;height:30px;
+    background:transparent;border:none;cursor:pointer;
+    font-size:16px;color:#555;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:8px;
+  " onmouseover="this.style.background='rgba(0,0,0,0.07)'" onmouseout="this.style.background='transparent'">&#8249;</button>
+
+  <!-- วันที่ — width คงที่ ไม่ขยาย ข้อความกึ่งกลาง -->
   <span id="stickyDateText" style="
-    color:#fff;
-    font-size:10px;
+    flex-shrink:0;
+    width:196px;
+    text-align:center;
+    color:#444;
+    font-size:11px;
     font-weight:700;
-    letter-spacing:0.06em;
-    text-shadow:0 1px 3px rgba(0,0,0,0.3);
+    letter-spacing:0.03em;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
   "></span>
+
+  <!-- ปุ่ม > — ขนาดคงที่ -->
+  <button onclick="boardNavDay(1)" style="
+    flex-shrink:0;width:30px;height:30px;
+    background:transparent;border:none;cursor:pointer;
+    font-size:16px;color:#555;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:8px;
+  " onmouseover="this.style.background='rgba(0,0,0,0.07)'" onmouseout="this.style.background='transparent'">&#8250;</button>
+
+  <!-- ปุ่ม กลับ — สีฟ้าอ่อน ขนาดคงที่ -->
+  <button onclick="boardNavToday()" style="
+    flex-shrink:0;
+    background:rgba(186,230,253,0.7);border:none;cursor:pointer;
+    font-size:11px;font-weight:700;color:#0369A1;
+    padding:4px 10px;border-radius:10px;font-family:inherit;
+    white-space:nowrap;margin-left:2px;
+  " onmouseover="this.style.background='rgba(186,230,253,1)'" onmouseout="this.style.background='rgba(186,230,253,0.7)'">กลับ</button>
 </div>
 
 <!-- CONTENT -->
 <div class="content">
   <div id="boardTab">
-    <div id="boardDateHeader" style="text-align:center;padding:18px 0 10px;"></div>
     <div class="summary-cards" id="summaryCards"></div>
-    <div class="progress-wrap">
-      <div class="progress-head">
-        <span>ความคืบหน้าการชำระ</span>
-        <span id="pctLabel" style="color:#166534;font-weight:700;">0%</span>
-      </div>
-      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-      <div id="closeYodBtn" style="display:none;margin-top:12px;">
-        <button onclick="closeYod()" style="width:100%;padding:11px;border-radius:10px;border:none;background:#166534;color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">✅ ปิดยอดวันนี้ — ทุกคนจ่ายครบแล้ว</button>
-      </div>
+    <!-- ปุ่มปิดยอด (ซ่อนอยู่ ใช้แทน progress wrap) -->
+    <div id="closeYodBtn" style="display:none;margin-bottom:14px;">
+      <button onclick="closeYod()" style="width:100%;padding:11px;border-radius:10px;border:none;background:#166534;color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">✅ ปิดยอดวันนี้ — ทุกคนจ่ายครบแล้ว</button>
     </div>
+    <!-- hidden pct elements (JS still references them) -->
+    <span id="pctLabel" style="display:none;"></span>
+    <div style="display:none;"><div id="progressFill"></div></div>
     <div class="groups-grid" id="groupsGrid"></div>
   </div>
 
@@ -1543,7 +1576,7 @@ function renderBoard() {
   const sdt = document.getElementById("stickyDateText");
   if (sdb && sdt && activeTab==="board") {
     sdt.textContent = formatThaiDate(activeDay);
-    sdb.style.display = "block";
+    sdb.style.display = "flex";
   }
   const data = allDays[activeDay]||{};
   const all  = GROUPS.flatMap(g=>Object.values(data[g.key]||{}));
@@ -1553,15 +1586,11 @@ function renderBoard() {
   const pct  = tot>0?Math.round(paid/tot*100):0;
 
   document.getElementById("summaryCards").innerHTML =
-    card("ยอดรวม "+activeDay, fmt(tot), all.length+" ราย", "#1C1917") +
+    card("ยอดรวม", fmt(tot), all.length+" ราย", "#1C1917") +
     card("ชำระแล้ว", fmt(paid), all.filter(c=>c.status==="ชำระแล้ว").length+" ราย", "#166534") +
     card("รอชำระ", fmt(wait), all.filter(c=>c.status==="รอชำระ").length+" ราย", "#92400E");
 
-  // แสดงวันที่กลางหน้า
-  const dateHeader = document.getElementById("boardDateHeader");
-  if (dateHeader) {
-    dateHeader.innerHTML = `<span style="font-family:'Sarabun','Noto Sans Thai',sans-serif;font-size:28px;font-weight:700;color:#1C1917;letter-spacing:-0.5px;">${formatThaiDate(activeDay)}</span>`;
-  }
+
   document.getElementById("pctLabel").textContent = pct+"%";
   document.getElementById("progressFill").style.width = pct+"%";
 
@@ -2133,6 +2162,38 @@ function formatThaiDate(label) {
     return `${dayName} ${dd} ${monthName} ${year}`;
   } catch(e) { return label; }
 }
+
+// ── Board date navigation (sticky pill) ─────────────────────────
+function boardNavDay(dir) {
+  const days = Object.keys(allDays).sort();
+  if(!days.length) return;
+  const idx = days.indexOf(activeDay);
+  const newIdx = idx + dir;
+  if(newIdx < 0 || newIdx >= days.length) return;
+  activeDay = days[newIdx];
+  openForm = null;
+  renderDayTabs(days);
+  renderBoard();
+}
+
+function boardNavToday() {
+  const now = new Date();
+  const dd = String(now.getDate()).padStart(2,"0");
+  const mm = String(now.getMonth()+1).padStart(2,"0");
+  const yy = String(now.getFullYear()+543).slice(-2);
+  const todayKey = `${dd}-${mm}-${yy}`;
+  const days = Object.keys(allDays).sort();
+  if(allDays[todayKey]) {
+    activeDay = todayKey;
+  } else {
+    // ไปวันล่าสุด
+    activeDay = days[days.length-1];
+  }
+  openForm = null;
+  renderDayTabs(days);
+  renderBoard();
+}
+
 let billDeducts = []; // [{name, amount}]
 
 function openBillModal(customerName, group) {
@@ -2239,8 +2300,34 @@ function openBillModal(customerName, group) {
 
   document.getElementById("billGrandTotal").textContent = fmt(grandTotal);
 
-  // reset deducts
+  // reset deducts — แล้วดึงตะกร้าของลูกค้าคนนี้ที่สถานะ รอจ่าย หรือ จ่าย มาเป็น deduct อัตโนมัติ
   billDeducts = [];
+
+  // หาตะกร้าของลูกค้าคนนี้จาก bkOrders (รอจ่าย หรือ จ่าย) แยกแต่ละรายการ
+  if (typeof bkOrders !== "undefined") {
+    bkOrders.forEach(o => {
+      if (
+        o.name === customerName &&
+        (o.status === "รอเก็บ" || o.status === "รอจ่าย") &&
+        o.basket && parseFloat(o.basket) > 0
+      ) {
+        // แสดงวันที่ในรูปแบบอ่านได้
+        let dateLabel = o.dateKey || "";
+        if (dateLabel) {
+          const p = dateLabel.split("-");
+          const BK_M = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+          dateLabel = `${parseInt(p[2])}-${BK_M[parseInt(p[1])-1]}`;
+        }
+        const qty    = parseFloat(o.basket);
+        const amount = qty * 100;
+        billDeducts.push({
+          name:   `ตะกร้า ${dateLabel} (${qty} ใบ)`,
+          amount: amount
+        });
+      }
+    });
+  }
+
   renderDeducts(grandTotal);
 
   document.getElementById("billModal").style.display = "flex";
@@ -2472,6 +2559,7 @@ let bkCutters   = []; // [{id,name}]
 let bkCustomers = []; // [{id,name}]
 let bkData      = {}; // {yyyy-mm: {cutter:{id:{dd:{out,in}}}}, customer:{...}}
 let bkOrders    = []; // [{id,dateKey,name,basket,status,paidAt}]
+let bkPayStatus = "รอชำระ"; // สถานะปุ่มชำระ ด้านล่าง โอนคืนตะกร้า
 
 let bkScrolledToToday = false; // scroll วันปัจจุบันเฉพาะครั้งแรก
 
@@ -2579,14 +2667,21 @@ function bkSetData(type,personId,dd,field,val) {
 
 // ── Basket: save/load via Firebase ──────────────────────────────
 function bkSaveLocal() {
-  bkSaving = true; // บอก listener ว่าเราเป็นคนบันทึกเอง ไม่ต้อง re-render
+  bkSaving = true;
   const payload = {
     cutters:   JSON.stringify(bkCutters||[]),
     customers: JSON.stringify(bkCustomers||[]),
     orders:    JSON.stringify(bkOrders||[]),
-    data:      JSON.stringify(bkData||{})
+    data:      JSON.stringify(bkData||{}),
+    payStatus: bkPayStatus||"รอชำระ"
   };
   db.ref("basket").set(payload).catch(()=>{ bkSaving = false; });
+}
+
+function bkTogglePayStatus() {
+  bkPayStatus = (bkPayStatus==="รอชำระ") ? "ชำระแล้ว" : "รอชำระ";
+  bkSaveLocal();
+  bkRender();
 }
 
 let bkSaving = false; // flag ป้องกัน re-render ตอนบันทึกเอง
@@ -2598,6 +2693,7 @@ function bkLoadLocal() {
     try { bkCustomers = JSON.parse(d.customers || "[]"); } catch(e){ bkCustomers=[]; }
     try { bkOrders    = JSON.parse(d.orders    || "[]"); } catch(e){ bkOrders=[]; }
     try { bkData      = JSON.parse(d.data      || "{}"); } catch(e){ bkData={}; }
+    try { bkPayStatus = d.payStatus || "รอชำระ"; } catch(e){ bkPayStatus="รอชำระ"; }
     // ไม่ re-render ถ้าเราเป็นคนบันทึกเอง (แค่อัปเดต balance in-place)
     if (activeTab === "basket" && !bkSaving) bkRender();
     bkSaving = false;
@@ -3008,6 +3104,9 @@ function bkRenderOrderBelow() {
   const waiting  = filtered.filter(o => o.status==="รอเก็บ" || o.status==="รอจ่าย");
   const paid     = filtered.filter(o => o.status==="จ่าย")
                             .sort((a,b)=>(a.paidAt||0)-(b.paidAt||0));
+  const deducted = filtered.filter(o => o.status==="หัก");
+  // นับตะกร้าเฉพาะ จ่าย
+  const paidBasketCount = paid.reduce((s,o)=>s+(parseFloat(o.basket)||0),0);
 
   // ── helper สร้างแถว ───────────────────────────────────────
   function makeRow(order, oi, dk, bg) {
@@ -3024,7 +3123,7 @@ function bkRenderOrderBelow() {
     </tr>`;
   }
 
-  function makeTable(orders) {
+  function makeTable(orders, showRuamJai) {
     if(!orders.length) return `<div style="text-align:center;padding:16px;color:#A8A29E;font-size:12px;">ไม่มีรายการ</div>`;
     const dateKeys = [...new Set(orders.map(o=>o.dateKey))].sort();
     let rows = "";
@@ -3033,25 +3132,48 @@ function bkRenderOrderBelow() {
         rows += makeRow(order, oi, dk, di%2===0?"#fff":"#f5f5f5");
       });
     });
+    const ruamJaiHeader = showRuamJai
+      ? `<th style="min-width:78px;text-align:center;position:relative;">
+           สถานะ
+           <br><span id="bkRuamJaiBtn" style="display:inline-block;margin-top:2px;background:#DCFCE7;color:#166534;border-radius:99px;font-size:9px;font-weight:700;padding:1px 7px;cursor:default;">รวมจ่าย: ${paidBasketCount}</span>
+         </th>`
+      : `<th style="min-width:78px;text-align:center;">สถานะ</th>`;
     return `<table class="bk-order-table" style="width:100%">
       <thead><tr>
         <th style="min-width:80px;">วันที่</th><th>รายชื่อ</th>
         <th style="min-width:60px;text-align:center;">ตะกร้า</th>
-        <th style="min-width:78px;text-align:center;">สถานะ</th>
+        ${ruamJaiHeader}
         <th style="width:28px;"></th>
       </tr></thead><tbody>${rows}</tbody></table>`;
   }
 
   // ── ตาราง 1: รอเก็บ / รอจ่าย ─────────────────────────────
   container.innerHTML = waiting.length
-    ? makeTable(waiting)
+    ? makeTable(waiting, false)
     : `<div style="text-align:center;padding:16px;color:#A8A29E;font-size:12px;">ไม่มีรายการค้าง ✅</div>`;
 
-  // ── ตาราง 2: โอนคืนตะกร้า (จ่ายแล้ว) ──────────────────────
+  // ── ตาราง 2: โอนคืนตะกร้า (จ่ายแล้ว + หัก) ──────────────────────
   if(container2) {
-    container2.innerHTML = paid.length
-      ? makeTable(paid)
+    const returnOrders = [...paid, ...deducted].sort((a,b)=>(a.paidAt||0)-(b.paidAt||0));
+    // คำนวณผลรวมตะกร้า paid
+    const totalBasket = paid.reduce((s,o)=>s+(parseFloat(o.basket)||0),0);
+    const totalDeduct = deducted.reduce((s,o)=>s+(parseFloat(o.basket)||0),0);
+    const netBasket   = totalBasket - totalDeduct;
+    // อ่านสถานะปุ่มชำระ
+    const payStatus = bkPayStatus || "รอชำระ";
+    const payBtnStyle = payStatus==="ชำระแล้ว"
+      ? "background:#DCFCE7;color:#16A34A;border:2px solid #16A34A;font-weight:800;font-size:13px;border-radius:10px;padding:10px 20px;cursor:pointer;font-family:inherit;width:100%;"
+      : "background:#FEE2E2;color:#991B1B;border:2px solid #991B1B;font-weight:800;font-size:13px;border-radius:10px;padding:10px 20px;cursor:pointer;font-family:inherit;width:100%;";
+    const payBtnLabel = payStatus==="ชำระแล้ว" ? "✅ ชำระแล้ว" : "⏳ รอชำระ";
+
+    const tableHTML = returnOrders.length
+      ? makeTable(returnOrders, true)
       : `<div style="text-align:center;padding:16px;color:#A8A29E;font-size:12px;">ยังไม่มีรายการที่จ่ายแล้ว</div>`;
+
+    container2.innerHTML = tableHTML + `
+      <div style="padding:12px 14px;border-top:2px solid #E7E5E4;background:#F8F7F4;">
+        <button onclick="bkTogglePayStatus()" style="${payBtnStyle}">${payBtnLabel}</button>
+      </div>`;
   }
 }
 
@@ -3088,11 +3210,7 @@ function bkRenderOrder() {
           </td>
           <td onclick="bkEditOrderName('${order.id}')" style="cursor:pointer;font-weight:600;">${order.name}</td>
           <td onclick="bkEditOrderBasket('${order.id}')" style="text-align:center;cursor:pointer;font-weight:700;">${order.basket||"-"}</td>
-          <td style="text-align:center;">
-            <span class="${isPaid?"bk-status-paid":"bk-status-wait"}" onclick="bkToggleOrderStatus('${order.id}')" style="cursor:pointer;">
-              ${isPaid?"✓ จ่าย":"รอเก็บ"}
-            </span>
-          </td>
+          <td style="text-align:center;">${bkStatusBadge(order)}</td>
           <td><button onclick="bkDeleteOrder('${order.id}')" style="border:none;background:transparent;cursor:pointer;color:#FCA5A5;font-size:13px;">✕</button></td>
         </tr>`;
       });
@@ -3148,18 +3266,65 @@ function bkEditOrderBasket(id) {
 }
 function bkStatusBadge(order) {
   const s = order.status||"รอเก็บ";
-  const cls = s==="จ่าย"?"bk-status-paid":s==="รอจ่าย"?"bk-status-pending":"bk-status-wait";
-  const label = s==="จ่าย"?"✓ จ่าย":s==="รอจ่าย"?"⏳ รอจ่าย":"รอเก็บ";
-  return `<span class="${cls}" onclick="bkToggleOrderStatus('${order.id}')">${label}</span>`;
+  const MAP = {
+    "รอเก็บ": {cls:"bk-status-wait",    label:"รอเก็บ"},
+    "รอจ่าย": {cls:"bk-status-pending",  label:"⏳ รอจ่าย"},
+    "จ่าย":   {cls:"bk-status-paid",     label:"✓ จ่าย"},
+    "หัก":    {cls:"bk-status-deduct",   label:"✕ หัก"}
+  };
+  const {cls, label} = MAP[s] || MAP["รอเก็บ"];
+  return `<span class="${cls}" onclick="bkOpenStatusPicker('${order.id}')" style="cursor:pointer;">${label}</span>`;
 }
 
-function bkToggleOrderStatus(id) {
+function bkOpenStatusPicker(id) {
   const o = bkOrders.find(x=>x.id===id); if(!o) return;
-  const cycle = {"รอเก็บ":"รอจ่าย", "รอจ่าย":"จ่าย", "จ่าย":"รอเก็บ"};
-  o.status = cycle[o.status] || "รอเก็บ";
-  if(o.status==="จ่าย") o.paidAt=Date.now();
-  else delete o.paidAt; // reset ถ้าย้อนกลับ
-  bkSaveLocal(); bkRender();
+  const existing = document.getElementById("bkStatusPickerModal");
+  if(existing) existing.remove();
+
+  const STATUSES = [
+    {key:"รอเก็บ",  cls:"bk-status-wait",    label:"รอเก็บ"},
+    {key:"รอจ่าย", cls:"bk-status-pending",  label:"⏳ รอจ่าย"},
+    {key:"จ่าย",   cls:"bk-status-paid",     label:"✓ จ่าย"},
+    {key:"หัก",    cls:"bk-status-deduct",   label:"✕ หัก"}
+  ];
+
+  const overlay = document.createElement("div");
+  overlay.id = "bkStatusPickerModal";
+  overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9900;display:flex;align-items:flex-end;justify-content:center;";
+  overlay.onclick = (e) => { if(e.target===overlay) overlay.remove(); };
+
+  const sheet = document.createElement("div");
+  sheet.style.cssText = "background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:420px;padding:16px 16px 28px;";
+  sheet.innerHTML = `
+    <div style="text-align:center;margin-bottom:14px;">
+      <div style="width:36px;height:4px;background:#E7E5E4;border-radius:99px;margin:0 auto 12px;"></div>
+      <div style="font-weight:800;font-size:15px;color:#1C1917;">เลือกสถานะ</div>
+      <div style="font-size:12px;color:#A8A29E;margin-top:3px;">${o.name} · ตะกร้า ${o.basket||"-"}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      ${STATUSES.map(st => `
+        <button onclick="bkSetOrderStatus('${id}','${st.key}')"
+          style="padding:13px 18px;border-radius:12px;border:2px solid ${o.status===st.key?'#1C1917':'#E7E5E4'};
+          background:${o.status===st.key?'#F5F5F4':'#fff'};text-align:left;font-family:inherit;
+          font-size:14px;font-weight:${o.status===st.key?'800':'600'};cursor:pointer;
+          display:flex;align-items:center;gap:10px;">
+          <span class="${st.cls}" style="pointer-events:none;">${st.label}</span>
+          ${o.status===st.key?'<span style="margin-left:auto;font-size:16px;">✓</span>':''}
+        </button>`).join('')}
+    </div>`;
+  overlay.appendChild(sheet);
+  document.body.appendChild(overlay);
+}
+
+function bkSetOrderStatus(id, newStatus) {
+  const o = bkOrders.find(x=>x.id===id); if(!o) return;
+  o.status = newStatus;
+  if(o.status==="จ่าย") o.paidAt = Date.now();
+  else delete o.paidAt;
+  bkSaveLocal();
+  bkRender();
+  const modal = document.getElementById("bkStatusPickerModal");
+  if(modal) modal.remove();
 }
 function bkDeleteOrder(id) {
   if(!confirm("ลบรายการนี้?")) return;
