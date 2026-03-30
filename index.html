@@ -910,12 +910,12 @@ tr:last-child td { border-bottom: none; }
   transform:translateX(-50%);
   z-index:150;
   display:none;
-  background:rgba(255,255,255,0.72);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-  border:1px solid rgba(255,255,255,0.55);
+  background:rgba(255,255,255,0.28);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,0.32);
   border-radius:20px;
-  box-shadow:0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.6);
+  box-shadow:0 4px 20px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.35);
   pointer-events:auto;
   align-items:center;
   gap:0;
@@ -923,46 +923,10 @@ tr:last-child td { border-bottom: none; }
   width:340px;
   box-sizing:border-box;
 ">
-  <!-- ปุ่ม < — ขนาดคงที่ -->
-  <button onclick="boardNavDay(-1)" style="
-    flex-shrink:0;width:30px;height:30px;
-    background:transparent;border:none;cursor:pointer;
-    font-size:16px;color:#555;
-    display:flex;align-items:center;justify-content:center;
-    border-radius:8px;
-  " onmouseover="this.style.background='rgba(0,0,0,0.07)'" onmouseout="this.style.background='transparent'">&#8249;</button>
-
-  <!-- วันที่ — width คงที่ ไม่ขยาย ข้อความกึ่งกลาง -->
-  <span id="stickyDateText" style="
-    flex-shrink:0;
-    width:196px;
-    text-align:center;
-    color:#444;
-    font-size:11px;
-    font-weight:700;
-    letter-spacing:0.03em;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  "></span>
-
-  <!-- ปุ่ม > — ขนาดคงที่ -->
-  <button onclick="boardNavDay(1)" style="
-    flex-shrink:0;width:30px;height:30px;
-    background:transparent;border:none;cursor:pointer;
-    font-size:16px;color:#555;
-    display:flex;align-items:center;justify-content:center;
-    border-radius:8px;
-  " onmouseover="this.style.background='rgba(0,0,0,0.07)'" onmouseout="this.style.background='transparent'">&#8250;</button>
-
-  <!-- ปุ่ม กลับ — สีฟ้าอ่อน ขนาดคงที่ -->
-  <button onclick="boardNavToday()" style="
-    flex-shrink:0;
-    background:rgba(186,230,253,0.7);border:none;cursor:pointer;
-    font-size:11px;font-weight:700;color:#0369A1;
-    padding:4px 10px;border-radius:10px;font-family:inherit;
-    white-space:nowrap;margin-left:2px;
-  " onmouseover="this.style.background='rgba(186,230,253,1)'" onmouseout="this.style.background='rgba(186,230,253,0.7)'">กลับ</button>
+  <button onclick="boardNavDay(-1)" style="flex-shrink:0;width:30px;height:30px;background:transparent;border:none;cursor:pointer;font-size:16px;color:#555;display:flex;align-items:center;justify-content:center;border-radius:8px;" onmouseover="this.style.background='rgba(0,0,0,0.07)'" onmouseout="this.style.background='transparent'">&#8249;</button>
+  <span id="stickyDateText" style="flex-shrink:0;width:196px;text-align:center;color:#444;font-size:11px;font-weight:700;letter-spacing:0.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></span>
+  <button onclick="boardNavDay(1)" style="flex-shrink:0;width:30px;height:30px;background:transparent;border:none;cursor:pointer;font-size:16px;color:#555;display:flex;align-items:center;justify-content:center;border-radius:8px;" onmouseover="this.style.background='rgba(0,0,0,0.07)'" onmouseout="this.style.background='transparent'">&#8250;</button>
+  <button onclick="boardNavToday()" style="flex-shrink:0;background:rgba(186,230,253,0.7);border:none;cursor:pointer;font-size:11px;font-weight:700;color:#0369A1;padding:4px 10px;border-radius:10px;font-family:inherit;white-space:nowrap;margin-left:2px;" onmouseover="this.style.background='rgba(186,230,253,1)'" onmouseout="this.style.background='rgba(186,230,253,0.7)'">กลับ</button>
 </div>
 
 <!-- CONTENT -->
@@ -1158,10 +1122,10 @@ const db = firebase.database();
 
 // ── Config ────────────────────────────────────────────────────────
 const GROUPS = [
-  {key:"credit",   label:"เงินเชื่อ",         pos:"ซ้ายบน",    accent:"#7C3AED", light:"#F5F3FF", tag:"💳"},
-  {key:"transfer", label:"หน้าร้านรอโอน",      pos:"ขวาบน",    accent:"#0369A1", light:"#EFF6FF", tag:"📲"},
-  {key:"fence",    label:"รถรั้ว",              pos:"ซ้ายล่าง", accent:"#065F46", light:"#ECFDF5", tag:"🚛"},
-  {key:"delivery", label:"จัดส่งต่างจังหวัด",  pos:"ขวาล่าง",  accent:"#92400E", light:"#FFFBEB", tag:"📦"},
+  {key:"credit",   label:"เงินเชื่อ",  pos:"", accent:"#7C3AED", light:"#F5F3FF", tag:"💳"},
+  {key:"transfer", label:"หน้าร้าน",   pos:"", accent:"#0369A1", light:"#EFF6FF", tag:"📲"},
+  {key:"fence",    label:"รถรั้ว",     pos:"", accent:"#065F46", light:"#ECFDF5", tag:"🚛"},
+  {key:"delivery", label:"จัดส่ง",     pos:"", accent:"#92400E", light:"#FFFBEB", tag:"📦"},
 ];
 const S_CYCLE = ["รอชำระ","ชำระแล้ว","ติดต่อไม่ได้"];
 const S_CLASS = {"รอชำระ":"s-wait","ชำระแล้ว":"s-paid","ติดต่อไม่ได้":"s-no"};
@@ -1622,7 +1586,7 @@ function renderBoard() {
     hdr.style.background = g.accent;
     hdr.innerHTML = `<div style="display:flex;align-items:center;gap:7px">
       <span style="font-size:18px">${g.tag}</span>
-      <div><div class="group-name">${g.label}</div><div class="group-pos">${g.pos}</div></div>
+      <div><div class="group-name">${g.label}</div></div>
     </div>
     <div><div class="group-total-text">${fmt(gTot)}</div><div class="group-count">${gPaid}/${arr.length} ชำระแล้ว</div></div>`;
     div.appendChild(hdr);
@@ -1648,25 +1612,6 @@ function renderBoard() {
         // ข้อ 2,4: เรียงตาม paidAt — จ่ายก่อนแสดงก่อน (เก่าสุดอยู่ซ้าย)
         .sort(([,a],[,b]) => (a.paidAt||0) - (b.paidAt||0));
       const unpaidItems = sortedArr.filter(([,x]) => x.status!=="ชำระแล้ว");
-
-      // แถว paid chips
-      if (paidItems.length > 0) {
-        const chipsRow = document.createElement("div");
-        chipsRow.className = "paid-chips-row";
-        paidItems.forEach(([key,item]) => {
-          const chip = document.createElement("span");
-          chip.className = "paid-chip";
-          chip.innerHTML = `<span class="paid-chip-check">✓</span>${item.name}`;
-          chip.title = `${item.name} — กดเพื่อแก้ไข`;
-          chip.addEventListener("click", () => openEditItemModal(activeDay, g.key, key, item));
-          // long press → bill modal
-          let lpt; 
-          chip.addEventListener("touchstart", ()=>{ lpt=setTimeout(()=>openBillModal(item.name,g),500); },{passive:true});
-          chip.addEventListener("touchend", ()=>clearTimeout(lpt),{passive:true});
-          chipsRow.appendChild(chip);
-        });
-        body.appendChild(chipsRow);
-      }
 
       unpaidItems.forEach(([key,item]) => {
         const dot=S_DOT[item.status]||"#EAB308", ico=S_ICON[item.status]||"", sc=S_CLASS[item.status]||"s-wait";
@@ -1804,10 +1749,44 @@ function renderBoard() {
         row.appendChild(delBtn);
         body.appendChild(row);
       });
+      // paid chips ย้ายมาด้านล่าง
+      if (paidItems.length > 0) {
+        const chipsRow = document.createElement("div");
+        chipsRow.className = "paid-chips-row";
+        paidItems.forEach(([key,item]) => {
+          const chip = document.createElement("span");
+          chip.className = "paid-chip";
+          chip.innerHTML = `<span class="paid-chip-check">✓</span>${item.name}`;
+          chip.title = `${item.name} — กดเพื่อแก้ไข`;
+          chip.addEventListener("click", () => openEditItemModal(activeDay, g.key, key, item));
+          let lpt;
+          chip.addEventListener("touchstart", ()=>{ lpt=setTimeout(()=>openBillModal(item.name,g),500); },{passive:true});
+          chip.addEventListener("touchend", ()=>clearTimeout(lpt),{passive:true});
+          chipsRow.appendChild(chip);
+        });
+        body.appendChild(chipsRow);
+      }
     }
+    // ปุ่มเพิ่มรายการ — อยู่เหนือรายการ (เมื่อไม่ได้เปิดฟอร์ม)
+    if (openForm !== g.key) {
+      const topAddBtn = document.createElement("button");
+      topAddBtn.className = "add-group-btn";
+      topAddBtn.style.cssText = `color:${g.accent};border-top:none;border-bottom:1px solid #F5F5F4;`;
+      topAddBtn.textContent = "＋ เพิ่มรายการ";
+      topAddBtn.addEventListener("click", () => {
+        openForm = g.key;
+        renderBoard();
+        setTimeout(()=>{
+          const inp = document.getElementById("f-name");
+          if(inp){ inp.focus(); inp.click(); inp.scrollIntoView({behavior:"smooth",block:"center"}); }
+        }, 10);
+      });
+      div.appendChild(topAddBtn);
+    }
+
     div.appendChild(body);
 
-    // add form or button
+    // add form (เปิดเมื่อ openForm===g.key)
     const foot = document.createElement("div");
     if (openForm===g.key) {
       foot.className = "add-form";
@@ -1932,22 +1911,8 @@ function renderBoard() {
         const inp=document.getElementById("f-name"); 
         if(inp){ setupAutocomplete(inp); inp.focus(); inp.click(); }
       }, 10);
-    } else {
-      const addBtn = document.createElement("button");
-      addBtn.className = "add-group-btn";
-      addBtn.style.color = g.accent;
-      addBtn.textContent = "＋ เพิ่มรายการ";
-      addBtn.addEventListener("click", () => { 
-        openForm=g.key; 
-        renderBoard(); 
-        setTimeout(()=>{ 
-          const inp=document.getElementById("f-name"); 
-          if(inp){ inp.focus(); inp.click(); inp.scrollIntoView({behavior:"smooth",block:"center"}); } 
-        }, 10);
-      });
-      foot.appendChild(addBtn);
     }
-    div.appendChild(foot);
+    if (openForm===g.key) div.appendChild(foot);
     grid.appendChild(div);
   });
 }
@@ -3370,9 +3335,8 @@ function switchTab(tab) {
   // แสดง FAB เฉพาะหน้าบอร์ด
   const fab = document.getElementById("scanFab");
   if(fab) fab.style.display = tab==="board" ? "flex" : "none";
-  // ข้อ 1: ซ่อน/แสดง sticky date box
   const sdb3=document.getElementById("stickyDateBox");
-  if(sdb3) sdb3.style.display = tab==="board" ? "block" : "none";
+  if(sdb3) sdb3.style.display = tab==="board" ? "flex" : "none";
 }
 const FRUIT_IMGS = {
   "อิดอ": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii01NSAtODAgMTEwIDExMCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIj4KICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjAiIHJ4PSI0MiIgcnk9IjM4IiBmaWxsPSIjQjg5MjRBIi8+CiAgPGVsbGlwc2UgY3g9Ii01IiBjeT0iLTUiIHJ4PSIzMiIgcnk9IjI4IiBmaWxsPSIjRDRBQTYwIi8+CiAgPGVsbGlwc2UgY3g9Ii05IiBjeT0iLTkiIHJ4PSIyMCIgcnk9IjE3IiBmaWxsPSIjRUREMDgwIi8+CiAgPGVsbGlwc2UgY3g9Ii00IiBjeT0iMyIgcng9IjgiIHJ5PSI3IiBmaWxsPSIjMUEwQzAwIiBvcGFjaXR5PSIwLjgiLz4KICA8ZWxsaXBzZSBjeD0iLTIiIGN5PSIxIiByeD0iMyIgcnk9IjMiIGZpbGw9IiM4QjY5MTQiIG9wYWNpdHk9IjAuNSIvPgogIDxwYXRoIGQ9Ik0wLC0zOCBRNiwtNTAgMTAsLTYwIiBzdHJva2U9IiM0QTdBMjAiIHN0cm9rZS13aWR0aD0iMi41IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8ZWxsaXBzZSBjeD0iMTMiIGN5PSItNjQiIHJ4PSIxMSIgcnk9IjYiIGZpbGw9IiM1QThBMzAiIHRyYW5zZm9ybT0icm90YXRlKC0yMCwxMywtNjQpIi8+CiAgPGVsbGlwc2UgY3g9IjQiIGN5PSItNjYiIHJ4PSI5IiByeT0iNSIgZmlsbD0iIzRBN0EyOCIgdHJhbnNmb3JtPSJyb3RhdGUoMTAsNCwtNjYpIi8+Cjwvc3ZnPg==",
