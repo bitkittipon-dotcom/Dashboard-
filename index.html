@@ -555,7 +555,6 @@ tr:last-child td { border-bottom: none; }
 <!-- TOP BAR -->
 <div class="topbar">
   <div class="topbar-left">
-    <div class="topbar-icon">🏪</div>
     <div>
       <div class="topbar-title">ทศพร ผลไม้</div>
     </div>
@@ -1038,36 +1037,32 @@ tr:last-child td { border-bottom: none; }
 
 
 <!-- STICKY DATE NAV — กล่องกว้างคงที่ วันที่ width คงที่กึ่งกลาง ปุ่มไม่ขยับ -->
-<div id="stickyDateBox" style="
-  position:fixed;
-  top:106px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:150;
-  display:none;
-  background:rgba(255,255,255,0.28);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,0.32);
-  border-radius:20px;
-  box-shadow:0 4px 20px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.35);
-  pointer-events:auto;
-  align-items:center;
-  gap:0;
-  padding:4px 6px;
-  width:340px;
-  box-sizing:border-box;
-">
-  <button onclick="boardNavDay(-1)" style="flex-shrink:0;width:30px;height:30px;background:transparent;border:none;cursor:pointer;font-size:16px;color:#555;display:flex;align-items:center;justify-content:center;border-radius:8px;" onmouseover="this.style.background='rgba(0,0,0,0.07)'" onmouseout="this.style.background='transparent'">&#8249;</button>
-  <span id="stickyDateText" style="flex-shrink:0;width:196px;text-align:center;color:#444;font-size:11px;font-weight:700;letter-spacing:0.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></span>
-  <button onclick="boardNavDay(1)" style="flex-shrink:0;width:30px;height:30px;background:transparent;border:none;cursor:pointer;font-size:16px;color:#555;display:flex;align-items:center;justify-content:center;border-radius:8px;" onmouseover="this.style.background='rgba(0,0,0,0.07)'" onmouseout="this.style.background='transparent'">&#8250;</button>
-  <button onclick="boardNavToday()" style="flex-shrink:0;background:rgba(186,230,253,0.7);border:none;cursor:pointer;font-size:11px;font-weight:700;color:#0369A1;padding:4px 10px;border-radius:10px;font-family:inherit;white-space:nowrap;margin-left:2px;" onmouseover="this.style.background='rgba(186,230,253,1)'" onmouseout="this.style.background='rgba(186,230,253,0.7)'">กลับ</button>
-</div>
-
 <!-- CONTENT -->
 <div class="content">
   <div id="boardTab">
     <div class="summary-cards" id="summaryCards"></div>
+    <!-- Date nav bar — inline under summary cards -->
+    <div id="stickyDateBox" style="
+      display:none;
+      align-items:center;
+      justify-content:center;
+      gap:0;
+      padding:6px 8px;
+      margin-bottom:12px;
+      background:rgba(255,255,255,0.28);
+      backdrop-filter:blur(14px);
+      -webkit-backdrop-filter:blur(14px);
+      border:1px solid rgba(0,0,0,0.08);
+      border-radius:20px;
+      box-shadow:0 2px 10px rgba(0,0,0,0.07);
+      width:100%;
+      box-sizing:border-box;
+    ">
+      <button onclick="boardNavDay(-1)" style="flex-shrink:0;width:32px;height:32px;background:transparent;border:none;cursor:pointer;font-size:18px;color:#555;display:flex;align-items:center;justify-content:center;border-radius:8px;" onmouseover="this.style.background='rgba(0,0,0,0.06)'" onmouseout="this.style.background='transparent'">&#8249;</button>
+      <span id="stickyDateText" style="flex:1;text-align:center;color:#1C1917;font-size:13px;font-weight:700;letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;padding:0 4px;"></span>
+      <button onclick="boardNavDay(1)" style="flex-shrink:0;width:32px;height:32px;background:transparent;border:none;cursor:pointer;font-size:18px;color:#555;display:flex;align-items:center;justify-content:center;border-radius:8px;" onmouseover="this.style.background='rgba(0,0,0,0.06)'" onmouseout="this.style.background='transparent'">&#8250;</button>
+      <button onclick="boardNavToday()" style="flex-shrink:0;background:rgba(186,230,253,0.8);border:none;cursor:pointer;font-size:12px;font-weight:700;color:#0369A1;padding:5px 12px;border-radius:10px;font-family:inherit;white-space:nowrap;margin-left:4px;">กลับ</button>
+    </div>
     <!-- ปุ่มปิดยอด (ซ่อนอยู่ ใช้แทน progress wrap) -->
     <div id="closeYodBtn" style="display:none;margin-bottom:14px;">
       <button onclick="closeYod()" style="width:100%;padding:11px;border-radius:10px;border:none;background:#166534;color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">✅ ปิดยอดวันนี้ — ทุกคนจ่ายครบแล้ว</button>
@@ -3612,8 +3607,7 @@ function switchTab(tab) {
   // แสดง FAB เฉพาะหน้าบอร์ด
   const fab = document.getElementById("scanFab");
   if(fab) fab.style.display = tab==="board" ? "flex" : "none";
-  const sdb3=document.getElementById("stickyDateBox");
-  if(sdb3) sdb3.style.display = tab==="board" ? "flex" : "none";
+  // stickyDateBox is inside boardTab — no need to toggle separately
 }
 const FRUIT_IMGS = {
   "อิดอ": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii01NSAtODAgMTEwIDExMCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIj4KICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjAiIHJ4PSI0MiIgcnk9IjM4IiBmaWxsPSIjQjg5MjRBIi8+CiAgPGVsbGlwc2UgY3g9Ii01IiBjeT0iLTUiIHJ4PSIzMiIgcnk9IjI4IiBmaWxsPSIjRDRBQTYwIi8+CiAgPGVsbGlwc2UgY3g9Ii05IiBjeT0iLTkiIHJ4PSIyMCIgcnk9IjE3IiBmaWxsPSIjRUREMDgwIi8+CiAgPGVsbGlwc2UgY3g9Ii00IiBjeT0iMyIgcng9IjgiIHJ5PSI3IiBmaWxsPSIjMUEwQzAwIiBvcGFjaXR5PSIwLjgiLz4KICA8ZWxsaXBzZSBjeD0iLTIiIGN5PSIxIiByeD0iMyIgcnk9IjMiIGZpbGw9IiM4QjY5MTQiIG9wYWNpdHk9IjAuNSIvPgogIDxwYXRoIGQ9Ik0wLC0zOCBRNiwtNTAgMTAsLTYwIiBzdHJva2U9IiM0QTdBMjAiIHN0cm9rZS13aWR0aD0iMi41IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8ZWxsaXBzZSBjeD0iMTMiIGN5PSItNjQiIHJ4PSIxMSIgcnk9IjYiIGZpbGw9IiM1QThBMzAiIHRyYW5zZm9ybT0icm90YXRlKC0yMCwxMywtNjQpIi8+CiAgPGVsbGlwc2UgY3g9IjQiIGN5PSItNjYiIHJ4PSI5IiByeT0iNSIgZmlsbD0iIzRBN0EyOCIgdHJhbnNmb3JtPSJyb3RhdGUoMTAsNCwtNjYpIi8+Cjwvc3ZnPg==",
