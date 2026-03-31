@@ -53,11 +53,34 @@ body { font-family: 'Noto Sans Thai', Sarabun, sans-serif; background: #F8F7F4; 
 .settings-dd-item.active { color:#F59E0B; }
 
 /* DAY TABS */
-.day-tabs { background: #fff; border-bottom: 1px solid #E7E5E4; padding: 0 12px; display: flex; align-items: center; overflow-x: auto; scrollbar-width: none; gap: 2px; }
-.day-tabs::-webkit-scrollbar { display: none; }
-.day-tab { padding: 10px 12px; background: transparent; border: none; border-bottom: 3px solid transparent; cursor: pointer; font-family: inherit; white-space: nowrap; font-size: 13px; color: #A8A29E; transition: all .2s; flex-shrink:0; }
-.day-tab.active { color: #1C1917; font-weight: 700; border-bottom-color: #F59E0B; }
-.add-day-btn { margin-left: 4px; padding: 6px 12px; border-radius: 8px; background: transparent; border: 1.5px dashed #D6D3D1; color: #A8A29E; font-size: 12px; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink:0; }
+/* ── DAY TABS NEW ─────────────────────────────────────────────── */
+.day-tabs { background: #fff; border-bottom: 1px solid #E7E5E4; padding: 0; display: flex; flex-direction: column; }
+.day-tabs-row1 { display: flex; align-items: center; gap: 6px; padding: 6px 10px 0; flex-shrink: 0; }
+.day-tabs-row2 { display: flex; align-items: center; overflow-x: auto; scrollbar-width: none; gap: 2px; padding: 0 10px 0; }
+.day-tabs-row2::-webkit-scrollbar { display: none; }
+
+/* dropdown ปีและเดือน */
+.dt-select {
+  padding: 5px 22px 5px 9px;
+  border-radius: 8px;
+  border: 1.5px solid #E7E5E4;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23A8A29E'/%3E%3C/svg%3E") no-repeat right 7px center;
+  -webkit-appearance: none;
+  appearance: none;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  color: #1C1917;
+  cursor: pointer;
+  outline: none;
+  flex-shrink: 0;
+}
+.dt-select:focus { border-color: #F59E0B; }
+
+/* วันที่ pill */
+.day-tab { padding: 7px 9px; background: transparent; border: none; border-bottom: 3px solid transparent; cursor: pointer; font-family: inherit; white-space: nowrap; font-size: 13px; font-weight: 600; color: #A8A29E; transition: all .15s; flex-shrink:0; }
+.day-tab.active { color: #1C1917; font-weight: 800; border-bottom-color: #F59E0B; }
+.add-day-btn { margin-left: 4px; padding: 5px 10px; border-radius: 8px; background: transparent; border: 1.5px dashed #D6D3D1; color: #A8A29E; font-size: 11px; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink:0; }
 
 /* ADD DAY FORM — แถวแยก ไม่ซ้อนทับอะไร */
 .add-day-bar { background: #FFFBEB; border-bottom: 1px solid #FDE68A; padding: 10px 16px; display: none; }
@@ -172,6 +195,8 @@ tr:last-child td { border-bottom: none; }
   .sc-value { font-size: 14px; }
   .paid-chips-row { padding: 3px 5px 5px !important; gap: 3px !important; }
   .paid-chip { font-size: 10px !important; padding: 2px 7px 2px 5px !important; }
+  .dt-select { font-size: 12px !important; padding: 4px 20px 4px 7px !important; }
+  .day-tabs-row1 { padding: 5px 8px 0 !important; gap: 4px !important; }
 }
 
 /* ── CUSTOMER MODULE ── */
@@ -413,9 +438,119 @@ tr:last-child td { border-bottom: none; }
 .bk-status-paid    { background:#DCFCE7; color:#16A34A; padding:3px 9px; border-radius:99px; font-size:10px; font-weight:700; cursor:pointer; }
 .bk-status-deduct  { background:#FEE2E2; color:#991B1B; padding:3px 9px; border-radius:99px; font-size:10px; font-weight:700; cursor:pointer; }
 
+
+/* ── LOGIN SCREEN ─────────────────────────────────────────── */
+/* ── LOGIN NETFLIX STYLE ─────────────────────────────────────── */
+#loginScreen {
+  position:fixed; inset:0; z-index:9999;
+  background:#141414;
+  display:none; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:24px;
+}
+/* Phase 1: avatar picker */
+#loginPickPhase {
+  display:none; flex-direction:column;
+  align-items:center; gap:32px;
+  width:100%;
+}
+.login-pick-title {
+  color:#fff; font-weight:800; font-size:28px;
+  letter-spacing:-0.5px;
+}
+.login-avatars {
+  display:flex; flex-wrap:wrap;
+  justify-content:center; gap:20px;
+}
+.login-avatar-btn {
+  display:flex; flex-direction:column; align-items:center; gap:10px;
+  background:transparent; border:none; cursor:pointer; font-family:inherit;
+}
+.login-avatar-img {
+  width:90px; height:90px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:44px; background:#292524;
+  border:3px solid transparent;
+  transition:all .15s;
+  box-shadow:0 4px 16px rgba(0,0,0,0.5);
+  overflow:hidden;
+}
+.login-avatar-btn:hover .login-avatar-img {
+  border-color:#fff; transform:scale(1.08);
+}
+.login-avatar-name {
+  color:#808080; font-size:13px; font-weight:600;
+  transition:color .15s;
+}
+.login-avatar-btn:hover .login-avatar-name { color:#fff; }
+
+/* Phase 2: PIN entry */
+#loginPinPhase {
+  display:none; flex-direction:column;
+  align-items:center; gap:0; width:100%; max-width:300px;
+}
+.login-pin-avatar {
+  width:80px; height:80px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:38px; background:#292524;
+  box-shadow:0 4px 20px rgba(0,0,0,0.6);
+  margin-bottom:14px;
+  overflow:hidden;
+}
+.login-pin-name {
+  color:#fff; font-size:18px; font-weight:700; margin-bottom:24px;
+}
+.login-pin-input {
+  width:100%; padding:14px 16px; border-radius:10px;
+  border:2px solid #333; background:#222;
+  color:#fff; font-size:24px; font-weight:700;
+  letter-spacing:8px; text-align:center; outline:none;
+  font-family:inherit; transition:border .15s; margin-bottom:14px;
+}
+.login-pin-input:focus { border-color:#F59E0B; }
+.login-btn {
+  width:100%; padding:13px; border-radius:10px; border:none;
+  background:#F59E0B; color:#1C1917; font-weight:800;
+  font-size:15px; cursor:pointer; font-family:inherit;
+  margin-bottom:10px;
+}
+.login-back-btn {
+  background:transparent; border:none; color:#808080;
+  font-size:13px; cursor:pointer; font-family:inherit;
+  padding:4px; text-decoration:underline;
+}
+.login-back-btn:hover { color:#fff; }
+.login-error { color:#FCA5A5; font-size:12px; text-align:center; min-height:18px; }
+/* logout btn in topbar */
+#logoutBtn {
+  background:#292524; border:none; border-radius:20px;
+  padding:5px 10px; font-size:11px; font-weight:600;
+  color:#78716C; cursor:pointer; font-family:inherit;
+  transition:all .2s; white-space:nowrap;
+}
+#logoutBtn:hover { background:#3D3530; color:#D6D3D1; }
 </style>
 </head>
 <body>
+
+<!-- ══ LOGIN SCREEN (Netflix style) ════════════════════════════ -->
+<div id="loginScreen">
+  <!-- Phase 1: เลือก avatar -->
+  <div id="loginPickPhase">
+    <div class="login-pick-title">เลือกผู้ใช้งาน</div>
+    <div class="login-avatars" id="loginAvatars"></div>
+  </div>
+  <!-- Phase 2: กรอก PIN -->
+  <div id="loginPinPhase">
+    <div class="login-pin-avatar" id="loginPinAvatar"></div>
+    <div class="login-pin-name" id="loginPinName"></div>
+    <input class="login-pin-input" id="loginPinInput" type="password"
+      inputmode="numeric" maxlength="8" placeholder="PIN" autocomplete="off">
+    <button class="login-btn" onclick="doLogin()">เข้าสู่ระบบ</button>
+    <button class="login-back-btn" onclick="loginShowPick()">← เปลี่ยนผู้ใช้</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
 
 <!-- TOP BAR -->
 <div class="topbar">
@@ -1198,7 +1333,29 @@ db.ref("customers").on("value", snap => {
 
 
 // ── Firebase Listener: days ────────────────────────────────────────
-db.ref("days").on("value", snap => {
+// ══════════════════════════════════════════════════════════════
+// AUTH SYSTEM — declared early to avoid Temporal Dead Zone
+// ══════════════════════════════════════════════════════════════
+const AUTH_USERS = [
+  { id:"lek",  name:"Lek",  pin:"101237", role:"owner" },
+  { id:"mint", name:"Mint", pin:"621237", role:"owner" },
+  { id:"aon",  name:"Aon",  pin:"123456", role:"staff" },
+];
+const SESSION_DURATION = 2 * 24 * 60 * 60 * 1000; // 2 วัน ms
+let currentUser = null;
+const USER_AVATARS = { lek:"👑", mint:"🌿", aon:"⭐" };
+let loginSelectedUserId = null;
+
+function isOwner() { return currentUser && currentUser.role === "owner"; }
+function isToday(dayKey) {
+  const now = new Date();
+  const dd = String(now.getDate()).padStart(2,"0");
+  const mm = String(now.getMonth()+1).padStart(2,"0");
+  const yy = String(now.getFullYear()+543).slice(-2);
+  return dayKey === `${dd}-${mm}-${yy}`;
+}
+
+db.ref("days").on("value", snap => { try {
   allDays = snap.val() || {};
   if (Object.keys(allDays).length === 0) {
     db.ref("days").set({"14-03-69":{
@@ -1209,11 +1366,12 @@ db.ref("days").on("value", snap => {
     return;
   }
   const days = Object.keys(allDays).sort();
-  if (!activeDay || !allDays[activeDay]) activeDay = days[days.length-1]; // วันล่าสุด
+  if (!activeDay || !allDays[activeDay]) activeDay = days[days.length-1];
   renderDayTabs(days);
   if (activeTab==="board" && !openForm) renderBoard();
   if (activeTab==="unpaid")  renderUnpaid();
   if (activeTab==="summary") renderSummary();
+  } catch(e) { console.error("Firebase listener error:", e); }
 });
 
 // ── Firebase Listener: closed ──────────────────────────────────────
@@ -1381,93 +1539,205 @@ function renderCalGrid() {
 function renderDayTabs(days) {
   const el = document.getElementById("dayTabs");
   el.innerHTML = "";
+
+  // ── ข้อมูลปีและเดือนจาก allDays ─────────────────────────────
+  const MONTH_SHORT = ["มค","กพ","มีค","เมย","พค","มิย","กค","สค","กย","ตค","พย","ธค"];
+  const COLOR_MAP = {
+    "all-paid":      "#16A34A",
+    "credit-pending":"#0369A1",
+    "other-pending": "#DC2626",
+  };
+
+  // grouping: { "69": { "3": ["01-03-69","17-03-69",...], ... } }
+  const grouped = {};
   days.forEach(d => {
-    const btn = document.createElement("button");
-    btn.className = "day-tab" + (d===activeDay?" active":"");
-    btn.textContent = "📅 "+d;
+    const p = parseDayKey(d);
+    if (!p) return;
+    const yy = String(p.year + 543).slice(-2);
+    const mm = p.month;
+    if (!grouped[yy]) grouped[yy] = {};
+    if (!grouped[yy][mm]) grouped[yy][mm] = [];
+    grouped[yy][mm].push(d);
+  });
 
-    // ── ใช้ getDayStatus() เดียวกับปฏิทิน ──────────────────────
-    const status = getDayStatus(d);
-    const COLOR_MAP = {
-      "all-paid":      "#16A34A",  // เขียว
-      "credit-pending":"#0369A1",  // ฟ้า
-      "other-pending": "#DC2626",  // แดง
-    };
-    if (status) {
-      const col = COLOR_MAP[status];
-      btn.style.color      = col;
-      btn.style.fontWeight = "700";
-      // active day: underline ใช้สีเดิม (#F59E0B) แต่ตัวหนังสือเปลี่ยนสีตาม status
-      if (d === activeDay) {
-        btn.style.borderBottomColor = col;
-      }
+  const sortedYears = Object.keys(grouped).sort();
+  if (!sortedYears.length) return;
+
+  // หา selected year/month จาก activeDay
+  let selYear = sortedYears[sortedYears.length-1];
+  let selMonth = Object.keys(grouped[selYear]).sort((a,b)=>a-b).slice(-1)[0];
+  if (activeDay) {
+    const p = parseDayKey(activeDay);
+    if (p) {
+      const yy = String(p.year+543).slice(-2);
+      const mm = String(p.month);
+      if (grouped[yy]) { selYear = yy; }
+      if (grouped[selYear]?.[mm]) { selMonth = mm; }
     }
+  }
 
-    btn.addEventListener("click", () => {
-      if (activeDay === d && activeTab === "board") {
-        openEditModal(d);
-      } else {
-        activeDay = d;
-        openForm = null;
-        playSoundPaperFlip();
-        renderDayTabs(days);
-        if (activeTab !== "board") switchTab("board");
-        else renderBoard();
-      }
+  // ── สีเดือน: worst status ในเดือนนั้น ──────────────────────
+  function getMonthColor(yy, mm) {
+    const daysInMonth = grouped[yy]?.[mm] || [];
+    let worst = null;
+    daysInMonth.forEach(d => {
+      const s = getDayStatus(d);
+      if (s === "other-pending")  worst = "other-pending";
+      else if (s === "credit-pending" && worst !== "other-pending") worst = "credit-pending";
+      else if (s === "all-paid" && !worst) worst = "all-paid";
     });
-    el.appendChild(btn);
+    return worst;
+  }
+
+  // ── Row 1: dropdown ปี + เดือน + ปุ่มเพิ่มวัน + ปุ่มปฏิทิน ──
+  const row1 = document.createElement("div");
+  row1.className = "day-tabs-row1";
+
+  // Year dropdown
+  const yearSel = document.createElement("select");
+  yearSel.className = "dt-select";
+  sortedYears.forEach(yy => {
+    const opt = document.createElement("option");
+    opt.value = yy;
+    opt.textContent = yy;
+    opt.selected = (yy === selYear);
+    yearSel.appendChild(opt);
   });
 
-  const addBtn = document.createElement("button");
-  addBtn.className = "add-day-btn";
-  addBtn.textContent = "＋ วันใหม่";
-  addBtn.addEventListener("click", () => {
-    const now   = new Date();
-    const dd    = String(now.getDate()).padStart(2,"0");
-    const mm    = String(now.getMonth()+1).padStart(2,"0");
-    const yy    = String(now.getFullYear()+543).slice(-2);
-    const label = `${dd}-${mm}-${yy}`;
+  // Month dropdown
+  const monthSel = document.createElement("select");
+  monthSel.className = "dt-select";
 
-    if (allDays[label]) {
-      // วันนี้ซ้ำ → เปิด form ให้กรอกเอง
-      document.getElementById("addDayBar").classList.add("show");
-      const inp = document.getElementById("newDayInput");
-      inp.value = "";
-      inp.placeholder = "วันที่ซ้ำ กรอกวันที่ใหม่เช่น 15-03-69";
-      setTimeout(() => inp.focus(), 50);
-      return;
-    }
+  function populateMonths(yy) {
+    monthSel.innerHTML = "";
+    const months = Object.keys(grouped[yy]||{}).sort((a,b)=>+a-+b);
+    months.forEach(mm => {
+      const opt = document.createElement("option");
+      opt.value = mm;
+      const mc = getMonthColor(yy, mm);
+      opt.textContent = MONTH_SHORT[parseInt(mm)-1];
+      opt.selected = (mm === selMonth && yy === selYear);
+      if (mc) opt.style.color = COLOR_MAP[mc];
+      monthSel.appendChild(opt);
+    });
+    // color selected month
+    const mc = getMonthColor(yy, monthSel.value);
+    monthSel.style.color = mc ? COLOR_MAP[mc] : "#1C1917";
+  }
+  populateMonths(selYear);
 
-    // สร้างทันที
-    allDays[label] = { credit:{}, transfer:{}, fence:{}, delivery:{} };
-    activeDay = label;
-    openForm  = null;
-    renderDayTabs(Object.keys(allDays).sort());
-    renderBoard();
-
-    db.ref("days/"+label).set({ credit:{}, transfer:{}, fence:{}, delivery:{} })
-      .catch(e => {
-        alert("บันทึกไม่ได้: "+e.message);
-        delete allDays[label];
-        const fallback = Object.keys(allDays).sort();
-        activeDay = fallback[0] || null;
-        renderDayTabs(fallback);
-        renderBoard();
-      });
+  yearSel.addEventListener("change", () => {
+    selYear = yearSel.value;
+    const months = Object.keys(grouped[selYear]||{}).sort((a,b)=>+a-+b);
+    selMonth = months[months.length-1] || "1";
+    populateMonths(selYear);
+    renderDayChips();
   });
-  el.appendChild(addBtn);
 
-  // ── ปุ่มปฏิทิน (มุมขวาสุด) ─────────────────────────
+  monthSel.addEventListener("change", () => {
+    selMonth = monthSel.value;
+    const mc = getMonthColor(selYear, selMonth);
+    monthSel.style.color = mc ? COLOR_MAP[mc] : "#1C1917";
+    renderDayChips();
+  });
+
+  row1.appendChild(yearSel);
+  row1.appendChild(monthSel);
+
+  // ปุ่ม ＋วันใหม่ (เฉพาะ owner)
+  if (isOwner()) {
+    const addBtn = document.createElement("button");
+    addBtn.className = "add-day-btn";
+    addBtn.textContent = "＋ วันใหม่";
+    addBtn.addEventListener("click", () => {
+      const now   = new Date();
+      const dd    = String(now.getDate()).padStart(2,"0");
+      const mm    = String(now.getMonth()+1).padStart(2,"0");
+      const yy    = String(now.getFullYear()+543).slice(-2);
+      const label = `${dd}-${mm}-${yy}`;
+      if (allDays[label]) {
+        document.getElementById("addDayBar").classList.add("show");
+        const inp = document.getElementById("newDayInput");
+        inp.value = ""; inp.placeholder = "วันที่ซ้ำ กรอกวันที่ใหม่เช่น 15-03-69";
+        setTimeout(() => inp.focus(), 50);
+        return;
+      }
+      allDays[label] = { credit:{}, transfer:{}, fence:{}, delivery:{} };
+      activeDay = label; openForm = null;
+      renderDayTabs(Object.keys(allDays).sort());
+      renderBoard();
+      db.ref("days/"+label).set({ credit:{}, transfer:{}, fence:{}, delivery:{} })
+        .catch(e => {
+          alert("บันทึกไม่ได้: "+e.message);
+          delete allDays[label];
+          activeDay = Object.keys(allDays).sort()[0] || null;
+          renderDayTabs(Object.keys(allDays).sort());
+          renderBoard();
+        });
+    });
+    row1.appendChild(addBtn);
+  }
+
+  // ปุ่มปฏิทิน
   const calBtn = document.createElement("button");
   calBtn.className = "day-cal-btn";
   calBtn.textContent = "📅";
   calBtn.title = "เปิดปฏิทิน";
   calBtn.addEventListener("click", openCal);
-  el.appendChild(calBtn);
-}
+  row1.appendChild(calBtn);
 
+  el.appendChild(row1);
+
+  // ── Row 2: day chips ──────────────────────────────────────────
+  const row2 = document.createElement("div");
+  row2.className = "day-tabs-row2";
+  el.appendChild(row2);
+
+  function renderDayChips() {
+    row2.innerHTML = "";
+    const daysInMonth = (grouped[selYear]?.[selMonth] || []).slice().sort();
+    daysInMonth.forEach(d => {
+      const p = parseDayKey(d);
+      if (!p) return;
+      const btn = document.createElement("button");
+      const isActive = (d === activeDay);
+      btn.className = "day-tab" + (isActive ? " active" : "");
+      btn.textContent = String(p.day); // แค่ตัวเลขวัน
+
+      const status = getDayStatus(d);
+      if (status && !isActive) {
+        btn.style.color = COLOR_MAP[status];
+      } else if (isActive && status) {
+        btn.style.borderBottomColor = COLOR_MAP[status];
+        btn.style.color = COLOR_MAP[status];
+      }
+
+      btn.addEventListener("click", () => {
+        if (activeDay === d && activeTab === "board") {
+          openEditModal(d);
+        } else {
+          activeDay = d; openForm = null;
+          playSoundPaperFlip();
+          renderDayTabs(days);
+          if (activeTab !== "board") switchTab("board");
+          else renderBoard();
+        }
+      });
+      row2.appendChild(btn);
+    });
+
+    // scroll active day into view
+    setTimeout(() => {
+      const active = row2.querySelector(".day-tab.active");
+      if (active) active.scrollIntoView({ inline: "center", block: "nearest" });
+    }, 50);
+  }
+
+  renderDayChips();
+}
 function confirmAddDay() {
   const label = document.getElementById("newDayInput").value.trim();
+  if (!isOwner() && !isToday(label)) { alert("พนักงานสร้างได้เฉพาะวันปัจจุบัน"); return; }
   if (!label) { alert("กรุณากรอกวันที่ครับ"); return; }
   if (allDays[label]) { alert("มีวันนี้อยู่แล้วครับ"); return; }
 
@@ -1499,6 +1769,7 @@ function cancelAddDay() {
 
 // ── Edit Modal ────────────────────────────────────────────────────
 function openEditModal(day) {
+  if (!isOwner()) return;
   editingDay = day;
   document.getElementById("editDayInput").value = day;
   document.getElementById("editDayModal").classList.add("show");
@@ -1508,6 +1779,7 @@ function closeEditModal() {
   document.getElementById("editDayModal").classList.remove("show");
 }
 async function saveEditDay() {
+  if (!isOwner()) { alert("ไม่มีสิทธิ์แก้ไขวันที่"); return; }
   const newLabel = document.getElementById("editDayInput").value.trim();
   if (!newLabel) return;
   if (newLabel === editingDay) { closeEditModal(); return; }
@@ -1518,6 +1790,7 @@ async function saveEditDay() {
   closeEditModal();
 }
 async function deleteDay() {
+  if (!isOwner()) { alert("ไม่มีสิทธิ์ลบวัน"); return; }
   if (!confirm("ลบวัน "+editingDay+" ทั้งหมด?")) return;
   const d = editingDay;
   closeEditModal();
@@ -1561,7 +1834,7 @@ function renderBoard() {
   // แสดงปุ่มปิดยอดเมื่อทุกคนจ่ายครบ (และมีรายการอย่างน้อย 1 ราย)
   const closeBtn = document.getElementById("closeYodBtn");
   const allDone  = all.length > 0 && all.every(c => c.status === "ชำระแล้ว");
-  if (closeBtn) closeBtn.style.display = allDone ? "block" : "none";
+  if (closeBtn) closeBtn.style.display = (allDone && isOwner()) ? "block" : "none";
 
   const grid = document.getElementById("groupsGrid");
   grid.innerHTML = "";
@@ -1717,6 +1990,7 @@ function renderBoard() {
         const delBtn = document.createElement("button");
         delBtn.className = "del-btn";
         delBtn.textContent = "✕";
+        if (!isOwner()) delBtn.style.display = "none";
         delBtn.addEventListener("click", () => {
           openDeleteConfirm(item.name, () => {
             db.ref(`days/${activeDay}/${g.key}/${key}`).remove();
@@ -1726,6 +2000,7 @@ function renderBoard() {
         // ⚙️ ปุ่มแก้ไข
         const editBtn = document.createElement("button");
         editBtn.className = "del-btn";
+        if (!isOwner()) editBtn.style.display = "none";
         editBtn.textContent = "⚙️";
         editBtn.style.fontSize = "14px";
         editBtn.addEventListener("click", () => openEditItemModal(activeDay, g.key, key, item));
@@ -1768,7 +2043,7 @@ function renderBoard() {
       }
     }
     // ปุ่มเพิ่มรายการ — อยู่เหนือรายการ (เมื่อไม่ได้เปิดฟอร์ม)
-    if (openForm !== g.key) {
+    if (openForm !== g.key && (isOwner() || isToday(activeDay))) {
       const topAddBtn = document.createElement("button");
       topAddBtn.className = "add-group-btn";
       topAddBtn.style.cssText = `color:${g.accent};border-top:none;border-bottom:1px solid #F5F5F4;`;
@@ -2395,6 +2670,7 @@ function printBill() {
 
 // ── ปิดยอด ───────────────────────────────────────────────────────
 async function closeYod() {
+  if (!isOwner()) { alert("ไม่มีสิทธิ์ปิดยอด"); return; }
   return new Promise(resolve => {
     openDeleteConfirm("ปิดยอด " + activeDay + " ?\nวันนี้จะถูกย้ายไปหน้า 'ปิดยอด'", async () => {
   const d    = activeDay;
@@ -2503,6 +2779,7 @@ function viewClosedDay(d) {
 
 // เปิดวันกลับมาจาก closed → days
 async function reopenDay(d) {
+  if (!isOwner()) { alert("ไม่มีสิทธิ์เปิดวันใหม่"); return; }
   if (!confirm("เปิดวัน " + d + " กลับมาบอร์ด?")) return;
   const data = Object.assign({}, allClosed[d]);
   delete data.closedAt;
@@ -4188,6 +4465,7 @@ function revertItemToPending() {
 }
 
 function openEditItemModal(dayKey, grpKey, itemKey, item) {
+  if (!isOwner()) { alert("ไม่มีสิทธิ์แก้ไขรายการ"); return; }
   _editItemCtx = {dayKey, grpKey, itemKey};
   _editItemColor = item.nameColor || "#1C1917";
   const n  = document.getElementById("editItemName");
@@ -4254,6 +4532,7 @@ function closeDeleteConfirm() {
 }
 
 function confirmDelete() {
+  if (!isOwner()) { alert("ไม่มีสิทธิ์ลบรายการ"); return; }
   if(_deleteFn) _deleteFn();
   closeDeleteConfirm();
 }
@@ -4303,6 +4582,145 @@ const SCAN_GRP_COLOR = {
 // โหลด basket data จาก Firebase (sync ทุกอุปกรณ์)
 bkLoadLocal();
 bkInit();
+authInit();
+
+// AUTH SYSTEM — variables moved to top (before Firebase listener)
+function authInit() {
+  // ── render avatar grid ──────────────────────────────────────
+  const container = document.getElementById("loginAvatars");
+  AUTH_USERS.forEach(u => {
+    const btn = document.createElement("button");
+    btn.className = "login-avatar-btn";
+    btn.dataset.id = u.id;
+    const avatar = USER_AVATARS[u.id] || "👤";
+    btn.innerHTML = `
+      <div class="login-avatar-img">${avatar}</div>
+      <div class="login-avatar-name">${u.name}</div>`;
+    btn.addEventListener("click", () => loginShowPin(u));
+    container.appendChild(btn);
+  });
+
+  // enter key on PIN
+  document.getElementById("loginPinInput").addEventListener("keydown", e => {
+    if (e.key === "Enter") doLogin();
+  });
+
+  // ── check existing session ──────────────────────────────────
+  try {
+    const sess = JSON.parse(localStorage.getItem("authSession") || "null");
+    if (sess && sess.userId && sess.lastActive) {
+      if (Date.now() - sess.lastActive < SESSION_DURATION) {
+        const u = AUTH_USERS.find(x => x.id === sess.userId);
+        if (u) { authSuccess(u); return; }
+      }
+    }
+  } catch(e) {}
+
+  document.getElementById("loginScreen").style.display = "flex";
+  loginShowPick();
+}
+
+function loginShowPick() {
+  loginSelectedUserId = null;
+  document.getElementById("loginPickPhase").style.display = "flex";
+  document.getElementById("loginPinPhase").style.display  = "none";
+  document.getElementById("loginPinInput").value = "";
+  document.getElementById("loginError").textContent = "";
+}
+
+function loginShowPin(u) {
+  loginSelectedUserId = u.id;
+  const avatar = USER_AVATARS[u.id] || "👤";
+  document.getElementById("loginPinAvatar").textContent = avatar;
+  document.getElementById("loginPinName").textContent   = u.name;
+  document.getElementById("loginPickPhase").style.display = "none";
+  document.getElementById("loginPinPhase").style.display  = "flex";
+  document.getElementById("loginPinInput").value = "";
+  document.getElementById("loginError").textContent = "";
+  setTimeout(() => document.getElementById("loginPinInput").focus(), 50);
+}
+
+function doLogin() {
+  if (!loginSelectedUserId) {
+    document.getElementById("loginError").textContent = "กรุณาเลือกผู้ใช้งานก่อน";
+    return;
+  }
+  const pin  = document.getElementById("loginPinInput").value.trim();
+  const user = AUTH_USERS.find(u => u.id === loginSelectedUserId && u.pin === pin);
+  if (!user) {
+    document.getElementById("loginError").textContent = "PIN ไม่ถูกต้อง กรุณาลองใหม่";
+    document.getElementById("loginPinInput").value = "";
+    document.getElementById("loginPinInput").focus();
+    return;
+  }
+  authSuccess(user);
+}
+
+function authSuccess(user) {
+  currentUser = { id: user.id, name: user.name, role: user.role };
+  // save session
+  localStorage.setItem("authSession", JSON.stringify({
+    userId: user.id,
+    lastActive: Date.now()
+  }));
+  // hide login screen
+  document.getElementById("loginScreen").style.display = "none";
+  // show logout btn
+  const lb = document.getElementById("logoutBtn");
+  if (lb) { lb.style.display = "inline-block"; lb.textContent = user.name + " ออกระบบ"; }
+  // apply role restrictions
+  applyRoleUI();
+  // render หลัง login — รอให้ allDays โหลดแล้วค่อย render
+  if (Object.keys(allDays).length > 0) {
+    const days = Object.keys(allDays).sort();
+    if (!activeDay || !allDays[activeDay]) activeDay = days[days.length-1];
+    renderDayTabs(days);
+    if (activeTab === "board") renderBoard();
+  }
+  // ถ้า allDays ยังว่าง Firebase listener จะ render เองเมื่อโหลดเสร็จ
+}
+
+function doLogout() {
+  currentUser = null;
+  localStorage.removeItem("authSession");
+  // reload to reset state
+  location.reload();
+}
+
+function updateSessionActivity() {
+  if (!currentUser) return;
+  try {
+    const sess = JSON.parse(localStorage.getItem("authSession") || "null");
+    if (sess) { sess.lastActive = Date.now(); localStorage.setItem("authSession", JSON.stringify(sess)); }
+  } catch(e) {}
+}
+
+// อัปเดต lastActive ทุกครั้งที่ user แตะ
+document.addEventListener("click",      updateSessionActivity, { passive:true });
+document.addEventListener("touchstart", updateSessionActivity, { passive:true });
+
+function applyRoleUI() {
+  if (isOwner()) return; // เจ้าของไม่ต้องจำกัดอะไร
+  // staff: ซ่อนปุ่มปิดยอด (จะถูก renderBoard override — ใช้ flag แทน)
+}
+
+// ── auth guards ใส่ใน window เพื่อให้ HTML onclick เรียกได้ ──────
+// (ไม่ redeclare functions ป้องกัน hoisting conflict)
+window._authGuard = function(action, ...args) {
+  const guards = {
+    confirmAddDay: () => {
+      const val = document.getElementById("newDayInput").value.trim();
+      if (!isOwner() && !isToday(val)) {
+        alert("พนักงานสามารถสร้างได้เฉพาะวันที่ปัจจุบันเท่านั้น"); return;
+      }
+      confirmAddDay();
+    },
+  };
+  if (guards[action]) guards[action](...args);
+};
+
+// ── เพิ่มรายการ: staff ทำได้เฉพาะวันปัจจุบัน ──────────────────
+// จัดการใน renderBoard — ซ่อน openForm button ถ้าไม่ใช่วันนี้
 
 // โหลด Gemini API Key จาก localStorage (จำถาวร)
 try {
