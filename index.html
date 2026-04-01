@@ -529,6 +529,62 @@ tr:last-child td { border-bottom: none; }
   transition:all .2s; white-space:nowrap;
 }
 #logoutBtn:hover { background:#3D3530; color:#D6D3D1; }
+
+/* ── MINI MONTH CALENDAR POPUP ─────────────────────────────── */
+.mc-overlay {
+  position:fixed; inset:0; z-index:800;
+  display:none; align-items:flex-start; justify-content:flex-start;
+}
+.mc-overlay.show { display:flex; }
+.mc-backdrop { position:absolute; inset:0; }
+.mc-popup {
+  position:absolute;
+  background:#fff;
+  border-radius:16px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.18);
+  padding:14px;
+  width:260px;
+  z-index:1;
+  animation:mcPop .15s ease;
+}
+@keyframes mcPop { from{transform:scale(.92);opacity:0} to{transform:scale(1);opacity:1} }
+.mc-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:10px;
+}
+.mc-title { font-weight:800; font-size:14px; color:#1C1917; }
+.mc-nav {
+  background:transparent; border:none; cursor:pointer;
+  font-size:16px; color:#78716C; width:28px; height:28px;
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  transition:background .15s;
+}
+.mc-nav:hover { background:#F5F5F4; }
+.mc-dow-row {
+  display:grid; grid-template-columns:repeat(7,1fr);
+  margin-bottom:4px;
+}
+.mc-dow { text-align:center; font-size:10px; font-weight:700; color:#A8A29E; padding:2px 0; }
+.mc-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:1px; }
+.mc-cell {
+  aspect-ratio:1; display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:600; border-radius:50%; cursor:pointer;
+  color:#57534E; transition:all .12s; border:none; background:transparent;
+  font-family:inherit; position:relative;
+}
+.mc-cell:hover { background:#F5F5F4; }
+.mc-cell.today { background:#FEF3C7; color:#92400E; font-weight:800; }
+.mc-cell.active { background:#F59E0B !important; color:#1C1917 !important; font-weight:800; }
+.mc-cell.has-data { font-weight:700; }
+.mc-cell.empty { cursor:default; pointer-events:none; opacity:0; }
+.mc-cell.all-paid { color:#16A34A !important; }
+.mc-cell.credit-pending { color:#0369A1 !important; }
+.mc-cell.other-pending { color:#DC2626 !important; }
+.mc-done {
+  width:100%; margin-top:10px; padding:8px; border-radius:9px;
+  border:none; background:#0369A1; color:#fff; font-weight:700;
+  font-size:13px; cursor:pointer; font-family:inherit;
+}
 </style>
 </head>
 <body>
@@ -1361,7 +1417,15 @@ db.ref("days").on("value", snap => { try {
     return;
   }
   const days = Object.keys(allDays).sort();
-  if (!activeDay || !allDays[activeDay]) activeDay = days[days.length-1];
+  if (!activeDay || !allDays[activeDay]) {
+    // ถ้ามีวันนี้ใน allDays ให้เลือกวันนี้ก่อน
+    const now2 = new Date();
+    const dd2 = String(now2.getDate()).padStart(2,"0");
+    const mm2 = String(now2.getMonth()+1).padStart(2,"0");
+    const yy2 = String(now2.getFullYear()+543).slice(-2);
+    const todayKey2 = `${dd2}-${mm2}-${yy2}`;
+    activeDay = allDays[todayKey2] ? todayKey2 : days[days.length-1];
+  }
   renderDayTabs(days);
   if (activeTab==="board" && !openForm) renderBoard();
   if (activeTab==="unpaid")  renderUnpaid();
@@ -1376,6 +1440,11 @@ db.ref("closed").on("value", snap => {
   const count = Object.keys(allClosed).length;
   document.getElementById("tabClosedBtn").textContent = count > 0 ? `✅ ปิดยอด (${count})` : "✅ ปิดยอด";
   if (activeTab==="closed") renderClosed();
+  // re-render ปฏิทินถ้าเปิดอยู่ เพื่อให้ dot อัปเดต
+  if (document.getElementById("calModal")?.style.display === "flex") renderCalGrid();
+  if (document.getElementById("mcOverlay")?.classList.contains("show")) renderMiniCalGrid();
+  // re-render day tabs ด้วย
+  if (Object.keys(allDays).length) renderDayTabs(Object.keys(allDays).sort());
 });
 
 // ── Day Tabs ──────────────────────────────────────────────────────
@@ -1437,9 +1506,23 @@ function openCal() {
   const years = [...yearsSet].sort((a,b)=>b-a);
   yearSel.innerHTML = years.map(y => `<option value="${y}" ${y===curBE?"selected":""}>${y}</option>`).join("");
 
-  monthSel.innerHTML = THAI_MONTHS.map((m,i) =>
-    `<option value="${i+1}" ${i+1===now.getMonth()+1?"selected":""}>${m}</option>`
-  ).join("");
+  const selBeYear = parseInt(yearSel.value) || (now.getFullYear()+543);
+  monthSel.innerHTML = THAI_MONTHS.map((m,i) => {
+    const ms = getMonthStatus(selBeYear, i+1);
+    const COLOR_BIG = {"all-paid":"#16A34A","credit-pending":"#0369A1","other-pending":"#DC2626"};
+    const col = ms ? COLOR_BIG[ms] : "";
+    return `<option value="${i+1}" ${i+1===now.getMonth()+1?"selected":""} style="color:${col}">${ms?"●":""} ${m}</option>`;
+  }).join("");
+  // update month color on year change
+  yearSel.onchange = () => {
+    const be2 = parseInt(yearSel.value);
+    monthSel.innerHTML = THAI_MONTHS.map((m,i) => {
+      const ms2 = getMonthStatus(be2, i+1);
+      const col2 = ms2 ? {"all-paid":"#16A34A","credit-pending":"#0369A1","other-pending":"#DC2626"}[ms2] : "";
+      return `<option value="${i+1}" style="color:${col2}">${ms2?"●":""} ${m}</option>`;
+    }).join("");
+    renderCalGrid();
+  };
 
   // ถ้า activeDay → ไปหน้านั้น
   if (activeDay) {
@@ -1465,6 +1548,34 @@ function calGoToday() {
   renderCalGrid();
 }
 
+
+function createDayKey(key) {
+  if (!isOwner()) { alert("ไม่มีสิทธิ์สร้างวันใหม่"); return; }
+  if (allDays[key]) return; // มีอยู่แล้ว
+  const empty = { credit:{}, transfer:{}, fence:{}, delivery:{} };
+  allDays[key] = empty;
+  activeDay = key; openForm = null;
+  db.ref("days/" + key).set(empty).catch(e => {
+    alert("บันทึกไม่ได้: " + e.message);
+    delete allDays[key];
+  });
+  renderDayTabs(Object.keys(allDays).sort());
+  renderBoard();
+}
+function getMonthStatus(beYear, month) {
+  const yy = String(beYear).slice(-2);
+  const mm = String(month).padStart(2,"0");
+  const daysInM = new Date(beYear-543, month, 0).getDate();
+  let worst = null;
+  for (let d=1; d<=daysInM; d++) {
+    const key = `${String(d).padStart(2,"0")}-${mm}-${yy}`;
+    const s = getDayStatus(key);
+    if (s==="other-pending") { worst="other-pending"; break; }
+    if (s==="credit-pending" && worst!=="other-pending") worst="credit-pending";
+    else if (s==="all-paid" && !worst) worst="all-paid";
+  }
+  return worst;
+}
 function renderCalGrid() {
   const yearSel  = document.getElementById("calYearSel");
   const monthSel = document.getElementById("calMonthSel");
@@ -1505,8 +1616,17 @@ function renderCalGrid() {
     // วันที่ active
     if (key === activeDay) cell.classList.add("active-day");
 
-    // สถานะข้อมูล
+    // สถานะข้อมูล — ตรวจสอบทั้ง allDays และ allClosed
+    const _hasData = allDays[key] || allClosed[key];
     const status = getDayStatus(key);
+    if (_hasData && !status) {
+      // มีข้อมูลแต่ getDayStatus คืน null → แสดง dot สีเทา
+      cell.classList.add("has-data");
+      const dot2 = document.createElement("div");
+      dot2.style.cssText = "width:4px;height:4px;border-radius:50%;position:absolute;bottom:3px;left:50%;transform:translateX(-50%);background:#A8A29E;";
+      cell.style.position = "relative";
+      cell.appendChild(dot2);
+    }
     if (status) {
       cell.classList.add("has-data");
       cell.classList.add(status);
@@ -1519,7 +1639,12 @@ function renderCalGrid() {
     }
 
     cell.addEventListener("click", () => {
-      if (!allDays[key] && !allClosed[key]) return; // ไม่มีข้อมูลวันนั้น
+      if (!allDays[key] && !allClosed[key]) {
+        // วันว่าง → สร้างวันใหม่
+        closeCal();
+        createDayKey(key);
+        return;
+      }
       activeDay = key; openForm = null;
       const days = Object.keys(allDays).sort();
       renderDayTabs(days);
@@ -1543,9 +1668,10 @@ function renderDayTabs(days) {
     "other-pending": "#DC2626",
   };
 
-  // grouping: { "69": { "3": ["01-03-69","17-03-69",...], ... } }
+  // grouping: build จาก allDays ทั้งหมด (ไม่จำกัดแค่ days ที่ส่งมา)
+  const allDayKeys = Object.keys(allDays).sort();
   const grouped = {};
-  days.forEach(d => {
+  allDayKeys.forEach(d => {
     const p = parseDayKey(d);
     if (!p) return;
     const yy = String(p.year + 543).slice(-2);
@@ -1558,7 +1684,7 @@ function renderDayTabs(days) {
   const sortedYears = Object.keys(grouped).sort();
   if (!sortedYears.length) return;
 
-  // หา selected year/month จาก activeDay
+  // หา selected year/month จาก activeDay — ไม่เช็ค grouped (activeDay อาจอยู่เดือนใหม่)
   let selYear = sortedYears[sortedYears.length-1];
   let selMonth = Object.keys(grouped[selYear]).sort((a,b)=>a-b).slice(-1)[0];
   if (activeDay) {
@@ -1566,8 +1692,15 @@ function renderDayTabs(days) {
     if (p) {
       const yy = String(p.year+543).slice(-2);
       const mm = String(p.month);
-      if (grouped[yy]) { selYear = yy; }
-      if (grouped[selYear]?.[mm]) { selMonth = mm; }
+      // เพิ่ม activeDay เข้า grouped เสมอ ถึงแม้จะข้ามเดือน
+      if (!grouped[yy]) grouped[yy] = {};
+      if (!grouped[yy][mm]) grouped[yy][mm] = [];
+      if (!grouped[yy][mm].includes(activeDay)) grouped[yy][mm].push(activeDay);
+      // set selYear/selMonth จาก activeDay เสมอ ไม่ต้องเช็คอะไร
+      selYear = yy;
+      selMonth = mm;
+      if (!sortedYears.includes(yy)) sortedYears.push(yy);
+      // หมายเหตุ: yearSel ยังไม่ถูกสร้าง ณ จุดนี้ — จะ set value ทีหลังหลัง createElement
     }
   }
 
@@ -1591,53 +1724,65 @@ function renderDayTabs(days) {
   // Year dropdown
   const yearSel = document.createElement("select");
   yearSel.className = "dt-select";
-  sortedYears.forEach(yy => {
+  sortedYears.sort().forEach(yy => {
     const opt = document.createElement("option");
     opt.value = yy;
     opt.textContent = yy;
     opt.selected = (yy === selYear);
     yearSel.appendChild(opt);
   });
+  yearSel.value = selYear; // set ค่า selYear หลังสร้าง element แล้ว
 
-  // Month dropdown
-  const monthSel = document.createElement("select");
-  monthSel.className = "dt-select";
+  // Month button — opens mini calendar
+  const monthBtn = document.createElement("button");
+  monthBtn.className = "dt-select";
+  monthBtn.style.cursor = "pointer";
 
-  function populateMonths(yy) {
-    monthSel.innerHTML = "";
-    const months = Object.keys(grouped[yy]||{}).sort((a,b)=>+a-+b);
-    months.forEach(mm => {
-      const opt = document.createElement("option");
-      opt.value = mm;
-      const mc = getMonthColor(yy, mm);
-      opt.textContent = MONTH_SHORT[parseInt(mm)-1];
-      opt.selected = (mm === selMonth && yy === selYear);
-      if (mc) opt.style.color = COLOR_MAP[mc];
-      monthSel.appendChild(opt);
-    });
-    // color selected month
-    const mc = getMonthColor(yy, monthSel.value);
-    monthSel.style.color = mc ? COLOR_MAP[mc] : "#1C1917";
+  function updateMonthBtn() {
+    const mc = getMonthColor(selYear, selMonth);
+    monthBtn.style.color = mc ? COLOR_MAP[mc] : "#1C1917";
+    monthBtn.textContent = MONTH_SHORT[parseInt(selMonth)-1] + " ▾";
   }
-  populateMonths(selYear);
+  updateMonthBtn();
+
+  monthBtn.addEventListener("click", (e) => {
+    openMiniCal(monthBtn);
+  });
 
   yearSel.addEventListener("change", () => {
     selYear = yearSel.value;
     const months = Object.keys(grouped[selYear]||{}).sort((a,b)=>+a-+b);
     selMonth = months[months.length-1] || "1";
-    populateMonths(selYear);
+    updateMonthBtn();
     renderDayChips();
   });
 
-  monthSel.addEventListener("change", () => {
-    selMonth = monthSel.value;
-    const mc = getMonthColor(selYear, selMonth);
-    monthSel.style.color = mc ? COLOR_MAP[mc] : "#1C1917";
+  // update monthBtn when activeDay changes (after calendar selection)
+  window._updateMonthBtn = () => {
+    if (activeDay) {
+      const p = parseDayKey(activeDay);
+      if (p) {
+        const yy = String(p.year+543).slice(-2);
+        const mm = String(p.month);
+        // อัปเดต selYear/selMonth เสมอ ไม่ว่า grouped จะมีหรือไม่
+        selYear = yy; selMonth = mm;
+        yearSel.value = yy;
+        // rebuild grouped ถ้าจำเป็น
+        if (!grouped[yy]) grouped[yy] = {};
+        if (!grouped[yy][mm]) {
+          grouped[yy][mm] = Object.keys(allDays).filter(d => {
+            const dp = parseDayKey(d);
+            return dp && String(dp.year+543).slice(-2)===yy && String(dp.month)===mm;
+          });
+        }
+      }
+    }
+    updateMonthBtn();
     renderDayChips();
-  });
+  };
 
   row1.appendChild(yearSel);
-  row1.appendChild(monthSel);
+  row1.appendChild(monthBtn);
 
   // ปุ่ม ＋วันใหม่ (เฉพาะ owner)
   if (isOwner()) {
@@ -1802,7 +1947,10 @@ async function deleteDay() {
 
 // ── Board ─────────────────────────────────────────────────────────
 function renderBoard() {
-  if (!activeDay||!allDays[activeDay]) return;
+  if (!activeDay) return;
+  // รองรับทั้ง allDays และ allClosed
+  const _dayData = allDays[activeDay] || allClosed[activeDay];
+  if (!_dayData) return;
   // ข้อ 1: อัปเดต sticky date box
   const sdb = document.getElementById("stickyDateBox");
   const sdt = document.getElementById("stickyDateText");
@@ -1810,7 +1958,7 @@ function renderBoard() {
     sdt.textContent = formatThaiDate(activeDay);
     sdb.style.display = "flex";
   }
-  const data = allDays[activeDay]||{};
+  const data = _dayData;
   const all  = GROUPS.flatMap(g=>Object.values(data[g.key]||{}));
   const tot  = all.reduce((s,c)=>s+(c.amount||0),0);
   const paid = all.filter(c=>c.status==="ชำระแล้ว").reduce((s,c)=>s+(c.amount||0),0);
@@ -1842,7 +1990,7 @@ function renderBoard() {
     const div = document.createElement("div");
     div.className = "group-card";
     // ถ้าทุกรายการชำระครบ → เปลี่ยนพื้นหลัง card
-    const allGroupPaid = arr.length > 0 && gPaid === arr.length;
+    const allGroupPaid = arr.length === 0 || (arr.length > 0 && gPaid === arr.length);
     if (allGroupPaid) {
       div.style.background = "#8EB69B";
       div.style.borderColor = "#6fa085";
@@ -2400,14 +2548,15 @@ function formatThaiDate(label) {
 
 // ── Board date navigation (sticky pill) ─────────────────────────
 function boardNavDay(dir) {
-  const days = Object.keys(allDays).sort();
-  if(!days.length) return;
-  const idx = days.indexOf(activeDay);
+  const allKeys = [...new Set([...Object.keys(allDays), ...Object.keys(allClosed)])].sort();
+  if(!allKeys.length) return;
+  let idx = allKeys.indexOf(activeDay);
+  if(idx === -1) idx = allKeys.length - 1;
   const newIdx = idx + dir;
-  if(newIdx < 0 || newIdx >= days.length) return;
-  activeDay = days[newIdx];
+  if(newIdx < 0 || newIdx >= allKeys.length) return;
+  activeDay = allKeys[newIdx];
   openForm = null;
-  renderDayTabs(days);
+  renderDayTabs(Object.keys(allDays).sort());
   renderBoard();
 }
 
@@ -3466,13 +3615,19 @@ function bkRenderOrder() {
 
 function bkAddOrder() {
   const now = new Date();
-  const dk = `${bkYear}-${String(bkMonth).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+  const defaultDk = `${bkYear}-${String(bkMonth).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+  // Step 1: วันที่
+  const dk = prompt("วันที่ (YYYY-MM-DD):", defaultDk);
+  if(!dk||!dk.trim()) return;
+  // Step 2: ชื่อลูกค้า
   const name = prompt("ชื่อลูกค้า:");
   if(!name||!name.trim()) return;
+  // Step 3: จำนวนตะกร้า
   const basket = prompt("จำนวนตะกร้า:");
+  if(basket===null) return;
   bkOrders.push({
     id: "ord"+Date.now(),
-    dateKey: dk,
+    dateKey: dk.trim(),
     name: name.trim(),
     basket: parseFloat(basket)||0,
     status: "รอเก็บ"
@@ -4578,6 +4733,114 @@ bkLoadLocal();
 bkInit();
 authInit();
 
+// ══════════════════════════════════════════════════════════════
+// MINI MONTH CALENDAR
+// ══════════════════════════════════════════════════════════════
+let mcYear = 0, mcMonth = 0;
+const THAI_MONTHS_FULL = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน",
+                          "กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+
+function openMiniCal(anchorEl) {
+  const now = new Date();
+  if (activeDay) {
+    const p = parseDayKey(activeDay);
+    if (p) { mcYear = p.year; mcMonth = p.month; }
+    else { mcYear = now.getFullYear(); mcMonth = now.getMonth()+1; }
+  } else {
+    mcYear = now.getFullYear(); mcMonth = now.getMonth()+1;
+  }
+  renderMiniCalGrid();
+  const overlay = document.getElementById("mcOverlay");
+  const popup   = document.getElementById("mcPopup");
+  overlay.classList.add("show");
+  // position popup near anchor
+  if (anchorEl) {
+    const r = anchorEl.getBoundingClientRect();
+    popup.style.top  = (r.bottom + 6) + "px";
+    popup.style.left = Math.max(8, r.left - 20) + "px";
+  } else {
+    popup.style.top = "120px"; popup.style.left = "20px";
+  }
+}
+
+function closeMiniCal() {
+  document.getElementById("mcOverlay").classList.remove("show");
+}
+
+function renderMiniCalGrid() {
+  const BE = mcYear + 543;
+  document.getElementById("mcTitle").textContent = THAI_MONTHS_FULL[mcMonth-1] + " " + BE;
+
+  const grid  = document.getElementById("mcGrid");
+  grid.innerHTML = "";
+
+  const adYear  = mcYear;
+  const firstDOW = new Date(adYear, mcMonth-1, 1).getDay(); // 0=Sun
+  // shift: Mon=0
+  const offset  = (firstDOW === 0) ? 6 : firstDOW - 1;
+  const daysInM = new Date(adYear, mcMonth, 0).getDate();
+  const yy2     = String(BE).slice(-2);
+  const mm2     = String(mcMonth).padStart(2,"0");
+  const now2    = new Date();
+
+  // blanks
+  for (let i=0; i<offset; i++) {
+    const blank = document.createElement("div");
+    blank.className = "mc-cell empty";
+    grid.appendChild(blank);
+  }
+
+  for (let d=1; d<=daysInM; d++) {
+    const dd2 = String(d).padStart(2,"0");
+    const key = `${dd2}-${mm2}-${yy2}`;
+    const cell = document.createElement("button");
+    cell.className = "mc-cell";
+    cell.textContent = d;
+
+    const isToday2 = (d===now2.getDate() && mcMonth===now2.getMonth()+1 && adYear===now2.getFullYear());
+    if (isToday2) cell.classList.add("today");
+    if (key === activeDay) cell.classList.add("active");
+
+    const _hasDataMini = allDays[key] || allClosed[key];
+    const status = getDayStatus(key);
+    if (status && key !== activeDay) {
+      cell.classList.add("has-data", status);
+    } else if (_hasDataMini && !status && key !== activeDay) {
+      // มีข้อมูล แต่ getDayStatus คืน null → dot สีเทา
+      cell.classList.add("has-data");
+      cell.style.fontWeight = "700";
+      cell.style.opacity = "1";
+    }
+
+    if (!allDays[key] && !allClosed[key]) {
+      cell.style.opacity = "0.28";
+      cell.addEventListener("click", () => {
+        closeMiniCal();
+        createDayKey(key);
+      });
+    } else {
+      cell.addEventListener("click", () => {
+        activeDay = key; openForm = null;
+        renderDayTabs(Object.keys(allDays).sort());
+        if (activeTab !== "board") switchTab("board");
+        else renderBoard();
+        closeMiniCal();
+        if(window._updateMonthBtn) window._updateMonthBtn();
+      });
+    }
+    grid.appendChild(cell);
+  }
+
+  // nav buttons
+  document.getElementById("mcPrevMonth").onclick = () => {
+    mcMonth--; if(mcMonth<1){mcMonth=12;mcYear--;} renderMiniCalGrid();
+  };
+  document.getElementById("mcNextMonth").onclick = () => {
+    mcMonth++; if(mcMonth>12){mcMonth=1;mcYear++;} renderMiniCalGrid();
+  };
+  document.getElementById("mcBackdrop").onclick = closeMiniCal;
+}
+
 // AUTH SYSTEM — variables moved to top (before Firebase listener)
 function authInit() {
   // ── render avatar grid ──────────────────────────────────────
@@ -4667,7 +4930,15 @@ function authSuccess(user) {
   // render หลัง login — รอให้ allDays โหลดแล้วค่อย render
   if (Object.keys(allDays).length > 0) {
     const days = Object.keys(allDays).sort();
-    if (!activeDay || !allDays[activeDay]) activeDay = days[days.length-1];
+    if (!activeDay || !allDays[activeDay]) {
+    // ถ้ามีวันนี้ใน allDays ให้เลือกวันนี้ก่อน
+    const now2 = new Date();
+    const dd2 = String(now2.getDate()).padStart(2,"0");
+    const mm2 = String(now2.getMonth()+1).padStart(2,"0");
+    const yy2 = String(now2.getFullYear()+543).slice(-2);
+    const todayKey2 = `${dd2}-${mm2}-${yy2}`;
+    activeDay = allDays[todayKey2] ? todayKey2 : days[days.length-1];
+  }
     renderDayTabs(days);
     if (activeTab === "board") renderBoard();
   }
@@ -5030,5 +5301,25 @@ async function scanSaveAll() {
 
 
 </script>
+
+<!-- MINI MONTH CALENDAR POPUP -->
+<div class="mc-overlay" id="mcOverlay">
+  <div class="mc-backdrop" id="mcBackdrop"></div>
+  <div class="mc-popup" id="mcPopup">
+    <div class="mc-header">
+      <button class="mc-nav" id="mcPrevMonth">&#8249;</button>
+      <div class="mc-title" id="mcTitle"></div>
+      <button class="mc-nav" id="mcNextMonth">&#8250;</button>
+    </div>
+    <div class="mc-dow-row">
+      <div class="mc-dow">จ</div><div class="mc-dow">อ</div>
+      <div class="mc-dow">พ</div><div class="mc-dow">พฤ</div>
+      <div class="mc-dow">ศ</div><div class="mc-dow">ส</div>
+      <div class="mc-dow">อา</div>
+    </div>
+    <div class="mc-grid" id="mcGrid"></div>
+    <button class="mc-done" onclick="closeMiniCal()">เสร็จสิ้น</button>
+  </div>
+</div>
 </body>
 </html>
