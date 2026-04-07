@@ -5718,19 +5718,27 @@ function masShowDrop(id, el) {
   masRemoveAllDrops();
   const q = el.value.trim().toLowerCase();
   if(!q) return;
-  // collect names from allDays + allClosed + cmCustomers
+  // collect names — เรียงวันจากใหม่สุด→เก่าสุด เพื่อให้ได้ประวัติล่าสุดก่อน
   const nameMap = {};
-  Object.values(cmCustomers||{}).forEach(c=>{
-    const n=(c.name||"").trim(); if(n) nameMap[n]={color:c.nameColor||"#1C1917",grp:null};
-  });
-  const src = Object.assign({}, allDays, allClosed);
-  Object.keys(src).sort().reverse().forEach(day=>{
+  // ดึงจาก allDays + allClosed เรียงตาม timestamp ล่าสุดก่อน
+  const _allSrc = Object.assign({}, allDays, allClosed);
+  const _sortedNewest = _sortDayKeys(Object.keys(_allSrc)).reverse();
+  _sortedNewest.forEach(day=>{
     GROUPS.forEach(g=>{
-      Object.values(src[day][g.key]||{}).forEach(item=>{
+      Object.values(_allSrc[day][g.key]||{}).forEach(item=>{
         const n=(item.name||"").trim();
-        if(n && !nameMap[n]) nameMap[n]={color:item.nameColor||"#1C1917", grp:g.key};
+        if(n && !nameMap[n]) {
+          // ถ้ามีใน masLastGrpByName ให้ใช้ค่านั้นแทน (session memory สำคัญกว่า)
+          nameMap[n]={color:item.nameColor||"#1C1917", grp:g.key};
+        }
       });
     });
+  });
+  // cmCustomers override color ถ้าไม่มีใน allDays
+  Object.values(cmCustomers||{}).forEach(c=>{
+    const n=(c.name||"").trim(); if(!n) return;
+    if(!nameMap[n]) nameMap[n]={color:c.nameColor||"#1C1917", grp:null};
+    else if(c.nameColor) nameMap[n].color=c.nameColor;
   });
   const matches = Object.entries(nameMap)
     .filter(([n])=>n.toLowerCase().includes(q))
@@ -5751,13 +5759,14 @@ function masShowDrop(id, el) {
     item.addEventListener("mousedown", e2=>{
       e2.preventDefault();
       const r = masRows.find(x=>x.id===id); if(!r) return;
-      // auto-color from history
+      // คำนวณ grp ตอน click เพื่อให้ได้ค่าล่าสุดที่สุด
+      const clickGrp = masLastGrpByName[name] || meta.grp || masLastGrp;
       const autoColor = masLastColorByName[name] || meta.color || "#1C1917";
-      r.name=name; r.nameColor=autoColor; r.grp=autoGrp;
-      masLastGrp=autoGrp; masLastGrpByName[name]=autoGrp; masLastColorByName[name]=autoColor;
+      r.name=name; r.nameColor=autoColor; r.grp=clickGrp;
+      masLastGrp=clickGrp; masLastGrpByName[name]=clickGrp; masLastColorByName[name]=autoColor;
       el.value=name;
       const sel=document.getElementById("mas-grp-"+id);
-      if(sel){sel.value=autoGrp;sel.dataset.grp=autoGrp;}
+      if(sel){sel.value=clickGrp;sel.dataset.grp=clickGrp;}
       masRemoveAllDrops();
       masUpdateSummary();
       document.getElementById("mas-amt-"+id)?.focus();
