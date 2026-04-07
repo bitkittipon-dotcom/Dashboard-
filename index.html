@@ -538,13 +538,13 @@ tr:last-child td { border-bottom: none; }
 .mc-overlay.show { display:flex; }
 .mc-backdrop { position:absolute; inset:0; }
 .mc-popup {
-  position:absolute;
+  position:fixed;
   background:#fff;
   border-radius:16px;
   box-shadow:0 8px 32px rgba(0,0,0,0.18);
   padding:14px;
-  width:260px;
-  z-index:1;
+  width:270px;
+  z-index:802;
   animation:mcPop .15s ease;
 }
 @keyframes mcPop { from{transform:scale(.92);opacity:0} to{transform:scale(1);opacity:1} }
@@ -703,6 +703,38 @@ tr:last-child td { border-bottom: none; }
   padding:12px; border-radius:10px; border:none; background:#F59E0B;
   font-size:14px; font-weight:800; cursor:pointer; font-family:inherit; color:#1C1917;
 }
+
+/* ── MULTI ADD MODAL ─────────────────────────────────────────── */
+#multiAddModal { position:fixed; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); z-index:600; display:none; align-items:center; justify-content:center; padding:16px; }
+#multiAddModal.show { display:flex; }
+#multiAddSheet {
+  background:#fff; border-radius:20px;
+  width:100%; max-width:460px; max-height:88vh;
+  display:flex; flex-direction:column;
+  box-shadow:0 16px 48px rgba(0,0,0,0.2);
+  animation:slideUpSheet .2s ease;
+}
+@keyframes slideUpSheet { from{transform:scale(.9);opacity:0} to{transform:scale(1);opacity:1} }
+.mas-head { padding:16px 18px 12px; border-bottom:1px solid #F5F5F4; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.mas-title { font-size:15px; font-weight:800; color:#1C1917; }
+.mas-close { background:#F5F5F4; border:none; border-radius:50%; width:28px; height:28px; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#78716C; }
+.mas-summary { text-align:center; font-size:11px; color:#A8A29E; padding:6px 0 2px; flex-shrink:0; }
+
+.mas-rows { overflow-y:auto; flex:1; padding:0 14px 4px; }
+.mas-row { display:grid; grid-template-columns:1fr 90px 80px 28px; gap:5px; align-items:center; padding:5px 0; border-bottom:0.5px solid #F5F5F4; }
+.mas-inp { width:100%; padding:8px 10px; border-radius:8px; border:1.5px solid #E7E5E4; font-size:13px; outline:none; font-family:inherit; color:#1C1917; background:#fff; transition:border .12s; }
+.mas-inp:focus { border-color:#F59E0B; }
+.mas-amt { text-align:right; }
+.mas-grp { width:100%; padding:7px 4px; border-radius:8px; border:1.5px solid #E7E5E4; font-size:11px; font-weight:700; outline:none; font-family:inherit; cursor:pointer; background:#fff; color:#78716C; -webkit-appearance:none; text-align:center; }
+.mas-grp[data-grp="credit"]   { background:#EDE9FE; color:#5B21B6; border-color:#C4B5FD; }
+.mas-grp[data-grp="transfer"] { background:#DBEAFE; color:#1D4ED8; border-color:#93C5FD; }
+.mas-grp[data-grp="fence"]    { background:#D1FAE5; color:#065F46; border-color:#6EE7B7; }
+.mas-grp[data-grp="delivery"] { background:#FEF3C7; color:#92400E; border-color:#FCD34D; }
+.mas-del { background:transparent; border:none; color:#FCA5A5; font-size:16px; cursor:pointer; padding:4px; }
+.mas-add-row { width:100%; margin:8px 0 4px; padding:10px; border-radius:10px; border:1.5px dashed #D6D3D1; background:transparent; color:#78716C; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
+.mas-foot { padding:10px 18px 24px; flex-shrink:0; border-top:1px solid #F5F5F4; display:flex; gap:8px; }
+.mas-cancel { flex:1; padding:12px; border-radius:10px; border:1.5px solid #E7E5E4; background:#fff; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; color:#78716C; }
+.mas-save { flex:2; padding:12px; border-radius:10px; border:none; background:#F59E0B; font-size:14px; font-weight:800; cursor:pointer; font-family:inherit; color:#1C1917; }
 </style>
 </head>
 <body>
@@ -855,7 +887,13 @@ tr:last-child td { border-bottom: none; }
         <div id="billCustomerName" style="color:#fff;font-weight:800;font-size:20px;"></div>
         <div id="billGroupLabel" style="color:rgba(255,255,255,.65);font-size:12px;margin-top:2px;"></div>
       </div>
-      <button onclick="closeBillModal()" style="background:rgba(255,255,255,.2);border:none;border-radius:50%;width:32px;height:32px;font-size:18px;cursor:pointer;color:#fff;display:flex;align-items:center;justify-content:center;">✕</button>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <select id="billMonthFilter" onchange="billApplyMonthFilter()"
+          style="padding:5px 10px;border-radius:10px;border:none;background:rgba(255,255,255,0.9);color:#1C1917;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;outline:none;max-width:120px;">
+          <option value="all">ทั้งหมด</option>
+        </select>
+        <button onclick="closeBillModal()" style="background:rgba(255,255,255,.2);border:none;border-radius:50%;width:32px;height:32px;font-size:18px;cursor:pointer;color:#fff;display:flex;align-items:center;justify-content:center;">✕</button>
+      </div>
     </div>
 
     <!-- Bill Items per Day -->
@@ -1237,8 +1275,9 @@ tr:last-child td { border-bottom: none; }
     ">
       <button onclick="boardNavDay(-1)" style="flex-shrink:0;width:32px;height:32px;background:transparent;border:none;cursor:pointer;font-size:18px;color:#555;display:flex;align-items:center;justify-content:center;border-radius:8px;" onmouseover="this.style.background='rgba(0,0,0,0.06)'" onmouseout="this.style.background='transparent'">&#8249;</button>
       <span id="stickyDateText" style="flex:1;text-align:center;color:#1C1917;font-size:13px;font-weight:700;letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;padding:0 4px;"></span>
+      <button onclick="boardNavToday()" style="flex-shrink:0;background:rgba(186,230,253,0.8);border:none;cursor:pointer;font-size:12px;font-weight:700;color:#0369A1;padding:5px 12px;border-radius:10px;font-family:inherit;white-space:nowrap;">กลับ</button>
+      <button onclick="openMultiAdd()" style="flex-shrink:0;background:rgba(245,158,11,0.9);border:none;cursor:pointer;font-size:12px;font-weight:700;color:#1C1917;padding:5px 12px;border-radius:10px;font-family:inherit;white-space:nowrap;margin-left:2px;" id="multiAddNavBtn">＋รายการ</button>
       <button onclick="boardNavDay(1)" style="flex-shrink:0;width:32px;height:32px;background:transparent;border:none;cursor:pointer;font-size:18px;color:#555;display:flex;align-items:center;justify-content:center;border-radius:8px;" onmouseover="this.style.background='rgba(0,0,0,0.06)'" onmouseout="this.style.background='transparent'">&#8250;</button>
-      <button onclick="boardNavToday()" style="flex-shrink:0;background:rgba(186,230,253,0.8);border:none;cursor:pointer;font-size:12px;font-weight:700;color:#0369A1;padding:5px 12px;border-radius:10px;font-family:inherit;white-space:nowrap;margin-left:4px;">กลับ</button>
     </div>
     <!-- ปุ่มปิดยอด (ซ่อนอยู่ ใช้แทน progress wrap) -->
     <div id="closeYodBtn" style="display:none;margin-bottom:14px;">
@@ -1812,7 +1851,7 @@ function renderDayTabs(days) {
   };
 
   // grouping: build จาก allDays ทั้งหมด (ไม่จำกัดแค่ days ที่ส่งมา)
-  const allDayKeys = Object.keys(allDays).sort();
+  const allDayKeys = _sortDayKeys(Object.keys(allDays));
   const grouped = {};
   allDayKeys.forEach(d => {
     const p = parseDayKey(d);
@@ -2338,22 +2377,7 @@ function renderBoard() {
         body.appendChild(chipsRow);
       }
     }
-    // ปุ่มเพิ่มรายการ — อยู่เหนือรายการ (เมื่อไม่ได้เปิดฟอร์ม)
-    if (openForm !== g.key && (isOwner() || isToday(activeDay))) {
-      const topAddBtn = document.createElement("button");
-      topAddBtn.className = "add-group-btn";
-      topAddBtn.style.cssText = `color:${g.accent};border-top:none;border-bottom:1px solid #F5F5F4;`;
-      topAddBtn.textContent = "＋ เพิ่มรายการ";
-      topAddBtn.addEventListener("click", () => {
-        openForm = g.key;
-        renderBoard();
-        setTimeout(()=>{
-          const inp = document.getElementById("f-name");
-          if(inp){ inp.focus(); inp.click(); inp.scrollIntoView({behavior:"smooth",block:"center"}); }
-        }, 10);
-      });
-      div.appendChild(topAddBtn);
-    }
+    // ปุ่มเพิ่มรายการถูกย้ายไป modal ＋รายการ
 
     div.appendChild(body);
 
@@ -2361,6 +2385,7 @@ function renderBoard() {
     const foot = document.createElement("div");
     if (openForm===g.key) {
       foot.className = "add-form";
+      foot.id = "add-form-" + g.key;
       foot.style.background = g.light;
 
       const grid2 = document.createElement("div");
@@ -2734,13 +2759,32 @@ function formatThaiDate(label) {
 }
 
 // ── Board date navigation (sticky pill) ─────────────────────────
+function _sortDayKeys(keys) {
+  return [...keys].sort((a, b) => {
+    const pa = parseDayKey(a), pb = parseDayKey(b);
+    if (!pa || !pb) return 0;
+    return new Date(pa.year, pa.month-1, pa.day) - new Date(pb.year, pb.month-1, pb.day);
+  });
+}
+
 function boardNavDay(dir) {
-  const allKeys = [...new Set([...Object.keys(allDays), ...Object.keys(allClosed)])].sort();
-  if(!allKeys.length) return;
+  // รวม allDays + allClosed เรียงตามวันที่จริง (ไม่ใช่ string sort)
+  const allKeys = _sortDayKeys([...new Set([...Object.keys(allDays), ...Object.keys(allClosed)])]);
+  if (!allKeys.length) return;
   let idx = allKeys.indexOf(activeDay);
-  if(idx === -1) idx = allKeys.length - 1;
+  if (idx === -1) {
+    // หาวันใกล้เคียง activeDay ที่สุด
+    const ats = (() => { const p = parseDayKey(activeDay); return p ? new Date(p.year, p.month-1, p.day).getTime() : 0; })();
+    let best = 0, bestDiff = Infinity;
+    allKeys.forEach((k, i) => {
+      const p = parseDayKey(k); if (!p) return;
+      const diff = Math.abs(new Date(p.year, p.month-1, p.day).getTime() - ats);
+      if (diff < bestDiff) { bestDiff = diff; best = i; }
+    });
+    idx = best;
+  }
   const newIdx = idx + dir;
-  if(newIdx < 0 || newIdx >= allKeys.length) return;
+  if (newIdx < 0 || newIdx >= allKeys.length) return;
   activeDay = allKeys[newIdx];
   openForm = null;
   renderDayTabs(Object.keys(allDays).sort());
@@ -2753,50 +2797,114 @@ function boardNavToday() {
   const mm = String(now.getMonth()+1).padStart(2,"0");
   const yy = String(now.getFullYear()+543).slice(-2);
   const todayKey = `${dd}-${mm}-${yy}`;
-  const days = Object.keys(allDays).sort();
-  if(allDays[todayKey]) {
+
+  // เรียงวันที่ถูกต้องด้วย timestamp
+  const sortedDays = _sortDayKeys(Object.keys(allDays));
+
+  if (allDays[todayKey]) {
     activeDay = todayKey;
   } else {
-    // ไปวันล่าสุด
-    activeDay = days[days.length-1];
+    // หาวันที่ใกล้วันนี้ที่สุด
+    const todayTs = now.getTime();
+    let closest = sortedDays[sortedDays.length - 1];
+    let closestDiff = Infinity;
+    sortedDays.forEach(k => {
+      const p = parseDayKey(k); if (!p) return;
+      const diff = Math.abs(new Date(p.year, p.month-1, p.day).getTime() - todayTs);
+      if (diff < closestDiff) { closestDiff = diff; closest = k; }
+    });
+    activeDay = closest;
   }
   openForm = null;
-  renderDayTabs(days);
+  renderDayTabs(sortedDays);
   renderBoard();
 }
 
 let billDeducts = []; // [{name, amount}]
 
+let _billAllBills = [];  // เก็บ bills ทั้งหมดสำหรับ filter
+let _billAccentColor = "#1C1917";
+
 function openBillModal(customerName, group) {
-  // รวบรวมบิลทุกวันที่ค้างอยู่ของลูกค้าคนนี้
-  const bills = [];
-  Object.keys(allDays).sort().forEach(day => {
+  // รวบรวมบิลทุกวันที่ค้างอยู่ของลูกค้าคนนี้ เรียงเก่า→ใหม่
+  const allBills = [];
+  const sortedDays = Object.keys(allDays).sort((a,b)=>{
+    const pa=parseDayKey(a), pb=parseDayKey(b);
+    if(!pa||!pb) return 0;
+    return new Date(pa.year,pa.month-1,pa.day)-new Date(pb.year,pb.month-1,pb.day);
+  });
+  sortedDays.forEach(day => {
     const dayData = allDays[day] || {};
     GROUPS.forEach(g => {
       Object.entries(dayData[g.key]||{}).forEach(([k, item]) => {
         if (item && item.name === customerName && item.status === "รอชำระ") {
-          bills.push({ day, group: g, key: k, item });
+          allBills.push({ day, group: g, key: k, item });
         }
       });
     });
   });
+  _billAllBills = allBills;
 
   // ตั้งค่า header
-  const accentColor = bills.length > 0 ? bills[0].group.accent : (group ? group.accent : "#1C1917");
-  document.getElementById("billHeader").style.background = accentColor;
+  _billAccentColor = allBills.length > 0 ? allBills[0].group.accent : (group ? group.accent : "#1C1917");
+  document.getElementById("billHeader").style.background = _billAccentColor;
   document.getElementById("billCustomerName").textContent = customerName;
-  const grpLabel = bills.length > 0 ? bills[0].group.tag + " " + bills[0].group.label : "";
+  const grpLabel = allBills.length > 0 ? allBills[0].group.tag + " " + allBills[0].group.label : "";
+
+  // สร้าง month options
+  const monthSel = document.getElementById("billMonthFilter");
+  const THAI_M = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+  const monthSet = new Set();
+  allBills.forEach(({day})=>{ const p=parseDayKey(day); if(p) monthSet.add(`${p.year+543}-${p.month}`); });
+  monthSel.innerHTML = '<option value="all">ทั้งหมด</option>';
+  [...monthSet].sort().forEach(mk=>{
+    const [y,m]=mk.split("-");
+    const opt=document.createElement("option");
+    opt.value=mk; opt.textContent=`${THAI_M[+m-1]} ${y}`;
+    monthSel.appendChild(opt);
+  });
+  monthSel.value="all";
+
+  const bills = allBills; // ใช้ทั้งหมดตอนแรก
   document.getElementById("billGroupLabel").textContent = grpLabel + (bills.length > 0 ? " · " + bills.length + " รายการ" : "");
 
-  // รายการบิลแยกวัน
+  renderBillItems(bills);
+
+  // reset deducts
+  billDeducts = [];
+  renderDeducts(bills.reduce((s,b)=>s+(b.item.amount||0),0));
+
+  document.getElementById("billModal").style.display = "flex";
+}
+
+function billApplyMonthFilter() {
+  const sel = document.getElementById("billMonthFilter");
+  const mk  = sel.value;
+  const bills = mk==="all" ? _billAllBills : _billAllBills.filter(({day})=>{
+    const p=parseDayKey(day); if(!p) return false;
+    return `${p.year+543}-${p.month}`===mk;
+  });
+  const THAI_M = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+  const grpLabel = _billAllBills.length>0 ? _billAllBills[0].group.tag+" "+_billAllBills[0].group.label : "";
+  const [y,m] = mk!=="all" ? mk.split("-") : [];
+  const suffix = mk==="all" ? ` · ${_billAllBills.length} รายการ` : ` · ${THAI_M[+m-1]} ${y} · ${bills.length} รายการ`;
+  document.getElementById("billGroupLabel").textContent = grpLabel + suffix;
+  renderBillItems(bills);
+  renderDeducts(bills.reduce((s,b)=>s+(b.item.amount||0),0));
+}
+
+function renderBillItems(bills) {
+  const accentColor = _billAccentColor;
   const itemsEl = document.getElementById("billItems");
   itemsEl.innerHTML = "";
   let grandTotal = 0;
 
   if (bills.length === 0) {
     itemsEl.innerHTML = `<div style="text-align:center;padding:20px;color:#A8A29E;font-size:14px;">ไม่มีรายการค้างชำระ</div>`;
-  } else {
-    bills.forEach(({day, group: billGroup, key, item}, i) => {
+    document.getElementById("billGrandTotal").textContent = fmt(0);
+    return;
+  }
+  bills.forEach(({day, group: billGroup, key, item}, i) => {
       grandTotal += item.amount || 0;
       const row = document.createElement("div");
       row.style.cssText = `display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid ${i < bills.length-1 ? "#F5F5F4":"transparent"};`;
@@ -2858,7 +2966,8 @@ function openBillModal(customerName, group) {
           if (activeTab==="summary") renderSummary();
           // refresh bill modal ด้วย
           closeBillModal();
-          openBillModal(customerName, group);
+          const _bn = document.getElementById("billCustomerName")?.textContent;
+          if (_bn) openBillModal(_bn, null);
         });
       });
 
@@ -2867,41 +2976,6 @@ function openBillModal(customerName, group) {
       row.appendChild(payBtn);
       itemsEl.appendChild(row);
     });
-  }
-
-  document.getElementById("billGrandTotal").textContent = fmt(grandTotal);
-
-  // reset deducts — แล้วดึงตะกร้าของลูกค้าคนนี้ที่สถานะ รอจ่าย หรือ จ่าย มาเป็น deduct อัตโนมัติ
-  billDeducts = [];
-
-  // หาตะกร้าของลูกค้าคนนี้จาก bkOrders (รอจ่าย หรือ จ่าย) แยกแต่ละรายการ
-  if (typeof bkOrders !== "undefined") {
-    bkOrders.forEach(o => {
-      if (
-        o.name === customerName &&
-        (o.status === "รอเก็บ" || o.status === "รอจ่าย") &&
-        o.basket && parseFloat(o.basket) > 0
-      ) {
-        // แสดงวันที่ในรูปแบบอ่านได้
-        let dateLabel = o.dateKey || "";
-        if (dateLabel) {
-          const p = dateLabel.split("-");
-          const BK_M = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
-          dateLabel = `${parseInt(p[2])}-${BK_M[parseInt(p[1])-1]}`;
-        }
-        const qty    = parseFloat(o.basket);
-        const amount = qty * 100;
-        billDeducts.push({
-          name:   `ตะกร้า ${dateLabel} (${qty} ใบ)`,
-          amount: amount
-        });
-      }
-    });
-  }
-
-  renderDeducts(grandTotal);
-
-  document.getElementById("billModal").style.display = "flex";
 }
 
 function closeBillModal() {
@@ -3823,13 +3897,10 @@ function bkCloseAddModal() {
 }
 
 function bkmNameKey(e) {
-  // Enter เมื่อไม่มี autocomplete → ข้ามไป basket
+  // ถ้า dropdown ไม่มี → Enter ข้ามไป basket
   if (e.key !== "Enter") return;
   const dd = document.getElementById("nameAcDropdown");
-  if (dd) {
-    // มี dropdown → เลือก item แรก (จัดการโดย setupAutocomplete)
-    return;
-  }
+  if (dd) return; // มี dropdown → setupAutocomplete จัดการ Enter เอง
   e.preventDefault();
   document.getElementById("bkmBasket").focus();
 }
@@ -4762,9 +4833,11 @@ function showAutocomplete(inputEl) {
         });
       }
       removeAutocomplete();
-      // focus ช่อง ยอดเงิน ทันที
+      // focus ช่อง basket modal ก่อน ถ้าไม่มีค่อย f-amount
+      const bkmB = document.getElementById("bkmBasket");
       const amtEl = document.getElementById("f-amount");
-      if (amtEl) setTimeout(()=>{ amtEl.focus(); amtEl.scrollIntoView({behavior:"smooth",block:"center"}); }, 50);
+      const nextEl = bkmB && document.getElementById("bkAddModal")?.classList.contains("show") ? bkmB : amtEl;
+      if (nextEl) setTimeout(()=>{ nextEl.focus(); nextEl.scrollIntoView({behavior:"smooth",block:"center"}); }, 50);
     });
     dropdown.appendChild(item);
   });
@@ -4981,13 +5054,10 @@ function openMiniCal(anchorEl) {
   const popup   = document.getElementById("mcPopup");
   overlay.classList.add("show");
   // position popup near anchor
-  if (anchorEl) {
-    const r = anchorEl.getBoundingClientRect();
-    popup.style.top  = (r.bottom + 6) + "px";
-    popup.style.left = Math.max(8, r.left - 20) + "px";
-  } else {
-    popup.style.top = "120px"; popup.style.left = "20px";
-  }
+  // Center on screen
+  popup.style.top    = "50%";
+  popup.style.left   = "50%";
+  popup.style.transform = "translate(-50%, -50%)";
 }
 
 function closeMiniCal() {
@@ -5527,6 +5597,254 @@ async function scanSaveAll() {
 }
 
 
+
+// ══════════════════════════════════════════════════════════════
+// MULTI-ADD MODAL
+// ══════════════════════════════════════════════════════════════
+let masRows = [], masRowId = 0;
+let masLastGrp = "transfer";
+let masLastGrpByName = {}; // name → grp
+
+function openMultiAdd() {
+  masRows = []; masRowId = 0;
+  masAddRow();
+  document.getElementById("multiAddModal").classList.add("show");
+}
+function closeMultiAdd() {
+  document.getElementById("multiAddModal").classList.remove("show");
+  masRemoveAllDrops();
+}
+
+function masAddRow(inheritGrp) {
+  const id = ++masRowId;
+  const grp = inheritGrp || masLastGrp;
+  masRows.push({id, name:"", amount:"", grp, nameColor:"#1C1917"});
+  masRenderRows();
+  setTimeout(()=> document.getElementById("mas-name-"+id)?.focus(), 30);
+}
+
+function masRemoveRow(id) {
+  if(masRows.length <= 1) return;
+  masRows = masRows.filter(r=>r.id!==id);
+  masRenderRows();
+}
+
+function masRenderRows() {
+  const area = document.getElementById("masRows");
+  area.innerHTML = "";
+  const MAS_COLORS = ["#1C1917","#DC2626","#16A34A","#EA580C","#7C3AED","#0369A1"];
+  const grpOpts = [
+    {k:"credit",  lb:"💳 เชื่อ"},
+    {k:"transfer",lb:"📱 หน้าร้าน"},
+    {k:"fence",   lb:"🚛 รั้ว"},
+    {k:"delivery",lb:"📦 จัดส่ง"},
+  ];
+  masRows.forEach(r => {
+    const div = document.createElement("div");
+    div.className = "mas-row";
+    // color dot button
+    const colorBtn = document.createElement("button");
+    colorBtn.className = "mas-color-btn";
+    colorBtn.style.cssText = `width:20px;height:20px;border-radius:50%;background:${r.nameColor||"#1C1917"};border:2px solid rgba(255,255,255,0.6);box-shadow:0 0 0 1.5px ${r.nameColor||"#1C1917"};flex-shrink:0;cursor:pointer;`;
+    colorBtn.onclick = () => masOpenColorPicker(r.id, colorBtn);
+    div.innerHTML = `
+      <div style="display:flex;align-items:center;gap:5px;position:relative;" id="mas-name-wrap-${r.id}">
+        <input class="mas-inp" id="mas-name-${r.id}" placeholder="ชื่อลูกค้า *" value="${r.name}"
+          autocomplete="off"
+          oninput="masOnNameInput(${r.id},this)"
+          onkeydown="masOnNameKey(event,${r.id})"
+          style="padding-left:30px;">
+      </div>
+      <input class="mas-inp mas-amt" id="mas-amt-${r.id}" placeholder="฿0" value="${r.amount||""}" type="number"
+        oninput="masRows.find(x=>x.id===${r.id}).amount=this.value;masUpdateSummary();"
+        onkeydown="masOnAmtKey(event,${r.id})">
+      <select class="mas-grp" id="mas-grp-${r.id}" data-grp="${r.grp}"
+        onchange="masOnGrpChange(${r.id},this)">
+        ${grpOpts.map(g=>`<option value="${g.k}" ${g.k===r.grp?"selected":""}>${g.lb}</option>`).join("")}
+      </select>
+      <button class="mas-del" onclick="masRemoveRow(${r.id})">✕</button>`;
+    // insert color btn inside name input
+    const nameWrap = div.querySelector(`#mas-name-wrap-${r.id}`);
+    nameWrap.style.position = "relative";
+    colorBtn.style.position = "absolute";
+    colorBtn.style.left = "8px";
+    colorBtn.style.top = "50%";
+    colorBtn.style.transform = "translateY(-50%)";
+    colorBtn.style.zIndex = "2";
+    nameWrap.appendChild(colorBtn);
+    area.appendChild(div);
+  });
+  const addBtn = document.createElement("button");
+  addBtn.className = "mas-add-row";
+  addBtn.textContent = "＋ เพิ่มรายการ";
+  addBtn.onclick = () => masAddRow();
+  area.appendChild(addBtn);
+  masUpdateSummary();
+}
+
+function masOnGrpChange(id, el) {
+  const r = masRows.find(x=>x.id===id); if(!r) return;
+  r.grp = el.value; el.dataset.grp = el.value;
+  masLastGrp = el.value;
+  if(r.name) masLastGrpByName[r.name] = el.value;
+}
+
+function masOnNameInput(id, el) {
+  const r = masRows.find(x=>x.id===id); if(!r) return;
+  r.name = el.value;
+  masShowDrop(id, el);
+  masUpdateSummary();
+}
+
+function masOnNameKey(e, id) {
+  if(e.key !== "Enter") return;
+  const drop = document.getElementById("mas-drop-"+id);
+  if(drop) {
+    const first = drop.querySelector(".mas-ac-item");
+    if(first) { first.dispatchEvent(new MouseEvent("mousedown",{bubbles:true})); return; }
+  }
+  e.preventDefault();
+  document.getElementById("mas-amt-"+id)?.focus();
+}
+
+function masOnAmtKey(e, id) {
+  if(e.key !== "Enter") return;
+  e.preventDefault();
+  const r = masRows.find(x=>x.id===id);
+  masAddRow(r?.grp);
+}
+
+function masShowDrop(id, el) {
+  masRemoveAllDrops();
+  const q = el.value.trim().toLowerCase();
+  if(!q) return;
+  // collect names from allDays + allClosed + cmCustomers
+  const nameMap = {};
+  Object.values(cmCustomers||{}).forEach(c=>{
+    const n=(c.name||"").trim(); if(n) nameMap[n]={color:c.nameColor||"#1C1917",grp:null};
+  });
+  const src = Object.assign({}, allDays, allClosed);
+  Object.keys(src).sort().reverse().forEach(day=>{
+    GROUPS.forEach(g=>{
+      Object.values(src[day][g.key]||{}).forEach(item=>{
+        const n=(item.name||"").trim();
+        if(n && !nameMap[n]) nameMap[n]={color:item.nameColor||"#1C1917", grp:g.key};
+      });
+    });
+  });
+  const matches = Object.entries(nameMap)
+    .filter(([n])=>n.toLowerCase().includes(q))
+    .slice(0,7);
+  if(!matches.length) return;
+  const drop = document.createElement("div");
+  drop.id = "mas-drop-"+id;
+  drop.style.cssText = "position:absolute;top:calc(100% + 3px);left:0;right:0;background:#fff;border:1.5px solid #E7E5E4;border-radius:9px;box-shadow:0 4px 16px rgba(0,0,0,.1);max-height:140px;overflow-y:auto;z-index:700;";
+  matches.forEach(([name, meta])=>{
+    const autoGrp = masLastGrpByName[name] || meta.grp || masLastGrp;
+    const grpLabels = {credit:"เชื่อ",transfer:"หน้าร้าน",fence:"รั้ว",delivery:"จัดส่ง"};
+    const item = document.createElement("div");
+    item.className = "mas-ac-item";
+    item.style.cssText = "padding:8px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid #F5F5F4;display:flex;align-items:center;gap:7px;";
+    item.innerHTML = `<div style="width:8px;height:8px;border-radius:50%;background:${meta.color};flex-shrink:0;"></div>
+      <span style="flex:1;font-weight:600;">${name}</span>
+      <span style="font-size:10px;color:#A8A29E;">${grpLabels[autoGrp]||""}</span>`;
+    item.addEventListener("mousedown", e2=>{
+      e2.preventDefault();
+      const r = masRows.find(x=>x.id===id); if(!r) return;
+      // auto-color from history
+      const autoColor = masLastColorByName[name] || meta.color || "#1C1917";
+      r.name=name; r.nameColor=autoColor; r.grp=autoGrp;
+      masLastGrp=autoGrp; masLastGrpByName[name]=autoGrp; masLastColorByName[name]=autoColor;
+      el.value=name;
+      const sel=document.getElementById("mas-grp-"+id);
+      if(sel){sel.value=autoGrp;sel.dataset.grp=autoGrp;}
+      masRemoveAllDrops();
+      masUpdateSummary();
+      document.getElementById("mas-amt-"+id)?.focus();
+    });
+    drop.appendChild(item);
+  });
+  el.parentNode.appendChild(drop);
+}
+
+function masRemoveAllDrops() {
+  document.querySelectorAll("[id^=mas-drop-]").forEach(d=>d.remove());
+  document.querySelectorAll(".mas-color-popup").forEach(d=>d.remove());
+}
+
+let masLastColorByName = {};
+const MAS_COLORS_GLOBAL = ["#1C1917","#DC2626","#16A34A","#EA580C","#7C3AED","#0369A1"];
+
+function masOpenColorPicker(rowId, btnEl) {
+  document.querySelectorAll(".mas-color-popup").forEach(d=>d.remove());
+  const popup = document.createElement("div");
+  popup.className = "mas-color-popup";
+  popup.style.cssText = "position:absolute;background:#fff;border:1.5px solid #E7E5E4;border-radius:12px;padding:8px 10px;display:flex;gap:7px;box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:800;flex-wrap:wrap;width:fit-content;";
+  MAS_COLORS_GLOBAL.forEach(c=>{
+    const r=masRows.find(x=>x.id===rowId);
+    const isActive = (r?.nameColor||"#1C1917")===c;
+    const b=document.createElement("button");
+    b.style.cssText=`width:26px;height:26px;border-radius:50%;background:${c};border:${isActive?"3px solid #F59E0B":"2px solid transparent"};cursor:pointer;flex-shrink:0;`;
+    b.onclick=(e)=>{
+      e.stopPropagation();
+      const row=masRows.find(x=>x.id===rowId); if(!row) return;
+      row.nameColor=c;
+      if(row.name) masLastColorByName[row.name]=c;
+      // update dot
+      btnEl.style.background=c;
+      btnEl.style.boxShadow=`0 0 0 1.5px ${c}`;
+      popup.remove();
+    };
+    popup.appendChild(b);
+  });
+  // position popup above/below btnEl
+  const sheet=document.getElementById("multiAddSheet");
+  const br=btnEl.getBoundingClientRect();
+  const sr=sheet.getBoundingClientRect();
+  popup.style.left=(br.left-sr.left-4)+"px";
+  popup.style.top=(br.bottom-sr.top+6)+"px";
+  sheet.style.position="relative";
+  sheet.appendChild(popup);
+  setTimeout(()=>document.addEventListener("click",()=>popup.remove(),{once:true}), 10);
+}
+document.addEventListener("click", e=>{
+  if(!e.target.closest("#masRows")) masRemoveAllDrops();
+});
+
+function masUpdateSummary() {
+  const count = masRows.filter(r=>r.name.trim()).length;
+  const total = masRows.reduce((s,r)=>s+(parseFloat(r.amount)||0),0);
+  const el = document.getElementById("masSummary");
+  if(el) el.textContent = count+" รายการ · ฿"+total.toLocaleString("th-TH");
+}
+
+async function masDoSave() {
+  if (!isOwner() && !isToday(activeDay)) {
+    alert("พนักงานสามารถเพิ่มได้เฉพาะวันปัจจุบัน"); return;
+  }
+  const valid = masRows.filter(r=>r.name.trim() && parseFloat(r.amount)>0);
+  if(!valid.length){ alert("กรุณากรอกชื่อและยอดเงินอย่างน้อย 1 รายการ"); return; }
+  const btn = document.querySelector(".mas-save");
+  if(btn) btn.disabled = true;
+  try {
+    for(const r of valid) {
+      const key = "itm"+Date.now()+"_"+Math.random().toString(36).slice(2,6);
+      await db.ref(`days/${activeDay}/${r.grp}/${key}`).set({
+        name: r.name, amount: parseFloat(r.amount), status: "รอชำระ",
+        nameColor: r.nameColor||"#1C1917", note:"", paidAt:null
+      });
+      masLastGrpByName[r.name] = r.grp;
+      masLastColorByName[r.name] = r.nameColor||"#1C1917";
+    }
+    closeMultiAdd();
+    renderBoard();
+  } catch(e) {
+    alert("บันทึกไม่ได้: "+e.message);
+  } finally {
+    if(btn) btn.disabled = false;
+  }
+}
+
 </script>
 
 <!-- MINI MONTH CALENDAR POPUP -->
@@ -5595,6 +5913,23 @@ async function scanSaveAll() {
     <div class="bkm-foot">
       <button class="bkm-cancel" onclick="bkCloseAddModal()">ยกเลิก</button>
       <button class="bkm-save" onclick="bkDoAddOrder()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- MULTI ADD MODAL -->
+<div id="multiAddModal" onclick="if(event.target===this)closeMultiAdd()">
+  <div id="multiAddSheet">
+    <div class="mas-head">
+      <div class="mas-title">＋ เพิ่มหลายรายการ</div>
+      <button class="mas-close" onclick="closeMultiAdd()">✕</button>
+    </div>
+    <div class="mas-summary" id="masSummary">0 รายการ · ฿0</div>
+
+    <div class="mas-rows" id="masRows"></div>
+    <div class="mas-foot">
+      <button class="mas-cancel" onclick="closeMultiAdd()">ยกเลิก</button>
+      <button class="mas-save" onclick="masDoSave()">💾 บันทึกทั้งหมด</button>
     </div>
   </div>
 </div>
