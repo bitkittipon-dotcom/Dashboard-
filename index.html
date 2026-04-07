@@ -735,6 +735,37 @@ tr:last-child td { border-bottom: none; }
 .mas-foot { padding:10px 18px 24px; flex-shrink:0; border-top:1px solid #F5F5F4; display:flex; gap:8px; }
 .mas-cancel { flex:1; padding:12px; border-radius:10px; border:1.5px solid #E7E5E4; background:#fff; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; color:#78716C; }
 .mas-save { flex:2; padding:12px; border-radius:10px; border:none; background:#F59E0B; font-size:14px; font-weight:800; cursor:pointer; font-family:inherit; color:#1C1917; }
+
+/* ── UNPAID VIEW TOGGLE ───────────────────────────────────────── */
+.upd-view-bar { display:flex; gap:0; margin:8px 12px 0; border:1.5px solid #E7E5E4; border-radius:10px; overflow:hidden; flex-shrink:0; }
+.upd-view-btn { flex:1; padding:7px 0; font-size:12px; font-weight:700; border:none; background:#fff; cursor:pointer; font-family:inherit; color:#78716C; transition:all .15s; border-right:1px solid #E7E5E4; }
+.upd-view-btn:last-child { border-right:none; }
+.upd-view-btn.on { background:#1C1917; color:#fff; }
+
+/* Group rows (ต่อคน / ต่อเดือน) */
+.upd-group-list { padding:8px 12px 60px; }
+.upd-gh-row {
+  display:flex; align-items:center; gap:8px; padding:12px 14px;
+  background:#fff; border:1px solid #E7E5E4; border-radius:12px;
+  cursor:pointer; margin-bottom:6px; transition:background .12s; user-select:none;
+}
+.upd-gh-row.open { border-radius:12px 12px 0 0; margin-bottom:0; border-bottom-color:transparent; background:#FAFAFA; }
+.upd-gh-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.upd-gh-name { flex:1; font-size:14px; font-weight:800; color:#1C1917; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.upd-gh-meta { font-size:10px; color:#A8A29E; white-space:nowrap; flex-shrink:0; }
+.upd-gh-total { font-size:13px; font-weight:800; color:#1C1917; white-space:nowrap; flex-shrink:0; }
+.upd-gh-bill { flex-shrink:0; padding:4px 10px; border-radius:99px; border:none; color:#fff; font-size:10px; font-weight:700; cursor:pointer; font-family:inherit; }
+.upd-gh-arr { font-size:14px; color:#A8A29E; transition:transform .2s; flex-shrink:0; }
+.upd-gh-row.open .upd-gh-arr { transform:rotate(90deg); }
+
+.upd-gh-body { display:none; border:1px solid #E7E5E4; border-top:none; border-radius:0 0 12px 12px; overflow:hidden; margin-bottom:6px; }
+.upd-gh-body.show { display:block; }
+.upd-gh-item { display:flex; align-items:center; padding:9px 14px; border-bottom:1px solid #F5F5F4; gap:8px; }
+.upd-gh-item:last-child { border-bottom:none; }
+.upd-gh-item-date { background:#FEF3C7; color:#92400E; font-size:10px; font-weight:700; padding:2px 8px; border-radius:99px; flex-shrink:0; }
+.upd-gh-item-note { flex:1; font-size:12px; color:#78716C; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; }
+.upd-gh-item-grp { font-size:10px; color:#A8A29E; flex-shrink:0; white-space:nowrap; }
+.upd-gh-item-amt { font-size:13px; font-weight:800; color:#1C1917; flex-shrink:0; }
 </style>
 </head>
 <body>
@@ -1291,12 +1322,18 @@ tr:last-child td { border-bottom: none; }
 
   <div id="unpaidTab" style="display:none;padding-bottom:60px;">
     <!-- Filter tabs -->
-    <div id="unpaidFilterBar" style="display:flex;gap:6px;padding:10px 12px;background:#fff;border-bottom:1px solid #E7E5E4;position:sticky;top:54px;z-index:80;overflow-x:auto;scrollbar-width:none;">
+    <div id="unpaidFilterBar" style="display:flex;gap:6px;padding:10px 12px;background:#fff;border-bottom:0.5px solid #E7E5E4;position:sticky;top:54px;z-index:80;overflow-x:auto;scrollbar-width:none;">
       <button class="upd-tab active" data-grp="all" onclick="upSetFilter('all',this)">ทั้งหมด</button>
       <button class="upd-tab" data-grp="credit"   onclick="upSetFilter('credit',this)"   style="border-color:#7C3AED;color:#7C3AED;">💳 เชื่อ</button>
       <button class="upd-tab" data-grp="transfer" onclick="upSetFilter('transfer',this)" style="border-color:#0C4A6E;color:#0C4A6E;">📱 หน้าร้าน</button>
       <button class="upd-tab" data-grp="delivery" onclick="upSetFilter('delivery',this)" style="border-color:#78350F;color:#78350F;">📦 จัดส่ง</button>
       <button class="upd-tab" data-grp="fence"    onclick="upSetFilter('fence',this)"    style="border-color:#065F46;color:#065F46;">🚛 รั้ว</button>
+    </div>
+    <!-- View toggle -->
+    <div class="upd-view-bar" style="position:sticky;top:calc(54px + 52px);z-index:79;">
+      <button class="upd-view-btn on" data-view="day"    onclick="upSetView('day',this)">ตามวัน</button>
+      <button class="upd-view-btn"    data-view="person" onclick="upSetView('person',this)">ต่อคน</button>
+      <button class="upd-view-btn"    data-view="month"  onclick="upSetView('month',this)">ต่อเดือน</button>
     </div>
     <div id="unpaidGrid"></div>
   </div>
@@ -1606,8 +1643,11 @@ db.ref("days").on("value", snap => { try {
       activeDay = closest || days[days.length-1];
     }
   }
-  // เปิดหน้าบอร์ดเสมอตอนโหลดครั้งแรก
-  if (activeTab !== "board") switchTab("board");
+  // เปิดหน้าบอร์ดเฉพาะครั้งแรกที่โหลด (ไม่ทำทุกครั้งที่ Firebase update)
+  if (!window._appInitialized) {
+    window._appInitialized = true;
+    if (activeTab !== "board") switchTab("board");
+  }
   renderDayTabs(days);
   if (activeTab==="board" && !openForm) renderBoard();
   if (activeTab==="unpaid")  renderUnpaid();
@@ -2542,7 +2582,15 @@ function makeBadge(count) {
 // ── Unpaid ────────────────────────────────────────────────────────
 // ── NEW UNPAID RENDER ───────────────────────────────────────────
 let _updFilter = "all";  // "all" | "credit" | "transfer" | "delivery" | "fence"
+let _updView   = "day";  // "day" | "person" | "month"
 let _updCtxCtx = null;   // { day, grpKey, itemKey, item, group }
+
+function upSetView(view, btn) {
+  _updView = view;
+  document.querySelectorAll(".upd-view-btn").forEach(t => t.classList.remove("on"));
+  btn.classList.add("on");
+  renderUnpaid();
+}
 
 function upSetFilter(grp, btn) {
   _updFilter = grp;
@@ -2555,6 +2603,10 @@ function renderUnpaid() {
   const container = document.getElementById("unpaidGrid");
   if (!container) return;
   container.innerHTML = "";
+
+  // dispatch ตาม view
+  if (_updView === "person") { renderUnpaidPerson(container); return; }
+  if (_updView === "month")  { renderUnpaidMonth(container); return; }
 
   // รวบรวมทุก item รอชำระ เรียงตามวัน (เก่า→ใหม่)
   const allEntries = [];
@@ -2661,6 +2713,146 @@ function renderUnpaid() {
     });
     container.appendChild(grid);
   });
+}
+
+
+// ── ต่อคน view ────────────────────────────────────────────────────
+function renderUnpaidPerson(container) {
+  const GRP_COLORS = {credit:"#7C3AED",transfer:"#0C4A6E",delivery:"#78350F",fence:"#065F46"};
+  const persons = {};
+  const sortedDays = _sortDayKeys(Object.keys(allDays));
+  sortedDays.forEach(day => {
+    const dayData = allDays[day]||{};
+    ["transfer","delivery","fence","credit"].forEach(grpKey => {
+      if (_updFilter !== "all" && grpKey !== _updFilter) return;
+      const g = GROUPS.find(x=>x.key===grpKey); if(!g) return;
+      Object.entries(dayData[grpKey]||{}).forEach(([key,item]) => {
+        if (!item || item.status !== "รอชำระ") return;
+        const n = item.name;
+        if (!persons[n]) persons[n] = {color:item.nameColor||"#1C1917",grp:grpKey,total:0,bills:[]};
+        persons[n].total += item.amount||0;
+        persons[n].bills.push({day,grpKey,key,item,group:g});
+      });
+    });
+  });
+
+  if (!Object.keys(persons).length) {
+    container.innerHTML = `<div style="text-align:center;padding:40px;color:#A8A29E;font-size:14px;">🎉 ไม่มีรายการค้างชำระ</div>`;
+    return;
+  }
+
+  const gl = document.createElement("div"); gl.className = "upd-group-list";
+  Object.entries(persons).sort((a,b)=>b[1].total-a[1].total).forEach(([name,info]) => {
+    const grpColor = GRP_COLORS[info.grp] || "#1C1917";
+    const row = document.createElement("div"); row.className = "upd-gh-row";
+    const billBtn = document.createElement("button");
+    billBtn.className = "upd-gh-bill";
+    billBtn.style.background = grpColor;
+    billBtn.textContent = "🧾 รวมบิล";
+    billBtn.onclick = e => { e.stopPropagation(); openBillModal(name, info.bills[0]?.group); };
+
+    row.innerHTML = `<div class="upd-gh-dot" style="background:${info.color};"></div>
+      <div class="upd-gh-name">${name}</div>
+      <div class="upd-gh-meta">${info.bills.length} บิล</div>
+      <div class="upd-gh-total">${fmt(info.total)}</div>
+      <div class="upd-gh-arr">›</div>`;
+    row.insertBefore(billBtn, row.querySelector(".upd-gh-arr"));
+
+    const body = document.createElement("div"); body.className = "upd-gh-body";
+    info.bills.forEach(({day,grpKey,key,item,group}) => {
+      const it = document.createElement("div"); it.className = "upd-gh-item";
+      const circle = document.createElement("div");
+      circle.style.cssText = `width:22px;height:22px;border-radius:50%;border:2px solid ${grpColor};flex-shrink:0;cursor:pointer;`;
+      circle.onclick = e => {
+        e.stopPropagation();
+        db.ref(`days/${day}/${grpKey}/${key}/status`).set("ชำระแล้ว").then(()=>{
+          if(allDays[day]?.[grpKey]?.[key]) allDays[day][grpKey][key].status="ชำระแล้ว";
+          renderUnpaid();
+        });
+      };
+      it.innerHTML = `<div class="upd-gh-item-date">${day}</div>
+        <div class="upd-gh-item-grp">${group.tag}</div>
+        <div class="upd-gh-item-note">${item.note||"-"}</div>
+        <div class="upd-gh-item-amt">${fmt(item.amount||0)}</div>`;
+      it.insertBefore(circle, it.firstChild);
+      body.appendChild(it);
+    });
+
+    row.addEventListener("click", () => {
+      const open = row.classList.toggle("open");
+      body.classList.toggle("show", open);
+    });
+    gl.appendChild(row); gl.appendChild(body);
+  });
+  container.appendChild(gl);
+}
+
+// ── ต่อเดือน view ─────────────────────────────────────────────────
+function renderUnpaidMonth(container) {
+  const THAI_MF = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+  const GRP_COLORS = {credit:"#7C3AED",transfer:"#0C4A6E",delivery:"#78350F",fence:"#065F46"};
+  const months = {};
+  const sortedDays = _sortDayKeys(Object.keys(allDays));
+  sortedDays.forEach(day => {
+    const p = parseDayKey(day); if(!p) return;
+    const mk = `${p.year+543}-${String(p.month).padStart(2,"0")}`;
+    const dayData = allDays[day]||{};
+    ["transfer","delivery","fence","credit"].forEach(grpKey => {
+      if (_updFilter !== "all" && grpKey !== _updFilter) return;
+      const g = GROUPS.find(x=>x.key===grpKey); if(!g) return;
+      Object.entries(dayData[grpKey]||{}).forEach(([key,item]) => {
+        if (!item || item.status !== "รอชำระ") return;
+        if (!months[mk]) months[mk] = {label:`${THAI_MF[p.month-1]} ${p.year+543}`,total:0,byName:{}};
+        months[mk].total += item.amount||0;
+        const n = item.name;
+        if (!months[mk].byName[n]) months[mk].byName[n]={color:item.nameColor||"#1C1917",grp:grpKey,group:g,total:0,count:0};
+        months[mk].byName[n].total += item.amount||0;
+        months[mk].byName[n].count++;
+      });
+    });
+  });
+
+  if (!Object.keys(months).length) {
+    container.innerHTML = `<div style="text-align:center;padding:40px;color:#A8A29E;font-size:14px;">🎉 ไม่มีรายการค้างชำระ</div>`;
+    return;
+  }
+
+  const gl = document.createElement("div"); gl.className = "upd-group-list";
+  Object.keys(months).sort().forEach(mk => {
+    const m = months[mk];
+    const totalCount = Object.values(m.byName).reduce((s,v)=>s+v.count,0);
+    const row = document.createElement("div"); row.className = "upd-gh-row";
+    row.innerHTML = `<div class="upd-gh-dot" style="background:#F59E0B;"></div>
+      <div class="upd-gh-name">${m.label}</div>
+      <div class="upd-gh-meta">${totalCount} รายการ</div>
+      <div class="upd-gh-total">${fmt(m.total)}</div>
+      <div class="upd-gh-arr">›</div>`;
+
+    const body = document.createElement("div"); body.className = "upd-gh-body";
+    Object.entries(m.byName).sort((a,b)=>b[1].total-a[1].total).forEach(([name,info]) => {
+      const grpColor = GRP_COLORS[info.grp]||"#1C1917";
+      const it = document.createElement("div"); it.className = "upd-gh-item";
+      const billBtn = document.createElement("button");
+      billBtn.className = "upd-gh-bill";
+      billBtn.style.cssText = `background:${grpColor};font-size:10px;padding:3px 8px;margin-left:4px;flex-shrink:0;`;
+      billBtn.textContent = "🧾";
+      billBtn.title = "รวมบิล "+name;
+      billBtn.onclick = e => { e.stopPropagation(); openBillModal(name, info.group); };
+      it.innerHTML = `<div class="upd-gh-dot" style="background:${info.color};"></div>
+        <div class="upd-gh-name" style="font-size:13px;">${name}</div>
+        <div class="upd-gh-meta">${info.count} บิล</div>
+        <div class="upd-gh-item-amt">${fmt(info.total)}</div>`;
+      it.appendChild(billBtn);
+      body.appendChild(it);
+    });
+
+    row.addEventListener("click", () => {
+      const open = row.classList.toggle("open");
+      body.classList.toggle("show", open);
+    });
+    gl.appendChild(row); gl.appendChild(body);
+  });
+  container.appendChild(gl);
 }
 
 // ── Context menu ───────────────────────────────────────────────
@@ -2960,14 +3152,24 @@ function renderBillItems(bills) {
           // อัปเดต local cache ทันที
           if (allDays[day]?.[billGroup.key]?.[key])   allDays[day][billGroup.key][key].status   = next;
           if (allClosed[day]?.[billGroup.key]?.[key]) allClosed[day][billGroup.key][key].status = next;
-          // refresh หน้าต่างที่เปิดอยู่
+          // เสียงติ๊กเดียวกับหน้าบอร์ด
+          try {
+            const ac = new (window.AudioContext||window.webkitAudioContext)();
+            const o1=ac.createOscillator(), g1=ac.createGain();
+            o1.connect(g1); g1.connect(ac.destination);
+            o1.type="sine"; o1.frequency.setValueAtTime(660,ac.currentTime);
+            o1.frequency.setValueAtTime(880,ac.currentTime+0.08);
+            g1.gain.setValueAtTime(0.3,ac.currentTime);
+            g1.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.25);
+            o1.start(); o1.stop(ac.currentTime+0.25);
+          } catch(e){}
+          // refresh หน้าต่างพื้นหลัง (ไม่สลับแท็บ)
           if (activeTab==="board")   renderBoard();
           if (activeTab==="unpaid")  renderUnpaid();
-          if (activeTab==="summary") renderSummary();
-          // refresh bill modal ด้วย
-          closeBillModal();
+          // refresh bill modal ในที่เดิม ไม่ปิด
           const _bn = document.getElementById("billCustomerName")?.textContent;
-          if (_bn) openBillModal(_bn, null);
+          if (_bn) { closeBillModal(); openBillModal(_bn, null); }
+          else { payBtn.disabled = false; }
         });
       });
 
@@ -4551,14 +4753,23 @@ function anKpi(label,val,sub,color,bg) {
     if (pct < 0.30 && velocity < 0.5) return;
     // axis lock: ถ้า dy > dx ยกเลิก
     if (Math.abs(dy) > Math.abs(dx) * 0.7) return;
-    const days = Object.keys(allDays).sort();
-    const idx  = days.indexOf(activeDay);
-    if (dx < 0 && idx < days.length-1) {
+    // ใช้ _sortDayKeys เหมือนปุ่ม < >
+    const allSwipeKeys = _sortDayKeys([...new Set([...Object.keys(allDays), ...Object.keys(allClosed)])]);
+    let idx = allSwipeKeys.indexOf(activeDay);
+    if (idx === -1) {
+      const ats = (() => { const p = parseDayKey(activeDay); return p ? new Date(p.year,p.month-1,p.day).getTime() : 0; })();
+      let best=0, bestDiff=Infinity;
+      allSwipeKeys.forEach((k,i)=>{ const p=parseDayKey(k); if(!p) return; const diff=Math.abs(new Date(p.year,p.month-1,p.day).getTime()-ats); if(diff<bestDiff){bestDiff=diff;best=i;} });
+      idx = best;
+    }
+    if (dx < 0 && idx < allSwipeKeys.length-1) {
       playSoundPaperFlip();
-      activeDay = days[idx+1]; openForm=null; renderDayTabs(days); renderBoard();
+      activeDay = allSwipeKeys[idx+1]; openForm=null;
+      renderDayTabs(Object.keys(allDays).sort()); renderBoard();
     } else if (dx > 0 && idx > 0) {
       playSoundPaperFlip();
-      activeDay = days[idx-1]; openForm=null; renderDayTabs(days); renderBoard();
+      activeDay = allSwipeKeys[idx-1]; openForm=null;
+      renderDayTabs(Object.keys(allDays).sort()); renderBoard();
     }
   }, {passive:true});
 })();
@@ -5620,7 +5831,17 @@ function masAddRow(inheritGrp) {
   const grp = inheritGrp || masLastGrp;
   masRows.push({id, name:"", amount:"", grp, nameColor:"#1C1917"});
   masRenderRows();
-  setTimeout(()=> document.getElementById("mas-name-"+id)?.focus(), 30);
+  // focus ช่องชื่อใหม่ทันที — ลอง 3 รอบเพื่อให้แน่ใจบน mobile
+  const tryFocus = (attempts) => {
+    const inp = document.getElementById("mas-name-"+id);
+    if (inp) {
+      inp.focus();
+      inp.scrollIntoView({behavior:"smooth", block:"nearest"});
+    } else if (attempts > 0) {
+      setTimeout(()=> tryFocus(attempts-1), 30);
+    }
+  };
+  setTimeout(()=> tryFocus(3), 20);
 }
 
 function masRemoveRow(id) {
