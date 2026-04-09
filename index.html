@@ -1385,7 +1385,7 @@ tr:last-child td { border-bottom: none; }
       box-sizing:border-box;
     ">
       <button onclick="boardNavDay(-1)" style="flex-shrink:0;width:32px;height:32px;background:transparent;border:none;cursor:pointer;font-size:18px;color:#555;display:flex;align-items:center;justify-content:center;border-radius:8px;" onmouseover="this.style.background='rgba(0,0,0,0.06)'" onmouseout="this.style.background='transparent'">&#8249;</button>
-      <span id="stickyDateText" style="flex:1;text-align:center;color:#1C1917;font-size:13px;font-weight:700;letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;padding:0 4px;"></span>
+      <span id="stickyDateText" onclick="openMiniCal(this)" style="flex:1;text-align:center;color:#1C1917;font-size:13px;font-weight:700;letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;padding:0 4px;cursor:pointer;border-radius:8px;transition:background .12s;" onmouseover="this.style.background='rgba(0,0,0,0.05)'" onmouseout="this.style.background='transparent'"></span>
       <button onclick="boardNavToday()" style="flex-shrink:0;background:rgba(186,230,253,0.8);border:none;cursor:pointer;font-size:12px;font-weight:700;color:#0369A1;padding:5px 12px;border-radius:10px;font-family:inherit;white-space:nowrap;">กลับ</button>
       <button onclick="openMultiAdd()" style="flex-shrink:0;background:rgba(245,158,11,0.9);border:none;cursor:pointer;font-size:12px;font-weight:700;color:#1C1917;padding:5px 12px;border-radius:10px;font-family:inherit;white-space:nowrap;margin-left:2px;" id="multiAddNavBtn">＋รายการ</button>
       <button onclick="boardNavDay(1)" style="flex-shrink:0;width:32px;height:32px;background:transparent;border:none;cursor:pointer;font-size:18px;color:#555;display:flex;align-items:center;justify-content:center;border-radius:8px;" onmouseover="this.style.background='rgba(0,0,0,0.06)'" onmouseout="this.style.background='transparent'">&#8250;</button>
@@ -2799,14 +2799,12 @@ function renderUnpaid() {
         db.ref(`days/${d}/${grpKey}/${key}/status`).set(nextStatus).then(()=>{
           if(allDays[d]?.[grpKey]?.[key]) allDays[d][grpKey][key].status = nextStatus;
           if(activeTab==="board") renderBoard();
-          // จำ scroll position ของ unpaid tab ก่อน re-render
-          const _upTab = document.getElementById("unpaidTab");
-          const _sy = _upTab ? _upTab.scrollTop : (window.scrollY||0);
+          // จำ scroll position ก่อน re-render
+          const _sy = window.scrollY || document.documentElement.scrollTop || 0;
           renderUnpaid();
-          setTimeout(() => {
-            if(_upTab) _upTab.scrollTop = _sy;
-            else window.scrollTo(0, _sy);
-          }, 30);
+          // restore ทันทีและหลัง 50ms เผื่อ iOS
+          window.scrollTo(0, _sy);
+          setTimeout(() => { window.scrollTo(0, _sy); }, 50);
         });
       });
 
@@ -3419,8 +3417,15 @@ function generateInvoiceBillImage(customerName) {
   const gross     = parseInt(grossText.replace(/,/g,"")) || 0;
   const net       = parseInt(netText.replace(/,/g,"")) || 0;
   const totalDeduct = gross - net;
+  // ใช้ bills ที่กำลังแสดงอยู่จริง (ตาม filter เดือนที่เลือก)
+  const _mk = document.getElementById("billMonthFilter")?.value || "all";
+  const _THAI_M2 = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+  const _filteredBills = _mk === "all" ? (_billAllBills||[]) : (_billAllBills||[]).filter(({day})=>{
+    const p = parseDayKey(day); if(!p) return false;
+    return `${p.year+543}-${p.month}` === _mk;
+  });
   const billRowsData = [];
-  (_billAllBills||[]).forEach(({day,item})=>{ billRowsData.push({day,note:item.note||"-",amount:item.amount||0}); });
+  _filteredBills.forEach(({day,item})=>{ billRowsData.push({day,note:item.note||"-",amount:item.amount||0}); });
   billRowsData.sort((a,b)=>{ const pa=parseDayKey(a.day),pb=parseDayKey(b.day); if(!pa||!pb) return 0; return new Date(pa.year,pa.month-1,pa.day)-new Date(pb.year,pb.month-1,pb.day); });
   const deductRows = [...billDeducts];
   const now = new Date();
