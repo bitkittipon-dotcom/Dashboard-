@@ -1402,7 +1402,7 @@ tr:last-child td { border-bottom: none; }
 <!-- STICKY DATE NAV — กล่องกว้างคงที่ วันที่ width คงที่กึ่งกลาง ปุ่มไม่ขยับ -->
 <!-- CONTENT -->
 <div class="content">
-  <div id="boardTab">
+  <div id="boardTab" style="display:none;">
     <div class="summary-cards" id="summaryCards"></div>
     <!-- Date nav bar — inline under summary cards -->
     <div id="stickyDateBox" style="
@@ -1489,7 +1489,7 @@ tr:last-child td { border-bottom: none; }
   <!-- CUSTOMER TAB -->
 
   <!-- ████████ ตะกร้า TAB ████████ -->
-  <div id="basketTab" style="display:none;padding:0 0 80px;margin:-14px -14px 0;">
+  <div id="basketTab" style="display:none;padding:0 0 80px;">
 
     <!-- MONTH SELECTOR -->
     <div style="background:#fff;border-bottom:1px solid #E7E5E4;padding:10px 14px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:90;">
@@ -1561,7 +1561,7 @@ tr:last-child td { border-bottom: none; }
   </div>
 
   <!-- ANALYTICS TAB -->
-  <div id="truckTab" style="display:none;padding-bottom:80px;margin:-14px -14px 0;">
+  <div id="truckTab" style="display:none;padding-bottom:80px;">
     <!-- search -->
     <div style="padding:10px 14px 4px;position:relative;">
       <span style="position:absolute;left:26px;top:50%;transform:translateY(-50%);font-size:14px;color:#A8A29E;pointer-events:none;">🔍</span>
@@ -4734,6 +4734,11 @@ function switchTab(tab) {
   const fab = document.getElementById("scanFab");
   if(fab) fab.style.display = tab==="board" ? "flex" : "none";
   // stickyDateBox is inside boardTab — no need to toggle separately
+  // Adjust content padding: board/unpaid/etc need padding, basket/truck use own padding
+  const contentEl = document.querySelector(".content");
+  if (contentEl) {
+    contentEl.style.padding = (tab === "basket" || tab === "truck") ? "0" : "14px 14px 60px";
+  }
 }
 const FRUIT_IMGS = {
   "อิดอ": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii01NSAtODAgMTEwIDExMCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIj4KICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjAiIHJ4PSI0MiIgcnk9IjM4IiBmaWxsPSIjQjg5MjRBIi8+CiAgPGVsbGlwc2UgY3g9Ii01IiBjeT0iLTUiIHJ4PSIzMiIgcnk9IjI4IiBmaWxsPSIjRDRBQTYwIi8+CiAgPGVsbGlwc2UgY3g9Ii05IiBjeT0iLTkiIHJ4PSIyMCIgcnk9IjE3IiBmaWxsPSIjRUREMDgwIi8+CiAgPGVsbGlwc2UgY3g9Ii00IiBjeT0iMyIgcng9IjgiIHJ5PSI3IiBmaWxsPSIjMUEwQzAwIiBvcGFjaXR5PSIwLjgiLz4KICA8ZWxsaXBzZSBjeD0iLTIiIGN5PSIxIiByeD0iMyIgcnk9IjMiIGZpbGw9IiM4QjY5MTQiIG9wYWNpdHk9IjAuNSIvPgogIDxwYXRoIGQ9Ik0wLC0zOCBRNiwtNTAgMTAsLTYwIiBzdHJva2U9IiM0QTdBMjAiIHN0cm9rZS13aWR0aD0iMi41IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8ZWxsaXBzZSBjeD0iMTMiIGN5PSItNjQiIHJ4PSIxMSIgcnk9IjYiIGZpbGw9IiM1QThBMzAiIHRyYW5zZm9ybT0icm90YXRlKC0yMCwxMywtNjQpIi8+CiAgPGVsbGlwc2UgY3g9IjQiIGN5PSItNjYiIHJ4PSI5IiByeT0iNSIgZmlsbD0iIzRBN0EyOCIgdHJhbnNmb3JtPSJyb3RhdGUoMTAsNCwtNjYpIi8+Cjwvc3ZnPg==",
