@@ -347,13 +347,13 @@ tr:last-child td { border-bottom: none; }
 
 /* ข้อ 9: Autocomplete dropdown */
 .name-autocomplete {
-  position:absolute;
+  position:fixed;
   z-index:9999;
   background:#fff;
   border:1.5px solid #E7E5E4;
   border-radius:10px;
   box-shadow:0 4px 16px rgba(0,0,0,.12);
-  max-height:180px;
+  max-height:220px;
   overflow-y:auto;
   width:100%;
   left:0;
@@ -775,10 +775,10 @@ tr:last-child td { border-bottom: none; }
   border-radius:20px; box-shadow:0 16px 48px rgba(0,0,0,0.2);
 }
 .bkm-summary { text-align:center; font-size:11px; color:#A8A29E; padding:2px 0 6px; flex-shrink:0; }
-.bka-col-head { display:grid; grid-template-columns:88px 1fr 56px 82px 28px; gap:4px; padding:0 14px 4px; flex-shrink:0; }
+.bka-col-head { display:grid; grid-template-columns:72px 1fr 48px 64px 28px; gap:4px; padding:0 14px 4px; flex-shrink:0; }
 .bka-col-head span { font-size:10px; font-weight:700; color:#A8A29E; }
 .bka-rows { overflow-y:auto; flex:1; padding:0 14px 4px; }
-.bka-row { display:grid; grid-template-columns:88px 1fr 56px 82px 28px; gap:4px; align-items:center; padding:5px 0; border-bottom:0.5px solid #F5F5F4; }
+.bka-row { display:grid; grid-template-columns:72px 1fr 48px 64px 28px; gap:4px; align-items:center; padding:5px 0; border-bottom:0.5px solid #F5F5F4; }
 .bka-inp { width:100%; padding:7px 8px; border-radius:8px; border:1.5px solid #E7E5E4; font-size:12px; outline:none; font-family:inherit; color:#1C1917; background:#fff; transition:border .12s; }
 .bka-inp:focus { border-color:#F59E0B; }
 .bka-num { text-align:right; }
@@ -1775,10 +1775,15 @@ db.ref("days").on("value", snap => { try {
   // เปิดหน้าบอร์ดเฉพาะครั้งแรกที่โหลด (ไม่ทำทุกครั้งที่ Firebase update)
   if (!window._appInitialized) {
     window._appInitialized = true;
-    if (activeTab !== "board") switchTab("board");
+    switchTab("board"); // แสดงหน้าบอร์ดเสมอตอน load ครั้งแรก
   }
   renderDayTabs(days);
-  if (activeTab==="board" && !openForm) renderBoard();
+  if (activeTab==="board" && !openForm) {
+    const _fbSY = window.scrollY || 0;
+    renderBoard();
+    window.scrollTo(0, _fbSY);
+    setTimeout(() => window.scrollTo(0, _fbSY), 50);
+  }
   if (activeTab==="unpaid")  renderUnpaid();
   if (activeTab==="summary") renderSummary();
   } catch(e) { console.error("Firebase listener error:", e); }
@@ -2473,7 +2478,12 @@ function renderBoard() {
                 row.style.padding   = "0";
                 row.style.margin    = "0";
               });
-              setTimeout(() => renderBoard(), 520);
+              const _scrollY = window.scrollY || 0;
+              setTimeout(() => {
+                renderBoard();
+                window.scrollTo(0, _scrollY);
+                setTimeout(() => window.scrollTo(0, _scrollY), 50);
+              }, 520);
             }, 2000);
 
           } else {
@@ -2845,15 +2855,21 @@ function renderUnpaid() {
       circle.addEventListener("click", (e) => {
         e.stopPropagation();
         const nextStatus = item.status==="ชำระแล้ว" ? "รอชำระ" : "ชำระแล้ว";
+        // จำ scroll position ก่อน
+        const _sy = window.scrollY || document.documentElement.scrollTop || 0;
         db.ref(`days/${d}/${grpKey}/${key}/status`).set(nextStatus).then(()=>{
           if(allDays[d]?.[grpKey]?.[key]) allDays[d][grpKey][key].status = nextStatus;
-          if(activeTab==="board") renderBoard();
-          // จำ scroll position ก่อน re-render
-          const _sy = window.scrollY || document.documentElement.scrollTop || 0;
-          renderUnpaid();
-          // restore ทันทีและหลัง 50ms เผื่อ iOS
-          window.scrollTo(0, _sy);
-          setTimeout(() => { window.scrollTo(0, _sy); }, 50);
+          if(activeTab==="board") {
+            renderBoard();
+            // restore scroll หลัง renderBoard
+            window.scrollTo(0, _sy);
+            setTimeout(() => { window.scrollTo(0, _sy); }, 50);
+          }
+          if(activeTab==="unpaid") {
+            renderUnpaid();
+            window.scrollTo(0, _sy);
+            setTimeout(() => { window.scrollTo(0, _sy); }, 50);
+          }
         });
       });
 
@@ -4563,12 +4579,12 @@ function bkaOnNameKey(e,id){
   if(dd){
     const f = dd.querySelector(".name-autocomplete-item");
     if(f){ f.dispatchEvent(new MouseEvent("mousedown",{bubbles:true})); return; }
-    // ซ่อน dropdown
     dd.remove();
   }
-  // ข้ามไปช่องถัดไป (จำนวนตะกร้า)
+  // ข้ามไปช่องจำนวนตะกร้าทันที
   const nxt = document.getElementById("bka-bk-"+id);
-  if(nxt){ nxt.focus(); nxt.scrollIntoView({behavior:"smooth",block:"nearest"}); }
+  if(nxt){ nxt.focus(); return; }
+  setTimeout(()=>{ const n2=document.getElementById("bka-bk-"+id); if(n2) n2.focus(); }, 60);
 }
 
 function bkaOnBkKey(e,id){
@@ -5500,20 +5516,7 @@ function showAutocomplete(inputEl) {
   dropdown.className = "name-autocomplete";
   dropdown.id = "nameAcDropdown";
 
-  // ข้อ 1: ตำแหน่ง — ตรวจว่าพื้นที่ด้านล่างพอหรือเปล่า
-  const inputRect = inputEl.getBoundingClientRect();
-  const spaceBelow = window.innerHeight - inputRect.bottom;
-  const dropH = Math.min(matches.length * 44, 180);
-  if (spaceBelow < dropH + 60) {
-    // พื้นที่ด้านล่างไม่พอ → เด้งขึ้นเหนือ
-    dropdown.style.bottom = (inputEl.offsetHeight + 5) + "px";
-    dropdown.style.top    = "auto";
-    dropdown.style.borderRadius = "10px 10px 10px 10px";
-  } else {
-    // เด้งลงด้านล่าง (ปกติ) พร้อม margin 5px
-    dropdown.style.top    = (inputEl.offsetHeight + 5) + "px";
-    dropdown.style.bottom = "auto";
-  }
+  // positioning handled after append below
 
   matches.forEach(([name, meta]) => {
     const item = document.createElement("div");
@@ -5545,7 +5548,23 @@ function showAutocomplete(inputEl) {
     dropdown.appendChild(item);
   });
 
-  inputEl.parentNode.appendChild(dropdown);
+  // append ที่ body พร้อม fixed position เพื่อทะลุ modal overflow
+  const iRect = inputEl.getBoundingClientRect();
+  dropdown.style.position = "fixed";
+  dropdown.style.left = iRect.left + "px";
+  dropdown.style.width = iRect.width + "px";
+  dropdown.style.top = "";
+  dropdown.style.bottom = "";
+  const spBelow2 = window.innerHeight - iRect.bottom;
+  const dh2 = Math.min(matches.length * 44, 220);
+  if (spBelow2 < dh2 + 20) {
+    dropdown.style.bottom = (window.innerHeight - iRect.top + 4) + "px";
+    dropdown.style.top = "auto";
+  } else {
+    dropdown.style.top = (iRect.bottom + 4) + "px";
+    dropdown.style.bottom = "auto";
+  }
+  document.body.appendChild(dropdown);
 }
 
 function removeAutocomplete() {
