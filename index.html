@@ -2922,16 +2922,30 @@ function renderUnpaidPerson(container) {
       <div class="upd-gh-arr">›</div>`;
     row.insertBefore(billBtn, row.querySelector(".upd-gh-arr"));
 
-    const body = document.createElement("div"); body.className = "upd-gh-body";
+    const bodyId = "upd-body-" + name.replace(/[^a-zA-Z0-9ก-๙]/g,"_");
+    const body = document.createElement("div"); body.className = "upd-gh-body"; body.id = bodyId;
     info.bills.forEach(({day,grpKey,key,item,group}) => {
       const it = document.createElement("div"); it.className = "upd-gh-item";
       const circle = document.createElement("div");
       circle.style.cssText = `width:22px;height:22px;border-radius:50%;border:2px solid ${grpColor};flex-shrink:0;cursor:pointer;`;
       circle.onclick = e => {
         e.stopPropagation();
+        // visual feedback ทันที ไม่รอ Firebase
+        circle.style.background = grpColor;
+        circle.style.opacity = "0.5";
         db.ref(`days/${day}/${grpKey}/${key}/status`).set("ชำระแล้ว").then(()=>{
           if(allDays[day]?.[grpKey]?.[key]) allDays[day][grpKey][key].status="ชำระแล้ว";
+          // จำ scroll + เปิดอยู่ body ไหนบ้าง
+          const _sy = window.scrollY || 0;
+          const openBodies = [...document.querySelectorAll(".upd-gh-body.show")].map(b=>b.id);
           renderUnpaid();
+          // restore open bodies
+          openBodies.forEach(bid=>{
+            const b = document.getElementById(bid);
+            if(b){ b.classList.add("show"); b.previousElementSibling?.classList.add("open"); }
+          });
+          window.scrollTo(0, _sy);
+          setTimeout(()=>window.scrollTo(0, _sy), 50);
         });
       };
       it.innerHTML = `<div class="upd-gh-item-date">${day}</div>
@@ -4532,10 +4546,16 @@ function bkaRenderRows(){
   area.innerHTML="";
   bkaRows.forEach(r=>{
     const div=document.createElement("div"); div.className="bka-row";
+    // แสดงวันที่เฉพาะวัน (dd)
+    const _dtDay = r.date ? r.date.split("-")[2] : "";
     div.innerHTML=`
-      <input class="bka-inp" id="bka-dt-${r.id}" type="date" value="${r.date}"
-        onchange="bkaRows.find(x=>x.id===${r.id}).date=this.value;bkaUpdateSummary();"
-        onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('bka-nm-${r.id}')?.focus();}">
+      <div style="position:relative;text-align:center;">
+        <input class="bka-inp" id="bka-dt-${r.id}" type="date" value="${r.date}"
+          onchange="bkaRows.find(x=>x.id===${r.id}).date=this.value;bkaUpdateSummary();bkaRefreshDayDisplay(${r.id});"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('bka-nm-${r.id}')?.focus();}"
+          style="position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2;">
+        <div id="bka-dt-disp-${r.id}" style="padding:7px 4px;border-radius:8px;border:1.5px solid #E7E5E4;font-size:13px;font-weight:700;color:#1C1917;background:#fff;text-align:center;cursor:pointer;position:relative;z-index:1;">${_dtDay||"วัน"}</div>
+      </div>
       <div style="position:relative;">
         <input class="bka-inp" id="bka-nm-${r.id}" placeholder="ชื่อ *" value="${r.name}" autocomplete="off"
           oninput="bkaOnName(${r.id},this)"
@@ -4557,6 +4577,13 @@ function bkaRenderRows(){
   bkaUpdateSummary();
 }
 
+function bkaRefreshDayDisplay(id) {
+  const r = bkaRows.find(x=>x.id===id); if(!r) return;
+  const day = r.date ? r.date.split("-")[2] : "";
+  const el = document.getElementById("bka-dt-disp-"+id);
+  if(el) el.textContent = day || "วัน";
+}
+
 function bkaOnStatus(id,el){
   const r=bkaRows.find(x=>x.id===id); if(!r) return;
   r.status=el.value; el.dataset.s=el.value;
@@ -4574,17 +4601,21 @@ function bkaOnName(id,el){
 function bkaOnNameKey(e,id){
   if(e.key!=="Enter") return;
   e.preventDefault();
-  // ถ้า dropdown เปิดอยู่ให้เลือก item แรก
+  e.stopPropagation(); // prevent setupAutocomplete's keydown from interfering
+  // select first autocomplete item if visible
   const dd = document.getElementById("nameAcDropdown");
   if(dd){
     const f = dd.querySelector(".name-autocomplete-item");
     if(f){ f.dispatchEvent(new MouseEvent("mousedown",{bubbles:true})); return; }
     dd.remove();
   }
-  // ข้ามไปช่องจำนวนตะกร้าทันที
-  const nxt = document.getElementById("bka-bk-"+id);
-  if(nxt){ nxt.focus(); return; }
-  setTimeout(()=>{ const n2=document.getElementById("bka-bk-"+id); if(n2) n2.focus(); }, 60);
+  // always jump to basket field
+  const jump = () => {
+    const nxt = document.getElementById("bka-bk-"+id);
+    if(nxt) { nxt.focus(); nxt.select?.(); }
+  };
+  jump();
+  setTimeout(jump, 80);
 }
 
 function bkaOnBkKey(e,id){
@@ -5555,15 +5586,9 @@ function showAutocomplete(inputEl) {
   dropdown.style.width = iRect.width + "px";
   dropdown.style.top = "";
   dropdown.style.bottom = "";
-  const spBelow2 = window.innerHeight - iRect.bottom;
-  const dh2 = Math.min(matches.length * 44, 220);
-  if (spBelow2 < dh2 + 20) {
-    dropdown.style.bottom = (window.innerHeight - iRect.top + 4) + "px";
-    dropdown.style.top = "auto";
-  } else {
-    dropdown.style.top = (iRect.bottom + 4) + "px";
-    dropdown.style.bottom = "auto";
-  }
+  // Always show below input (keyboard already raises modal on iOS)
+  dropdown.style.top = (iRect.bottom + 4) + "px";
+  dropdown.style.bottom = "auto";
   document.body.appendChild(dropdown);
 }
 
