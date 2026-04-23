@@ -6506,7 +6506,7 @@ function masShowDrop(id, el) {
   if(!matches.length) return;
   const drop = document.createElement("div");
   drop.id = "mas-drop-"+id;
-  drop.style.cssText = "position:absolute;top:calc(100% + 3px);left:0;right:0;background:#fff;border:1.5px solid #E7E5E4;border-radius:9px;box-shadow:0 4px 16px rgba(0,0,0,.1);max-height:140px;overflow-y:auto;z-index:700;";
+  drop.style.cssText = "position:fixed;background:#fff;border:1.5px solid #E7E5E4;border-radius:9px;box-shadow:0 4px 16px rgba(0,0,0,.1);overflow-y:auto;z-index:9999;";
   matches.forEach(([name, meta])=>{
     const autoGrp = masLastGrpByName[name] || meta.grp || masLastGrp;
     const grpLabels = {credit:"เชื่อ",transfer:"หน้าร้าน",fence:"รั้ว",delivery:"จัดส่ง"};
@@ -6533,7 +6533,14 @@ function masShowDrop(id, el) {
     });
     drop.appendChild(item);
   });
-  el.parentNode.appendChild(drop);
+  // append ที่ body ด้วย fixed position เพื่อทะลุ modal overflow/stacking context
+  const rect = el.getBoundingClientRect();
+  drop.style.left = rect.left + "px";
+  drop.style.width = rect.width + "px";
+  const topPos = rect.bottom + 3;
+  drop.style.top = topPos + "px";
+  drop.style.maxHeight = (window.innerHeight - topPos - 8) + "px";
+  document.body.appendChild(drop);
 }
 
 function masRemoveAllDrops() {
