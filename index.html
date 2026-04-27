@@ -110,6 +110,11 @@ body, .group-card, .summary-card, .cust-card, .tc, .an-kpi-card, .item-row, .gro
   background: var(--bg-subtle) !important;
 }
 [data-theme="dark"] .item-row { border-top-color: rgba(255,255,255,0.05) !important; }
+/* Group pill tags in dark mode — slightly stronger bg for legibility */
+[data-theme="dark"] .group-card.group-credit .group-tag-pill { background: rgba(167,139,250,0.18); color: #C4B5FD; }
+[data-theme="dark"] .group-card.group-transfer .group-tag-pill { background: rgba(56,189,248,0.18); color: #7DD3FC; }
+[data-theme="dark"] .group-card.group-fence .group-tag-pill { background: rgba(74,222,128,0.18); color: #86EFAC; }
+[data-theme="dark"] .group-card.group-delivery .group-tag-pill { background: rgba(251,191,36,0.18); color: #FCD34D; }
 [data-theme="dark"] .item-name,
 [data-theme="dark"] .gc-name,
 [data-theme="dark"] .group-total-text,
@@ -747,10 +752,30 @@ body.tab-board .edge-handle.active { opacity: 1 !important; }
 
 /* GROUP GRID */
 .groups-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.group-card { background: #fff; border-radius: 18px; overflow: hidden; border: none; box-shadow: 0 1px 2px rgba(0,0,0,0.03); transition: all 0.3s ease-out; }
+.group-card {
+  background: #fff;
+  border-radius: 18px;
+  overflow: hidden;
+  border: none;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  transition: all 0.3s ease-out;
+  position: relative;
+}
 .group-card:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
 
-/* Apple-style header: white bg with accent dot tag */
+/* OPTION C: Top color bar — 4px strip indicating group */
+.group-card::before {
+  content: "";
+  display: block;
+  height: 4px;
+  width: 100%;
+}
+.group-card.group-credit::before { background: var(--c-credit); }
+.group-card.group-transfer::before { background: var(--c-transfer); }
+.group-card.group-fence::before { background: var(--c-fence); }
+.group-card.group-delivery::before { background: var(--c-delivery); }
+
+/* Apple-style header: white bg with pill tag */
 .group-header {
   padding: 10px 14px 9px;
   display: flex;
@@ -759,16 +784,25 @@ body.tab-board .edge-handle.active { opacity: 1 !important; }
   background: #fff;
   border-bottom: 1px solid rgba(0,0,0,0.04);
 }
-.group-tag-wrap {
+
+/* OPTION C: Pill-style tag with subtle bg + dot */
+.group-tag-pill {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
+  padding: 3px 9px 3px 7px;
+  border-radius: 99px;
+  font-size: 11.5px;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  margin-bottom: 2px;
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+  white-space: nowrap;
 }
+.group-card.group-credit .group-tag-pill { background: rgba(124,58,237,0.1); color: var(--c-credit); }
+.group-card.group-transfer .group-tag-pill { background: rgba(3,105,161,0.1); color: var(--c-transfer); }
+.group-card.group-fence .group-tag-pill { background: rgba(21,128,61,0.1); color: var(--c-fence); }
+.group-card.group-delivery .group-tag-pill { background: rgba(180,83,9,0.1); color: var(--c-delivery); }
+
 .group-tag-dot {
   width: 6px;
   height: 6px;
@@ -868,8 +902,8 @@ tr:last-child td { border-bottom: none; }
   }
   .group-card { padding: 0 !important; }
   .group-header { padding: 6px 8px !important; }
-  .group-header .group-tag { font-size: 12px !important; }
-  .group-header .group-label { font-size: 10px !important; }
+  .group-header .group-tag-pill { font-size: 11px !important; padding: 2px 7px 2px 5px !important; }
+  .group-header .group-name { font-size: 10px !important; }
   .group-total-text { font-size: 12px !important; }
   .group-count { font-size: 9px !important; }
   .item-row { position: relative; overflow: hidden; padding: 5px 6px !important; gap: 4px !important; }
@@ -3472,7 +3506,7 @@ function renderBoard() {
     const gPaid = arr.filter(([,c])=>c.status==="ชำระแล้ว").length;
 
     const div = document.createElement("div");
-    div.className = "group-card";
+    div.className = "group-card group-" + g.key;
     // ถ้าทุกรายการชำระครบ → เปลี่ยนพื้นหลัง card
     const allGroupPaid = arr.length === 0 || (arr.length > 0 && gPaid === arr.length);
     if (allGroupPaid) {
@@ -3480,11 +3514,11 @@ function renderBoard() {
       div.style.boxShadow = "0 1px 2px rgba(34,197,94,0.12), inset 0 0 0 1px rgba(34,197,94,0.18)";
     }
 
-    // header — Apple-style: white bg + accent dot tag (no solid color header)
+    // header — Apple-style with pill tag (Option C)
     const hdr = document.createElement("div");
     hdr.className = "group-header";
     hdr.innerHTML = `<div style="min-width:0;flex:1;">
-      <div class="group-tag-wrap" style="color:${g.accent};"><span class="group-tag-dot"></span>${g.label}</div>
+      <div class="group-tag-pill"><span class="group-tag-dot"></span>${g.label}</div>
       <div class="group-name">${arr.length} รายการ</div>
     </div>
     <div style="text-align:right;flex-shrink:0;"><div class="group-total-text">${fmt(gTot)}</div><div class="group-count">${gPaid}/${arr.length} ชำระแล้ว</div></div>`;
@@ -4517,24 +4551,58 @@ function renderBillItems(bills) {
             SX.tapNeg();
             showToast(`คืนสถานะ — ${day}`, "info", 1400);
           }
-          // refresh หน้าต่างพื้นหลัง (ไม่สลับแท็บ)
+          // refresh background tabs (ไม่ render bill modal ทันที)
           if (activeTab==="board")   renderBoard();
           if (activeTab==="unpaid")  renderUnpaid();
-          // refresh bill modal — จำ scroll position ไว้
+          // ── REFRESH BILL MODAL IN-PLACE (ไม่ปิด-เปิดใหม่ → scroll ไม่กระเด้ง) ──
           const _bn = document.getElementById("billCustomerName")?.textContent;
           const _modal = document.getElementById("billModal");
-          const _scrollY = _modal ? _modal.scrollTop : 0;
-          if (_bn) {
-            // ใช้ skip animation flag เพื่อไม่ให้ modal ปิด-เปิดสะดุด
-            window._billSkipAnim = true;
-            closeBillModal();
-            setTimeout(() => {
-              openBillModal(_bn, null);
-              setTimeout(() => { if(_modal) _modal.scrollTop = _scrollY; }, 50);
-              window._billSkipAnim = false;
-            }, 50);
+          if (_bn && _modal && _modal.style.display !== "none") {
+            const _scrollY = _modal.scrollTop;
+            // recompute bills (อ่านใหม่จาก allDays + allClosed แต่ filter เฉพาะที่ยัง "รอชำระ")
+            const newBills = [];
+            const sortedDays2 = Object.keys(allDays).sort((a,b)=>{
+              const pa=parseDayKey(a), pb=parseDayKey(b);
+              if(!pa||!pb) return 0;
+              return new Date(pa.year,pa.month-1,pa.day)-new Date(pb.year,pb.month-1,pb.day);
+            });
+            sortedDays2.forEach(d => {
+              const dayData = allDays[d] || {};
+              GROUPS.forEach(gg => {
+                Object.entries(dayData[gg.key]||{}).forEach(([kk, item]) => {
+                  if (item && item.name === _bn && item.status === "รอชำระ") {
+                    newBills.push({ day: d, group: gg, key: kk, item });
+                  }
+                });
+              });
+            });
+            _billAllBills = newBills;
+            // ถ้าไม่มี bills เหลือ → ปิด modal เลย
+            if (newBills.length === 0) {
+              setTimeout(() => closeBillModal(), 250);
+              return;
+            }
+            // re-render รายการตาม month filter ปัจจุบัน
+            const sel = document.getElementById("billMonthFilter");
+            const mk  = sel ? sel.value : "all";
+            const filteredBills = mk==="all" ? newBills : newBills.filter(({day:dd})=>{
+              const p=parseDayKey(dd); if(!p) return false;
+              return `${p.year+543}-${p.month}`===mk;
+            });
+            const THAI_M = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+            const suffix = mk==="all" ? `${newBills.length} รายการ` : (() => {
+              const [y,m] = mk.split("-");
+              return `${THAI_M[+m-1]} ${y} · ${filteredBills.length} รายการ`;
+            })();
+            const lblEl = document.getElementById("billGroupLabel");
+            if (lblEl) lblEl.textContent = suffix;
+            renderBillItems(filteredBills);
+            renderDeducts(filteredBills.reduce((s,b)=>s+(b.item.amount||0),0));
+            // restore scroll ทันทีในเฟรมเดียวกัน → ไม่กระเด้ง
+            requestAnimationFrame(() => { _modal.scrollTop = _scrollY; });
+          } else {
+            payBtn.disabled = false;
           }
-          else { payBtn.disabled = false; }
         }).catch(() => {
           payBtn.disabled = false;
           showToast("บันทึกไม่ได้ — เครือข่ายขาด", "error");
@@ -6714,6 +6782,8 @@ function setupAutocomplete(inputEl) {
 
 function showAutocomplete(inputEl) {
   removeAutocomplete();
+  // Track active input for reposition (used when keyboard opens/closes)
+  window._acActiveInput = inputEl;
   const q = inputEl.value.trim().toLowerCase();
   if (!q) return;
 
@@ -6777,23 +6847,83 @@ function showAutocomplete(inputEl) {
     dropdown.appendChild(item);
   });
 
-  // append ที่ body พร้อม fixed position เพื่อทะลุ modal overflow
+  // ── SMART POSITIONING: auto-flip up/down based on available space ──
   const iRect = inputEl.getBoundingClientRect();
+  // viewport visible height (visualViewport accounts for iOS keyboard)
+  const vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+  const vTop = (window.visualViewport && window.visualViewport.offsetTop) || 0;
+  const visibleBottom = vTop + vh;
+
+  const SPACING = 4;
+  const MAX_DROPDOWN_H = 220;   // matches CSS max-height
+  const MIN_USABLE_H = 80;      // minimum space to consider direction usable
+
+  const spaceBelow = visibleBottom - iRect.bottom - SPACING;
+  const spaceAbove = iRect.top - vTop - SPACING;
+
   dropdown.style.position = "fixed";
   dropdown.style.left = iRect.left + "px";
   dropdown.style.width = iRect.width + "px";
-  dropdown.style.top = "";
-  dropdown.style.bottom = "";
-  // Always show below input (keyboard already raises modal on iOS)
-  dropdown.style.top = (iRect.bottom + 4) + "px";
-  dropdown.style.bottom = "auto";
+
+  // Decide direction: prefer below if it fits; otherwise flip up
+  const showBelow = spaceBelow >= MIN_USABLE_H || spaceBelow >= spaceAbove;
+
+  if (showBelow) {
+    // Show below — cap height by available space
+    const maxH = Math.min(MAX_DROPDOWN_H, Math.max(MIN_USABLE_H, spaceBelow));
+    dropdown.style.top = (iRect.bottom + SPACING) + "px";
+    dropdown.style.bottom = "auto";
+    dropdown.style.maxHeight = maxH + "px";
+  } else {
+    // Flip up — anchor by bottom so it sits above input
+    const maxH = Math.min(MAX_DROPDOWN_H, Math.max(MIN_USABLE_H, spaceAbove));
+    dropdown.style.bottom = (vh + vTop - iRect.top + SPACING) + "px";
+    dropdown.style.top = "auto";
+    dropdown.style.maxHeight = maxH + "px";
+  }
   document.body.appendChild(dropdown);
 }
 
 function removeAutocomplete() {
   const el = document.getElementById("nameAcDropdown");
   if (el) el.remove();
+  window._acActiveInput = null;
 }
+
+// Reposition dropdown when keyboard opens/closes (visualViewport resizes)
+(function setupAcViewportListener() {
+  if (!window.visualViewport) return;
+  let _t = null;
+  const reposition = () => {
+    const dd = document.getElementById("nameAcDropdown");
+    const inp = window._acActiveInput;
+    if (!dd || !inp || !document.body.contains(inp)) return;
+    const iRect = inp.getBoundingClientRect();
+    const vh = window.visualViewport.height;
+    const vTop = window.visualViewport.offsetTop;
+    const visibleBottom = vTop + vh;
+    const SPACING = 4, MAX_H = 220, MIN_H = 80;
+    const spaceBelow = visibleBottom - iRect.bottom - SPACING;
+    const spaceAbove = iRect.top - vTop - SPACING;
+    dd.style.left = iRect.left + "px";
+    dd.style.width = iRect.width + "px";
+    if (spaceBelow >= MIN_H || spaceBelow >= spaceAbove) {
+      dd.style.top = (iRect.bottom + SPACING) + "px";
+      dd.style.bottom = "auto";
+      dd.style.maxHeight = Math.min(MAX_H, Math.max(MIN_H, spaceBelow)) + "px";
+    } else {
+      dd.style.bottom = (vh + vTop - iRect.top + SPACING) + "px";
+      dd.style.top = "auto";
+      dd.style.maxHeight = Math.min(MAX_H, Math.max(MIN_H, spaceAbove)) + "px";
+    }
+  };
+  const onViewport = () => {
+    if (_t) clearTimeout(_t);
+    _t = setTimeout(reposition, 50);
+  };
+  window.visualViewport.addEventListener("resize", onViewport);
+  window.visualViewport.addEventListener("scroll", onViewport);
+})();
 
 // ── ข้อ 15: Swipe sensitivity tuning ─────────────────────────────
 
