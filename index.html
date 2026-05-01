@@ -1492,15 +1492,15 @@ tr:last-child td { border-bottom: none; }
 .upd-card[data-grp="transfer"] .upd-amt { color: #0C4A6E; }
 .upd-card[data-grp="fence"]    .upd-amt { color: #14532D; }
 .upd-card[data-grp="delivery"] .upd-amt { color: #78350F; }
-/* Selected state — green outline + glow */
+/* Selected state — ORANGE (distinct from green "paid") */
 .upd-card.selected {
-  outline: 2.5px solid #22C55E;
+  outline: 2.5px solid #F59E0B;
   outline-offset: -2px;
-  box-shadow: 0 0 0 4px rgba(34,197,94,0.18);
+  box-shadow: 0 0 0 4px rgba(245,158,11,0.18);
 }
 .upd-card.selected .upd-circle {
-  background: #22C55E;
-  border-color: #22C55E;
+  background: #F59E0B;
+  border-color: #F59E0B;
 }
 .upd-card.selected .upd-circle::after {
   content:""; width:7px; height:7px;
@@ -1545,7 +1545,7 @@ tr:last-child td { border-bottom: none; }
   width:14px;
   height:14px;
   border-radius:50%;
-  border:1.5px solid #22C55E;
+  border:1.5px solid rgba(0,0,0,0.25);
   background:transparent;
   cursor:pointer;
   display:flex;
@@ -4365,10 +4365,13 @@ function updToggleCell(cellId, ctx) {
   } else {
     window._updSelected.set(cellId, ctx);
   }
-  // toggle DOM
-  const card = document.querySelector(`.upd-card[data-cellid="${cellId}"]`);
-  if (card) card.classList.toggle("selected", window._updSelected.has(cellId));
-  updUpdatePayBar();
+  // V3: re-render to apply sort (selected → bottom)
+  // capture scroll for restore
+  const _sy = window.scrollY || document.documentElement.scrollTop || 0;
+  if (typeof renderUnpaid === "function") renderUnpaid();
+  // restore scroll position
+  window.scrollTo(0, _sy);
+  setTimeout(() => window.scrollTo(0, _sy), 30);
   if (typeof hap === "function") hap(8);
 }
 
@@ -4407,10 +4410,11 @@ function updPaySelected() {
   sel.forEach(ctx => total += (ctx.item?.amount || 0));
   const count = sel.size;
 
-  // Confirmation rule
-  if (count >= 5 || total >= 10000) {
-    if (!confirm(`ยืนยันจ่าย ${count} บิล รวม ${fmt(total)} บาท?`)) return;
-  }
+  // V3: Always confirm before paying (prevent accidental payment)
+  const confirmMsg = count === 1
+    ? `ยืนยันจ่าย "${[...sel.values()][0].item.name}" ${fmt(total)} บาท?`
+    : `ยืนยันจ่าย ${count} บิล รวม ${fmt(total)} บาท?`;
+  if (!confirm(confirmMsg)) return;
 
   // batch update
   const updates = {};
@@ -4538,7 +4542,20 @@ function renderUnpaid() {
     const grid = document.createElement("div");
     grid.className = "upd-grid";
 
-    entries.forEach(({day:d, grpKey, key, item, group}) => {
+    // V3: Sort within day — เลือกแล้วไปท้าย, group ตามประเภท, แล้วชื่อ
+    const grpOrder = {credit:0, transfer:1, fence:2, delivery:3};
+    const sortedEntries = [...entries].sort((a, b) => {
+      const aSel = window._updSelected && window._updSelected.has(a.day+"::"+a.grpKey+"::"+a.key) ? 1 : 0;
+      const bSel = window._updSelected && window._updSelected.has(b.day+"::"+b.grpKey+"::"+b.key) ? 1 : 0;
+      if (aSel !== bSel) return aSel - bSel;  // unselected first, selected last
+      // group by category
+      const gDiff = (grpOrder[a.grpKey]??9) - (grpOrder[b.grpKey]??9);
+      if (gDiff !== 0) return gDiff;
+      // sort by name (Thai-aware)
+      return (a.item.name||"").localeCompare(b.item.name||"", "th", {sensitivity:"base"});
+    });
+
+    sortedEntries.forEach(({day:d, grpKey, key, item, group}) => {
       const count = nameCount[item.name]||1;
       const card = document.createElement("div");
       card.className = "upd-card";
@@ -5918,8 +5935,9 @@ function bkPersonOptions(type, id, idx) {
       </div>
       <div style="display:flex;flex-direction:column;gap:0;">
         <button onclick="bkEditPersonInline('${type}','${id}');document.getElementById('bkPersonOptModal').remove();"
-          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;">
-          ✏️ แก้ไขชื่อ
+          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;display:inline-flex;align-items:center;gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          แก้ไขชื่อ
         </button>
         <button onclick="bkMovePerson('${type}','${i}',-1);document.getElementById('bkPersonOptModal').remove();"
           style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;${i===0?'opacity:.3;pointer-events:none;':''}">
@@ -6914,7 +6932,7 @@ function cmOpenDetail(id) {
       <div class="cd-stat"><div class="cd-stat-label">ตะกร้า</div><div class="cd-stat-val">${baskets||"-"}</div></div>
       <div class="cd-stat"><div class="cd-stat-label">ความถี่</div><div class="cd-stat-val" style="font-size:13px;padding-top:3px;">${freq}</div></div>
     </div>
-    ${c.phone?`<div class="cd-row"><span class="cd-key">โทร</span><a href="tel:${c.phone}" style="background:#DCFCE7;color:#166534;padding:5px 14px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;">📞 ${c.phone}</a></div>`:""}
+    ${c.phone?`<div class="cd-row"><span class="cd-key">โทร</span><a href="tel:${c.phone}" style="background:#DCFCE7;color:#166534;padding:5px 14px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:5px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${c.phone}</a></div>`:""}
     ${c.lineId?`<div class="cd-row"><span class="cd-key">Line</span><span style="font-weight:600;">${c.lineId}</span></div>`:""}
     ${c.address?`<div class="cd-row"><span class="cd-key">ที่อยู่</span><span style="font-weight:600;text-align:right;max-width:60%;">${c.address}</span></div>`:""}
     ${c.custType?`<div class="cd-row"><span class="cd-key">ประเภท</span><span class="cd-chip" style="background:#EFF6FF;color:#0369A1;">${c.custType}</span></div>`:""}
@@ -6951,7 +6969,7 @@ function cmOpenAddForm() {
 function cmOpenEditForm(id) {
   cmEditingId=id;
   const c=cmCustomers[id]||{};
-  const t=document.getElementById("cmFormTitle"); if(t) t.textContent="✏️ แก้ไข: "+c.name;
+  const t=document.getElementById("cmFormTitle"); if(t) t.textContent="แก้ไข: "+c.name;
   const d=document.getElementById("cmDelBtn"); if(d) d.style.display="block";
   cmClearForm();
   const fields={cmName:c.name,cmPhone:c.phone,cmLine:c.lineId,cmAddr:c.address,cmNote:c.note};
@@ -7417,11 +7435,11 @@ function editItemUpdateCustBtn() {
 
   btn.style.display = "block";
   if (_editItemFoundCust) {
-    btn.textContent = "✏️ แก้ไขรายชื่อ";
+    btn.textContent = "แก้ไขรายชื่อ";
     btn.style.background = "#F0FDF4";
     btn.style.color = "#166534";
   } else {
-    btn.textContent = "👤 เพิ่มเพื่อน";
+    btn.textContent = "เพิ่มเพื่อน";
     btn.style.background = "#EFF6FF";
     btn.style.color = "#0369A1";
   }
@@ -7685,6 +7703,9 @@ function revertItemToPending() {
     // refresh board
     if (activeTab==="board") renderBoard();
     if (activeTab==="unpaid") renderUnpaid();
+  }).catch(e => {
+    if (typeof showToast === "function") showToast("ไม่สามารถเปลี่ยนสถานะได้", "error");
+    else alert("ผิดพลาด: " + e.message);
   });
 }
 
@@ -8726,9 +8747,9 @@ function openBoardSearch() {
   const box = document.createElement("div");
   box.className = "board-search-expanded";
   box.id = "boardSearchBox";
-  box.innerHTML = `<span style="font-size:13px;color:#78716C;">🔍</span>
+  box.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#78716C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <input id="boardSearchInp" placeholder="ค้นหาชื่อ..." autocomplete="off">
-    <button class="board-search-clear" onclick="closeBoardSearch()">✕</button>`;
+    <button class="board-search-clear" onclick="closeBoardSearch()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`;
   wrap.appendChild(box);
   setTimeout(() => { const inp = document.getElementById("boardSearchInp"); if(inp){ inp.focus(); inp.addEventListener("input", () => boardSearchQuery(inp.value)); } }, 30);
 
@@ -9601,13 +9622,13 @@ setTimeout(() => setBodyTabClass(activeTab || "board"), 50);
     <div class="upd-ctx-head-sub"  id="updCtxDay"></div>
   </div>
   <button class="upd-ctx-item" id="updCtxBill" onclick="updCtxAction('bill')">
-    <span class="upd-ctx-icon">🧾</span><span>รวมบิล</span>
+    <span class="upd-ctx-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8M16 17H8M10 9H8"/></svg></span><span>รวมบิล</span>
   </button>
   <button class="upd-ctx-item" id="updCtxGo" onclick="updCtxAction('go')">
-    <span class="upd-ctx-icon">📅</span><span>ไปยังหน้า</span>
+    <span class="upd-ctx-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span>ไปยังหน้า</span>
   </button>
   <button class="upd-ctx-item" id="updCtxEdit" onclick="updCtxAction('edit')">
-    <span class="upd-ctx-icon">✏️</span><span>แก้ไข</span>
+    <span class="upd-ctx-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span><span>แก้ไข</span>
   </button>
 </div>
 
@@ -9629,7 +9650,7 @@ setTimeout(() => setBodyTabClass(activeTab || "board"), 50);
     <div class="bka-rows" id="bkaRows"></div>
     <div class="bkm-foot">
       <button class="bkm-cancel" onclick="bkCloseAddModal()">ยกเลิก</button>
-      <button class="bkm-save" onclick="bkDoSaveAll()">💾 บันทึกทั้งหมด</button>
+      <button class="bkm-save" onclick="bkDoSaveAll()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:5px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>บันทึกทั้งหมด</button>
     </div>
   </div>
 </div>
@@ -9646,7 +9667,7 @@ setTimeout(() => setBodyTabClass(activeTab || "board"), 50);
     <div class="mas-rows" id="masRows"></div>
     <div class="mas-foot">
       <button class="mas-cancel" onclick="closeMultiAdd()">ยกเลิก</button>
-      <button class="mas-save" onclick="masDoSave()">💾 บันทึกทั้งหมด</button>
+      <button class="mas-save" onclick="masDoSave()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:5px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>บันทึกทั้งหมด</button>
     </div>
   </div>
 </div>
@@ -9704,7 +9725,7 @@ setTimeout(() => setBodyTabClass(activeTab || "board"), 50);
     <div class="tmfoot">
       <button id="btnTruckDel" onclick="truckDelete()" style="flex:1;padding:11px;border-radius:10px;border:1.5px solid #FCA5A5;background:#FEF2F2;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;color:#991B1B;display:none;">🗑 ลบ</button>
       <button onclick="truckCloseModal()" style="flex:1;padding:11px;border-radius:10px;border:1.5px solid transparent;background:#F5F5F4;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;color:#78716C;">ยกเลิก</button>
-      <button onclick="truckSaveModal()" style="flex:2;padding:11px;border-radius:10px;border:none;background:#1C1917;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">💾 บันทึก</button>
+      <button onclick="truckSaveModal()" style="flex:2;padding:11px;border-radius:10px;border:none;background:#1C1917;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>บันทึก</button>
     </div>
   </div>
 </div>
