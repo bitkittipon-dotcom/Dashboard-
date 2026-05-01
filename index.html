@@ -91,6 +91,10 @@ body, .group-card, .summary-card, .cust-card, .tc, .an-kpi-card, .item-row, .gro
 
 /* Loading spinner keyframe */
 @keyframes spin { to { transform: rotate(360deg); } }
+@keyframes deductFormSlide {
+  from { opacity: 0; transform: translateY(-8px); max-height: 0; }
+  to { opacity: 1; transform: translateY(0); max-height: 200px; }
+}
 
 /* ─── DARK MODE: override hardcoded colors ─── */
 [data-theme="dark"] body { background: var(--bg-page); color: var(--text-primary); }
@@ -802,8 +806,8 @@ body.tab-board .edge-handle.active { opacity: 1 !important; }
   gap: 5px;
   padding: 3px 9px 3px 7px;
   border-radius: 99px;
-  font-size: 11.5px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   letter-spacing: -0.01em;
   margin-bottom: 4px;
   white-space: nowrap;
@@ -830,16 +834,16 @@ body.tab-board .edge-handle.active { opacity: 1 !important; }
 .group-pos { color: var(--text-tertiary); font-size: 11px; }
 .group-total-text {
   color: var(--text-primary);
-  font-weight: 600;
-  font-size: 20px;
+  font-weight: 700;
+  font-size: 14px;
   text-align: right;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.015em;
   font-variant-numeric: tabular-nums;
-  line-height: 1;
+  line-height: 1.2;
 }
 .group-count {
   color: var(--text-quaternary);
-  font-size: 10.5px;
+  font-size: 11px;
   text-align: right;
   margin-top: 3px;
   font-weight: 500;
@@ -1459,33 +1463,49 @@ tr:last-child td { border-bottom: none; }
   letter-spacing: 0.02em;
 }
 .upd-grid { display:grid; grid-template-columns:1fr 1fr; gap:4px 8px; padding:4px 10px; }
-/* V3: White card + colored text (Option E) */
+/* V3: Solid Tint by group (Option C) — colored bg in cell */
 .upd-card {
   border-radius:8px;
-  padding:6px 8px;
+  padding:7px 9px;
   display:flex;
   align-items:center;
   gap:6px;
   overflow:hidden;
   cursor:pointer;
-  background:#fff;
-  border:1px solid #F5F5F4;
+  border:none;
+  position:relative;
   -webkit-tap-highlight-color:transparent;
   transition: all .2s cubic-bezier(.34,1.56,.64,1);
 }
-.upd-card:active { transform: scale(0.97); }
-.upd-card[data-grp="credit"]   .upd-name { color:#7C3AED; }
-.upd-card[data-grp="transfer"] .upd-name { color:#075985; }
-.upd-card[data-grp="delivery"] .upd-name { color:#9A3412; }
-.upd-card[data-grp="fence"]    .upd-name { color:#15803D; }
-.upd-badge {
-  font-size:9px;
-  font-weight:700;
-  color:#A8A29E;
-  flex-shrink:0;
-  width:14px;
-  text-align:right;
-  font-variant-numeric: tabular-nums;
+.upd-card:active { transform: scale(0.96); }
+.upd-card[data-grp="credit"]   { background: #EDE9FE; }
+.upd-card[data-grp="transfer"] { background: #DBEAFE; }
+.upd-card[data-grp="fence"]    { background: #D1FAE5; }
+.upd-card[data-grp="delivery"] { background: #FED7AA; }
+/* Name: darker shade of group */
+.upd-card[data-grp="credit"]   .upd-name { color: #5B21B6; }
+.upd-card[data-grp="transfer"] .upd-name { color: #075985; }
+.upd-card[data-grp="fence"]    .upd-name { color: #14532D; }
+.upd-card[data-grp="delivery"] .upd-name { color: #7C2D12; }
+/* Amount: even darker */
+.upd-card[data-grp="credit"]   .upd-amt { color: #4C1D95; }
+.upd-card[data-grp="transfer"] .upd-amt { color: #0C4A6E; }
+.upd-card[data-grp="fence"]    .upd-amt { color: #14532D; }
+.upd-card[data-grp="delivery"] .upd-amt { color: #78350F; }
+/* Selected state — green outline + glow */
+.upd-card.selected {
+  outline: 2.5px solid #22C55E;
+  outline-offset: -2px;
+  box-shadow: 0 0 0 4px rgba(34,197,94,0.18);
+}
+.upd-card.selected .upd-circle {
+  background: #22C55E;
+  border-color: #22C55E;
+}
+.upd-card.selected .upd-circle::after {
+  content:""; width:7px; height:7px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>");
+  background-size:contain; background-repeat:no-repeat;
 }
 .upd-name {
   flex:1;
@@ -1497,10 +1517,25 @@ tr:last-child td { border-bottom: none; }
   min-width:0;
   letter-spacing: -0.01em;
 }
+.upd-bc {
+  font-size:10px;
+  color:rgba(0,0,0,0.4);
+  font-weight:700;
+  margin-left:2px;
+  font-variant-numeric: tabular-nums;
+}
+.upd-badge {
+  font-size:9px;
+  font-weight:700;
+  color:#A8A29E;
+  flex-shrink:0;
+  width:14px;
+  text-align:right;
+  font-variant-numeric: tabular-nums;
+}
 .upd-amt {
   font-size:12.5px;
   font-weight:700;
-  color:#1C1917;
   flex-shrink:0;
   white-space:nowrap;
   font-variant-numeric: tabular-nums;
@@ -1519,18 +1554,85 @@ tr:last-child td { border-bottom: none; }
   -webkit-tap-highlight-color:transparent;
   transition: all .2s cubic-bezier(.34,1.56,.64,1);
 }
-.upd-circle:active { transform: scale(0.85); }
-.upd-circle.paid { background:#22C55E; border-color:#22C55E; }
-.upd-circle.paid::after { content:""; width:7px; height:7px; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>"); background-size:contain; background-repeat:no-repeat; }
 
-/* Dark mode: white card → bg-card */
-[data-theme="dark"] .upd-card { background: var(--bg-card); border-color: rgba(255,255,255,0.06); }
+/* V3: Floating pill pay bar */
+.upd-paybar {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  background: #16A34A;
+  border-radius: 99px;
+  padding: 11px 14px 11px 12px;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 8px 24px rgba(22,163,74,0.4), 0 2px 6px rgba(0,0,0,0.1);
+  z-index: 100;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: inherit;
+}
+.upd-paybar.show { display: flex; animation: updBarSlideUp 0.35s cubic-bezier(.34,1.56,.64,1); }
+@keyframes updBarSlideUp { from { transform: translateY(150%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.upd-paybar-count {
+  width: 32px; height: 32px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.upd-paybar-text {
+  flex: 1;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.upd-paybar-amt {
+  font-variant-numeric: tabular-nums;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+}
+.upd-paybar-clear {
+  width: 32px; height: 32px;
+  background: rgba(255,255,255,0.18);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-tap-highlight-color:transparent;
+  transition: all .2s cubic-bezier(.34,1.56,.64,1);
+}
+.upd-paybar-clear:active { transform: scale(0.85); background: rgba(255,255,255,0.3); }
+
+/* Dark mode */
+[data-theme="dark"] .upd-card[data-grp="credit"]   { background: rgba(167,139,250,0.18); }
+[data-theme="dark"] .upd-card[data-grp="transfer"] { background: rgba(56,189,248,0.18); }
+[data-theme="dark"] .upd-card[data-grp="fence"]    { background: rgba(74,222,128,0.18); }
+[data-theme="dark"] .upd-card[data-grp="delivery"] { background: rgba(251,191,36,0.18); }
 [data-theme="dark"] .upd-card[data-grp="credit"]   .upd-name { color: #C4B5FD; }
 [data-theme="dark"] .upd-card[data-grp="transfer"] .upd-name { color: #7DD3FC; }
-[data-theme="dark"] .upd-card[data-grp="delivery"] .upd-name { color: #FDBA74; }
 [data-theme="dark"] .upd-card[data-grp="fence"]    .upd-name { color: #86EFAC; }
-[data-theme="dark"] .upd-amt { color: var(--text-primary); }
-[data-theme="dark"] .upd-badge { color: var(--text-quaternary); }
+[data-theme="dark"] .upd-card[data-grp="delivery"] .upd-name { color: #FCD34D; }
+[data-theme="dark"] .upd-card[data-grp="credit"]   .upd-amt { color: #DDD6FE; }
+[data-theme="dark"] .upd-card[data-grp="transfer"] .upd-amt { color: #BAE6FD; }
+[data-theme="dark"] .upd-card[data-grp="fence"]    .upd-amt { color: #BBF7D0; }
+[data-theme="dark"] .upd-card[data-grp="delivery"] .upd-amt { color: #FDE68A; }
+[data-theme="dark"] .upd-bc { color: rgba(255,255,255,0.45); }
 [data-theme="dark"] .upd-date-label { color: var(--text-tertiary); }
 
 /* Context menu */
@@ -2267,21 +2369,33 @@ tr:last-child td { border-bottom: none; }
 
     <!-- Deduct Section -->
     <div style="padding:14px 16px 8px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <div style="font-weight:700;font-size:13px;color:#1C1917;display:flex;align-items:center;gap:6px;letter-spacing:-0.015em;"><span style="display:inline-flex;width:22px;height:22px;border-radius:7px;background:#FEF3C7;align-items:center;justify-content:center;font-size:13px;">➖</span>หักลบรายการ (ตะกร้า)</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px;">
+        <div style="font-weight:700;font-size:13px;color:#1C1917;display:flex;align-items:center;gap:6px;letter-spacing:-0.015em;flex:1;min-width:0;"><span style="display:inline-flex;width:22px;height:22px;border-radius:7px;background:#FEF3C7;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">➖</span>หักลบรายการ (ตะกร้า)</div>
+        <button onclick="toggleDeductForm()" id="deductAddBtn" style="flex-shrink:0;padding:5px 11px;border-radius:99px;border:1px solid #D6D3D1;background:#fff;color:#44403C;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:3px;transition:all .2s cubic-bezier(.34,1.56,.64,1);-webkit-tap-highlight-color:transparent;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>เพิ่ม</span>
+        </button>
         <select id="basketDeductFilter" onchange="basketDeductApplyFilter()"
-          style="padding:5px 9px;border-radius:9px;border:1px solid #E7E5E4;font-size:11px;font-weight:700;color:#1C1917;background:#fff;outline:none;cursor:pointer;font-family:inherit;transition:all .2s;">
+          style="flex-shrink:0;padding:5px 9px;border-radius:9px;border:1px solid #E7E5E4;font-size:11px;font-weight:700;color:#1C1917;background:#fff;outline:none;cursor:pointer;font-family:inherit;transition:all .2s;">
           <option value="all">ทั้งหมด</option>
         </select>
       </div>
-      <div id="deductList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
+      <div id="deductList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px;"></div>
 
-      <!-- Add deduct row -->
-      <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px;">
-        <input id="deductName" placeholder="ชื่อรายการหักลบ" style="padding:10px 13px;border-radius:10px;border:1.5px solid #E7E5E4;font-size:13px;outline:none;font-family:inherit;transition:all .2s;">
-        <input id="deductAmount" type="number" placeholder="จำนวนเงิน" style="width:110px;padding:10px 13px;border-radius:10px;border:1.5px solid #E7E5E4;font-size:13px;outline:none;font-family:inherit;text-align:right;transition:all .2s;">
+      <!-- Inline form (hidden by default - shown when "+ เพิ่ม" clicked) -->
+      <div id="deductFormWrap" style="display:none;background:#FFFBEB;border:1px solid #FDE68A;border-radius:11px;padding:10px;margin-bottom:8px;animation:deductFormSlide .25s cubic-bezier(.34,1.56,.64,1);">
+        <div style="display:grid;grid-template-columns:1fr 110px;gap:6px;margin-bottom:6px;">
+          <input id="deductName" placeholder="ชื่อรายการหักลบ" style="padding:9px 12px;border-radius:9px;border:1.5px solid #FDE68A;background:#fff;font-size:13px;outline:none;font-family:inherit;transition:all .2s;">
+          <input id="deductAmount" type="text" inputmode="decimal" placeholder="0" style="padding:9px 12px;border-radius:9px;border:1.5px solid #FDE68A;background:#fff;font-size:13px;outline:none;font-family:inherit;text-align:right;transition:all .2s;font-variant-numeric:tabular-nums;">
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button onclick="toggleDeductForm()" style="flex:0 0 auto;padding:8px 14px;border-radius:9px;border:none;background:rgba(0,0,0,0.05);color:#44403C;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">ยกเลิก</button>
+          <button onclick="addDeductRow()" style="flex:1;padding:8px;border-radius:9px;border:none;background:#16A34A;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:5px;box-shadow:0 2px 6px rgba(22,163,74,0.25);">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>เพิ่ม</span>
+          </button>
+        </div>
       </div>
-      <button onclick="addDeductRow()" style="width:100%;padding:10px;border-radius:10px;border:1.5px dashed #D6D3D1;background:transparent;color:#78716C;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .25s cubic-bezier(.34,1.56,.64,1);">＋ เพิ่มรายการหักลบ</button>
     </div>
 
     <!-- Net Total -->
@@ -2336,7 +2450,7 @@ tr:last-child td { border-bottom: none; }
     <div class="cm-body">
       <div><div class="cm-label">ชื่อลูกค้า *</div><input class="cm-input" id="cmName" placeholder="ชื่อ หรือชื่อร้าน"></div>
       <div class="cm-row2">
-        <div><div class="cm-label">เบอร์โทร</div><input class="cm-input" id="cmPhone" placeholder="08x-xxx-xxxx" type="tel"></div>
+        <div><div class="cm-label">เบอร์โทร</div><input class="cm-input" id="cmPhone" placeholder="08x-xxx-xxxx" type="tel" inputmode="tel"></div>
         <div><div class="cm-label">Line ID</div><input class="cm-input" id="cmLine" placeholder="@lineid"></div>
       </div>
       <div><div class="cm-label">ที่อยู่</div><input class="cm-input" id="cmAddr" placeholder="ที่อยู่จัดส่ง"></div>
@@ -2611,7 +2725,7 @@ tr:last-child td { border-bottom: none; }
       </div>
       <div>
         <div style="font-size:11px;color:#78716C;font-weight:600;margin-bottom:5px;">ยอดเงิน (บาท)</div>
-        <input id="editItemAmount" type="number" style="width:100%;padding:11px 13px;border-radius:11px;border:1.5px solid #E7E5E4;font-size:14px;outline:none;font-family:inherit;transition:all .2s;" onfocus="this.style.borderColor='#1C1917';this.style.boxShadow='0 0 0 3px rgba(0,0,0,0.06)';this.style.background='#fff'" onblur="this.style.borderColor='transparent';this.style.boxShadow='';this.style.background='#F5F5F4'">
+        <input id="editItemAmount" type="text" inputmode="decimal" style="width:100%;padding:11px 13px;border-radius:11px;border:1.5px solid #E7E5E4;font-size:14px;outline:none;font-family:inherit;transition:all .2s;" onfocus="this.style.borderColor='#1C1917';this.style.boxShadow='0 0 0 3px rgba(0,0,0,0.06)';this.style.background='#fff'" onblur="this.style.borderColor='transparent';this.style.boxShadow='';this.style.background='#F5F5F4'">
       </div>
       <div>
         <div style="font-size:11px;color:#78716C;font-weight:600;margin-bottom:4px;">หมายเหตุ</div>
@@ -2695,6 +2809,17 @@ tr:last-child td { border-bottom: none; }
       <button class="upd-view-btn"    data-view="month"  onclick="upSetView('month',this)">ต่อเดือน</button>
     </div>
     <div id="unpaidGrid"></div>
+    <!-- V3: Floating pill pay bar (multi-select) -->
+    <div id="updPaybar" class="upd-paybar">
+      <div class="upd-paybar-count" id="updPaybarCount">0</div>
+      <div class="upd-paybar-text" onclick="updPaySelected()">
+        <span>จ่าย</span>
+        <span class="upd-paybar-amt" id="updPaybarAmt">0</span>
+      </div>
+      <button class="upd-paybar-clear" onclick="updClearSelection()" title="ล้าง">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
   </div>
 
   <div id="summaryTab" style="display:none;">
@@ -4087,7 +4212,7 @@ function renderBoard() {
         const hint = document.getElementById("f-name-hint");
         if (hint) hint.remove();
       });
-      const inpAmt  = document.createElement("input"); inpAmt.placeholder="ยอดเงิน *"; inpAmt.type="number"; inpAmt.id="f-amount";
+      const inpAmt  = document.createElement("input"); inpAmt.placeholder="ยอดเงิน *"; inpAmt.type="text"; inpAmt.inputMode="decimal"; inpAmt.id="f-amount";
       const inpNote = document.createElement("input"); inpNote.placeholder="หมายเหตุ"; inpNote.className="add-form-note"; inpNote.id="f-note";
 
       // Enter → ข้ามไปช่องถัดไป
@@ -4215,6 +4340,9 @@ function upSetView(view, btn) {
   _updView = view;
   document.querySelectorAll(".upd-view-btn").forEach(t => t.classList.remove("on"));
   btn.classList.add("on");
+  // V3: clear multi-select on view change
+  window._updSelected = new Map();
+  updUpdatePayBar();
   renderUnpaid();
 }
 
@@ -4222,7 +4350,101 @@ function upSetFilter(grp, btn) {
   _updFilter = grp;
   document.querySelectorAll(".upd-tab").forEach(t => t.classList.remove("active"));
   btn.classList.add("active");
+  // V3: clear multi-select on filter change
+  window._updSelected = new Map();
+  updUpdatePayBar();
   renderUnpaid();
+}
+
+// ═══ V3 UNPAID MULTI-SELECT ═══
+// Toggle a single cell (cellId = "day::grpKey::key")
+function updToggleCell(cellId, ctx) {
+  if (!window._updSelected) window._updSelected = new Map();
+  if (window._updSelected.has(cellId)) {
+    window._updSelected.delete(cellId);
+  } else {
+    window._updSelected.set(cellId, ctx);
+  }
+  // toggle DOM
+  const card = document.querySelector(`.upd-card[data-cellid="${cellId}"]`);
+  if (card) card.classList.toggle("selected", window._updSelected.has(cellId));
+  updUpdatePayBar();
+  if (typeof hap === "function") hap(8);
+}
+
+// Clear all selections
+function updClearSelection() {
+  window._updSelected = new Map();
+  document.querySelectorAll(".upd-card.selected").forEach(c => c.classList.remove("selected"));
+  updUpdatePayBar();
+  if (typeof hap === "function") hap(15);
+}
+
+// Update floating pay bar visibility + content
+function updUpdatePayBar() {
+  const sel = window._updSelected || new Map();
+  const bar = document.getElementById("updPaybar");
+  if (!bar) return;
+  if (sel.size === 0) {
+    bar.classList.remove("show");
+    return;
+  }
+  bar.classList.add("show");
+  // sum amounts
+  let total = 0;
+  sel.forEach(ctx => total += (ctx.item?.amount || 0));
+  const cnt = document.getElementById("updPaybarCount");
+  const amt = document.getElementById("updPaybarAmt");
+  if (cnt) cnt.textContent = sel.size;
+  if (amt) amt.textContent = fmt(total);
+}
+
+// Pay all selected (with confirmation if ≥5 bills or ≥10000)
+function updPaySelected() {
+  const sel = window._updSelected || new Map();
+  if (sel.size === 0) return;
+  let total = 0;
+  sel.forEach(ctx => total += (ctx.item?.amount || 0));
+  const count = sel.size;
+
+  // Confirmation rule
+  if (count >= 5 || total >= 10000) {
+    if (!confirm(`ยืนยันจ่าย ${count} บิล รวม ${fmt(total)} บาท?`)) return;
+  }
+
+  // batch update
+  const updates = {};
+  sel.forEach(ctx => {
+    const path = `days/${ctx.day}/${ctx.grpKey}/${ctx.key}/status`;
+    updates[path] = "ชำระแล้ว";
+  });
+
+  // capture scroll for restore
+  const _sy = window.scrollY || document.documentElement.scrollTop || 0;
+
+  db.ref().update(updates).then(() => {
+    // local cache
+    sel.forEach(ctx => {
+      if (allDays[ctx.day]?.[ctx.grpKey]?.[ctx.key]) {
+        allDays[ctx.day][ctx.grpKey][ctx.key].status = "ชำระแล้ว";
+      }
+    });
+    // feedback
+    if (typeof SX !== "undefined" && SX.tapPos) SX.tapPos();
+    if (typeof hap === "function") hap([8, 30, 12, 30, 8]);
+    if (typeof showToast === "function") showToast(`ชำระแล้ว ${count} บิล · ${fmt(total)}`, "success", 2000);
+    // clear selection
+    window._updSelected = new Map();
+    // refresh
+    if (activeTab === "board")  renderBoard();
+    if (activeTab === "unpaid") renderUnpaid();
+    // restore scroll
+    setTimeout(() => { window.scrollTo(0, _sy); }, 50);
+    setTimeout(() => { window.scrollTo(0, _sy); }, 150);
+  }).catch(err => {
+    if (typeof showToast === "function") showToast("บันทึกไม่ได้ — เครือข่ายขาด", "error");
+    console.error(err);
+  });
 }
 
 function renderUnpaid() {
@@ -4321,44 +4543,37 @@ function renderUnpaid() {
       const card = document.createElement("div");
       card.className = "upd-card";
       card.dataset.grp = grpKey;
+      const cellId = d+"::"+grpKey+"::"+key;
+      card.dataset.cellid = cellId;
+      if (window._updSelected && window._updSelected.has(cellId)) {
+        card.classList.add("selected");
+      }
 
       // badge
       const badge = count>=2 ? `<span class="upd-badge">${count}×</span>` : "";
-      // circle
-      const circleClass = item.status==="ชำระแล้ว" ? "upd-circle paid" : "upd-circle";
 
-      card.innerHTML = `${badge}
-        <span class="upd-name">${item.name}</span>
+      card.innerHTML = `<span class="upd-name">${item.name}${count>=2?` <span class="upd-bc">×${count}</span>`:""}</span>
         <span class="upd-amt">${fmt(item.amount)}</span>
-        <div class="${circleClass}" data-day="${d}" data-grp="${grpKey}" data-key="${key}"></div>`;
+        <div class="upd-circle"></div>`;
 
-      // card click → context menu
-      card.addEventListener("click", (e) => {
-        if (e.target.classList.contains("upd-circle")) return;
-        updOpenCtx(e, {day:d, grpKey, key, item, group});
+      // V3: tap card or circle → toggle selection (multi-select)
+      // Long-press → context menu (advanced)
+      let _pressTimer = null;
+      let _longPressed = false;
+      card.addEventListener("pointerdown", (e) => {
+        _longPressed = false;
+        _pressTimer = setTimeout(() => {
+          _longPressed = true;
+          updOpenCtx(e, {day:d, grpKey, key, item, group});
+          if (typeof hap === "function") hap([8, 30, 12]);
+        }, 500);
       });
-
-      // circle click → ชำระแล้ว
-      const circle = card.querySelector(".upd-circle");
-      circle.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const nextStatus = item.status==="ชำระแล้ว" ? "รอชำระ" : "ชำระแล้ว";
-        // จำ scroll position ก่อน
-        const _sy = window.scrollY || document.documentElement.scrollTop || 0;
-        db.ref(`days/${d}/${grpKey}/${key}/status`).set(nextStatus).then(()=>{
-          if(allDays[d]?.[grpKey]?.[key]) allDays[d][grpKey][key].status = nextStatus;
-          if(activeTab==="board") {
-            renderBoard();
-            // restore scroll หลัง renderBoard
-            window.scrollTo(0, _sy);
-            setTimeout(() => { window.scrollTo(0, _sy); }, 50);
-          }
-          if(activeTab==="unpaid") {
-            renderUnpaid();
-            window.scrollTo(0, _sy);
-            setTimeout(() => { window.scrollTo(0, _sy); }, 50);
-          }
-        });
+      card.addEventListener("pointerup", () => { clearTimeout(_pressTimer); });
+      card.addEventListener("pointercancel", () => { clearTimeout(_pressTimer); });
+      card.addEventListener("pointerleave", () => { clearTimeout(_pressTimer); });
+      card.addEventListener("click", (e) => {
+        if (_longPressed) { e.preventDefault(); return; }
+        updToggleCell(cellId, {day:d, grpKey, key, item});
       });
 
       grid.appendChild(card);
@@ -5056,10 +5271,73 @@ function billPaySelected() {
 }
 
 
+function closeBillModal() {
+  const m = document.getElementById("billModal");
+  if (!m) return;
+  m.classList.add("closing");
+  setTimeout(() => {
+    m.style.display = "none";
+    m.classList.remove("closing");
+  }, 240);
+  // V3: clear multi-select state
+  window._billSelected = new Set();
+  window._billDisplayedBills = [];
+  // Clear deducts so next open is fresh
+  if (typeof billDeducts !== "undefined") billDeducts = [];
+}
+
 function removeDeduct(idx) {
   billDeducts.splice(idx, 1);
   const grandTotalText = document.getElementById("billGrandTotal").textContent.replace(/[฿,]/g,"");
   renderDeducts(parseFloat(grandTotalText)||0);
+  if (typeof billUpdateBottomBar === "function") billUpdateBottomBar();
+}
+
+// V3: toggle inline deduct form
+function toggleDeductForm() {
+  const wrap = document.getElementById("deductFormWrap");
+  if (!wrap) return;
+  const showing = wrap.style.display !== "none";
+  wrap.style.display = showing ? "none" : "block";
+  if (!showing) {
+    // focus name input
+    setTimeout(() => {
+      const n = document.getElementById("deductName");
+      if (n) n.focus();
+    }, 100);
+  } else {
+    // clear inputs on cancel
+    const n = document.getElementById("deductName");
+    const a = document.getElementById("deductAmount");
+    if (n) n.value = "";
+    if (a) a.value = "";
+  }
+}
+
+// V3: add deduct row from inline form
+function addDeductRow() {
+  const nameEl = document.getElementById("deductName");
+  const amountEl = document.getElementById("deductAmount");
+  if (!nameEl || !amountEl) return;
+  const name = nameEl.value.trim();
+  const amount = parseFloat(amountEl.value) || 0;
+  if (!name && !amount) {
+    if (typeof showToast === "function") showToast("กรุณากรอกชื่อรายการหรือจำนวนเงิน", "warning", 1800);
+    else alert("กรุณากรอกชื่อรายการหรือจำนวนเงิน");
+    return;
+  }
+  if (!window.billDeducts) window.billDeducts = [];
+  billDeducts.push({ name: name || "-", amount });
+  nameEl.value = "";
+  amountEl.value = "";
+  // hide form
+  const wrap = document.getElementById("deductFormWrap");
+  if (wrap) wrap.style.display = "none";
+  // re-render
+  const grandTotalText = document.getElementById("billGrandTotal").textContent.replace(/[฿,]/g,"");
+  renderDeducts(parseFloat(grandTotalText)||0);
+  if (typeof billUpdateBottomBar === "function") billUpdateBottomBar();
+  if (typeof hap === "function") hap([8, 30]);
 }
 
 function renderDeducts(grandTotal) {
@@ -5115,7 +5393,13 @@ function renderDeducts(grandTotal) {
 }
 
 function saveBillImage() {
+  // V3: prevent double-click
+  if (window._billSavingImage) return;
+  window._billSavingImage = true;
   const customerName = document.getElementById("billCustomerName").textContent || "bill";
+  // Show immediate feedback
+  if (typeof showToast === "function") showToast("กำลังบันทึกภาพ…", "info", 1500);
+  if (typeof hap === "function") hap(8);
   generateInvoiceBillImage(customerName);
 }
 
@@ -5189,7 +5473,15 @@ function generateInvoiceBillImage(customerName) {
     const link = document.createElement("a");
     link.download = "bill_"+customerName+"_"+todayStr.replace(/ /g,"_")+".png";
     link.href = canvas.toDataURL("image/png"); link.click();
-  }).catch(err=>{ if(document.body.contains(captureEl)) document.body.removeChild(captureEl); alert("บันทึกภาพไม่ได้: "+err.message); });
+    window._billSavingImage = false;
+    if (typeof showToast === "function") showToast("บันทึกภาพสำเร็จ", "success", 1500);
+    if (typeof hap === "function") hap([8, 30, 12]);
+  }).catch(err=>{
+    if(document.body.contains(captureEl)) document.body.removeChild(captureEl);
+    window._billSavingImage = false;
+    if (typeof showToast === "function") showToast("บันทึกภาพไม่ได้: "+err.message, "error", 2500);
+    else alert("บันทึกภาพไม่ได้: "+err.message);
+  });
 }
 
 function printBill() {
@@ -5815,12 +6107,12 @@ function bkRenderMatrix(type) {
       const balClass = runBal > 0 ? "bk-cell-bal-warn" : "";
       html += `
         <td style="${bg}text-align:center;">
-          <input type="number" value="${out||""}" placeholder="-"
+          <input type="text" inputmode="decimal" value="${out||""}" placeholder="-"
             onchange="bkSetData('${type}','${person.id}','${dd}','out',this.value)"
             style="width:36px;border:none;background:transparent;text-align:center;font-family:inherit;font-size:11px;color:#1E3A8A;font-weight:${out?"600":"400"};">
         </td>
         <td style="${bg}text-align:center;">
-          <input type="number" value="${inp||""}" placeholder="-"
+          <input type="text" inputmode="decimal" value="${inp||""}" placeholder="-"
             onchange="bkSetData('${type}','${person.id}','${dd}','in',this.value)"
             style="width:36px;border:none;background:transparent;text-align:center;font-family:inherit;font-size:11px;color:#16A34A;font-weight:${inp?"600":"400"};">
         </td>
@@ -6181,7 +6473,7 @@ function bkaRenderRows(){
           oninput="bkaOnName(${r.id},this)"
           onkeydown="bkaOnNameKey(event,${r.id})">
       </div>
-      <input class="bka-inp bka-num" id="bka-bk-${r.id}" placeholder="0" value="${r.basket}" type="number" min="0" step="0.5"
+      <input class="bka-inp bka-num" id="bka-bk-${r.id}" placeholder="0" value="${r.basket}" type="text" inputmode="decimal" min="0" step="0.5"
         oninput="bkaRows.find(x=>x.id===${r.id}).basket=this.value;bkaUpdateSummary();"
         onkeydown="bkaOnBkKey(event,${r.id})">
       <select class="bka-status" id="bka-st-${r.id}" data-s="${r.status}"
@@ -6360,6 +6652,11 @@ function switchTab(tab) {
   // V3: smooth fade transition between tabs
   const tabs = ["board","unpaid","summary","closed","cust","analytics","basket","truck"];
   const allTabEls = tabs.map(t => document.getElementById(t+"Tab")).filter(Boolean);
+  // V3: clear unpaid multi-select on tab switch
+  if (activeTab === "unpaid" && tab !== "unpaid" && window._updSelected) {
+    window._updSelected = new Map();
+    if (typeof updUpdatePayBar === "function") updUpdatePayBar();
+  }
   // Mark new active tab with fade-in class
   activeTab = tab;
   document.getElementById("boardTab").style.display   = tab==="board"?"block":"none";
@@ -7294,9 +7591,12 @@ function removeAutocomplete() {
   if (!window.visualViewport) return;
   let _t = null;
   const reposition = () => {
-    const dd = document.getElementById("nameAcDropdown");
     const inp = window._acActiveInput;
-    if (!dd || !inp || !document.body.contains(inp)) return;
+    if (!inp || !document.body.contains(inp)) return;
+    // Find any active dropdown — board form OR master modal
+    const dd = document.getElementById("nameAcDropdown")
+            || document.querySelector("[id^=mas-drop-]");
+    if (!dd) return;
     const iRect = inp.getBoundingClientRect();
     const vh = window.visualViewport.height;
     const vTop = window.visualViewport.offsetTop;
@@ -7311,8 +7611,10 @@ function removeAutocomplete() {
       dd.style.bottom = "auto";
       dd.style.maxHeight = Math.min(MAX_H, Math.max(MIN_H, spaceBelow)) + "px";
     } else {
-      dd.style.bottom = (vh + vTop - iRect.top + SPACING) + "px";
-      dd.style.top = "auto";
+      // Flip up — place above input
+      const topPos = Math.max(vTop + SPACING, iRect.top - Math.min(MAX_H, spaceAbove) - SPACING);
+      dd.style.top = topPos + "px";
+      dd.style.bottom = "auto";
       dd.style.maxHeight = Math.min(MAX_H, Math.max(MIN_H, spaceAbove)) + "px";
     }
   };
@@ -8046,7 +8348,7 @@ function renderScanResults() {
               <input value="${r.name||''}" placeholder="ชื่อลูกค้า"
                 oninput="scanResults[${i}].name=this.value;scanResults[${i}].group=scanDetectGroup(this.value);"
                 style="flex:1;padding:5px 8px;border-radius:6px;border:1px solid #E7E5E4;font-size:12px;outline:none;font-family:inherit;min-width:0;">
-              <input type="number" value="${r.amount||''}" placeholder="฿"
+              <input type="text" inputmode="decimal" value="${r.amount||''}" placeholder="฿"
                 oninput="scanResults[${i}].amount=parseFloat(this.value)||0"
                 style="width:90px;padding:5px 8px;border-radius:6px;border:1px solid #E7E5E4;font-size:12px;outline:none;font-family:inherit;flex-shrink:0;">
             </div>
@@ -8170,7 +8472,7 @@ function masRenderRows() {
           onkeydown="masOnNameKey(event,${r.id})"
           style="padding-left:30px;">
       </div>
-      <input class="mas-inp mas-amt" id="mas-amt-${r.id}" placeholder="฿0" value="${r.amount||""}" type="number"
+      <input class="mas-inp mas-amt" id="mas-amt-${r.id}" placeholder="฿0" value="${r.amount||""}" type="text" inputmode="decimal"
         oninput="masRows.find(x=>x.id===${r.id}).amount=this.value;masUpdateSummary();"
         onkeydown="masOnAmtKey(event,${r.id})">
       <select class="mas-grp" id="mas-grp-${r.id}" data-grp="${r.grp}"
@@ -8288,19 +8590,50 @@ function masShowDrop(id, el) {
     });
     drop.appendChild(item);
   });
-  // append ที่ body ด้วย fixed position เพื่อทะลุ modal overflow/stacking context
+  // V3: Smart positioning — use visualViewport (iOS keyboard-aware) + auto flip up if not enough space below
   const rect = el.getBoundingClientRect();
+  const vv = window.visualViewport;
+  const visibleBottom = vv ? (vv.offsetTop + vv.height) : window.innerHeight;
+  const visibleTop = vv ? vv.offsetTop : 0;
+  const dropHeight = Math.min(matches.length * 36 + 8, 250);
+  const spaceBelow = visibleBottom - rect.bottom - 8;
+  const spaceAbove = rect.top - visibleTop - 8;
+
   drop.style.left = rect.left + "px";
   drop.style.width = rect.width + "px";
-  const topPos = rect.bottom + 3;
-  drop.style.top = topPos + "px";
-  drop.style.maxHeight = (window.innerHeight - topPos - 8) + "px";
+
+  // Flip up if not enough space below AND more space above
+  if (spaceBelow < dropHeight && spaceAbove > spaceBelow) {
+    // place above input
+    const topPos = Math.max(visibleTop + 4, rect.top - dropHeight - 3);
+    drop.style.top = topPos + "px";
+    drop.style.maxHeight = Math.min(dropHeight, spaceAbove) + "px";
+  } else {
+    // place below input (default)
+    const topPos = rect.bottom + 3;
+    drop.style.top = topPos + "px";
+    drop.style.maxHeight = Math.min(dropHeight, spaceBelow) + "px";
+  }
   document.body.appendChild(drop);
+
+  // V3: track which input is active so we can reposition on viewport change
+  window._acActiveInput = el;
+
+  // V3: auto-scroll input into view on iOS (so it's not behind keyboard)
+  setTimeout(() => {
+    if (typeof el.scrollIntoView === "function") {
+      el.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
+  }, 100);
 }
 
 function masRemoveAllDrops() {
   document.querySelectorAll("[id^=mas-drop-]").forEach(d=>d.remove());
   document.querySelectorAll(".mas-color-popup").forEach(d=>d.remove());
+  // V3: clear active input tracker if no dropdown remains
+  if (!document.getElementById("nameAcDropdown") && !document.querySelector("[id^=mas-drop-]")) {
+    window._acActiveInput = null;
+  }
 }
 
 let masLastColorByName = {};
@@ -9333,7 +9666,7 @@ setTimeout(() => setBodyTabClass(activeTab || "board"), 50);
     <div class="tmbody">
       <div class="tm-row2">
         <div><label class="tm-label">ชื่อคิว</label><input id="tm-queue" class="tm-inp" placeholder="คิว 1, สายเหนือ..."></div>
-        <div><label class="tm-label">เบอร์โทร</label><input id="tm-phone" class="tm-inp" type="tel" placeholder="08X-XXX-XXXX"></div>
+        <div><label class="tm-label">เบอร์โทร</label><input id="tm-phone" class="tm-inp" type="tel" inputmode="tel" placeholder="08X-XXX-XXXX"></div>
       </div>
       <div>
         <label class="tm-label">เวลาวิ่ง</label>
