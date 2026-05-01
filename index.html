@@ -1886,9 +1886,12 @@ tr:last-child td { border-bottom: none; }
   display:flex; align-items:center; gap:8px;
   padding:10px 14px; cursor:pointer;
   border-bottom:0.5px solid #F5F5F4;
+  -webkit-tap-highlight-color: transparent;
+  transition: all .15s cubic-bezier(.34,1.56,.64,1);
 }
 .bsd-item:last-child { border-bottom:none; }
 .bsd-item:hover { background:#F9F9F8; }
+.bsd-item:active { background:#F0F0EE; transform: scale(0.99); }
 .bsd-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
 .bsd-name { flex:1; font-size:13px; font-weight:700; color:#1C1917; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .bsd-bills { font-size:10px; color:#A8A29E; flex-shrink:0; }
@@ -8483,24 +8486,25 @@ function masRenderRows() {
     // color dot button
     const colorBtn = document.createElement("button");
     colorBtn.className = "mas-color-btn";
+    colorBtn.tabIndex = -1;
     colorBtn.style.cssText = `width:20px;height:20px;border-radius:50%;background:${r.nameColor||"#1C1917"};border:2px solid rgba(255,255,255,0.6);box-shadow:0 0 0 1.5px ${r.nameColor||"#1C1917"};flex-shrink:0;cursor:pointer;`;
     colorBtn.onclick = () => masOpenColorPicker(r.id, colorBtn);
     div.innerHTML = `
       <div style="display:flex;align-items:center;gap:5px;position:relative;" id="mas-name-wrap-${r.id}">
         <input class="mas-inp" id="mas-name-${r.id}" placeholder="ชื่อลูกค้า *" value="${r.name}"
-          autocomplete="off"
+          autocomplete="off" enterkeyhint="next"
           oninput="masOnNameInput(${r.id},this)"
           onkeydown="masOnNameKey(event,${r.id})"
           style="padding-left:30px;">
       </div>
-      <input class="mas-inp mas-amt" id="mas-amt-${r.id}" placeholder="฿0" value="${r.amount||""}" type="text" inputmode="decimal"
+      <input class="mas-inp mas-amt" id="mas-amt-${r.id}" placeholder="฿0" value="${r.amount||""}" type="text" inputmode="decimal" enterkeyhint="next"
         oninput="masRows.find(x=>x.id===${r.id}).amount=this.value;masUpdateSummary();"
         onkeydown="masOnAmtKey(event,${r.id})">
-      <select class="mas-grp" id="mas-grp-${r.id}" data-grp="${r.grp}"
+      <select class="mas-grp" id="mas-grp-${r.id}" data-grp="${r.grp}" tabindex="-1"
         onchange="masOnGrpChange(${r.id},this)">
         ${grpOpts.map(g=>`<option value="${g.k}" ${g.k===r.grp?"selected":""}>${g.lb}</option>`).join("")}
       </select>
-      <button class="mas-del" onclick="masRemoveRow(${r.id})">✕</button>`;
+      <button class="mas-del" tabindex="-1" onclick="masRemoveRow(${r.id})">✕</button>`;
     // insert color btn inside name input
     const nameWrap = div.querySelector(`#mas-name-wrap-${r.id}`);
     nameWrap.style.position = "relative";
@@ -8546,10 +8550,12 @@ function masOnNameKey(e, id) {
 }
 
 function masOnAmtKey(e, id) {
-  if(e.key !== "Enter") return;
-  e.preventDefault();
-  const r = masRows.find(x=>x.id===id);
-  masAddRow(r?.grp);
+  // V3: Enter or Tab → add new row + focus name (skip group select)
+  if (e.key === "Enter" || (e.key === "Tab" && !e.shiftKey)) {
+    e.preventDefault();
+    const r = masRows.find(x=>x.id===id);
+    masAddRow(r?.grp);
+  }
 }
 
 function masShowDrop(id, el) {
@@ -8751,7 +8757,14 @@ function openBoardSearch() {
     <input id="boardSearchInp" placeholder="ค้นหาชื่อ..." autocomplete="off">
     <button class="board-search-clear" onclick="closeBoardSearch()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`;
   wrap.appendChild(box);
-  setTimeout(() => { const inp = document.getElementById("boardSearchInp"); if(inp){ inp.focus(); inp.addEventListener("input", () => boardSearchQuery(inp.value)); } }, 30);
+  // V3: focus IMMEDIATELY (synchronous within user gesture) — iOS keyboard requirement
+  const inp = document.getElementById("boardSearchInp");
+  if (inp) {
+    inp.focus();
+    inp.addEventListener("input", () => boardSearchQuery(inp.value));
+    // Backup focus after layout settles (sometimes iOS needs second try)
+    requestAnimationFrame(() => inp.focus());
+  }
 
   // position dropdown
   const drop = document.getElementById("boardSearchDrop");
@@ -8820,17 +8833,18 @@ function boardSearchQuery(q) {
   matches.forEach(([name, info]) => {
     const row = document.createElement("div");
     row.className = "bsd-item";
+    row.style.cursor = "pointer";
     const grpColor = GRP_COLORS[info.grpKey]||"#1C1917";
-    const billBtn = document.createElement("button");
-    billBtn.className = "bsd-bill-btn";
-    billBtn.style.background = grpColor;
-    billBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:5px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8M16 17H8M10 9H8"/></svg>รวมบิล`;
-    billBtn.onclick = e => { e.stopPropagation(); closeBoardSearch(); openBillModal(name, info.group); };
     row.innerHTML = `<div class="bsd-dot" style="background:${info.color};"></div>
       <div class="bsd-name">${name}</div>
       <div class="bsd-bills">${info.count} บิล</div>
-      <div class="bsd-amt">฿${fmt(info.total)}</div>`;
-    row.appendChild(billBtn);
+      <div class="bsd-amt">฿${fmt(info.total)}</div>
+      <div style="color:#A8A29E;font-size:14px;margin-left:6px;flex-shrink:0;">›</div>`;
+    // V3: click anywhere on row → open bill modal
+    row.addEventListener("click", () => {
+      closeBoardSearch();
+      openBillModal(name, info.group);
+    });
     res.appendChild(row);
   });
   drop.classList.add("show");
