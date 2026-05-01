@@ -110,6 +110,11 @@ body, .group-card, .summary-card, .cust-card, .tc, .an-kpi-card, .item-row, .gro
   background: var(--bg-subtle) !important;
 }
 [data-theme="dark"] .item-row { border-top-color: rgba(255,255,255,0.05) !important; }
+/* Group border colors in dark mode — brighter for legibility */
+[data-theme="dark"] .group-card.group-credit { border-color: rgba(167,139,250,0.4); }
+[data-theme="dark"] .group-card.group-transfer { border-color: rgba(56,189,248,0.4); }
+[data-theme="dark"] .group-card.group-fence { border-color: rgba(74,222,128,0.4); }
+[data-theme="dark"] .group-card.group-delivery { border-color: rgba(251,191,36,0.4); }
 /* Group pill tags in dark mode — slightly stronger bg for legibility */
 [data-theme="dark"] .group-card.group-credit .group-tag-pill { background: rgba(167,139,250,0.18); color: #C4B5FD; }
 [data-theme="dark"] .group-card.group-transfer .group-tag-pill { background: rgba(56,189,248,0.18); color: #7DD3FC; }
@@ -710,40 +715,51 @@ body.tab-board .edge-handle.active { opacity: 1 !important; }
 
 /* CONTENT */
 .content { padding: 14px 14px 60px; max-width: 900px; margin: 0 auto; }
-.summary-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
+.summary-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 12px; }
 .summary-card {
   background: #fff;
-  border-radius: 16px;
-  padding: 14px 16px;
+  border-radius: 13px;
+  padding: 8px 10px;
   border: none;
   box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-  text-align: left;
+  text-align: center;
   transition: all .25s ease-out;
   -webkit-tap-highlight-color: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
-.summary-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.06); }
+.summary-card:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 .sc-label {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-tertiary);
   font-weight: 500;
   letter-spacing: 0;
-  margin-bottom: 6px;
+  margin-bottom: 3px;
   text-transform: none;
+  line-height: 1;
+}
+.sc-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  line-height: 1;
 }
 .sc-value {
-  font-size: 19px;
-  font-weight: 600;
-  line-height: 1.05;
-  letter-spacing: -0.025em;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
   color: var(--text-primary);
 }
 .sc-sub {
-  font-size: 11px;
+  font-size: 9.5px;
   color: var(--text-quaternary);
-  margin-top: 5px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 .progress-wrap { background: #fff; border-radius: 14px; padding: 12px 16px; margin-bottom: 14px; border: 1px solid #E7E5E4; transition: all .25s; }
 .progress-head { display: flex; justify-content: space-between; font-size: 11px; color: #A8A29E; margin-bottom: 7px; }
@@ -756,24 +772,18 @@ body.tab-board .edge-handle.active { opacity: 1 !important; }
   background: #fff;
   border-radius: 18px;
   overflow: hidden;
-  border: none;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  border: 2px solid transparent;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
   transition: all 0.3s ease-out;
   position: relative;
 }
 .group-card:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
 
-/* OPTION C: Top color bar — 4px strip indicating group */
-.group-card::before {
-  content: "";
-  display: block;
-  height: 4px;
-  width: 100%;
-}
-.group-card.group-credit::before { background: var(--c-credit); }
-.group-card.group-transfer::before { background: var(--c-transfer); }
-.group-card.group-fence::before { background: var(--c-fence); }
-.group-card.group-delivery::before { background: var(--c-delivery); }
+/* OPTION A: Soft Border 2px — colored frame around card */
+.group-card.group-credit { border-color: rgba(124,58,237,0.3); }
+.group-card.group-transfer { border-color: rgba(3,105,161,0.3); }
+.group-card.group-fence { border-color: rgba(22,163,74,0.3); }
+.group-card.group-delivery { border-color: rgba(180,83,9,0.3); }
 
 /* Apple-style header: white bg with pill tag */
 .group-header {
@@ -1437,36 +1447,91 @@ tr:last-child td { border-bottom: none; }
 }
 
 .upd-date-sep {
-  display:flex; align-items:center; gap:8px; padding:14px 12px 6px;
+  display:flex; align-items:center; gap:10px; padding:14px 12px 6px;
 }
 .upd-date-line { flex:1; height:1px; background:#E7E5E4; }
-.upd-date-label { font-size:11px; font-weight:700; color:#A8A29E; white-space:nowrap; }
-.upd-date-total {
-  font-size:11px; font-weight:700; color:#1C1917;
-  background:#F5F5F4; padding:2px 10px; border-radius:99px;
-  flex-shrink:0; border:1px solid #E7E5E4;
+.upd-date-label {
+  font-size:12px;
+  font-weight:700;
+  color:#78716C;
+  white-space:nowrap;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
 }
-.upd-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px; padding:4px 10px; }
+.upd-grid { display:grid; grid-template-columns:1fr 1fr; gap:4px 8px; padding:4px 10px; }
+/* V3: White card + colored text (Option E) */
 .upd-card {
-  border-radius:10px; padding:9px 10px;
-  display:flex; align-items:center; gap:6px; overflow:hidden; cursor:pointer;
+  border-radius:8px;
+  padding:6px 8px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  overflow:hidden;
+  cursor:pointer;
+  background:#fff;
+  border:1px solid #F5F5F4;
   -webkit-tap-highlight-color:transparent;
+  transition: all .2s cubic-bezier(.34,1.56,.64,1);
 }
-.upd-card[data-grp="credit"]   { background:#7C3AED; }
-.upd-card[data-grp="transfer"] { background:#0C4A6E; }
-.upd-card[data-grp="delivery"] { background:#78350F; }
-.upd-card[data-grp="fence"]    { background:#065F46; }
-.upd-badge { font-size:9px; font-weight:600; color:rgba(255,255,255,0.6); flex-shrink:0; }
-.upd-name  { flex:1; font-size:14px; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
-.upd-amt   { font-size:11px; font-weight:700; color:rgba(255,255,255,0.85); flex-shrink:0; white-space:nowrap; }
+.upd-card:active { transform: scale(0.97); }
+.upd-card[data-grp="credit"]   .upd-name { color:#7C3AED; }
+.upd-card[data-grp="transfer"] .upd-name { color:#075985; }
+.upd-card[data-grp="delivery"] .upd-name { color:#9A3412; }
+.upd-card[data-grp="fence"]    .upd-name { color:#15803D; }
+.upd-badge {
+  font-size:9px;
+  font-weight:700;
+  color:#A8A29E;
+  flex-shrink:0;
+  width:14px;
+  text-align:right;
+  font-variant-numeric: tabular-nums;
+}
+.upd-name {
+  flex:1;
+  font-size:12px;
+  font-weight:700;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  min-width:0;
+  letter-spacing: -0.01em;
+}
+.upd-amt {
+  font-size:12.5px;
+  font-weight:700;
+  color:#1C1917;
+  flex-shrink:0;
+  white-space:nowrap;
+  font-variant-numeric: tabular-nums;
+}
 .upd-circle {
-  flex-shrink:0; width:28px; height:28px; border-radius:50%;
-  border:2.5px solid rgba(255,255,255,0.4); background:transparent;
-  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  border:1.5px solid #22C55E;
+  background:transparent;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   -webkit-tap-highlight-color:transparent;
+  transition: all .2s cubic-bezier(.34,1.56,.64,1);
 }
+.upd-circle:active { transform: scale(0.85); }
 .upd-circle.paid { background:#22C55E; border-color:#22C55E; }
-.upd-circle.paid::after { content:"✓"; color:#fff; font-size:13px; font-weight:700; }
+.upd-circle.paid::after { content:""; width:7px; height:7px; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>"); background-size:contain; background-repeat:no-repeat; }
+
+/* Dark mode: white card → bg-card */
+[data-theme="dark"] .upd-card { background: var(--bg-card); border-color: rgba(255,255,255,0.06); }
+[data-theme="dark"] .upd-card[data-grp="credit"]   .upd-name { color: #C4B5FD; }
+[data-theme="dark"] .upd-card[data-grp="transfer"] .upd-name { color: #7DD3FC; }
+[data-theme="dark"] .upd-card[data-grp="delivery"] .upd-name { color: #FDBA74; }
+[data-theme="dark"] .upd-card[data-grp="fence"]    .upd-name { color: #86EFAC; }
+[data-theme="dark"] .upd-amt { color: var(--text-primary); }
+[data-theme="dark"] .upd-badge { color: var(--text-quaternary); }
+[data-theme="dark"] .upd-date-label { color: var(--text-tertiary); }
 
 /* Context menu */
 .upd-ctx-backdrop { position:fixed; inset:0; z-index:2000; display:none; }
@@ -1602,7 +1667,7 @@ tr:last-child td { border-bottom: none; }
 /* Group rows (ต่อคน / ต่อเดือน) */
 .upd-group-list { padding:8px 12px 60px; }
 .upd-gh-row {
-  display:flex; align-items:center; gap:8px; padding:12px 14px;
+  display:flex; align-items:center; gap:8px; padding:10px 14px;
   background:#fff; border:1px solid #E7E5E4; border-radius:13px;
   cursor:pointer; margin-bottom:6px;
   transition: all .25s cubic-bezier(.34,1.56,.64,1);
@@ -1613,7 +1678,25 @@ tr:last-child td { border-bottom: none; }
 .upd-gh-row:active { transform: scale(0.99); }
 .upd-gh-row.open { border-radius:13px 13px 0 0; margin-bottom:0; border-bottom-color:transparent; background:#FAFAFA; transform: none; }
 .upd-gh-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
-.upd-gh-name { flex:1; font-size:14px; font-weight:600; color:#1C1917; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.upd-gh-name { font-size:14px; font-weight:600; color:#1C1917; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex-shrink:0; }
+/* V3: monthly breakdown - inline 1 line, takes flex space */
+.upd-gh-bd {
+  flex:1;
+  font-size:11px;
+  color:#78716C;
+  font-weight:500;
+  font-variant-numeric:tabular-nums;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  padding-left:4px;
+}
+.upd-gh-bd b {
+  color:#6D28D9;
+  font-weight:700;
+}
+.upd-gh-bd-sep { color:#D6D3D1; margin:0 3px; }
 .upd-gh-meta { font-size:10px; color:#A8A29E; white-space:nowrap; flex-shrink:0; }
 .upd-gh-total { font-size:13px; font-weight:600; color:#1C1917; white-space:nowrap; flex-shrink:0; }
 .upd-gh-bill { flex-shrink:0; padding:4px 10px; border-radius:99px; border:none; color:#fff; font-size:10px; font-weight:700; cursor:pointer; font-family:inherit; }
@@ -1941,6 +2024,190 @@ tr:last-child td { border-bottom: none; }
 .cal-cell.other-pending  { color:#DC2626 !important; font-weight:600; }  /* แดง: หมวดอื่นค้าง */
 .cal-cell.empty { cursor:default; }
 .cal-cell.other-month { opacity:.3; cursor:default; pointer-events:none; }
+/* V3: วันพระ — yellow glowing dot at top-right */
+.cal-cell .holy-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #FBBF24;
+  box-shadow: 0 0 6px 1px rgba(251,191,36,0.7), 0 0 2px rgba(251,191,36,0.9);
+  animation: holyGlow 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes holyGlow {
+  0%, 100% { box-shadow: 0 0 4px 1px rgba(251,191,36,0.5), 0 0 2px rgba(251,191,36,0.8); opacity: 0.85; }
+  50% { box-shadow: 0 0 9px 2px rgba(251,191,36,0.85), 0 0 3px rgba(251,191,36,1); opacity: 1; }
+}
+[data-theme="dark"] .cal-cell .holy-dot {
+  background: #FCD34D;
+  box-shadow: 0 0 8px 2px rgba(252,211,77,0.7), 0 0 3px rgba(252,211,77,0.9);
+}
+
+/* ═════ V3 BILL MODAL — Multi-select Grid ═════ */
+.bill-month-header {
+  background: #F5F3FF;
+  padding: 7px 18px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #6D28D9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  letter-spacing: -0.01em;
+}
+.bill-month-meta {
+  font-size: 10.5px;
+  color: #A78BFA;
+  font-weight: 600;
+}
+.bill-month-toggle {
+  font-size: 10.5px;
+  color: #7C3AED;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 3px 9px;
+  background: #fff;
+  border: 1px solid #DDD6FE;
+  border-radius: 99px;
+  font-family: inherit;
+  transition: all .2s cubic-bezier(.34,1.56,.64,1);
+  -webkit-tap-highlight-color: transparent;
+}
+.bill-month-toggle:active { transform: scale(0.93); }
+.bill-month-toggle.active {
+  background: #DCFCE7;
+  color: #15803D;
+  border-color: #86EFAC;
+}
+.bill-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  padding: 10px 14px 14px;
+}
+.bill-cell {
+  background: #fff;
+  border: 1.5px solid #E7E5E4;
+  border-radius: 11px;
+  padding: 8px 4px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s cubic-bezier(.34,1.56,.64,1);
+  -webkit-tap-highlight-color: transparent;
+}
+.bill-cell:active { transform: scale(0.92); }
+.bill-cell-day {
+  font-size: 11px;
+  font-weight: 700;
+  color: #44403C;
+  margin-bottom: 2px;
+  line-height: 1;
+}
+.bill-cell-amt {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #7C3AED;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+/* Selected state — green */
+.bill-cell.selected {
+  background: #F0FDF4;
+  border-color: #22C55E;
+  border-width: 2px;
+  box-shadow: 0 0 0 3px rgba(34,197,94,0.15);
+}
+.bill-cell.selected .bill-cell-day { color: #15803D; }
+.bill-cell.selected .bill-cell-amt { color: #16A34A; }
+.bill-cell.selected::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 16px;
+  height: 16px;
+  background: #22C55E;
+  border-radius: 50%;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 12px;
+  box-shadow: 0 1px 3px rgba(34,197,94,0.4);
+}
+
+/* Sticky bottom bar */
+.bill-bottom-bar {
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #fff 30%);
+  padding: 14px 16px 16px;
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+.bill-btn-clear {
+  flex-shrink: 0;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #F5F5F4;
+  color: #44403C;
+  font-size: 12.5px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  transition: all .2s cubic-bezier(.34,1.56,.64,1);
+}
+.bill-btn-clear:active { transform: scale(0.95); }
+.bill-btn-pay {
+  flex: 1;
+  padding: 13px 16px;
+  border-radius: 12px;
+  background: #16A34A;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all .25s cubic-bezier(.34,1.56,.64,1);
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 4px 14px rgba(22,163,74,0.3);
+}
+.bill-btn-pay:active { transform: scale(0.97); }
+.bill-btn-pay.disabled {
+  background: #E7E5E4;
+  color: #A8A29E;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.bill-btn-pay-amt {
+  font-variant-numeric: tabular-nums;
+  background: rgba(255,255,255,0.22);
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .bill-month-header { background: rgba(124,58,237,0.15); color: #C4B5FD; }
+[data-theme="dark"] .bill-month-meta { color: #A78BFA; }
+[data-theme="dark"] .bill-month-toggle { background: var(--bg-card); color: #A78BFA; border-color: rgba(167,139,250,0.3); }
+[data-theme="dark"] .bill-cell { background: var(--bg-subtle); border-color: rgba(255,255,255,0.08); }
+[data-theme="dark"] .bill-cell-day { color: var(--text-secondary); }
+[data-theme="dark"] .bill-cell-amt { color: #C4B5FD; }
+[data-theme="dark"] .bill-cell.selected { background: rgba(34,197,94,0.12); border-color: #22C55E; }
+[data-theme="dark"] .bill-bottom-bar { background: linear-gradient(180deg, rgba(28,28,30,0) 0%, var(--bg-card) 30%); }
+[data-theme="dark"] .bill-btn-clear { background: var(--bg-subtle); color: var(--text-secondary); }
 </style>
 
 <!-- DAY TABS -->
@@ -1989,20 +2256,17 @@ tr:last-child td { border-bottom: none; }
       </div>
     </div>
 
-    <!-- Bill Items per Day -->
-    <div id="billItems" style="padding:6px 20px 0;"></div>
+    <!-- Bill Items per Day - V3 multi-select grid -->
+    <div id="billItems"></div>
 
     <!-- Grand Total -->
-    <div style="margin:14px 20px 0;padding:14px 16px;background:#FEF2F2;border-radius:14px;border:1px solid #FECACA;display:flex;justify-content:space-between;align-items:center;">
-      <div>
-        <div style="font-size:11px;color:#991B1B;font-weight:500;letter-spacing:0;margin-bottom:3px;">ยอดค้างรวม</div>
-        <div style="font-weight:500;font-size:12px;color:#7F1D1D;">ทั้งหมด</div>
-      </div>
-      <div id="billGrandTotal" style="font-weight:600;font-size:24px;color:#991B1B;letter-spacing:-0.025em;font-variant-numeric:tabular-nums;"></div>
+    <div style="margin:8px 16px 0;padding:11px 14px;background:#FEF2F2;border-radius:12px;border:1px solid #FECACA;display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-size:11.5px;color:#991B1B;font-weight:600;letter-spacing:0;">ยอดค้างรวม</div>
+      <div id="billGrandTotal" style="font-weight:700;font-size:18px;color:#7F1D1D;letter-spacing:-0.025em;font-variant-numeric:tabular-nums;"></div>
     </div>
 
     <!-- Deduct Section -->
-    <div style="padding:16px 20px 8px;">
+    <div style="padding:14px 16px 8px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <div style="font-weight:700;font-size:13px;color:#1C1917;display:flex;align-items:center;gap:6px;letter-spacing:-0.015em;"><span style="display:inline-flex;width:22px;height:22px;border-radius:7px;background:#FEF3C7;align-items:center;justify-content:center;font-size:13px;">➖</span>หักลบรายการ (ตะกร้า)</div>
         <select id="basketDeductFilter" onchange="basketDeductApplyFilter()"
@@ -2021,17 +2285,21 @@ tr:last-child td { border-bottom: none; }
     </div>
 
     <!-- Net Total -->
-    <div style="margin:0 20px 0;padding:16px 18px;background:linear-gradient(135deg,#F0FDF4 0%,#DCFCE7 100%);border-radius:14px;border:1px solid #BBF7D0;display:flex;justify-content:space-between;align-items:center;">
-      <div>
-        <div style="font-size:11px;color:#15803D;font-weight:500;letter-spacing:0;margin-bottom:3px;">ยอดสุทธิ</div>
-        <div style="font-weight:500;font-size:12px;color:#166534;">ที่ต้องชำระ</div>
-      </div>
-      <div id="billNetTotal" style="font-weight:600;font-size:26px;color:#166534;letter-spacing:-0.025em;font-variant-numeric:tabular-nums;"></div>
+    <div style="margin:0 16px 0;padding:13px 16px;background:linear-gradient(135deg,#F0FDF4 0%,#DCFCE7 100%);border-radius:12px;border:1px solid #BBF7D0;display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-size:11.5px;color:#15803D;font-weight:600;">ยอดสุทธิที่เลือก</div>
+      <div id="billNetTotal" style="font-weight:700;font-size:20px;color:#166534;letter-spacing:-0.025em;font-variant-numeric:tabular-nums;"></div>
     </div>
-    <div style="padding:16px 20px 20px;display:flex;gap:8px;">
-      <button onclick="closeBillModal()" style="padding:12px 16px;border-radius:11px;border:none;background:rgba(0,0,0,0.05);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;color:var(--text-secondary);transition:all .2s ease;">ปิด</button>
-      <button onclick="saveBillImage()" style="flex:1;padding:12px;border-radius:11px;border:none;background:#0369A1;color:#fff;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;transition:all .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 12px rgba(3,105,161,0.25);display:inline-flex;align-items:center;justify-content:center;gap:6px;letter-spacing:-0.01em;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>บันทึกภาพ</button>
-      <button onclick="printBill()" style="flex:1;padding:12px;border-radius:11px;border:none;background:var(--accent);color:#fff;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;transition:all .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 12px rgba(0,0,0,0.2);display:inline-flex;align-items:center;justify-content:center;gap:6px;letter-spacing:-0.01em;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>พิมพ์</button>
+
+    <!-- Action buttons (save/print) - smaller, less prominent -->
+    <div style="padding:10px 16px 8px;display:flex;gap:6px;">
+      <button onclick="saveBillImage()" style="flex:1;padding:9px;border-radius:10px;border:none;background:rgba(3,105,161,0.1);color:#0369A1;font-weight:600;font-size:12px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>บันทึกภาพ</button>
+      <button onclick="printBill()" style="flex:1;padding:9px;border-radius:10px;border:none;background:rgba(0,0,0,0.06);color:#44403C;font-weight:600;font-size:12px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>พิมพ์</button>
+    </div>
+
+    <!-- V3 Sticky pay bar -->
+    <div id="billBottomBar" class="bill-bottom-bar">
+      <button id="billBtnClear" class="bill-btn-clear" onclick="billClearSelection()" style="display:none;">ล้าง</button>
+      <button id="billBtnPay" class="bill-btn-pay disabled" onclick="billPaySelected()">เลือกบิลที่จะจ่าย</button>
     </div>
   </div>
 </div>
@@ -3076,6 +3344,52 @@ function renderCalGrid() {
   const grid     = document.getElementById("calGrid");
   const now      = new Date();
 
+  // V3: Buddhist holy days (วันพระ) — Thai lunar calendar
+  // Lookup table for accurate dates (verified ปี 2566-2570)
+  // Format: { 'YYYY-MM': [day, day, day, day] }
+  const HOLY_DAYS_TABLE = {
+    // 2566 (2023)
+    '2023-1':  [6, 13, 21, 28], '2023-2':  [4, 12, 19, 27], '2023-3':  [6, 14, 21, 28], '2023-4':  [5, 12, 20, 27],
+    '2023-5':  [4, 11, 19, 26], '2023-6':  [3, 10, 18, 25], '2023-7':  [3, 11, 17, 25], '2023-8':  [1, 9, 16, 24, 31],
+    '2023-9':  [7, 15, 22, 30], '2023-10': [7, 15, 22, 30], '2023-11': [6, 13, 21, 28], '2023-12': [5, 13, 20, 28],
+    // 2567 (2024)
+    '2024-1':  [4, 11, 19, 26], '2024-2':  [3, 10, 18, 25], '2024-3':  [3, 11, 17, 25], '2024-4':  [1, 9, 16, 24],
+    '2024-5':  [1, 9, 15, 23, 30], '2024-6':  [7, 14, 22, 29], '2024-7':  [6, 14, 21, 28], '2024-8':  [5, 13, 20, 27],
+    '2024-9':  [3, 11, 18, 25], '2024-10': [3, 11, 18, 25], '2024-11': [1, 9, 16, 24], '2024-12': [1, 8, 16, 23, 30],
+    // 2568 (2025)
+    '2025-1':  [7, 14, 22, 29], '2025-2':  [5, 13, 20, 27], '2025-3':  [7, 14, 22, 29], '2025-4':  [5, 13, 20, 27],
+    '2025-5':  [4, 12, 19, 26], '2025-6':  [3, 11, 18, 25], '2025-7':  [3, 10, 17, 25], '2025-8':  [1, 9, 16, 24, 31],
+    '2025-9':  [7, 15, 22, 30], '2025-10': [7, 14, 22, 29], '2025-11': [5, 13, 20, 27], '2025-12': [5, 12, 20, 27],
+    // 2569 (2026)
+    '2026-1':  [3, 11, 18, 26], '2026-2':  [2, 10, 17, 24], '2026-3':  [3, 11, 18, 26], '2026-4':  [2, 9, 17, 24],
+    '2026-5':  [1, 9, 16, 23, 31], '2026-6':  [7, 15, 22, 29], '2026-7':  [6, 14, 21, 28], '2026-8':  [5, 12, 20, 27],
+    '2026-9':  [3, 11, 19, 26], '2026-10': [2, 10, 18, 25], '2026-11': [1, 9, 17, 24], '2026-12': [1, 8, 16, 23, 30],
+    // 2570 (2027)
+    '2027-1':  [7, 15, 22, 29], '2027-2':  [5, 13, 20, 27], '2027-3':  [7, 15, 22, 29], '2027-4':  [5, 13, 20, 27],
+    '2027-5':  [4, 12, 19, 26], '2027-6':  [3, 11, 18, 25], '2027-7':  [2, 10, 17, 25], '2027-8':  [1, 9, 16, 24, 31],
+    '2027-9':  [7, 15, 22, 30], '2027-10': [7, 14, 22, 29], '2027-11': [5, 13, 20, 27], '2027-12': [5, 12, 20, 27],
+  };
+  const holyDaysSet = (() => {
+    const key = `${adYear}-${month}`;
+    const list = HOLY_DAYS_TABLE[key];
+    if (list) return new Set(list);
+    // Fallback: algorithmic approximation for years outside table
+    const set = new Set();
+    const SYNODIC = 29.530588853;
+    const REF_NEW_MOON_JD = 2451550.26;
+    const monthEnd = new Date(adYear, month, 0);
+    for (let d = 1; d <= monthEnd.getDate(); d++) {
+      const dt = new Date(adYear, month-1, d, 12, 0, 0);
+      const jd = (dt.getTime() / 86400000) + 2440587.5;
+      const phase = (((jd - REF_NEW_MOON_JD) % SYNODIC) + SYNODIC) % SYNODIC;
+      if (Math.abs(phase - 7) < 0.55 || Math.abs(phase - 14) < 0.55 ||
+          Math.abs(phase - 22) < 0.55 || Math.abs(phase - 29) < 0.55 || phase < 0.55) {
+        set.add(d);
+      }
+    }
+    return set;
+  })();
+
   // วันแรกและวันสุดท้ายของเดือน
   const firstDay = new Date(adYear, month-1, 1);
   const lastDay  = new Date(adYear, month, 0);
@@ -3099,6 +3413,7 @@ function renderCalGrid() {
     const cell = document.createElement("div");
     cell.className = "cal-cell";
     cell.textContent = d;
+    cell.style.position = "relative";
 
     // วันนี้
     const isToday = (d===now.getDate() && month===now.getMonth()+1 && adYear===now.getFullYear());
@@ -3106,6 +3421,14 @@ function renderCalGrid() {
 
     // วันที่ active
     if (key === activeDay) cell.classList.add("active-day");
+
+    // V3: วันพระ — dot สีเหลืองเรืองแสง มุมขวาบน
+    if (holyDaysSet.has(d)) {
+      cell.classList.add("holy-day");
+      const holyDot = document.createElement("div");
+      holyDot.className = "holy-dot";
+      cell.appendChild(holyDot);
+    }
 
     // สถานะข้อมูล — ตรวจสอบทั้ง allDays และ allClosed
     const _hasData = allDays[key] || allClosed[key];
@@ -3115,7 +3438,6 @@ function renderCalGrid() {
       cell.classList.add("has-data");
       const dot2 = document.createElement("div");
       dot2.style.cssText = "width:4px;height:4px;border-radius:50%;position:absolute;bottom:3px;left:50%;transform:translateX(-50%);background:#A8A29E;";
-      cell.style.position = "relative";
       cell.appendChild(dot2);
     }
     if (status) {
@@ -3125,7 +3447,6 @@ function renderCalGrid() {
       const dot = document.createElement("div");
       dot.style.cssText = `width:4px;height:4px;border-radius:50%;position:absolute;bottom:3px;left:50%;transform:translateX(-50%);background:${
         status==="all-paid"?"#16A34A":status==="credit-pending"?"#0369A1":"#DC2626"};`;
-      cell.style.position = "relative";
       cell.appendChild(dot);
     }
 
@@ -3473,7 +3794,7 @@ function renderBoard() {
   const sdb = document.getElementById("stickyDateBox");
   const sdt = document.getElementById("stickyDateText");
   if (sdb && sdt && activeTab==="board") {
-    sdt.textContent = formatThaiDate(activeDay);
+    sdt.textContent = formatThaiDateShort(activeDay);
     sdb.style.display = "flex";
   }
   const data = _dayData;
@@ -3484,9 +3805,9 @@ function renderBoard() {
   const pct  = tot>0?Math.round(paid/tot*100):0;
 
   document.getElementById("summaryCards").innerHTML =
-    card("ยอดรวม", fmt(tot), all.length+" ราย", "#1C1917") +
-    card("ชำระแล้ว", fmt(paid), all.filter(c=>c.status==="ชำระแล้ว").length+" ราย", "#166534") +
-    card("รอชำระ", fmt(wait), all.filter(c=>c.status==="รอชำระ").length+" ราย", "#92400E");
+    card("ยอดรวม", fmt(tot), all.length, "#1C1917") +
+    card("ชำระแล้ว", fmt(paid), all.filter(c=>c.status==="ชำระแล้ว").length, "#166534") +
+    card("รอชำระ", fmt(wait), all.filter(c=>c.status==="รอชำระ").length, "#92400E");
 
 
   document.getElementById("pctLabel").textContent = pct+"%";
@@ -3859,7 +4180,7 @@ function renderBoard() {
 }
 
 function card(label,value,sub,color) {
-  return `<div class="summary-card"><div class="sc-label">${label}</div><div class="sc-value" style="color:${color}">${value}</div><div class="sc-sub">${sub}</div></div>`;
+  return `<div class="summary-card"><div class="sc-label">${label}</div><div class="sc-row"><div class="sc-value" style="color:${color}">${value}</div><div class="sc-sub">·${sub}</div></div></div>`;
 }
 
 // ── นับจำนวนบิลค้างของลูกค้าแต่ละคน (ทุกวัน) ──────────────────────
@@ -3982,15 +4303,13 @@ function renderUnpaid() {
   });
   sortedByDay.forEach(day => {
     const entries = byDay[day];
-    const dayTotal = entries.reduce((s,e)=>s+(e.item.amount||0),0);
 
-    // date separator
+    // V3: date separator — short format "ศ 1 / 4 / 69" centered, no total
     const sep = document.createElement("div");
     sep.className = "upd-date-sep";
     sep.innerHTML = `<div class="upd-date-line"></div>
-      <div class="upd-date-label">${formatThaiDate(day)}</div>
-      <div class="upd-date-line"></div>
-      <div class="upd-date-total">${fmt(dayTotal)}</div>`;
+      <div class="upd-date-label">${formatThaiDateShort(day)}</div>
+      <div class="upd-date-line"></div>`;
     container.appendChild(sep);
 
     // grid
@@ -4075,61 +4394,33 @@ function renderUnpaidPerson(container) {
   }
 
   const gl = document.createElement("div"); gl.className = "upd-group-list";
+  const THAI_M_SHORT = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
   Object.entries(persons).sort((a,b)=>b[1].total-a[1].total).forEach(([name,info]) => {
-    const grpColor = GRP_COLORS[info.grp] || "#1C1917";
-    const row = document.createElement("div"); row.className = "upd-gh-row";
-    const billBtn = document.createElement("button");
-    billBtn.className = "upd-gh-bill";
-    billBtn.style.background = grpColor;
-    billBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:5px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8M16 17H8M10 9H8"/></svg>รวมบิล`;
-    billBtn.onclick = e => { e.stopPropagation(); openBillModal(name, info.bills[0]?.group); };
+    // build month breakdown — group bills by month
+    const byMonth = {};
+    info.bills.forEach(({day}) => {
+      const parts = day.split('-');
+      if (parts.length === 3) {
+        const m = parseInt(parts[1]);
+        if (m >= 1 && m <= 12) byMonth[m] = (byMonth[m]||0) + 1;
+      }
+    });
+    const breakdownHTML = Object.keys(byMonth)
+      .sort((a,b)=>+a-+b)
+      .map(m => `<b>${THAI_M_SHORT[+m-1]}</b>·${byMonth[m]}`)
+      .join('<span class="upd-gh-bd-sep">·</span>');
 
-    row.innerHTML = `<div class="upd-gh-dot" style="background:${info.color};"></div>
-      <div class="upd-gh-name">${name}</div>
-      <div class="upd-gh-meta">${info.bills.length} บิล</div>
+    const row = document.createElement("div"); row.className = "upd-gh-row";
+    row.innerHTML = `<div class="upd-gh-name">${name}</div>
+      <div class="upd-gh-bd">${breakdownHTML}</div>
       <div class="upd-gh-total">${fmt(info.total)}</div>
       <div class="upd-gh-arr">›</div>`;
-    row.insertBefore(billBtn, row.querySelector(".upd-gh-arr"));
 
-    const bodyId = "upd-body-" + name.replace(/[^a-zA-Z0-9ก-๙]/g,"_");
-    const body = document.createElement("div"); body.className = "upd-gh-body"; body.id = bodyId;
-    info.bills.forEach(({day,grpKey,key,item,group}) => {
-      const it = document.createElement("div"); it.className = "upd-gh-item";
-      const circle = document.createElement("div");
-      circle.style.cssText = `width:22px;height:22px;border-radius:50%;border:2px solid ${grpColor};flex-shrink:0;cursor:pointer;`;
-      circle.onclick = e => {
-        e.stopPropagation();
-        // visual feedback ทันที ไม่รอ Firebase
-        circle.style.background = grpColor;
-        circle.style.opacity = "0.5";
-        db.ref(`days/${day}/${grpKey}/${key}/status`).set("ชำระแล้ว").then(()=>{
-          if(allDays[day]?.[grpKey]?.[key]) allDays[day][grpKey][key].status="ชำระแล้ว";
-          // จำ scroll + เปิดอยู่ body ไหนบ้าง
-          const _sy = window.scrollY || 0;
-          const openBodies = [...document.querySelectorAll(".upd-gh-body.show")].map(b=>b.id);
-          renderUnpaid();
-          // restore open bodies
-          openBodies.forEach(bid=>{
-            const b = document.getElementById(bid);
-            if(b){ b.classList.add("show"); b.previousElementSibling?.classList.add("open"); }
-          });
-          window.scrollTo(0, _sy);
-          setTimeout(()=>window.scrollTo(0, _sy), 50);
-        });
-      };
-      it.innerHTML = `<div class="upd-gh-item-date">${day}</div>
-        <div class="upd-gh-item-grp">${group.tag}</div>
-        <div class="upd-gh-item-note">${item.note||"-"}</div>
-        <div class="upd-gh-item-amt">${fmt(item.amount||0)}</div>`;
-      it.insertBefore(circle, it.firstChild);
-      body.appendChild(it);
-    });
-
+    // V3: click row → open bill modal (replaces expand-down behavior)
     row.addEventListener("click", () => {
-      const open = row.classList.toggle("open");
-      body.classList.toggle("show", open);
+      openBillModal(name, info.bills[0]?.group);
     });
-    gl.appendChild(row); gl.appendChild(body);
+    gl.appendChild(row);
   });
   container.appendChild(gl);
 }
@@ -4297,6 +4588,24 @@ function formatThaiDate(label) {
   } catch(e) { return label; }
 }
 
+// V3: short format for sticky bar (e.g. "ศ 1 / 5 / 69")
+function formatThaiDateShort(label) {
+  try {
+    const sep = label.includes("-") ? "-" : "/";
+    const parts = label.split(sep);
+    if (parts.length !== 3) return label;
+    let [dd, mm, yy] = parts.map(Number);
+    const year = yy < 100 ? yy + 2500 : yy;
+    const adYear = year - 543;
+    const date = new Date(adYear, mm - 1, dd);
+    if (isNaN(date)) return label;
+    const SHORT_DAYS = ["อา","จ","อ","พ","พฤ","ศ","ส"];
+    const dayShort = SHORT_DAYS[date.getDay()];
+    const yy2 = (year % 100).toString().padStart(2,"0");
+    return `${dayShort} ${dd} / ${mm} / ${yy2}`;
+  } catch(e) { return label; }
+}
+
 // ── Board date navigation (sticky pill) ─────────────────────────
 function _sortDayKeys(keys) {
   return [...keys].sort((a, b) => {
@@ -4365,6 +4674,8 @@ let _billAllBills = [];  // เก็บ bills ทั้งหมดสำหร
 let _billAccentColor = "#1C1917";
 
 function openBillModal(customerName, group) {
+  // V3: reset multi-select state every time
+  window._billSelected = new Set();
   // รวบรวมบิลทุกวันที่ค้างอยู่ของลูกค้าคนนี้ เรียงเก่า→ใหม่
   const allBills = [];
   const sortedDays = Object.keys(allDays).sort((a,b)=>{
@@ -4470,192 +4781,280 @@ function billApplyMonthFilter() {
 }
 
 function renderBillItems(bills) {
-  const accentColor = _billAccentColor;
   const itemsEl = document.getElementById("billItems");
   itemsEl.innerHTML = "";
-  let grandTotal = 0;
 
   if (bills.length === 0) {
-    itemsEl.innerHTML = `<div style="text-align:center;padding:20px;color:#A8A29E;font-size:14px;">ไม่มีรายการค้างชำระ</div>`;
+    itemsEl.innerHTML = `<div style="text-align:center;padding:40px 20px;color:#A8A29E;font-size:14px;">ไม่มีรายการค้างชำระ</div>`;
     document.getElementById("billGrandTotal").textContent = fmt(0);
+    if (typeof billUpdateBottomBar === "function") billUpdateBottomBar();
     return;
   }
-  bills.forEach(({day, group: billGroup, key, item}, i) => {
-      grandTotal += item.amount || 0;
-      const row = document.createElement("div");
-      row.className = "bill-day-block";
-      row.style.cssText = `display:flex;align-items:center;gap:8px;padding:11px 0;border-bottom:1px solid ${i < bills.length-1 ? "#F5F5F4":"transparent"};animation-delay:${Math.min(i*45,250)}ms;`;
 
-      // ข้อมูลซ้าย
-      const infoDiv = document.createElement("div");
-      infoDiv.style.flex = "1";
-      infoDiv.style.minWidth = "0";
-      const noteDiv = document.createElement("div");
-      noteDiv.style.cssText = "font-size:13px;font-weight:700;color:#1C1917;";
-      noteDiv.textContent = item.note || "-";
-      // วันที่ — กดแล้วเด้งไปบอร์ดวันนั้น
-      const dayBtn = document.createElement("span");
-      dayBtn.style.cssText = "display:inline-block;background:#FEF3C7;color:#92400E;padding:3px 10px;border-radius:99px;font-size:10.5px;font-weight:700;cursor:pointer;border:1px solid #FDE68A;margin-top:4px;transition:all .2s cubic-bezier(.34,1.56,.64,1);";
-      dayBtn.textContent = day;
-      dayBtn.title = "กดเพื่อไปวันนั้น";
-      dayBtn.addEventListener("mouseenter", () => { dayBtn.style.background = "#FDE68A"; dayBtn.style.transform = "translateY(-1px)"; });
-      dayBtn.addEventListener("mouseleave", () => { dayBtn.style.background = "#FEF3C7"; dayBtn.style.transform = ""; });
-      dayBtn.addEventListener("click", () => {
-        closeBillModal();
-        activeDay = day; openForm = null;
-        renderDayTabs(Object.keys(allDays).sort());
-        switchTab("board");
-        showToast(`ไปยังวัน ${day}`, "info", 1400);
+  // V3: group bills by month for grid layout
+  const THAI_M = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+  const byMonth = {};
+  let grandTotal = 0;
+  bills.forEach(b => {
+    grandTotal += b.item.amount || 0;
+    const p = parseDayKey(b.day);
+    if (!p) return;
+    const mk = `${p.year+543}-${String(p.month).padStart(2,"0")}`;
+    if (!byMonth[mk]) byMonth[mk] = { bills: [], total: 0, year: p.year+543, month: p.month };
+    byMonth[mk].bills.push(b);
+    byMonth[mk].total += b.item.amount || 0;
+  });
+
+  // sort months ascending (old → new)
+  const monthKeys = Object.keys(byMonth).sort();
+
+  // Track currently displayed bills (used by selection logic)
+  window._billDisplayedBills = bills;
+  if (!window._billSelected) window._billSelected = new Set();
+
+  monthKeys.forEach(mk => {
+    const mInfo = byMonth[mk];
+    // Month header
+    const hdr = document.createElement("div");
+    hdr.className = "bill-month-header";
+    const monthAllSelected = mInfo.bills.every(b => window._billSelected.has(b.day+"::"+b.group.key+"::"+b.key));
+    hdr.innerHTML = `
+      <div>
+        <span>${THAI_M[mInfo.month-1]} ${mInfo.year}</span>
+        <span class="bill-month-meta" style="margin-left:8px;">${mInfo.bills.length} บิล · ${fmt(mInfo.total)}</span>
+      </div>
+      <button class="bill-month-toggle ${monthAllSelected?'active':''}" data-mk="${mk}">
+        ${monthAllSelected ? '✓ ล้างเดือน' : 'เลือกทั้งเดือน'}
+      </button>
+    `;
+    itemsEl.appendChild(hdr);
+
+    // Month grid
+    const grid = document.createElement("div");
+    grid.className = "bill-grid";
+    mInfo.bills.forEach(b => {
+      const cellId = b.day+"::"+b.group.key+"::"+b.key;
+      const cell = document.createElement("div");
+      cell.className = "bill-cell";
+      if (window._billSelected.has(cellId)) cell.classList.add("selected");
+      // วันที่ + ยอด
+      const p = parseDayKey(b.day);
+      const dayShort = p ? `${p.day}/${p.month}` : b.day;
+      cell.innerHTML = `
+        <div class="bill-cell-day">${dayShort}</div>
+        <div class="bill-cell-amt">${fmt(b.item.amount||0)}</div>
+      `;
+      cell.dataset.id = cellId;
+      cell.title = b.item.note ? `${b.day} · ${b.item.note}` : b.day;
+      cell.addEventListener("click", () => billToggleCell(cellId));
+      grid.appendChild(cell);
+    });
+    itemsEl.appendChild(grid);
+  });
+
+  // Wire up month toggle buttons
+  itemsEl.querySelectorAll(".bill-month-toggle").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      billToggleMonth(btn.dataset.mk);
+    });
+  });
+
+  document.getElementById("billGrandTotal").textContent = fmt(grandTotal);
+  billUpdateBottomBar();
+}
+
+// V3: toggle one cell
+function billToggleCell(cellId) {
+  if (!window._billSelected) window._billSelected = new Set();
+  if (window._billSelected.has(cellId)) {
+    window._billSelected.delete(cellId);
+  } else {
+    window._billSelected.add(cellId);
+  }
+  // update DOM
+  const cell = document.querySelector(`.bill-cell[data-id="${cellId}"]`);
+  if (cell) cell.classList.toggle("selected", window._billSelected.has(cellId));
+  // update month toggle state
+  billUpdateMonthToggles();
+  billUpdateBottomBar();
+  if (typeof hap === "function") hap(8);
+}
+
+// V3: toggle all bills in a month
+function billToggleMonth(mk) {
+  if (!window._billSelected) window._billSelected = new Set();
+  const bills = window._billDisplayedBills || [];
+  const inMonth = bills.filter(b => {
+    const p = parseDayKey(b.day); if (!p) return false;
+    return `${p.year+543}-${String(p.month).padStart(2,"0")}` === mk;
+  });
+  const allSelected = inMonth.every(b => window._billSelected.has(b.day+"::"+b.group.key+"::"+b.key));
+  inMonth.forEach(b => {
+    const id = b.day+"::"+b.group.key+"::"+b.key;
+    if (allSelected) window._billSelected.delete(id);
+    else window._billSelected.add(id);
+  });
+  // re-render cells (just toggle classes)
+  document.querySelectorAll(".bill-cell").forEach(cell => {
+    cell.classList.toggle("selected", window._billSelected.has(cell.dataset.id));
+  });
+  billUpdateMonthToggles();
+  billUpdateBottomBar();
+  if (typeof hap === "function") hap([8,30,12]);
+}
+
+// V3: update all month toggle button states
+function billUpdateMonthToggles() {
+  const bills = window._billDisplayedBills || [];
+  document.querySelectorAll(".bill-month-toggle").forEach(btn => {
+    const mk = btn.dataset.mk;
+    const inMonth = bills.filter(b => {
+      const p = parseDayKey(b.day); if (!p) return false;
+      return `${p.year+543}-${String(p.month).padStart(2,"0")}` === mk;
+    });
+    const allSelected = inMonth.length > 0 && inMonth.every(b => window._billSelected.has(b.day+"::"+b.group.key+"::"+b.key));
+    btn.classList.toggle("active", allSelected);
+    btn.textContent = allSelected ? "✓ ล้างเดือน" : "เลือกทั้งเดือน";
+  });
+}
+
+// V3: clear all selections
+function billClearSelection() {
+  window._billSelected = new Set();
+  document.querySelectorAll(".bill-cell.selected").forEach(c => c.classList.remove("selected"));
+  billUpdateMonthToggles();
+  billUpdateBottomBar();
+  if (typeof hap === "function") hap(15);
+}
+
+// V3: update sticky bottom bar (pay button text + clear button visibility)
+function billUpdateBottomBar() {
+  const sel = window._billSelected || new Set();
+  const bills = window._billDisplayedBills || [];
+  const selectedBills = bills.filter(b => sel.has(b.day+"::"+b.group.key+"::"+b.key));
+  const totalSelected = selectedBills.reduce((s,b)=>s+(b.item.amount||0),0);
+  const btnPay = document.getElementById("billBtnPay");
+  const btnClear = document.getElementById("billBtnClear");
+  if (!btnPay || !btnClear) return;
+  if (sel.size === 0) {
+    btnPay.classList.add("disabled");
+    btnPay.innerHTML = "เลือกบิลที่จะจ่าย";
+    btnClear.style.display = "none";
+  } else {
+    btnPay.classList.remove("disabled");
+    const allCount = bills.length;
+    const isAll = sel.size === allCount;
+    const label = isAll ? "จ่ายทั้งหมด" : `จ่าย ${sel.size} บิล`;
+    btnPay.innerHTML = `${label} <span class="bill-btn-pay-amt">${fmt(totalSelected)}</span>`;
+    btnClear.style.display = "inline-block";
+  }
+  // Update net total to reflect selected (or all if none)
+  const netEl = document.getElementById("billNetTotal");
+  if (netEl) {
+    const baseTotal = sel.size === 0 ? bills.reduce((s,b)=>s+(b.item.amount||0),0) : totalSelected;
+    const totalDeduct = (typeof billDeducts !== "undefined" && billDeducts) ? billDeducts.reduce((s,d)=>s+(d.amount||0),0) : 0;
+    netEl.textContent = fmt(Math.max(0, baseTotal - totalDeduct));
+  }
+}
+
+// V3: pay all selected bills (with confirmation if ≥5 bills or ≥10000)
+function billPaySelected() {
+  const sel = window._billSelected || new Set();
+  if (sel.size === 0) return;
+  const bills = window._billDisplayedBills || [];
+  const selectedBills = bills.filter(b => sel.has(b.day+"::"+b.group.key+"::"+b.key));
+  const totalAmount = selectedBills.reduce((s,b)=>s+(b.item.amount||0),0);
+
+  // Confirmation rule: ≥5 bills OR ≥10,000 baht
+  const needConfirm = selectedBills.length >= 5 || totalAmount >= 10000;
+  if (needConfirm) {
+    const msg = `ยืนยันจ่าย ${selectedBills.length} บิล รวม ${fmt(totalAmount)} บาท?`;
+    if (!confirm(msg)) return;
+  }
+
+  // Disable button to prevent double-click
+  const btnPay = document.getElementById("billBtnPay");
+  if (btnPay) btnPay.classList.add("disabled");
+
+  // Batch update Firebase
+  const updates = {};
+  selectedBills.forEach(b => {
+    let path = null;
+    if (allDays[b.day] && allDays[b.day][b.group.key] && allDays[b.day][b.group.key][b.key]) {
+      path = `days/${b.day}/${b.group.key}/${b.key}/status`;
+    } else if (allClosed[b.day] && allClosed[b.day][b.group.key] && allClosed[b.day][b.group.key][b.key]) {
+      path = `closed/${b.day}/${b.group.key}/${b.key}/status`;
+    }
+    if (path) updates[path] = "ชำระแล้ว";
+  });
+
+  db.ref().update(updates).then(() => {
+    // update local cache
+    selectedBills.forEach(b => {
+      if (allDays[b.day]?.[b.group.key]?.[b.key])   allDays[b.day][b.group.key][b.key].status   = "ชำระแล้ว";
+      if (allClosed[b.day]?.[b.group.key]?.[b.key]) allClosed[b.day][b.group.key][b.key].status = "ชำระแล้ว";
+    });
+    // feedback
+    if (typeof SX !== "undefined" && SX.tapPos) SX.tapPos();
+    if (typeof hap === "function") hap([8, 30, 12, 30, 8]);
+    showToast(`ชำระแล้ว ${selectedBills.length} บิล · ${fmt(totalAmount)}`, "success", 2000);
+    // refresh background
+    if (activeTab === "board")  renderBoard();
+    if (activeTab === "unpaid") renderUnpaid();
+    // clear selection
+    window._billSelected = new Set();
+    // recompute remaining bills for this customer
+    const _bn = document.getElementById("billCustomerName")?.textContent;
+    const _modal = document.getElementById("billModal");
+    if (_bn && _modal && _modal.style.display !== "none") {
+      const _scrollY = _modal.scrollTop;
+      const newBills = [];
+      const sortedDays2 = Object.keys(allDays).sort((a,b)=>{
+        const pa=parseDayKey(a), pb=parseDayKey(b);
+        if(!pa||!pb) return 0;
+        return new Date(pa.year,pa.month-1,pa.day)-new Date(pb.year,pb.month-1,pb.day);
       });
-      infoDiv.appendChild(noteDiv);
-      infoDiv.appendChild(dayBtn);
-
-      // ยอดเงิน
-      const amtDiv = document.createElement("div");
-      amtDiv.style.cssText = `font-weight:600;font-size:14px;color:${accentColor};flex-shrink:0;`;
-      amtDiv.textContent = fmt(item.amount);
-
-      // ปุ่มติ๊กจ่ายแล้ว
-      const isPaid = item.status === "ชำระแล้ว";
-      const payBtn = document.createElement("button");
-      payBtn.style.cssText = `padding:6px 11px;border-radius:9px;border:1.5px solid #22C55E;background:${isPaid?"#22C55E":"transparent"};color:${isPaid?"#fff":"#22C55E"};font-size:11.5px;font-weight:700;cursor:pointer;flex-shrink:0;transition:all .25s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;font-family:inherit;`;
-      payBtn.innerHTML = isPaid ? `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-right:3px;"><path d="M20 6 9 17l-5-5"/></svg>จ่ายแล้ว` : "จ่าย?";
-      payBtn.addEventListener("click", () => {
-        if (payBtn.disabled) return;
-        payBtn.disabled = true;
-        // V3: spring bounce
-        payBtn.animate(
-          [{transform:'scale(1)'},{transform:'scale(1.25)'},{transform:'scale(1)'}],
-          {duration:380, easing:'cubic-bezier(.34,1.56,.64,1)'}
-        );
-        const next = isPaid ? "รอชำระ" : "ชำระแล้ว";
-        // หา path ที่ถูกต้อง — ตรวจทั้ง allDays และ allClosed
-        let ref = null;
-        if (allDays[day] && allDays[day][billGroup.key] && allDays[day][billGroup.key][key]) {
-          ref = `days/${day}/${billGroup.key}/${key}/status`;
-        } else if (allClosed[day] && allClosed[day][billGroup.key] && allClosed[day][billGroup.key][key]) {
-          ref = `closed/${day}/${billGroup.key}/${key}/status`;
-        } else {
-          ref = `days/${day}/${billGroup.key}/${key}/status`; // fallback
-        }
-        db.ref(ref).set(next).then(() => {
-          // อัปเดต local cache ทันที
-          if (allDays[day]?.[billGroup.key]?.[key])   allDays[day][billGroup.key][key].status   = next;
-          if (allClosed[day]?.[billGroup.key]?.[key]) allClosed[day][billGroup.key][key].status = next;
-          // V3: SX shared + toast + confetti
-          if (next === "ชำระแล้ว") {
-            SX.tapPos(); hap([8, 30, 12]);
-            spawnMicroConfetti(payBtn);
-            showToast(`บันทึกชำระ — ${day}`, "success", 1600);
-          } else {
-            SX.tapNeg();
-            showToast(`คืนสถานะ — ${day}`, "info", 1400);
-          }
-          // refresh background tabs (ไม่ render bill modal ทันที)
-          if (activeTab==="board")   renderBoard();
-          if (activeTab==="unpaid")  renderUnpaid();
-          // ── REFRESH BILL MODAL IN-PLACE (ไม่ปิด-เปิดใหม่ → scroll ไม่กระเด้ง) ──
-          const _bn = document.getElementById("billCustomerName")?.textContent;
-          const _modal = document.getElementById("billModal");
-          if (_bn && _modal && _modal.style.display !== "none") {
-            const _scrollY = _modal.scrollTop;
-            // recompute bills (อ่านใหม่จาก allDays + allClosed แต่ filter เฉพาะที่ยัง "รอชำระ")
-            const newBills = [];
-            const sortedDays2 = Object.keys(allDays).sort((a,b)=>{
-              const pa=parseDayKey(a), pb=parseDayKey(b);
-              if(!pa||!pb) return 0;
-              return new Date(pa.year,pa.month-1,pa.day)-new Date(pb.year,pb.month-1,pb.day);
-            });
-            sortedDays2.forEach(d => {
-              const dayData = allDays[d] || {};
-              GROUPS.forEach(gg => {
-                Object.entries(dayData[gg.key]||{}).forEach(([kk, item]) => {
-                  if (item && item.name === _bn && item.status === "รอชำระ") {
-                    newBills.push({ day: d, group: gg, key: kk, item });
-                  }
-                });
-              });
-            });
-            _billAllBills = newBills;
-            // ถ้าไม่มี bills เหลือ → ปิด modal เลย
-            if (newBills.length === 0) {
-              setTimeout(() => closeBillModal(), 250);
-              return;
+      sortedDays2.forEach(d => {
+        const dayData = allDays[d] || {};
+        GROUPS.forEach(gg => {
+          Object.entries(dayData[gg.key]||{}).forEach(([kk, item]) => {
+            if (item && item.name === _bn && item.status === "รอชำระ") {
+              newBills.push({ day: d, group: gg, key: kk, item });
             }
-            // re-render รายการตาม month filter ปัจจุบัน
-            const sel = document.getElementById("billMonthFilter");
-            const mk  = sel ? sel.value : "all";
-            const filteredBills = mk==="all" ? newBills : newBills.filter(({day:dd})=>{
-              const p=parseDayKey(dd); if(!p) return false;
-              return `${p.year+543}-${p.month}`===mk;
-            });
-            const THAI_M = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
-            const suffix = mk==="all" ? `${newBills.length} รายการ` : (() => {
-              const [y,m] = mk.split("-");
-              return `${THAI_M[+m-1]} ${y} · ${filteredBills.length} รายการ`;
-            })();
-            const lblEl = document.getElementById("billGroupLabel");
-            if (lblEl) lblEl.textContent = suffix;
-            renderBillItems(filteredBills);
-            renderDeducts(filteredBills.reduce((s,b)=>s+(b.item.amount||0),0));
-            // restore scroll ทันทีในเฟรมเดียวกัน → ไม่กระเด้ง
-            requestAnimationFrame(() => { _modal.scrollTop = _scrollY; });
-          } else {
-            payBtn.disabled = false;
-          }
-        }).catch(() => {
-          payBtn.disabled = false;
-          showToast("บันทึกไม่ได้ — เครือข่ายขาด", "error");
+          });
         });
       });
-
-      row.appendChild(infoDiv);
-      row.appendChild(amtDiv);
-      row.appendChild(payBtn);
-      itemsEl.appendChild(row);
-    });
-  // set ยอดค้างรวมทั้งหมด
-  document.getElementById("billGrandTotal").textContent = fmt(grandTotal);
+      _billAllBills = newBills;
+      if (newBills.length === 0) {
+        setTimeout(() => closeBillModal(), 300);
+        return;
+      }
+      // re-render with current month filter
+      const monthSel = document.getElementById("billMonthFilter");
+      const mk = monthSel ? monthSel.value : "all";
+      const filteredBills = mk==="all" ? newBills : newBills.filter(({day:dd})=>{
+        const p=parseDayKey(dd); if(!p) return false;
+        return `${p.year+543}-${p.month}`===mk;
+      });
+      const THAI_M2 = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+      const suffix = mk==="all" ? `${newBills.length} รายการ` : (() => {
+        const [y,m] = mk.split("-");
+        return `${THAI_M2[+m-1]} ${y} · ${filteredBills.length} รายการ`;
+      })();
+      const lblEl = document.getElementById("billGroupLabel");
+      if (lblEl) lblEl.textContent = suffix;
+      renderBillItems(filteredBills);
+      renderDeducts(filteredBills.reduce((s,b)=>s+(b.item.amount||0),0));
+      requestAnimationFrame(() => { _modal.scrollTop = _scrollY; });
+    }
+  }).catch((err) => {
+    if (btnPay) btnPay.classList.remove("disabled");
+    showToast("บันทึกไม่ได้ — เครือข่ายขาด", "error");
+    console.error(err);
+  });
 }
 
-function closeBillModal() {
-  const m = document.getElementById("billModal");
-  if (!m) return;
-  m.classList.add("closing");
-  setTimeout(() => {
-    m.style.display = "none";
-    m.classList.remove("closing");
-  }, 250);
-  billDeducts = [];
-  window._billBasketAll = [];
-}
-
-function basketDeductApplyFilter() {
-  const sel = document.getElementById("basketDeductFilter");
-  const mk = sel?.value || "all";
-  if (!window._billBasketAll) return;
-  const BK_M = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
-  billDeducts = mk === "all"
-    ? [...window._billBasketAll]
-    : window._billBasketAll.filter(e => e.monthKey === mk);
-  // update grand total from current bill filter
-  const grandTotalText = document.getElementById("billGrandTotal")?.textContent?.replace(/[฿,]/g,"") || "0";
-  renderDeducts(parseFloat(grandTotalText)||0);
-}
-
-function addDeductRow() {
-  const nameEl   = document.getElementById("deductName");
-  const amountEl = document.getElementById("deductAmount");
-  const name   = nameEl.value.trim();
-  const amount = parseFloat(amountEl.value) || 0;
-  if (!name && !amount) { alert("กรุณากรอกชื่อรายการหรือจำนวนเงิน"); return; }
-  billDeducts.push({ name: name||"-", amount });
-  nameEl.value = ""; amountEl.value = "";
-
-  // คำนวณ grand total ใหม่จาก DOM
-  const grandTotalText = document.getElementById("billGrandTotal").textContent.replace(/[฿,]/g,"");
-  renderDeducts(parseFloat(grandTotalText)||0);
-}
 
 function removeDeduct(idx) {
   billDeducts.splice(idx, 1);
