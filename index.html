@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="version" content="V3-2026-05-01-sort-fix">
 <title>ทศพร ผลไม้</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -847,6 +851,92 @@ body.tab-board .edge-handle.active { opacity: 1 !important; }
   text-align: right;
   margin-top: 3px;
   font-weight: 500;
+}
+
+/* V3: All-paid state — replace count with green chip "✓ ชำระครบ" */
+.group-count-paid-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #DCFCE7;
+  color: #15803D;
+  padding: 2px 9px 2px 5px;
+  border-radius: 99px;
+  font-weight: 700;
+  font-size: 10.5px;
+  margin-top: 3px;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}
+.group-count-paid-chip::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  background: #16A34A;
+  border-radius: 50%;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.8' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>");
+  background-size: 8px;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-shrink: 0;
+}
+[data-theme="dark"] .group-count-paid-chip {
+  background: rgba(34,197,94,0.18);
+  color: #86EFAC;
+}
+
+/* V3: All-paid card — subtle green tint background (C3) */
+.group-card.all-paid {
+  background: #FAFDFA;
+  border-color: rgba(34,197,94,0.18);
+}
+[data-theme="dark"] .group-card.all-paid {
+  background: rgba(34,197,94,0.06);
+  border-color: rgba(34,197,94,0.25);
+}
+
+/* V3: When card is all-paid, fade everything EXCEPT the chip "ชำระครบ" */
+.group-card.all-paid .group-tag-pill {
+  background: rgba(0,0,0,0.04);
+  color: #A8A29E;
+}
+.group-card.all-paid .group-tag-dot {
+  opacity: 0.5;
+}
+.group-card.all-paid .group-name {
+  color: #A8A29E;
+}
+.group-card.all-paid .group-total-text {
+  color: #A8A29E;
+  font-weight: 600;
+}
+.group-card.all-paid .paid-chip {
+  background: rgba(0,0,0,0.03);
+  border-color: rgba(0,0,0,0.06);
+  color: #A8A29E;
+  font-weight: 500;
+}
+.group-card.all-paid .paid-chips-row {
+  border-top-color: rgba(0,0,0,0.06);
+}
+/* The chip "ชำระครบ" stays vivid - explicitly NOT faded */
+.group-card.all-paid .group-count-paid-chip {
+  /* keep original vivid green - no overrides */
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .group-card.all-paid .group-tag-pill {
+  background: rgba(255,255,255,0.05);
+  color: var(--text-quaternary);
+}
+[data-theme="dark"] .group-card.all-paid .group-name,
+[data-theme="dark"] .group-card.all-paid .group-total-text {
+  color: var(--text-quaternary);
+}
+[data-theme="dark"] .group-card.all-paid .paid-chip {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.08);
+  color: var(--text-quaternary);
 }
 
 /* ITEM ROWS */
@@ -2076,7 +2166,7 @@ tr:last-child td { border-bottom: none; }
     <!-- header -->
     <div style="padding:16px 18px 10px;border-bottom:1px solid #F5F5F4;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <div style="font-weight:600;font-size:15px;color:#1C1917;display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>เลือกวันที่</div>
+        <div style="font-weight:600;font-size:15px;color:#1C1917;display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span id="calTitle">เลือกวันที่</span></div>
         <button onclick="closeCal()" style="background:#F5F5F4;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--text-secondary);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
       </div>
       <!-- year + month selectors -->
@@ -2187,30 +2277,49 @@ tr:last-child td { border-bottom: none; }
   color: #15803D;
   border-color: #86EFAC;
 }
+/* V3: Two-column compact layout — flow DOWN then RIGHT (column-by-column) */
 .bill-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
-  padding: 10px 14px 14px;
+  /* CSS columns: items flow vertically within each column, then to next column */
+  column-count: 2;
+  column-gap: 6px;
+  padding: 8px 14px 12px;
 }
 .bill-cell {
   background: #fff;
   border: 1.5px solid #E7E5E4;
-  border-radius: 11px;
-  padding: 8px 4px;
-  text-align: center;
+  border-radius: 10px;
+  padding: 9px 11px 9px 9px;
   cursor: pointer;
   position: relative;
   transition: all 0.15s cubic-bezier(.34,1.56,.64,1);
   -webkit-tap-highlight-color: transparent;
+  /* prevent cells from breaking across columns */
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  page-break-inside: avoid;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
 }
-.bill-cell:active { transform: scale(0.92); }
+.bill-cell:active { transform: scale(0.97); }
+.bill-cell::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid #D6D3D1;
+  background: transparent;
+  flex-shrink: 0;
+  transition: all 0.2s cubic-bezier(.34,1.56,.64,1);
+}
 .bill-cell-day {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: #44403C;
-  margin-bottom: 2px;
   line-height: 1;
+  flex: 1;
+  letter-spacing: -0.01em;
 }
 .bill-cell-amt {
   font-size: 12.5px;
@@ -2218,31 +2327,99 @@ tr:last-child td { border-bottom: none; }
   color: #7C3AED;
   font-variant-numeric: tabular-nums;
   line-height: 1;
+  letter-spacing: -0.01em;
 }
-/* Selected state — green */
+
+/* Group color variations for amount */
+.bill-cell[data-grp="credit"] .bill-cell-amt { color: #7C3AED; }
+.bill-cell[data-grp="transfer"] .bill-cell-amt { color: #0369A1; }
+.bill-cell[data-grp="fence"] .bill-cell-amt { color: #15803D; }
+.bill-cell[data-grp="delivery"] .bill-cell-amt { color: #B45309; }
+
+/* Selected state — green checkmark + faded date/amount */
 .bill-cell.selected {
   background: #F0FDF4;
-  border-color: #22C55E;
-  border-width: 2px;
-  box-shadow: 0 0 0 3px rgba(34,197,94,0.15);
+  border-color: rgba(34,197,94,0.35);
 }
-.bill-cell.selected .bill-cell-day { color: #15803D; }
-.bill-cell.selected .bill-cell-amt { color: #16A34A; }
-.bill-cell.selected::after {
-  content: "";
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 16px;
-  height: 16px;
+.bill-cell.selected::before {
   background: #22C55E;
-  border-radius: 50%;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>");
+  border-color: #22C55E;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>");
+  background-size: 11px;
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 12px;
-  box-shadow: 0 1px 3px rgba(34,197,94,0.4);
 }
+.bill-cell.selected .bill-cell-day {
+  color: #A8A29E;
+  text-decoration: line-through;
+  text-decoration-color: rgba(168,162,158,0.6);
+}
+.bill-cell.selected .bill-cell-amt {
+  color: #A8A29E;
+  text-decoration: line-through;
+  text-decoration-color: rgba(168,162,158,0.6);
+}
+
+/* V3: Deduct action bar (orange pill, when basket items selected) */
+.deduct-action-bar {
+  position: sticky;
+  bottom: 75px;
+  margin: 0 16px;
+  background: #F59E0B;
+  border-radius: 99px;
+  padding: 9px 12px 9px 10px;
+  display: none;
+  align-items: center;
+  gap: 9px;
+  box-shadow: 0 6px 20px rgba(245,158,11,0.4), 0 2px 6px rgba(0,0,0,0.1);
+  z-index: 11;
+  font-family: inherit;
+}
+.deduct-action-bar.show { display: flex; animation: updBarSlideUp 0.35s cubic-bezier(.34,1.56,.64,1); }
+.deduct-action-count {
+  width: 28px; height: 28px;
+  background: rgba(255,255,255,0.28);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.deduct-action-text {
+  flex: 1;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: -0.01em;
+}
+.deduct-action-amt {
+  font-variant-numeric: tabular-nums;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+}
+.deduct-action-clear {
+  width: 28px; height: 28px;
+  background: rgba(255,255,255,0.18);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-tap-highlight-color:transparent;
+  transition: all .2s cubic-bezier(.34,1.56,.64,1);
+}
+.deduct-action-clear:active { transform: scale(0.85); background: rgba(255,255,255,0.3); }
 
 /* Sticky bottom bar */
 .bill-bottom-bar {
@@ -2310,7 +2487,14 @@ tr:last-child td { border-bottom: none; }
 [data-theme="dark"] .bill-cell { background: var(--bg-subtle); border-color: rgba(255,255,255,0.08); }
 [data-theme="dark"] .bill-cell-day { color: var(--text-secondary); }
 [data-theme="dark"] .bill-cell-amt { color: #C4B5FD; }
-[data-theme="dark"] .bill-cell.selected { background: rgba(34,197,94,0.12); border-color: #22C55E; }
+[data-theme="dark"] .bill-cell::before { border-color: rgba(255,255,255,0.25); }
+[data-theme="dark"] .bill-cell[data-grp="credit"] .bill-cell-amt { color: #C4B5FD; }
+[data-theme="dark"] .bill-cell[data-grp="transfer"] .bill-cell-amt { color: #93C5FD; }
+[data-theme="dark"] .bill-cell[data-grp="fence"] .bill-cell-amt { color: #86EFAC; }
+[data-theme="dark"] .bill-cell[data-grp="delivery"] .bill-cell-amt { color: #FCD34D; }
+[data-theme="dark"] .bill-cell.selected { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.45); }
+[data-theme="dark"] .bill-cell.selected .bill-cell-day,
+[data-theme="dark"] .bill-cell.selected .bill-cell-amt { color: var(--text-quaternary) !important; }
 [data-theme="dark"] .bill-bottom-bar { background: linear-gradient(180deg, rgba(28,28,30,0) 0%, var(--bg-card) 30%); }
 [data-theme="dark"] .bill-btn-clear { background: var(--bg-subtle); color: var(--text-secondary); }
 </style>
@@ -2411,6 +2595,18 @@ tr:last-child td { border-bottom: none; }
     <div style="padding:10px 16px 8px;display:flex;gap:6px;">
       <button onclick="saveBillImage()" style="flex:1;padding:9px;border-radius:10px;border:none;background:rgba(3,105,161,0.1);color:#0369A1;font-weight:600;font-size:12px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>บันทึกภาพ</button>
       <button onclick="printBill()" style="flex:1;padding:9px;border-radius:10px;border:none;background:rgba(0,0,0,0.06);color:#44403C;font-weight:600;font-size:12px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>พิมพ์</button>
+    </div>
+
+    <!-- V3 Deduct action bar (when basket items selected) -->
+    <div id="deductActionBar" class="deduct-action-bar">
+      <div class="deduct-action-count" id="deductActionCount">0</div>
+      <div class="deduct-action-text" onclick="deductPaySelected()">
+        <span>หักตะกร้า</span>
+        <span class="deduct-action-amt" id="deductActionAmt">0</span>
+      </div>
+      <button class="deduct-action-clear" onclick="deductClearSelection()" title="ล้าง">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
     </div>
 
     <!-- V3 Sticky pay bar -->
@@ -3375,9 +3571,30 @@ function getDayStatus(dayKey) {
   return null;
 }
 
-function openCal() {
+// V3: openCal supports two modes:
+// 1) default — navigate to that day in board (no args)
+// 2) picker — pass {value, onSelect, title} → callback receives "YYYY-MM-DD" string
+window._calPickerCallback = null;
+window._calPickerMode = false;
+
+function openCal(opts) {
   const modal = document.getElementById("calModal");
   modal.style.display = "flex";
+
+  // V3: setup picker mode if opts provided
+  if (opts && typeof opts.onSelect === "function") {
+    window._calPickerMode = true;
+    window._calPickerCallback = opts.onSelect;
+    // change title
+    const titleEl = document.getElementById("calTitle");
+    if (titleEl) titleEl.textContent = opts.title || "เลือกวันที่";
+  } else {
+    window._calPickerMode = false;
+    window._calPickerCallback = null;
+    const titleEl = document.getElementById("calTitle");
+    if (titleEl) titleEl.textContent = "เลือกวันที่";
+  }
+
   // populate year selector (ปีที่มีข้อมูล ± 1)
   const yearSel = document.getElementById("calYearSel");
   const monthSel = document.getElementById("calMonthSel");
@@ -3411,8 +3628,19 @@ function openCal() {
     renderCalGrid();
   };
 
-  // ถ้า activeDay → ไปหน้านั้น
-  if (activeDay) {
+  // ถ้า activeDay → ไปหน้านั้น (หรือถ้า picker mode + initial value → ไปวันนั้น)
+  if (window._calPickerMode && opts && opts.value) {
+    // value format: "YYYY-MM-DD" (Gregorian)
+    const parts = String(opts.value).split("-");
+    if (parts.length === 3) {
+      const adYr = parseInt(parts[0]);
+      const mo = parseInt(parts[1]);
+      if (adYr && mo) {
+        yearSel.value  = adYr + 543;
+        monthSel.value = mo;
+      }
+    }
+  } else if (activeDay) {
     const p = parseDayKey(activeDay);
     if (p) {
       yearSel.value  = p.year + 543;
@@ -3424,6 +3652,9 @@ function openCal() {
 
 function closeCal() {
   document.getElementById("calModal").style.display = "none";
+  // V3: reset picker state
+  window._calPickerMode = false;
+  window._calPickerCallback = null;
 }
 
 function calGoToday() {
@@ -3579,6 +3810,20 @@ function renderCalGrid() {
     }
 
     cell.addEventListener("click", () => {
+      // V3: picker mode — return YYYY-MM-DD via callback, no day creation
+      if (window._calPickerMode && window._calPickerCallback) {
+        const adYr = beYear - 543;
+        const dKey = `${adYr}-${String(month).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+        const cb = window._calPickerCallback;
+        // reset picker state BEFORE callback (in case callback opens another picker)
+        window._calPickerMode = false;
+        window._calPickerCallback = null;
+        closeCal();
+        try { cb(dKey); } catch(e) { console.error("calPicker callback failed:", e); }
+        return;
+      }
+
+      // Default behavior: navigate to that day in board
       if (!allDays[key] && !allClosed[key]) {
         // วันว่าง → สร้างวันใหม่
         closeCal();
@@ -3956,21 +4201,21 @@ function renderBoard() {
 
     const div = document.createElement("div");
     div.className = "group-card group-" + g.key;
-    // ถ้าทุกรายการชำระครบ → เปลี่ยนพื้นหลัง card
+    // V3: ถ้าทุกรายการชำระครบ OR ไม่มีรายการเลย → ใช้ chip "✓ ชำระครบ" + bg อมเขียว (C3 style)
     const allGroupPaid = arr.length === 0 || (arr.length > 0 && gPaid === arr.length);
-    if (allGroupPaid) {
-      div.style.background = "#F0FDF4";
-      div.style.boxShadow = "0 1px 2px rgba(34,197,94,0.12), inset 0 0 0 1px rgba(34,197,94,0.18)";
-    }
+    if (allGroupPaid) div.classList.add("all-paid");
 
     // header — Apple-style with pill tag (Option C)
     const hdr = document.createElement("div");
     hdr.className = "group-header";
+    const countHtml = allGroupPaid
+      ? `<div class="group-count-paid-chip">ชำระครบ</div>`
+      : `<div class="group-count">${gPaid}/${arr.length} ชำระแล้ว</div>`;
     hdr.innerHTML = `<div style="min-width:0;flex:1;">
       <div class="group-tag-pill"><span class="group-tag-dot"></span>${g.label}</div>
       <div class="group-name">${arr.length} รายการ</div>
     </div>
-    <div style="text-align:right;flex-shrink:0;"><div class="group-total-text">${fmt(gTot)}</div><div class="group-count">${gPaid}/${arr.length} ชำระแล้ว</div></div>`;
+    <div style="text-align:right;flex-shrink:0;"><div class="group-total-text">${fmt(gTot)}</div>${countHtml}</div>`;
     div.appendChild(hdr);
 
     // items — รอชำระขึ้นก่อน จากนั้น sort ชื่อ A-Z/ก-ฮ, สีแดงขึ้นบนสุด
@@ -4911,6 +5156,7 @@ let _billAccentColor = "#1C1917";
 function openBillModal(customerName, group) {
   // V3: reset multi-select state every time
   window._billSelected = new Set();
+  window._deductSelected = new Set();
   // รวบรวมบิลทุกวันที่ค้างอยู่ของลูกค้าคนนี้ เรียงเก่า→ใหม่
   const allBills = [];
   const sortedDays = Object.keys(allDays).sort((a,b)=>{
@@ -4985,9 +5231,10 @@ function openBillModal(customerName, group) {
       bdf.innerHTML = '<option value="all">ทั้งหมด</option>';
       [...basketMonthSet].sort().forEach(mk => {
         const [y,m] = mk.split("-");
+        const buddhistYr = (parseInt(y)||0) + 543;
         const opt = document.createElement("option");
         opt.value = mk;
-        opt.textContent = `${BK_M[parseInt(m)-1]} ${y}`;
+        opt.textContent = `${BK_M[parseInt(m)-1]} ${buddhistYr}`;
         bdf.appendChild(opt);
       });
       bdf.value = "all";
@@ -5040,6 +5287,21 @@ function renderBillItems(bills) {
     byMonth[mk].total += b.item.amount || 0;
   });
 
+  // V3: sort bills within each month by date (ascending - old to new)
+  // Use date components directly to avoid Date object timezone issues
+  Object.values(byMonth).forEach(mInfo => {
+    mInfo.bills.sort((a, b) => {
+      const pa = parseDayKey(a.day), pb = parseDayKey(b.day);
+      if (!pa && !pb) return 0;
+      if (!pa) return 1;
+      if (!pb) return -1;
+      // compare year, month, day directly (no Date object)
+      if (pa.year !== pb.year) return pa.year - pb.year;
+      if (pa.month !== pb.month) return pa.month - pb.month;
+      return pa.day - pb.day;
+    });
+  });
+
   // sort months ascending (old → new)
   const monthKeys = Object.keys(byMonth).sort();
 
@@ -5071,14 +5333,12 @@ function renderBillItems(bills) {
       const cellId = b.day+"::"+b.group.key+"::"+b.key;
       const cell = document.createElement("div");
       cell.className = "bill-cell";
+      cell.dataset.grp = b.group.key;
       if (window._billSelected.has(cellId)) cell.classList.add("selected");
       // วันที่ + ยอด
       const p = parseDayKey(b.day);
       const dayShort = p ? `${p.day}/${p.month}` : b.day;
-      cell.innerHTML = `
-        <div class="bill-cell-day">${dayShort}</div>
-        <div class="bill-cell-amt">${fmt(b.item.amount||0)}</div>
-      `;
+      cell.innerHTML = `<div class="bill-cell-day">${dayShort}</div><div class="bill-cell-amt">${fmt(b.item.amount||0)}</div>`;
       cell.dataset.id = cellId;
       cell.title = b.item.note ? `${b.day} · ${b.item.note}` : b.day;
       cell.addEventListener("click", () => billToggleCell(cellId));
@@ -5304,13 +5564,50 @@ function closeBillModal() {
   window._billDisplayedBills = [];
   // Clear deducts so next open is fresh
   if (typeof billDeducts !== "undefined") billDeducts = [];
+  window._billBasketAll = [];
+  window._deductSelected = new Set();
 }
 
 function removeDeduct(idx) {
+  const removed = billDeducts[idx];
   billDeducts.splice(idx, 1);
+  // V3: also remove from _billBasketAll if it's a basket entry (has monthKey)
+  if (removed && removed.monthKey && window._billBasketAll) {
+    const baIdx = window._billBasketAll.findIndex(d =>
+      d.name === removed.name && d.amount === removed.amount && d.monthKey === removed.monthKey
+    );
+    if (baIdx >= 0) window._billBasketAll.splice(baIdx, 1);
+  }
   const grandTotalText = document.getElementById("billGrandTotal").textContent.replace(/[฿,]/g,"");
   renderDeducts(parseFloat(grandTotalText)||0);
   if (typeof billUpdateBottomBar === "function") billUpdateBottomBar();
+}
+
+// V3: filter basket deducts by month
+function basketDeductApplyFilter() {
+  const sel = document.getElementById("basketDeductFilter");
+  if (!sel || !window._billBasketAll) return;
+  const mk = sel.value;
+
+  // separate user-added deducts (no monthKey) from basket-derived (has monthKey)
+  const userAdded = (billDeducts || []).filter(d => !d.monthKey);
+
+  // filter basket entries by selected month
+  let basketFiltered;
+  if (mk === "all") {
+    basketFiltered = [...window._billBasketAll];
+  } else {
+    basketFiltered = window._billBasketAll.filter(d => d.monthKey === mk);
+  }
+
+  // combine: filtered baskets + user-added deducts
+  billDeducts = [...basketFiltered, ...userAdded];
+
+  // re-render
+  const grandTotalText = document.getElementById("billGrandTotal").textContent.replace(/[฿,]/g,"");
+  renderDeducts(parseFloat(grandTotalText)||0);
+  if (typeof billUpdateBottomBar === "function") billUpdateBottomBar();
+  if (typeof hap === "function") hap(8);
 }
 
 // V3: toggle inline deduct form
@@ -5365,8 +5662,16 @@ function renderDeducts(grandTotal) {
   listEl.innerHTML = "";
   let totalDeduct = 0;
 
-  // เรียงตามวันที่ (sortKey = วันใน month เช่น "10-มี.ค." → ดึงตัวเลข)
+  // V3: เรียงตาม monthKey ก่อน → จากนั้นวัน (รองรับหลายเดือน)
   const sorted = [...billDeducts].sort((a, b) => {
+    // sort user-added (no monthKey) to bottom
+    if (!a.monthKey && b.monthKey) return 1;
+    if (a.monthKey && !b.monthKey) return -1;
+    // both basket-derived: by monthKey first
+    if (a.monthKey && b.monthKey && a.monthKey !== b.monthKey) {
+      return a.monthKey.localeCompare(b.monthKey);
+    }
+    // same month or both user-added: by day extracted from name
     const numA = parseInt((a.name.match(/ตะกร้า\s*(\d+)-/) || [])[1] || 999);
     const numB = parseInt((b.name.match(/ตะกร้า\s*(\d+)-/) || [])[1] || 999);
     return numA - numB;
@@ -5374,14 +5679,33 @@ function renderDeducts(grandTotal) {
   // sync กลับ billDeducts ตามลำดับที่เรียงแล้ว (เพื่อให้ removeDeduct index ถูก)
   billDeducts = sorted;
 
+  // V3: track selected basket deducts (only basket entries with monthKey are selectable)
+  if (!window._deductSelected) window._deductSelected = new Set();
+
   billDeducts.forEach((d, i) => {
     totalDeduct += d.amount;
     const row = document.createElement("div");
-    row.style.cssText = "display:flex;align-items:center;gap:8px;padding:8px 12px;background:#FEF2F2;border-radius:9px;";
-    row.innerHTML = `
-      <div style="flex:1;font-size:13px;color:#991B1B;font-weight:600;">${d.name}</div>
-      <div style="font-weight:600;font-size:13px;color:#991B1B;">-${fmt(d.amount)}</div>
-      <button onclick="removeDeduct(${i})" style="background:none;border:none;color:#FCA5A5;cursor:pointer;font-size:14px;padding:2px 4px;">✕</button>`;
+    const isBasket = !!d.monthKey;  // basket entries have monthKey
+    const deductId = isBasket ? `${d.monthKey}::${d.name}::${d.amount}` : null;
+    const isSelected = isBasket && window._deductSelected.has(deductId);
+
+    row.style.cssText = `display:flex;align-items:center;gap:8px;padding:8px 12px;background:${isSelected?"#FFFBEB":"#FEF2F2"};border-radius:9px;${isSelected?"outline:2px solid #F59E0B;outline-offset:-1px;":""}cursor:${isBasket?"pointer":"default"};transition:all .15s cubic-bezier(.34,1.56,.64,1);-webkit-tap-highlight-color:transparent;`;
+
+    if (isBasket) {
+      // basket entry — has checkbox + click row to toggle
+      row.dataset.deductId = deductId;
+      row.innerHTML = `
+        <div class="deduct-check" style="width:16px;height:16px;border-radius:4px;border:1.5px solid ${isSelected?"#F59E0B":"#FCA5A5"};background:${isSelected?"#F59E0B":"transparent"};flex-shrink:0;display:flex;align-items:center;justify-content:center;${isSelected?"":""}">${isSelected?'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':""}</div>
+        <div style="flex:1;font-size:13px;color:${isSelected?"#92400E":"#991B1B"};font-weight:600;">${d.name}</div>
+        <div style="font-weight:600;font-size:13px;color:${isSelected?"#92400E":"#991B1B"};">-${fmt(d.amount)}</div>`;
+      row.addEventListener("click", () => deductToggleBasket(deductId));
+    } else {
+      // user-added entry — has × delete only
+      row.innerHTML = `
+        <div style="flex:1;font-size:13px;color:#991B1B;font-weight:600;">${d.name}</div>
+        <div style="font-weight:600;font-size:13px;color:#991B1B;">-${fmt(d.amount)}</div>
+        <button onclick="removeDeduct(${i})" style="background:none;border:none;color:#FCA5A5;cursor:pointer;font-size:14px;padding:2px 4px;">✕</button>`;
+    }
     listEl.appendChild(row);
   });
 
@@ -5410,6 +5734,134 @@ function renderDeducts(grandTotal) {
   } else if (netEl) {
     netEl.textContent = newNetText;
   }
+
+  // V3: update deduct action bar
+  if (typeof deductUpdateActionBar === "function") deductUpdateActionBar();
+}
+
+// V3: toggle basket deduct selection
+function deductToggleBasket(deductId) {
+  if (!window._deductSelected) window._deductSelected = new Set();
+  if (window._deductSelected.has(deductId)) {
+    window._deductSelected.delete(deductId);
+  } else {
+    window._deductSelected.add(deductId);
+  }
+  // re-render
+  const grandTotalText = document.getElementById("billGrandTotal").textContent.replace(/[฿,]/g,"");
+  renderDeducts(parseFloat(grandTotalText)||0);
+  if (typeof hap === "function") hap(8);
+}
+
+// V3: clear deduct selection
+function deductClearSelection() {
+  window._deductSelected = new Set();
+  const grandTotalText = document.getElementById("billGrandTotal").textContent.replace(/[฿,]/g,"");
+  renderDeducts(parseFloat(grandTotalText)||0);
+  if (typeof hap === "function") hap(15);
+}
+
+// V3: update floating "หักตะกร้า" action bar visibility + content
+function deductUpdateActionBar() {
+  const sel = window._deductSelected || new Set();
+  const bar = document.getElementById("deductActionBar");
+  if (!bar) return;
+  if (sel.size === 0) {
+    bar.classList.remove("show");
+    return;
+  }
+  bar.classList.add("show");
+  // sum amounts
+  let total = 0;
+  billDeducts.forEach(d => {
+    if (!d.monthKey) return;
+    const id = `${d.monthKey}::${d.name}::${d.amount}`;
+    if (sel.has(id)) total += d.amount;
+  });
+  const cnt = document.getElementById("deductActionCount");
+  const amt = document.getElementById("deductActionAmt");
+  if (cnt) cnt.textContent = sel.size;
+  if (amt) amt.textContent = fmt(total);
+}
+
+// V3: deduct selected baskets — change status to "หักแล้ว" + remove from list
+function deductPaySelected() {
+  const sel = window._deductSelected || new Set();
+  if (sel.size === 0) return;
+
+  // collect entries
+  const toDeduct = [];
+  billDeducts.forEach(d => {
+    if (!d.monthKey) return;
+    const id = `${d.monthKey}::${d.name}::${d.amount}`;
+    if (sel.has(id)) toDeduct.push(d);
+  });
+  if (!toDeduct.length) return;
+
+  const total = toDeduct.reduce((s,d)=>s+(d.amount||0),0);
+
+  // confirmation
+  if (!confirm(`ยืนยันหัก ${toDeduct.length} รายการตะกร้า รวม ${fmt(total)} บาท?\n(สถานะในหน้าตะกร้าจะเปลี่ยนเป็น "หัก")`)) return;
+
+  // map deduct entries back to bkOrders entries
+  // entry name format: "ตะกร้า D-MMM (qty ใบ)"  → match by customerName + monthKey + qty
+  const customerName = document.getElementById("billCustomerName")?.textContent || "";
+  if (typeof bkOrders === "undefined") {
+    showToast("ไม่พบข้อมูลตะกร้า", "error");
+    return;
+  }
+
+  let changedCount = 0;
+  toDeduct.forEach(d => {
+    // Parse: "ตะกร้า 10-มี.ค. (29 ใบ)"
+    const m = d.name.match(/ตะกร้า\s*(\d+)-([^\s(]+)\s*\((\d+(?:\.\d+)?)\s*ใบ\)/);
+    if (!m) return;
+    const day = parseInt(m[1]);
+    const monthLbl = m[2].trim();
+    const qty = parseFloat(m[3]);
+
+    // find matching bkOrder
+    const order = bkOrders.find(o =>
+      o.name === customerName &&
+      (o.status === "รอเก็บ" || o.status === "รอจ่าย") &&
+      parseFloat(o.basket) === qty &&
+      o.dateKey && o.dateKey.startsWith(d.monthKey) &&
+      parseInt(o.dateKey.split("-")[2]||0) === day
+    );
+    if (order) {
+      order.status = "หัก";
+      changedCount++;
+    }
+  });
+
+  // Save bkOrders to localStorage (or wherever bkSaveLocal saves)
+  if (typeof bkSaveLocal === "function") bkSaveLocal();
+
+  // Remove from billDeducts and _billBasketAll
+  toDeduct.forEach(d => {
+    const id = `${d.monthKey}::${d.name}::${d.amount}`;
+    // remove from billDeducts
+    const bdIdx = billDeducts.findIndex(x => x.monthKey === d.monthKey && x.name === d.name && x.amount === d.amount);
+    if (bdIdx >= 0) billDeducts.splice(bdIdx, 1);
+    // remove from _billBasketAll
+    if (window._billBasketAll) {
+      const baIdx = window._billBasketAll.findIndex(x => x.monthKey === d.monthKey && x.name === d.name && x.amount === d.amount);
+      if (baIdx >= 0) window._billBasketAll.splice(baIdx, 1);
+    }
+  });
+
+  // Clear selection + re-render
+  window._deductSelected = new Set();
+  const grandTotalText = document.getElementById("billGrandTotal").textContent.replace(/[฿,]/g,"");
+  renderDeducts(parseFloat(grandTotalText)||0);
+  if (typeof billUpdateBottomBar === "function") billUpdateBottomBar();
+
+  // refresh basket tab if active
+  if (typeof bkRender === "function" && activeTab === "basket") bkRender();
+
+  // feedback
+  if (typeof hap === "function") hap([8, 30, 12, 30, 8]);
+  if (typeof showToast === "function") showToast(`หักตะกร้าแล้ว ${changedCount} รายการ · ${fmt(total)}`, "success", 2200);
 }
 
 function saveBillImage() {
@@ -6343,7 +6795,13 @@ function bkRenderOrderBelow() {
 
   function makeTable(orders, showRuamJai) {
     if(!orders.length) return `<div style="text-align:center;padding:16px;color:#A8A29E;font-size:12px;">ไม่มีรายการ</div>`;
-    const dateKeys = [...new Set(orders.map(o=>o.dateKey))].sort();
+    // V3: sort by Date object (not string) — handles non-padded days correctly
+    const dateKeys = [...new Set(orders.map(o=>o.dateKey))].sort((a, b) => {
+      const pa = a.split("-"), pb = b.split("-");
+      const da = new Date(parseInt(pa[0]), parseInt(pa[1])-1, parseInt(pa[2]));
+      const db = new Date(parseInt(pb[0]), parseInt(pb[1])-1, parseInt(pb[2]));
+      return da - db;
+    });
     let rows = "";
     dateKeys.forEach((dk,di) => {
       orders.filter(o=>o.dateKey===dk).forEach((order,oi) => {
@@ -6400,8 +6858,13 @@ function bkRenderOrder() {
   if(monthOrders.length===0) {
     html += `<tr><td colspan="5" style="text-align:center;padding:24px;color:#A8A29E;">ยังไม่มีรายการ</td></tr>`;
   } else {
-    // group by dateKey for alternating row bg
-    const dateKeys = [...new Set(monthOrders.map(o=>o.dateKey))].sort();
+    // V3: sort by Date object (not string) — handles non-padded days
+    const dateKeys = [...new Set(monthOrders.map(o=>o.dateKey))].sort((a, b) => {
+      const pa = a.split("-"), pb = b.split("-");
+      const da = new Date(parseInt(pa[0]), parseInt(pa[1])-1, parseInt(pa[2]));
+      const db = new Date(parseInt(pb[0]), parseInt(pb[1])-1, parseInt(pb[2]));
+      return da - db;
+    });
     dateKeys.forEach((dk, di) => {
       const dayOrders = monthOrders.filter(o=>o.dateKey===dk);
       const bg = di%2===0 ? "#fff" : "#f9fafb";
@@ -6483,11 +6946,8 @@ function bkaRenderRows(){
     const _dtDay = r.date ? r.date.split("-")[2] : "";
     div.innerHTML=`
       <div style="position:relative;text-align:center;">
-        <input class="bka-inp" id="bka-dt-${r.id}" type="date" value="${r.date}"
-          onchange="bkaRows.find(x=>x.id===${r.id}).date=this.value;bkaUpdateSummary();bkaRefreshDayDisplay(${r.id});"
-          onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('bka-nm-${r.id}')?.focus();}"
-          style="position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2;">
-        <div id="bka-dt-disp-${r.id}" style="padding:7px 4px;border-radius:8px;border:1.5px solid transparent;font-size:13px;font-weight:700;color:#1C1917;background:#F5F5F4;text-align:center;cursor:pointer;position:relative;z-index:1;">${_dtDay||"วัน"}</div>
+        <button type="button" id="bka-dt-disp-${r.id}" onclick="bkaOpenDatePicker(${r.id})"
+          style="width:100%;padding:7px 4px;border-radius:8px;border:1.5px solid transparent;font-size:13px;font-weight:700;color:#1C1917;background:#F5F5F4;text-align:center;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:all .2s cubic-bezier(.34,1.56,.64,1);">${_dtDay||"วัน"}</button>
       </div>
       <div style="position:relative;">
         <input class="bka-inp" id="bka-nm-${r.id}" placeholder="ชื่อ *" value="${r.name}" autocomplete="off"
@@ -6514,7 +6974,22 @@ function bkaRefreshDayDisplay(id) {
   const r = bkaRows.find(x=>x.id===id); if(!r) return;
   const day = r.date ? r.date.split("-")[2] : "";
   const el = document.getElementById("bka-dt-disp-"+id);
-  if(el) el.textContent = day || "วัน";
+  if(el) el.textContent = day ? parseInt(day) : "วัน";
+}
+
+// V3: open custom calendar picker for basket date
+function bkaOpenDatePicker(id) {
+  const r = bkaRows.find(x => x.id === id);
+  if (!r) return;
+  openCal({
+    title: "เลือกวันที่ตะกร้า",
+    value: r.date,  // current value (YYYY-MM-DD)
+    onSelect: (newDate) => {
+      r.date = newDate;
+      bkaUpdateSummary();
+      bkaRefreshDayDisplay(id);
+    }
+  });
 }
 
 function bkaOnStatus(id,el){
@@ -6582,14 +7057,26 @@ function bkDoAddOrder(){ bkDoSaveAll(); }
 
 function bkEditOrderDate(id) {
   const o = bkOrders.find(x=>x.id===id); if(!o) return;
-  const action = prompt(`วันที่: ${o.dateKey}\nพิมพ์วันที่ใหม่ (YYYY-MM-DD) หรือพิมพ์ "ลบ" เพื่อลบรายการนี้:`, o.dateKey);
-  if(!action) return;
-  if(action.trim()==="ลบ") {
-    bkOrders = bkOrders.filter(x=>x.id!==id);
-  } else {
-    o.dateKey = action.trim();
-  }
-  bkSaveLocal(); bkRender();
+  // V3: ใช้ calendar picker แทน prompt
+  openCal({
+    title: "แก้ไขวันที่ (ลบได้ในเมนูถัดไป)",
+    value: o.dateKey,
+    onSelect: (newDate) => {
+      // ถาม confirm ก่อนเปลี่ยน + รองรับการลบ
+      const want = confirm(`เปลี่ยนวันที่จาก ${o.dateKey} → ${newDate}?\n(กด "ยกเลิก" เพื่อลบรายการนี้แทน)`);
+      if (want) {
+        o.dateKey = newDate;
+      } else {
+        if (confirm("ลบรายการนี้?")) {
+          bkOrders = bkOrders.filter(x=>x.id!==id);
+        } else {
+          return; // ยกเลิกทุกอย่าง
+        }
+      }
+      bkSaveLocal();
+      if (typeof bkRender === "function") bkRender();
+    }
+  });
 }
 function bkEditOrderName(id) {
   const o = bkOrders.find(x=>x.id===id); if(!o) return;
