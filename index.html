@@ -2850,8 +2850,8 @@ tr:last-child td { border-bottom: none; }
 @keyframes scanSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 </style>
 
-<!-- FLOATING SCAN BUTTON — แสดงเฉพาะหน้าบอร์ด -->
-<div id="scanFab" style="position:fixed;bottom:24px;right:16px;z-index:200;display:flex;align-items:center;">
+<!-- FLOATING SCAN BUTTON — ซ่อนไว้ก่อน (ยังไม่ได้ใช้) -->
+<div id="scanFab" style="position:fixed;bottom:24px;right:16px;z-index:200;display:none;align-items:center;">
   <button onclick="openScanModal()" style="
     display:flex;align-items:center;gap:6px;
     padding:11px 20px;
@@ -4069,7 +4069,6 @@ function renderDayTabs(days) {
           openEditModal(d);
         } else {
           activeDay = d; openForm = null;
-          playSoundPaperFlip();
           renderDayTabs(days);
           if (activeTab !== "board") switchTab("board");
           else renderBoard();
@@ -4212,7 +4211,7 @@ function renderBoard() {
       ? `<div class="group-count-paid-chip">ชำระครบ</div>`
       : `<div class="group-count">${gPaid}/${arr.length} ชำระแล้ว</div>`;
     hdr.innerHTML = `<div style="min-width:0;flex:1;">
-      <div class="group-tag-pill"><span class="group-tag-dot"></span>${g.label}</div>
+      <div class="group-tag-pill">${g.label}</div>
       <div class="group-name">${arr.length} รายการ</div>
     </div>
     <div style="text-align:right;flex-shrink:0;"><div class="group-total-text">${fmt(gTot)}</div>${countHtml}</div>`;
@@ -4845,6 +4844,9 @@ function renderUnpaid() {
     });
     container.appendChild(grid);
   });
+
+  // V3: update pay bar visibility (in case selections persisted across re-render)
+  if (typeof updUpdatePayBar === "function") updUpdatePayBar();
 }
 
 
@@ -7214,9 +7216,9 @@ function switchTab(tab) {
   if(tab==="cust")    { cmRenderList(); cmRenderQuiet(); }
   if(tab==="analytics") renderAnalytics();
   if(tab==="truck")     truckRender();
-  // แสดง FAB เฉพาะหน้าบอร์ด
+  // V3: scan feature is hidden — ซ่อนปุ่มเสมอ (ยังไม่เปิดใช้)
   const fab = document.getElementById("scanFab");
-  if(fab) fab.style.display = tab==="board" ? "flex" : "none";
+  if(fab) fab.style.display = "none";
   // stickyDateBox is inside boardTab — no need to toggle separately
   // Adjust content padding: board/unpaid/etc need padding, basket/truck use own padding
   const contentEl = document.querySelector(".content");
@@ -7767,11 +7769,9 @@ function anKpi(label,val,sub,color,bg) {
       idx = best;
     }
     if (dx < 0 && idx < allSwipeKeys.length-1) {
-      playSoundPaperFlip();
       activeDay = allSwipeKeys[idx+1]; openForm=null;
       renderDayTabs(Object.keys(allDays).sort()); renderBoard();
     } else if (dx > 0 && idx > 0) {
-      playSoundPaperFlip();
       activeDay = allSwipeKeys[idx-1]; openForm=null;
       renderDayTabs(Object.keys(allDays).sort()); renderBoard();
     }
