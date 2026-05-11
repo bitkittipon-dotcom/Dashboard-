@@ -1363,8 +1363,8 @@ tr:last-child td { border-bottom: none; }
   white-space:nowrap; font-family:inherit;
 }
 .bk-freeze { position:sticky; left:0; z-index:10; background:#fff; }
-.bk-th-name { background:var(--text-primary) !important; color:#fff; font-weight:600; min-width:45px; max-width:70px; letter-spacing:-0.01em; }
-.bk-th-total { background:rgba(245,158,11,0.15) !important; color:#92400E; font-weight:600; min-width:48px; max-width:56px; }
+.bk-th-name { background:#1C1917 !important; color:#fff; font-weight:600; width:90px; min-width:90px; max-width:90px; letter-spacing:-0.01em; }
+.bk-th-total { background:#FEF3C7 !important; color:#92400E; font-weight:600; min-width:48px; max-width:56px; }
 .bk-th-day { background:var(--bg-subtle); font-weight:500; text-align:center; color:var(--text-tertiary); }
 .bk-sub-label { font-size:9px; color:var(--text-quaternary); font-weight:500; }
 .bk-cell-out   { color:#DC2626; font-weight:500; }
@@ -1375,27 +1375,85 @@ tr:last-child td { border-bottom: none; }
 .bk-col-even   { background:#fff; }
 .bk-col-odd    { background:rgba(0,0,0,0.015); }
 
-/* V3: Sticky thead - 2 rows ค้างบนตอน scroll ลง */
-.bk-table thead th {
-  position: sticky;
-  top: 0;
-  background: #fff;
+/* V3: Last-out badge - ข้างชื่อ */
+.bk-lo-lo-today  { background:#DCFCE7; color:#15803D; }
+.bk-lo-lo-1      { background:#FEF9C3; color:#854D0E; }
+.bk-lo-lo-2      { background:#FEF3C7; color:#92400E; }
+.bk-lo-lo-old    { background:#FEE2E2; color:#991B1B; }
+.bk-lo-lo-never  { background:rgba(0,0,0,0.06); color:#78716C; }
+
+/* V3: Group divider "ไม่ได้เอาในเดือนนี้" */
+.bk-group-divider {
+  background: rgba(0,0,0,0.04) !important;
+  font-size: 9.5px !important;
+  font-weight: 700 !important;
+  color: #78716C !important;
+  letter-spacing: 0.3px;
+  padding: 2px 0 !important;
+  text-align: left !important;
+  position: relative;
 }
-.bk-table thead tr:first-child th {
-  top: 0;
-  z-index: 11;
+.bk-group-divider .bk-group-divider-text {
+  position: sticky;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* V3: thead - ไม่ sticky เพื่อหลีกเลี่ยง render bug บน iOS */
+.bk-table {
+  position: relative;
+}
+.bk-table thead th {
+  background: #fff;
+  position: relative;
 }
 .bk-table thead tr:nth-child(2) th {
-  top: 30px;  /* ความสูง row 1 */
-  z-index: 11;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.06);
 }
 .bk-table thead tr:nth-child(2) th .bk-sub-label-bal {
   color: #DC2626 !important;
   font-weight: 700 !important;
 }
-.bk-table thead .bk-freeze {
-  z-index: 12;  /* ค้างทั้งซ้าย + บน */
+/* freeze - sticky ซ้ายเฉพาะ (สำหรับชื่อ + ยอดค้าง) */
+.bk-table tbody td.bk-freeze {
+  position: sticky;
+  z-index: 5;
+}
+.bk-table thead th.bk-freeze {
+  position: sticky;
+  left: 0;
+  z-index: 6;
+}
+
+/* V3: Warning "เก็บไม่ครบ" — superscript ใน cell เก็บ */
+.bk-cell-in-wrap {
+  position: relative;
+  width: 100%;
+}
+.bk-warn-sup {
+  position: absolute;
+  top: -1px;
+  right: 1px;
+  font-size: 8.5px;
+  font-weight: 700;
+  color: #DC2626;
+  letter-spacing: -0.5px;
+  line-height: 1;
+  pointer-events: none;
+  z-index: 2;
+}
+.bk-warn-x {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 13px;
+  font-weight: 700;
+  color: #DC2626;
+  pointer-events: none;
+  z-index: 2;
 }
 
 /* V3: เส้นคั่นระหว่างวัน */
@@ -2343,7 +2401,51 @@ tr:last-child td { border-bottom: none; }
 .cal-cell.other-pending  { color:#DC2626 !important; font-weight:600; }  /* แดง: หมวดอื่นค้าง */
 .cal-cell.empty { cursor:default; }
 .cal-cell.other-month { opacity:.3; cursor:default; pointer-events:none; }
-/* V3: วันพระ — yellow glowing dot at top-right */
+/* V3: วันพระ — แสดงตัวอักษร "พระ" สีทอง */
+.cal-cell .holy-label {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 7.5px;
+  font-weight: 700;
+  color: #92400E;
+  background: #FEF3C7;
+  padding: 0px 4px;
+  border-radius: 3px;
+  letter-spacing: -0.2px;
+  line-height: 1.2;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.cal-cell .special-label {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 7.5px;
+  font-weight: 700;
+  color: #fff;
+  padding: 0px 4px;
+  border-radius: 3px;
+  letter-spacing: -0.2px;
+  line-height: 1.2;
+  pointer-events: none;
+  white-space: nowrap;
+  max-width: calc(100% - 2px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cal-cell .special-newyear   { background: #F59E0B; }
+.cal-cell .special-songkran  { background: #06B6D4; }
+.cal-cell .special-chinese   { background: #DC2626; }
+.cal-cell .special-royal     { background: #7C3AED; }
+.cal-cell .special-buddha    { background: #92400E; color: #FEF3C7; }
+.cal-cell .special-holiday   { background: #DC2626; }
+.cal-cell.special-day, .cal-cell.holy-day {
+  padding-bottom: 12px;
+}
+/* DEPRECATED: keep old holy-dot for compatibility */
 .cal-cell .holy-dot {
   position: absolute;
   top: 4px;
@@ -3191,10 +3293,12 @@ tr:last-child td { border-bottom: none; }
     <div id="bkStickyHeader" style="position:sticky;top:0;z-index:90;background:#fff;">
 
       <!-- MONTH SELECTOR -->
-      <div style="background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.06);padding:12px 14px;display:flex;align-items:center;gap:10px;">
-        <button onclick="bkPrevMonth()" class="bk-month-nav-btn" style="width:32px;height:32px;border-radius:9px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-family:inherit;transition:all .2s ease;-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;justify-content:center;color:var(--text-secondary);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
-        <div id="bkMonthLabel" style="flex:1;text-align:center;font-weight:600;font-size:16px;color:var(--text-primary);letter-spacing:-0.025em;"></div>
-        <button onclick="bkNextMonth()" class="bk-month-nav-btn" style="width:32px;height:32px;border-radius:9px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-family:inherit;transition:all .2s ease;-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;justify-content:center;color:var(--text-secondary);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+      <div style="background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.06);padding:12px 14px;display:flex;align-items:center;justify-content:center;gap:8px;position:relative;">
+        <button onclick="bkPrevMonth()" class="bk-month-nav-btn" style="width:32px;height:32px;border-radius:9px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-family:inherit;transition:all .2s ease;-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;justify-content:center;color:var(--text-secondary);flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+        <div id="bkMonthLabel" style="font-weight:600;font-size:16px;color:var(--text-primary);letter-spacing:-0.025em;min-width:130px;text-align:center;"></div>
+        <button onclick="bkNextMonth()" class="bk-month-nav-btn" style="width:32px;height:32px;border-radius:9px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-family:inherit;transition:all .2s ease;-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;justify-content:center;color:var(--text-secondary);flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+        <button id="bkTodayBtn" onclick="bkActionToday()" style="margin-left:8px;height:32px;padding:0 14px;border-radius:10px;border:none;background:rgba(186,230,253,0.8);color:#0369A1;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;flex-shrink:0;letter-spacing:-0.005em;white-space:nowrap;">กลับ</button>
+        <button onclick="openNavSheet()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:9px;border:none;background:transparent;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;justify-content:center;color:#1C1917;flex-shrink:0;" onmousedown="this.style.background='rgba(0,0,0,0.06)'" onmouseup="this.style.background='transparent'" ontouchstart="this.style.background='rgba(0,0,0,0.06)'" ontouchend="this.style.background='transparent'"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
       </div>
 
       <!-- 3 SUB-TABS: คนตัด / เก็บ / คืน -->
@@ -3216,18 +3320,14 @@ tr:last-child td { border-bottom: none; }
         </div>
       </div>
 
-      <!-- ACTION BAR (เปลี่ยนตาม tab) -->
-      <div id="bkActionBar" style="background:rgba(0,0,0,0.025);padding:9px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:0.5px solid rgba(0,0,0,0.04);">
-        <div id="bkActionInfo" style="font-size:11.5px;color:var(--text-secondary);font-weight:600;letter-spacing:-0.005em;flex:1;min-width:0;"></div>
-        <div id="bkActionButtons" style="display:flex;gap:5px;align-items:center;flex-shrink:0;"></div>
-      </div>
+      <!-- ACTION BAR ลบออกแล้ว - ปุ่มวันนี้ย้ายไป Month bar -->
 
     </div>
 
     <!-- ━━━ TAB CONTENT ━━━ -->
     <!-- Tab: คนตัด (Matrix) -->
     <div id="bkPaneCutter" class="bk-pane-v2" style="display:block;">
-      <div id="bkContent" style="overflow:auto;-webkit-overflow-scrolling:touch;padding:8px 0 4px;"></div>
+      <div id="bkContent" style="overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;padding:8px 0 4px;"></div>
     </div>
 
     <!-- Tab: เก็บตะกร้า (Order list) -->
@@ -3243,6 +3343,11 @@ tr:last-child td { border-bottom: none; }
         <div id="bkReturnContent"></div>
       </div>
     </div>
+
+    <!-- V3: FAB - ปุ่ม "เพิ่ม" ลอยล่างขวา (เฉพาะ tab collect) -->
+    <button id="bkAddOrderFab" onclick="bkAddOrder()" style="display:none;position:fixed;bottom:80px;right:18px;width:52px;height:52px;border-radius:50%;background:#1C1917;color:#fff;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.18),0 2px 4px rgba(0,0,0,0.1);z-index:50;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;transition:transform .15s ease;" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.95)'" ontouchend="this.style.transform='scale(1)'">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
 
   </div>
 
@@ -3724,19 +3829,20 @@ function openCal(opts) {
   yearSel.innerHTML = years.map(y => `<option value="${y}" ${y===curBE?"selected":""}>${y}</option>`).join("");
 
   const selBeYear = parseInt(yearSel.value) || (now.getFullYear()+543);
+  // V3: 4 หมวด → 4 emoji สีจริง (แสดงใน native select option ได้)
+  const GROUP_EMOJI = {credit:"🟣", transfer:"🔵", fence:"🟢", delivery:"🟠"};
   monthSel.innerHTML = THAI_MONTHS.map((m,i) => {
-    const ms = getMonthStatus(selBeYear, i+1);
-    const COLOR_BIG = {"all-paid":"#16A34A","credit-pending":"#0369A1","other-pending":"#DC2626"};
-    const col = ms ? COLOR_BIG[ms] : "";
-    return `<option value="${i+1}" ${i+1===now.getMonth()+1?"selected":""} style="color:${col}">${ms?"●":""} ${m}</option>`;
+    const groups = getMonthPendingGroups(selBeYear, i+1);
+    const dots = groups.map(g => GROUP_EMOJI[g] || "").join("");
+    return `<option value="${i+1}" ${i+1===now.getMonth()+1?"selected":""}>${m}${dots?" "+dots:""}</option>`;
   }).join("");
   // update month color on year change
   yearSel.onchange = () => {
     const be2 = parseInt(yearSel.value);
     monthSel.innerHTML = THAI_MONTHS.map((m,i) => {
-      const ms2 = getMonthStatus(be2, i+1);
-      const col2 = ms2 ? {"all-paid":"#16A34A","credit-pending":"#0369A1","other-pending":"#DC2626"}[ms2] : "";
-      return `<option value="${i+1}" style="color:${col2}">${ms2?"●":""} ${m}</option>`;
+      const g2 = getMonthPendingGroups(be2, i+1);
+      const dots2 = g2.map(g => GROUP_EMOJI[g] || "").join("");
+      return `<option value="${i+1}">${m}${dots2?" "+dots2:""}</option>`;
     }).join("");
     renderCalGrid();
   };
@@ -3807,6 +3913,25 @@ function getMonthStatus(beYear, month) {
   }
   return worst;
 }
+
+// V3: คืน array ของหมวดที่ค้าง (key) — สำหรับแสดงสี dot บนเดือน
+function getMonthPendingGroups(beYear, month) {
+  const yy = String(beYear).slice(-2);
+  const mm = String(month).padStart(2,"0");
+  const daysInM = new Date(beYear-543, month, 0).getDate();
+  const pending = new Set();
+  for (let d=1; d<=daysInM; d++) {
+    const key = `${String(d).padStart(2,"0")}-${mm}-${yy}`;
+    const data = allDays[key] || allClosed[key] || null;
+    if (!data) continue;
+    GROUPS.forEach(g => {
+      const items = Object.values(data[g.key]||{});
+      if (items.some(x => x.status === "รอชำระ")) pending.add(g.key);
+    });
+  }
+  // คืนตามลำดับ GROUPS เพื่อให้สีเรียงเหมือนกันทุกครั้ง
+  return GROUPS.filter(g => pending.has(g.key)).map(g => g.key);
+}
 function renderCalGrid() {
   const yearSel  = document.getElementById("calYearSel");
   const monthSel = document.getElementById("calMonthSel");
@@ -3817,7 +3942,7 @@ function renderCalGrid() {
   const now      = new Date();
 
   // V3: Buddhist holy days (วันพระ) — Thai lunar calendar
-  // Lookup table for accurate dates (verified ปี 2566-2570)
+  // Verified from Thai PBS, myhora.com — accurate ปี 2566-2571
   // Format: { 'YYYY-MM': [day, day, day, day] }
   const HOLY_DAYS_TABLE = {
     // 2566 (2023)
@@ -3832,15 +3957,103 @@ function renderCalGrid() {
     '2025-1':  [7, 14, 22, 29], '2025-2':  [5, 13, 20, 27], '2025-3':  [7, 14, 22, 29], '2025-4':  [5, 13, 20, 27],
     '2025-5':  [4, 12, 19, 26], '2025-6':  [3, 11, 18, 25], '2025-7':  [3, 10, 17, 25], '2025-8':  [1, 9, 16, 24, 31],
     '2025-9':  [7, 15, 22, 30], '2025-10': [7, 14, 22, 29], '2025-11': [5, 13, 20, 27], '2025-12': [5, 12, 20, 27],
-    // 2569 (2026)
-    '2026-1':  [3, 11, 18, 26], '2026-2':  [2, 10, 17, 24], '2026-3':  [3, 11, 18, 26], '2026-4':  [2, 9, 17, 24],
-    '2026-5':  [1, 9, 16, 23, 31], '2026-6':  [7, 15, 22, 29], '2026-7':  [6, 14, 21, 28], '2026-8':  [5, 12, 20, 27],
-    '2026-9':  [3, 11, 19, 26], '2026-10': [2, 10, 18, 25], '2026-11': [1, 9, 17, 24], '2026-12': [1, 8, 16, 23, 30],
-    // 2570 (2027)
-    '2027-1':  [7, 15, 22, 29], '2027-2':  [5, 13, 20, 27], '2027-3':  [7, 15, 22, 29], '2027-4':  [5, 13, 20, 27],
-    '2027-5':  [4, 12, 19, 26], '2027-6':  [3, 11, 18, 25], '2027-7':  [2, 10, 17, 25], '2027-8':  [1, 9, 16, 24, 31],
-    '2027-9':  [7, 15, 22, 30], '2027-10': [7, 14, 22, 29], '2027-11': [5, 13, 20, 27], '2027-12': [5, 12, 20, 27],
+    // 2569 (2026) — verified from Thai PBS NOW
+    '2026-1':  [3, 11, 18, 26], '2026-2':  [2, 10, 16, 24], '2026-3':  [3, 11, 18, 26], '2026-4':  [2, 10, 16, 24],
+    '2026-5':  [1, 9, 16, 24, 31], '2026-6':  [8, 14, 22, 29], '2026-7':  [7, 14, 22, 29], '2026-8':  [6, 13, 21, 28],
+    '2026-9':  [5, 11, 19, 26], '2026-10': [4, 11, 19, 26], '2026-11': [3, 9, 17, 24], '2026-12': [2, 9, 17, 24],
+    // 2570 (2027) — myhora.com
+    '2027-1':  [1, 9, 16, 23, 31], '2027-2':  [7, 15, 22, 28], '2027-3':  [8, 14, 22, 29], '2027-4':  [6, 13, 21, 28],
+    '2027-5':  [5, 13, 20, 27], '2027-6':  [4, 12, 19, 26], '2027-7':  [4, 11, 18, 25], '2027-8':  [2, 10, 17, 24, 31],
+    '2027-9':  [8, 16, 23, 30], '2027-10': [8, 15, 23, 30], '2027-11': [6, 14, 21, 28], '2027-12': [6, 13, 21, 28],
+    // 2571 (2028) — myhora.com algorithm
+    '2028-1':  [4, 11, 19, 26], '2028-2':  [3, 10, 18, 25], '2028-3':  [3, 11, 18, 25], '2028-4':  [2, 10, 17, 24],
+    '2028-5':  [1, 9, 16, 23, 31], '2028-6':  [7, 14, 22, 29], '2028-7':  [6, 14, 21, 28], '2028-8':  [5, 13, 20, 27],
+    '2028-9':  [3, 11, 18, 25], '2028-10': [3, 11, 18, 25], '2028-11': [1, 9, 16, 24], '2028-12': [1, 8, 16, 23, 30],
   };
+  
+  // V3: วันสำคัญ + เทศกาล
+  // Format: { 'YYYY-MM-DD': { name, type } }
+  // type: holiday(แดง) / songkran(ฟ้า) / chinese(แดงเข้ม) / royal(ทอง) / buddha(เหลือง)
+  const SPECIAL_DAYS_TABLE = {
+    // ── 2569 (2026) ──
+    '2026-1-1':  { name:'ปีใหม่', type:'newyear' },
+    '2026-2-16': { name:'ตรุษจีน(ไหว้)', type:'chinese' },
+    '2026-2-17': { name:'ตรุษจีน', type:'chinese' },
+    '2026-3-3':  { name:'มาฆบูชา', type:'buddha' },
+    '2026-4-5':  { name:'เชงเม้ง', type:'chinese' },
+    '2026-4-6':  { name:'จักรี', type:'royal' },
+    '2026-4-13': { name:'สงกรานต์', type:'songkran' },
+    '2026-4-14': { name:'สงกรานต์', type:'songkran' },
+    '2026-4-15': { name:'สงกรานต์', type:'songkran' },
+    '2026-5-1':  { name:'แรงงาน', type:'holiday' },
+    '2026-5-4':  { name:'ฉัตรมงคล', type:'royal' },
+    '2026-5-13': { name:'พืชมงคล', type:'royal' },
+    '2026-5-31': { name:'วิสาขบูชา', type:'buddha' },
+    '2026-6-3':  { name:'พระราชินี', type:'royal' },
+    '2026-7-28': { name:'รัชกาลที่10', type:'royal' },
+    '2026-7-29': { name:'อาสาฬหบูชา', type:'buddha' },
+    '2026-7-30': { name:'เข้าพรรษา', type:'buddha' },
+    '2026-8-12': { name:'วันแม่', type:'royal' },
+    '2026-8-27': { name:'สารทจีน', type:'chinese' },
+    '2026-10-13':{ name:'รัชกาลที่9', type:'royal' },
+    '2026-10-23':{ name:'ปิยมหาราช', type:'royal' },
+    '2026-10-26':{ name:'ออกพรรษา', type:'buddha' },
+    '2026-11-24':{ name:'ลอยกระทง', type:'holiday' },
+    '2026-12-5': { name:'วันพ่อ', type:'royal' },
+    '2026-12-10':{ name:'รัฐธรรมนูญ', type:'royal' },
+    '2026-12-31':{ name:'สิ้นปี', type:'newyear' },
+    // ── 2570 (2027) ──
+    '2027-1-1':  { name:'ปีใหม่', type:'newyear' },
+    '2027-2-5':  { name:'ตรุษจีน(ไหว้)', type:'chinese' },
+    '2027-2-6':  { name:'ตรุษจีน', type:'chinese' },
+    '2027-2-21': { name:'มาฆบูชา', type:'buddha' },
+    '2027-4-5':  { name:'เชงเม้ง', type:'chinese' },
+    '2027-4-6':  { name:'จักรี', type:'royal' },
+    '2027-4-13': { name:'สงกรานต์', type:'songkran' },
+    '2027-4-14': { name:'สงกรานต์', type:'songkran' },
+    '2027-4-15': { name:'สงกรานต์', type:'songkran' },
+    '2027-5-1':  { name:'แรงงาน', type:'holiday' },
+    '2027-5-20': { name:'วิสาขบูชา', type:'buddha' },
+    '2027-7-18': { name:'อาสาฬหบูชา', type:'buddha' },
+    '2027-7-19': { name:'เข้าพรรษา', type:'buddha' },
+    '2027-7-28': { name:'รัชกาลที่10', type:'royal' },
+    '2027-8-12': { name:'วันแม่', type:'royal' },
+    '2027-8-17': { name:'สารทจีน', type:'chinese' },
+    '2027-10-13':{ name:'รัชกาลที่9', type:'royal' },
+    '2027-10-15':{ name:'ออกพรรษา', type:'buddha' },
+    '2027-10-23':{ name:'ปิยมหาราช', type:'royal' },
+    '2027-11-14':{ name:'ลอยกระทง', type:'holiday' },
+    '2027-12-5': { name:'วันพ่อ', type:'royal' },
+    '2027-12-10':{ name:'รัฐธรรมนูญ', type:'royal' },
+    '2027-12-31':{ name:'สิ้นปี', type:'newyear' },
+    // ── 2571 (2028) ──
+    '2028-1-1':  { name:'ปีใหม่', type:'newyear' },
+    '2028-1-26': { name:'ตรุษจีน(ไหว้)', type:'chinese' },
+    '2028-1-27': { name:'ตรุษจีน', type:'chinese' },
+    '2028-2-9':  { name:'มาฆบูชา', type:'buddha' },
+    '2028-4-4':  { name:'เชงเม้ง', type:'chinese' },
+    '2028-4-6':  { name:'จักรี', type:'royal' },
+    '2028-4-13': { name:'สงกรานต์', type:'songkran' },
+    '2028-4-14': { name:'สงกรานต์', type:'songkran' },
+    '2028-4-15': { name:'สงกรานต์', type:'songkran' },
+    '2028-5-1':  { name:'แรงงาน', type:'holiday' },
+    '2028-5-9':  { name:'วิสาขบูชา', type:'buddha' },
+    '2028-7-7':  { name:'อาสาฬหบูชา', type:'buddha' },
+    '2028-7-8':  { name:'เข้าพรรษา', type:'buddha' },
+    '2028-7-28': { name:'รัชกาลที่10', type:'royal' },
+    '2028-8-5':  { name:'สารทจีน', type:'chinese' },
+    '2028-8-12': { name:'วันแม่', type:'royal' },
+    '2028-10-4': { name:'ออกพรรษา', type:'buddha' },
+    '2028-10-13':{ name:'รัชกาลที่9', type:'royal' },
+    '2028-10-23':{ name:'ปิยมหาราช', type:'royal' },
+    '2028-11-2': { name:'ลอยกระทง', type:'holiday' },
+    '2028-12-5': { name:'วันพ่อ', type:'royal' },
+    '2028-12-10':{ name:'รัฐธรรมนูญ', type:'royal' },
+    '2028-12-31':{ name:'สิ้นปี', type:'newyear' },
+  };
+  
+  const specialKey = `${adYear}-${month}`;
+  const getSpecialFor = (d) => SPECIAL_DAYS_TABLE[`${adYear}-${month}-${d}`] || null;
   const holyDaysSet = (() => {
     const key = `${adYear}-${month}`;
     const list = HOLY_DAYS_TABLE[key];
@@ -3894,32 +4107,38 @@ function renderCalGrid() {
     // วันที่ active
     if (key === activeDay) cell.classList.add("active-day");
 
-    // V3: วันพระ — dot สีเหลืองเรืองแสง มุมขวาบน
+    // V3: วันพระ — แสดง "พระ" หรือ "พระใหญ่" แทนจุด
     if (holyDaysSet.has(d)) {
       cell.classList.add("holy-day");
-      const holyDot = document.createElement("div");
-      holyDot.className = "holy-dot";
-      cell.appendChild(holyDot);
+      const holyLabel = document.createElement("div");
+      holyLabel.className = "holy-label";
+      holyLabel.textContent = "พระ";
+      cell.appendChild(holyLabel);
+    }
+    
+    // V3: วันสำคัญ / เทศกาล — แสดงเป็นแถบสีล่าง + tooltip
+    const specialDay = getSpecialFor(d);
+    if (specialDay) {
+      cell.classList.add("special-day");
+      cell.setAttribute("data-special", specialDay.type);
+      const sLabel = document.createElement("div");
+      sLabel.className = `special-label special-${specialDay.type}`;
+      sLabel.textContent = specialDay.name;
+      // ถ้ามีวันพระแล้ว — ใส่ special label ไว้ก่อนวันพระ (override)
+      const existHoly = cell.querySelector(".holy-label");
+      if (existHoly) existHoly.remove();
+      cell.appendChild(sLabel);
     }
 
-    // สถานะข้อมูล — ตรวจสอบทั้ง allDays และ allClosed
+    // สถานะข้อมูล — ตรวจสอบทั้ง allDays และ allClosed (ไม่แสดง dot แล้ว — เห็นสีของเดือนใน dropdown แทน)
     const _hasData = allDays[key] || allClosed[key];
     const status = getDayStatus(key);
     if (_hasData && !status) {
-      // มีข้อมูลแต่ getDayStatus คืน null → แสดง dot สีเทา
       cell.classList.add("has-data");
-      const dot2 = document.createElement("div");
-      dot2.style.cssText = "width:4px;height:4px;border-radius:50%;position:absolute;bottom:3px;left:50%;transform:translateX(-50%);background:#A8A29E;";
-      cell.appendChild(dot2);
     }
     if (status) {
       cell.classList.add("has-data");
       cell.classList.add(status);
-      // dot indicator ใต้ตัวเลข
-      const dot = document.createElement("div");
-      dot.style.cssText = `width:4px;height:4px;border-radius:50%;position:absolute;bottom:3px;left:50%;transform:translateX(-50%);background:${
-        status==="all-paid"?"#16A34A":status==="credit-pending"?"#0369A1":"#DC2626"};`;
-      cell.appendChild(dot);
     }
 
     cell.addEventListener("click", () => {
@@ -6409,7 +6628,7 @@ function bkUpdateActionBarV2() {
   const tab = window._bkSubV2 || "cutter";
   const info = document.getElementById("bkActionInfo");
   const btns = document.getElementById("bkActionButtons");
-  if (!info || !btns) return;
+  // V3: Action bar ถูกลบออกแล้ว - update เฉพาะ tab counts
 
   // Compute counts/sums
   const mk = bkMonthKey();
@@ -6445,19 +6664,18 @@ function bkUpdateActionBarV2() {
   setCnt("bkCntCutter", cutterTotal);
   setCnt("bkCntCollect", ordersWait.length);
   setCnt("bkCntReturn", ordersDone.length);
+  
+  // V3: เพิ่มปุ่ม "+เพิ่ม" ใน collect tab → ทำเป็น floating button
+  // เก่า: ใส่ใน Action bar — ใหม่: ปุ่มลอย bottom-right ของ collect pane
+  const fab = document.getElementById("bkAddOrderFab");
+  if (fab) fab.style.display = (tab === "collect") ? "flex" : "none";
+}
 
-  // Update action bar by tab
-  if (tab === "cutter") {
-    info.innerHTML = `<strong style="color:var(--text-primary);">${cutterTotal}</strong> ใบ`;
-    btns.innerHTML = `<button class="bk-actbtn bk-actbtn-ghost" onclick="bkScrollCutterToToday()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M12 3l9 9-9 9"/></svg>วันนี้</button>`;
-  } else if (tab === "collect") {
-    info.innerHTML = `<strong style="color:var(--text-primary);">${ordersWait.length}</strong> รายการ · รวม <strong style="color:#DC2626;">${ordersTotal} ตะกร้า</strong>`;
-    btns.innerHTML = `<button class="bk-actbtn bk-actbtn-ghost" onclick="bkScrollOrderToToday()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M12 3l9 9-9 9"/></svg>วันนี้</button>
-      <button class="bk-actbtn bk-actbtn-primary" onclick="bkAddOrder()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>เพิ่ม</button>`;
-  } else if (tab === "return") {
-    info.innerHTML = `<strong style="color:var(--text-primary);">${ordersDone.length}</strong> รายการ · จ่าย <strong style="color:#15803D;">${sumPaid}</strong> · หัก <strong style="color:#DC2626;">${sumDeduct}</strong>`;
-    btns.innerHTML = `<button class="bk-actbtn bk-actbtn-ghost" onclick="bkScrollOrderToToday()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M12 3l9 9-9 9"/></svg>วันนี้</button>`;
-  }
+// V3: ปุ่ม "วันนี้" ใน Month bar - scroll ไป today ตาม sub-tab ปัจจุบัน
+function bkActionToday() {
+  const tab = window._bkSubV2 || "cutter";
+  if (tab === "cutter") bkScrollCutterToToday();
+  else bkScrollOrderToToday();
 }
 
 function bkRender() {
@@ -6611,6 +6829,10 @@ function bkPersonOptions(type, id, idx) {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           แก้ไขชื่อ
         </button>
+        <button onclick="bkToggleLock('${type}','${id}');document.getElementById('bkPersonOptModal').remove();"
+          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;display:inline-flex;align-items:center;gap:8px;${p.locked?'color:#B45309;font-weight:600;background:rgba(245,158,11,0.05);':''}">
+          ${p.locked ? '🔒 ปลดล็อกตำแหน่ง' : '🔓 ล็อกตำแหน่ง'}
+        </button>
         <button onclick="bkMovePerson('${type}','${i}',-1);document.getElementById('bkPersonOptModal').remove();"
           style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;${i===0?'opacity:.3;pointer-events:none;':''}">
           ↑ ขึ้นไป
@@ -6634,6 +6856,14 @@ function bkEditPersonInline(type, id) {
   const name = prompt("แก้ไขชื่อ:", p.name);
   if(!name||!name.trim()) return;
   p.name = name.trim();
+  bkSaveLocal(); bkRender();
+}
+
+// V3: Toggle lock state for auto-sort
+function bkToggleLock(type, id) {
+  const list = type==="cutter" ? bkCutters : bkCustomers;
+  const p = list.find(x=>x.id===id); if(!p) return;
+  p.locked = !p.locked;
   bkSaveLocal(); bkRender();
 }
 
@@ -6746,24 +6976,24 @@ function bkRenderMatrix(type) {
     return bal;
   }
 
-  let html = `<div style="overflow:auto;-webkit-overflow-scrolling:touch;max-height:calc(100vh - 160px);">
+  let html = `<div style="overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;">
   <table class="bk-table" id="bkMatrix">
   <thead><tr>
     <th class="bk-freeze bk-th-name" rowspan="2">ชื่อ</th>
-    <th class="bk-freeze bk-th-total" style="left:45px;min-width:48px;max-width:56px;" rowspan="2">ยอดค้าง</th>
+    <th class="bk-freeze bk-th-total" style="left:90px;min-width:48px;max-width:56px;" rowspan="2">ยอดค้าง</th>
     <th rowspan="2" style="background:#FFF9C4;border:1px solid #F59E0B;text-align:center;font-size:10px;font-weight:700;color:#92400E;min-width:46px;white-space:nowrap;">↩<br>ยกมา</th>`;
 
   for(let d=1; d<=days; d++) {
     const isEven = d%2===0;
     const isToday = d===todayD;
-    const bg = isToday ? "#FEF3C7" : isEven ? "#ebebeb" : "#fff";
+    const bg = isToday ? "#FFF8E1" : isEven ? "#F5F5F4" : "#fff";
     const divider = d > 1 ? ' bk-day-divider' : '';
-    html += `<th class="bk-th-day${divider}" colspan="3" style="background:${bg};${isToday?"border-bottom:2px solid #F59E0B;":""}">${d}</th>`;
+    html += `<th class="bk-th-day${divider}" colspan="3" style="background:${bg};${isToday?"border-bottom:1.5px solid #FBBF24;":""}">${d}</th>`;
   }
   html += `</tr><tr>`;
   for(let d=1; d<=days; d++) {
     const isEven = d%2===0;
-    const bg = isEven ? "#ebebeb" : "#fff";
+    const bg = isEven ? "#F5F5F4" : "#fff";
     const divider = d > 1 ? ' bk-day-divider' : '';
     html += `<th class="${divider}" style="background:${bg};text-align:center;"><span class="bk-sub-label" style="color:#1E3A8A;font-weight:700;">ออก</span></th>
              <th style="background:${bg};text-align:center;"><span class="bk-sub-label" style="color:#16A34A;font-weight:700;">เก็บ</span></th>
@@ -6771,19 +7001,103 @@ function bkRenderMatrix(type) {
   }
   html += `</tr></thead><tbody>`;
 
-  people.forEach((person, pi) => {
+  // ── V3: Auto-sort ตามวันออกล่าสุด + Lock ─────────────────────
+  // หา "วันออกล่าสุด" ของแต่ละคนในเดือนนี้ (max d ที่ out > 0)
+  function getLastOutDay(personId) {
+    for (let d = days; d >= 1; d--) {
+      const dd = String(d).padStart(2, "0");
+      const e = bkGetData(type, personId, dd);
+      if (e.out > 0) return d;
+    }
+    return 0; // ไม่เคยเอาในเดือนนี้
+  }
+  
+  // นับจำนวนครั้งที่ออก (วันที่มี out > 0)
+  function getOutCount(personId) {
+    let cnt = 0;
+    for (let d = 1; d <= days; d++) {
+      const dd = String(d).padStart(2, "0");
+      const e = bkGetData(type, personId, dd);
+      if (e.out > 0) cnt++;
+    }
+    return cnt;
+  }
+  
+  // หา max วันล่าสุดทั่วทั้งระบบ (ใช้สำหรับสี badge)
+  let maxLastOut = 0;
+  people.forEach(p => {
+    const d = getLastOutDay(p.id);
+    if (d > maxLastOut) maxLastOut = d;
+  });
+  
+  // เก็บ lastOutDay + outCount ในแต่ละ person + lock flag
+  people.forEach(p => {
+    p._lastOut = getLastOutDay(p.id);
+    p._outCount = getOutCount(p.id);
+    p._locked = !!p.locked;
+  });
+  
+  // แยก locked vs unlocked
+  // unlocked: sort by lastOut DESC, then ชื่อ ก-ฮ
+  // locked: คงตำแหน่งเดิม (index ใน original array)
+  const lockedPeople = people.map((p, idx) => ({p, idx})).filter(x => x.p._locked);
+  const unlockedPeople = people.filter(p => !p._locked);
+  unlockedPeople.sort((a, b) => {
+    if (b._lastOut !== a._lastOut) return b._lastOut - a._lastOut;
+    return a.name.localeCompare(b.name, "th");
+  });
+  
+  // วาง locked ที่ตำแหน่งเดิม
+  const sortedPeople = [...unlockedPeople];
+  lockedPeople.forEach(({p, idx}) => {
+    // หาตำแหน่ง insert: ใช้ idx เดิมเป็น guide
+    const pos = Math.min(idx, sortedPeople.length);
+    sortedPeople.splice(pos, 0, p);
+  });
+  
+  // ฟังก์ชันสำหรับ badge — แสดงจำนวนครั้งที่ออก, สีตาม lastOut
+  function getLastOutBadge(person) {
+    const cnt = person._outCount || 0;
+    const d = person._lastOut || 0;
+    if (cnt === 0) return { class: 'lo-never', text: '—' };
+    if (d === maxLastOut) return { class: 'lo-today', text: cnt };
+    const diff = maxLastOut - d;
+    if (diff === 1) return { class: 'lo-1', text: cnt };
+    if (diff <= 3) return { class: 'lo-2', text: cnt };
+    return { class: 'lo-old', text: cnt };
+  }
+
+  // นับ column สำหรับ divider colspan
+  const totalCols = 2 + (days * 3) + 1; // ชื่อ + ยอดค้าง + (วัน × 3) + สรุป
+  let lastWasNonZero = true;  // เริ่มต้นจริงคิดว่าเป็น "เคยเอา"
+  
+  sortedPeople.forEach((person, pi) => {
+    // ใส่ group divider ก่อนคนแรกที่ไม่เคยเอา (_lastOut === 0)
+    if (person._lastOut === 0 && lastWasNonZero && !person._locked) {
+      html += `<tr><td colspan="${totalCols}" class="bk-group-divider"><span class="bk-group-divider-text">━ ไม่ได้เอาในเดือนนี้ ━</span></td></tr>`;
+      lastWasNonZero = false;
+    }
+    if (person._lastOut > 0) lastWasNonZero = true;
+    
     const currentBal = calcBalance(person.id, days);
     const carry = getPrevMonthCarryOver(person.id);
     let runBal = carry;
 
-    html += `<tr>
-      <td class="bk-freeze" style="left:0;background:#fff;min-width:45px;max-width:70px;">
-        <span onclick="bkPersonOptions('${type}','${person.id}','${pi}')"
-          style="font-weight:700;cursor:pointer;padding:4px 2px;display:block;text-decoration:underline;text-decoration-style:dotted;text-decoration-color:#A8A29E;">
-          ${person.name}
-        </span>
+    const badge = getLastOutBadge(person);
+    // V3: สี bg ของ sticky cells ต้องทึบ (ไม่งั้นจะมองทะลุ)
+    const isLocked = person._locked;
+    const nameBg = isLocked ? '#FEF6E4' : '#fff';  // ส้มอ่อนทึบ (ล็อก) หรือขาว
+    const lockBorder = isLocked ? 'border-left:3px solid #F59E0B;' : '';
+    const rowBg = isLocked ? 'background:#FFFCF5;' : '';
+
+    html += `<tr style="${rowBg}">
+      <td class="bk-freeze" style="left:0;${lockBorder}width:90px;min-width:90px;max-width:90px;padding:5px 6px;text-align:left;background:${nameBg} !important;">
+        <div onclick="bkPersonOptions('${type}','${person.id}','${pi}')" style="cursor:pointer;display:flex;align-items:center;gap:4px;font-weight:700;">
+          <span class="bk-lo-badge bk-lo-${badge.class}" style="display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;padding:2px 5px;border-radius:5px;letter-spacing:-0.2px;min-width:18px;flex-shrink:0;">${badge.text}</span>
+          <span style="text-decoration:underline;text-decoration-style:dotted;text-decoration-color:#A8A29E;">${person.name}</span>
+        </div>
       </td>
-      <td data-total="${type}-${person.id}" class="bk-freeze" style="left:45px;text-align:center;min-width:48px;font-weight:700;${currentBal>0?'background:#FEF2F2;color:#DC2626;':'background:#F0FDF4;color:#16A34A;'}">
+      <td data-total="${type}-${person.id}" class="bk-freeze" style="left:90px;text-align:center;min-width:48px;font-weight:700;background:${currentBal>0?'#FEF2F2':currentBal<0?'#F0FDF4':'#FAFAF9'} !important;color:${currentBal>0?'#DC2626':currentBal<0?'#16A34A':'#A8A29E'};">
         ${currentBal}
       </td>
       <td style="text-align:center;background:${carry>0?"#FEF2F2":carry<0?"#F0FDF4":"#FAFAF9"};font-weight:${carry!==0?"700":"400"};color:${carry>0?"#DC2626":carry<0?"#16A34A":"#A8A29E"};font-size:11px;border:1px solid #F0E68C;">
@@ -6795,19 +7109,39 @@ function bkRenderMatrix(type) {
       const out = entry.out||0, inp = entry.in||0;
       runBal += out - inp;
       const isEven = d%2===0;
-      const bg = isEven ? "background:#ebebeb;" : "background:#fff;";
+      const bg = isEven ? "background:#F5F5F4;" : "background:#fff;";
       const balClass = runBal > 0 ? "bk-cell-bal-warn" : "bk-cell-bal";
       const divider = d > 1 ? ' bk-day-divider' : '';
+      
+      // V3: คำนวณ warning - มี out + ผ่านเที่ยงคืน (วันก่อนวันนี้) + เก็บไม่ครบ
+      // todayD = วันที่ปัจจุบัน (จาก getDate())
+      // currentMonth/Year ก็เป็นปัจจุบัน — เช็คว่า bkMonth/bkYear ตรงเดือนปัจจุบันหรือไม่
+      const now = new Date();
+      const isCurrentMonth = (bkYear === now.getFullYear() && bkMonth === now.getMonth()+1);
+      const dayPassed = !isCurrentMonth || d < todayD;  // ผ่านเที่ยงคืนแล้ว (วันที่ < วันนี้, หรือเดือนเก่า)
+      const shortfall = out - inp;
+      let warnHtml = "";
+      if (dayPassed && out > 0 && shortfall > 0) {
+        if (inp === 0) {
+          warnHtml = `<span class="bk-warn-x">✕</span>`;
+        } else {
+          warnHtml = `<span class="bk-warn-sup">${shortfall}+</span>`;
+        }
+      }
+      
       html += `
         <td class="${divider}" style="${bg}text-align:center;">
           <input type="text" inputmode="decimal" value="${out||""}" placeholder="-"
             onchange="bkSetData('${type}','${person.id}','${dd}','out',this.value)"
             style="width:36px;border:none;background:transparent;text-align:center;font-family:inherit;font-size:11px;color:#1E3A8A;font-weight:${out?"600":"400"};">
         </td>
-        <td style="${bg}text-align:center;">
-          <input type="text" inputmode="decimal" value="${inp||""}" placeholder="-"
-            onchange="bkSetData('${type}','${person.id}','${dd}','in',this.value)"
-            style="width:36px;border:none;background:transparent;text-align:center;font-family:inherit;font-size:11px;color:#16A34A;font-weight:${inp?"600":"400"};">
+        <td style="${bg}text-align:center;position:relative;">
+          <div class="bk-cell-in-wrap">
+            <input type="text" inputmode="decimal" value="${inp||""}" placeholder="-"
+              onchange="bkSetData('${type}','${person.id}','${dd}','in',this.value)"
+              style="width:36px;border:none;background:transparent;text-align:center;font-family:inherit;font-size:11px;color:#16A34A;font-weight:${inp?"600":"400"};">
+            ${warnHtml}
+          </div>
         </td>
         <td data-bal="${type}-${person.id}-${dd}" class="${balClass}" style="${bg}text-align:center;min-width:36px;">${runBal > 0 ? runBal : ""}</td>`;
     }
@@ -7413,6 +7747,9 @@ function switchTab(tab) {
   // V3: ซ่อน topBar + day-tabs ในหน้าตะกร้า (เพราะใช้ Month bar + sub-tabs แทน)
   const dt = document.getElementById("dayTabs");
   if (dt) dt.style.display = (tab === "basket") ? "none" : "";
+  // V3: ซ่อน FAB เมื่อไม่อยู่ tab basket
+  const orderFab = document.getElementById("bkAddOrderFab");
+  if (orderFab && tab !== "basket") orderFab.style.display = "none";
 
   document.getElementById("tabBoardBtn").classList.toggle("active",  tab==="board");
   document.getElementById("tabUnpaidBtn").classList.toggle("active", tab==="unpaid");
