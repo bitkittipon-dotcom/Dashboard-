@@ -6797,19 +6797,53 @@ function generateInvoiceBillImage(customerName) {
     return html2canvas(captureEl, {scale:2,useCORS:true,backgroundColor:"#ffffff",logging:false,width:560});
   }).then(canvas=>{
     document.body.removeChild(captureEl);
-    const dataUrl = canvas.toDataURL("image/png");
-    // V4: ดาวน์โหลดทันที ไม่ผ่าน preview modal
     const _safeFilename = (customerName || "bill").replace(/[\\/:*?"<>|]/g, "_");
     const _safeDate = (todayStr || new Date().toISOString().slice(0, 10)).replace(/ /g, "_");
-    const link = document.createElement("a");
-    link.download = `bill_${_safeFilename}_${_safeDate}.png`;
-    link.href = dataUrl;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window._billSavingImage = false;
-    if (typeof showToast === "function") showToast("บันทึกภาพสำเร็จ", "success", 1500);
-    if (typeof hap === "function") hap([8, 30, 12]);
+    const _filename = `bill_${_safeFilename}_${_safeDate}.png`;
+
+    // V4.4: บน iOS ใช้ Web Share API → user เลือก "Save Image" เข้า Photos ได้ทันที
+    //       Desktop/Android (รองรับ download attribute) ใช้ direct download
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        window._billSavingImage = false;
+        if (typeof showToast === "function") showToast("สร้างภาพไม่สำเร็จ", "error", 2200);
+        return;
+      }
+      const file = new File([blob], _filename, { type: "image/png" });
+      const canShareFile = !!(navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share);
+
+      if (canShareFile) {
+        // iOS / mobile ที่รองรับ Web Share API พร้อมไฟล์
+        navigator.share({
+          files: [file],
+          title: `บิล ${customerName||""}`.trim(),
+          text: `บิล ${customerName||""}`.trim()
+        }).then(() => {
+          window._billSavingImage = false;
+          if (typeof showToast === "function") showToast("บันทึกภาพสำเร็จ", "success", 1500);
+          if (typeof hap === "function") hap([8, 30, 12]);
+        }).catch(err => {
+          window._billSavingImage = false;
+          // user กด cancel → ไม่ต้อง error
+          if (err && err.name === "AbortError") return;
+          if (typeof showToast === "function") showToast("บันทึกภาพไม่ได้: "+(err && err.message ? err.message : "unknown"), "error", 2500);
+        });
+      } else {
+        // fallback: direct download (desktop, Android Chrome)
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.download = _filename;
+        link.href = url;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        // cleanup blob URL
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        window._billSavingImage = false;
+        if (typeof showToast === "function") showToast("บันทึกภาพสำเร็จ", "success", 1500);
+        if (typeof hap === "function") hap([8, 30, 12]);
+      }
+    }, "image/png");
   }).catch(err=>{
     if(document.body.contains(captureEl)) document.body.removeChild(captureEl);
     window._billSavingImage = false;
