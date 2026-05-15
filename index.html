@@ -6762,16 +6762,29 @@ function generateInvoiceBillImage(customerName) {
       <tr><td colspan="2" style="padding:12px 0 0;font-size:15px;font-weight:700;color:#1C1917;border-top:2px solid #1C1917">ยอดสุทธิที่ต้องชำระ</td><td style="padding:12px 0 0;font-size:18px;font-weight:700;color:#1C1917;text-align:right;border-top:2px solid #1C1917">${fmt(net)}</td></tr>
     </tfoot>
   </table>
-  <div style="margin-top:28px;padding-top:24px;border-top:1px solid #E0E0E0;display:flex;gap:20px;align-items:center">
-    <div style="text-align:center;flex-shrink:0">
-      <img src="${_QR_B64}" alt="QR code" style="width:82px;height:82px;object-fit:contain;display:block;margin:0 auto 4px">
-      <div style="font-size:10px;color:#888;font-weight:600">สแกนเพื่อโอนเงิน</div>
-    </div>
-    <div style="flex:1">
-      <div style="font-size:11px;font-weight:700;color:#888;margin-bottom:8px">ข้อมูลการชำระเงิน</div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:#888">ชื่อบัญชี</span><span style="font-size:12px;font-weight:700;color:#1C1917">ณชญา คงศรี</span></div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:#888">กสิกรไทย</span><span style="font-size:12px;font-weight:700;color:#1C1917">484 206 7087</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="font-size:11px;color:#888">พร้อมเพย์</span><span style="font-size:12px;font-weight:700;color:#1C1917">081 807 7089</span></div>
+  <div style="margin-top:24px;background:#FAFAF9;border-radius:10px;padding:16px;border:1px solid #E7E5E4;">
+    <div style="font-size:11px;font-weight:700;color:#78716C;text-align:center;margin-bottom:12px;letter-spacing:0.05em;">ข้อมูลการชำระเงิน</div>
+    <div style="display:flex;gap:16px;align-items:center;">
+      <div style="text-align:center;flex-shrink:0;">
+        <img src="${_QR_B64}" alt="QR" style="width:78px;height:78px;object-fit:contain;display:block;margin:0 auto 6px;">
+        <div style="font-size:9.5px;color:#A8A29E;font-weight:600;">สแกนเพื่อโอน</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:7px;">
+        <div>
+          <div style="font-size:10px;color:#A8A29E;font-weight:600;margin-bottom:1px;">ชื่อบัญชี</div>
+          <div style="font-size:13px;font-weight:700;color:#1C1917;">ณชญา คงศรี</div>
+        </div>
+        <div style="display:flex;gap:14px;">
+          <div style="flex:1;">
+            <div style="font-size:10px;color:#A8A29E;font-weight:600;margin-bottom:1px;">กสิกรไทย</div>
+            <div style="font-size:12.5px;font-weight:700;color:#1C1917;font-variant-numeric:tabular-nums;">484-206-7087</div>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:10px;color:#A8A29E;font-weight:600;margin-bottom:1px;">พร้อมเพย์</div>
+            <div style="font-size:12.5px;font-weight:700;color:#1C1917;font-variant-numeric:tabular-nums;">081-807-7089</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>`;
@@ -6785,9 +6798,18 @@ function generateInvoiceBillImage(customerName) {
   }).then(canvas=>{
     document.body.removeChild(captureEl);
     const dataUrl = canvas.toDataURL("image/png");
-    // V3: แสดง preview modal ก่อน save
-    showBillPreviewModal(dataUrl, customerName, todayStr);
+    // V4: ดาวน์โหลดทันที ไม่ผ่าน preview modal
+    const _safeFilename = (customerName || "bill").replace(/[\\/:*?"<>|]/g, "_");
+    const _safeDate = (todayStr || new Date().toISOString().slice(0, 10)).replace(/ /g, "_");
+    const link = document.createElement("a");
+    link.download = `bill_${_safeFilename}_${_safeDate}.png`;
+    link.href = dataUrl;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
     window._billSavingImage = false;
+    if (typeof showToast === "function") showToast("บันทึกภาพสำเร็จ", "success", 1500);
+    if (typeof hap === "function") hap([8, 30, 12]);
   }).catch(err=>{
     if(document.body.contains(captureEl)) document.body.removeChild(captureEl);
     window._billSavingImage = false;
