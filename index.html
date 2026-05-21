@@ -9842,34 +9842,153 @@ function editItemCustAction() {
   }
 }
 
-// ── ข้อ 9: Autocomplete ──────────────────────────────────────────
+// ── ข้อ 9: Autocomplete (V4.22 — unified helper สำหรับทุก context) ──────────
 let _acTimeout = null;
 
-function setupAutocomplete(inputEl) {
+// V4.22: Unified autocomplete attach helper
+// V4.23 updates: owner-tracking, max-wait debounce, pointerup tap-validation, race-safe blur
+// args: input element, options = {
+//   onSelect: (name, meta) => void   // เมื่อเลือก
+//   onEnter: () => void              // เมื่อกด Enter (no dropdown) — default: blur
+//   debounceMs: 50                   // default 50ms (V4.22 ลดจาก 100)
+// }
+function attachNameAutocomplete(inputEl, options) {
   if (!inputEl) return;
-  const wrap = inputEl.parentNode;
-  wrap.style.position = "relative";
+  options = options || {};
+  const debounceMs = options.debounceMs ?? 50;
+  const MAX_WAIT_MS = 200; // V4.23 #2: force show ถ้าพิมพ์ติดต่อกันเกิน 200ms
 
-  inputEl.addEventListener("input", () => {
-    clearTimeout(_acTimeout);
-    _acTimeout = setTimeout(() => showAutocomplete(inputEl), 100);
-  });
-  inputEl.addEventListener("blur", () => {
-    setTimeout(() => removeAutocomplete(), 200);
-  });
-  inputEl.addEventListener("focus", () => {
-    if (inputEl.value.trim()) showAutocomplete(inputEl);
-  });
-  // ข้อ 2: Enter → เลือก item แรก แล้ว focus ยอดเงิน
-  inputEl.addEventListener("keydown", (e) => {
-    if (e.key !== "Enter") return;
-    const dd = document.getElementById("nameAcDropdown");
-    if (!dd) return; // ถ้าไม่มี dropdown → ปล่อยให้ Enter ทำงานปกติ (submit form)
-    e.preventDefault();
-    e.stopPropagation();
-    const firstItem = dd.querySelector(".name-autocomplete-item");
-    if (firstItem) firstItem.dispatchEvent(new MouseEvent("mousedown", {bubbles:true}));
-  });
+  // Store original value at attach time → ป้องกัน dropdown โผล่โดยไม่ตั้งใจ
+  const initialValue = (inputEl.value || "").trim();
+  let _userTyped = false;        // flip เป็น true เมื่อ user พิมพ์จริง
+  let _localTimer = null;
+  let _firstInputTime = 0;       // V4.23: เวลาที่เริ่มพิมพ์ครั้งแรกใน burst (สำหรับ max-wait)
+  // Save options บน input → ใช้ใน showAutocomplete สำหรับ onSelect callback
+  inputEl._acOpts = options;
+
+  // V4.23: helper สำหรับ cancel pending timer (ใช้โดย global pointerdown handler)
+  inputEl._acCancelPending = () => {
+    clearTimeout(_localTimer);
+    _localTimer = null;
+    _firstInputTime = 0;
+  };
+
+  const triggerShow = () => {
+    if (document.activeElement === inputEl) {
+      showAutocomplete(inputEl);
+      // V4.23 #1: mark ว่า dropdown นี้เป็นของ input ตัวไหน
+      const dd = document.getElementById("nameAcDropdown");
+      if (dd) dd._acOwner = inputEl;
+    }
+    _firstInputTime = 0;
+  };
+
+  const handleInput = () => {
+    // V4.22 FIX: ถ้าอยู่ระหว่าง onPick (เพิ่งเลือก item) → ไม่ trigger
+    if (inputEl._acSuppress) return;
+    const cur = (inputEl.value || "").trim();
+    // ถ้า value === initial และ user ยังไม่เคยพิมพ์ → ไม่เด้ง (ป้องกัน iOS predictive trigger)
+    if (cur === initialValue && !_userTyped) return;
+    _userTyped = true;
+
+    // V4.23 #2: max-wait pattern — ถ้าพิมพ์ติดต่อกันเกิน MAX_WAIT_MS → force show
+    const now = Date.now();
+    if (_firstInputTime === 0) _firstInputTime = now;
+    const elapsed = now - _firstInputTime;
+
+    clearTimeout(_localTimer);
+    if (elapsed >= MAX_WAIT_MS) {
+      // เกิน max-wait → show ทันที (ไม่ debounce อีก)
+      triggerShow();
+    } else {
+      // ภายใน max-wait → debounce ปกติ
+      _localTimer = setTimeout(triggerShow, debounceMs);
+    }
+  };
+
+  const handleKeydown = (e) => {
+    // Track ว่า user พิมพ์จริง (รวม backspace, delete)
+    if (e.key && e.key.length === 1) _userTyped = true;
+    if (e.key === "Backspace" || e.key === "Delete") _userTyped = true;
+
+    if (e.key === "Enter") {
+      const dd = document.getElementById("nameAcDropdown");
+      if (dd) {
+        const first = dd.querySelector(".name-autocomplete-item");
+        if (first) {
+          e.preventDefault();
+          e.stopPropagation();
+          // V4.23 #5: dispatch pointerdown + pointerup ที่ตำแหน่ง center ของ item → valid tap
+          const r = first.getBoundingClientRect();
+          const cx = r.left + r.width / 2;
+          const cy = r.top + r.height / 2;
+          first.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, clientX: cx, clientY: cy }));
+          first.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, clientX: cx, clientY: cy }));
+          return;
+        }
+      }
+      // ไม่มี dropdown → onEnter callback (ถ้ามี) ไม่งั้น blur
+      if (typeof options.onEnter === "function") {
+        e.preventDefault();
+        options.onEnter();
+      }
+    }
+  };
+
+  const handleFocus = () => {
+    // V4.22: ไม่ auto-show ตอน focus — เด้งเฉพาะตอนพิมพ์
+    // (กันไม่ให้เด้งตอนกลับมา focus modal)
+  };
+
+  const handleBlur = () => {
+    // V4.23 #1 + #6: ลบ dropdown ที่ owner = input นี้เท่านั้น
+    // (ป้องกัน row อื่นโดน blur timer ของ row นี้ทับ)
+    setTimeout(() => {
+      const ae = document.activeElement;
+      if (ae && ae.closest && ae.closest(".name-autocomplete")) return;
+      const dd = document.getElementById("nameAcDropdown");
+      if (dd && (dd._acOwner === inputEl || !dd._acOwner)) {
+        // เป็นของ input นี้ → ลบได้
+        // หรือถ้า dropdown ไม่มี owner (legacy) → ลบเหมือนเดิม
+        // ยกเว้น: ถ้า dropdown owner เป็น input อื่นที่ยัง focus อยู่ → ไม่ลบ
+        if (dd._acOwner && dd._acOwner !== inputEl && document.activeElement === dd._acOwner) {
+          return; // ของ input อื่นที่ active → ไม่แตะ
+        }
+        removeAutocomplete();
+      }
+    }, 200);
+  };
+
+  // Remove old listeners ถ้าเคย attach แล้ว
+  if (inputEl._acDetach) inputEl._acDetach();
+
+  inputEl.addEventListener("input", handleInput);
+  inputEl.addEventListener("keydown", handleKeydown);
+  inputEl.addEventListener("focus", handleFocus);
+  inputEl.addEventListener("blur", handleBlur);
+
+  // store detach fn เพื่อ cleanup ภายหลัง
+  inputEl._acDetach = () => {
+    inputEl.removeEventListener("input", handleInput);
+    inputEl.removeEventListener("keydown", handleKeydown);
+    inputEl.removeEventListener("focus", handleFocus);
+    inputEl.removeEventListener("blur", handleBlur);
+    clearTimeout(_localTimer);
+    delete inputEl._acOpts;
+    delete inputEl._acDetach;
+    delete inputEl._acCancelPending;
+  };
+
+  // ตำแหน่ง parent ต้อง relative (สำหรับ legacy that may rely on it)
+  const wrap = inputEl.parentNode;
+  if (wrap && getComputedStyle(wrap).position === "static") {
+    wrap.style.position = "relative";
+  }
+}
+
+// V4.22: Legacy alias — เก่าใช้ setupAutocomplete (ฟอร์ม board / master modal)
+function setupAutocomplete(inputEl) {
+  attachNameAutocomplete(inputEl, {});
 }
 
 function showAutocomplete(inputEl) {
@@ -9921,11 +10040,18 @@ function showAutocomplete(inputEl) {
       <span style="color:${meta.color};font-weight:${meta.source==="master"?"700":"500"};">${_acEsc(name)}</span>
       ${meta.source==="master"?'<span style="font-size:9px;color:#A8A29E;margin-left:auto;">★</span>':""}
     `;
-    item.addEventListener("mousedown", (e) => {
-      e.preventDefault();
+
+    // V4.23 #5: pointerdown เก็บ coords + pointerup ตรวจว่ายังอยู่ใน item เดิม + distance < 12px
+    let _downX = 0, _downY = 0, _downTarget = null, _isDown = false;
+    const doPick = (e) => {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      // V4.22 FIX: ใส่ flag ป้องกัน helper เรียก showAutocomplete ซ้ำหลัง dispatchEvent
+      inputEl._acSuppress = true;
+      // ปิด dropdown ก่อน เพื่อไม่ให้กระพริบตอน focus next
+      removeAutocomplete();
       inputEl.value = name;
-      inputEl.dispatchEvent(new Event("input"));
-      // auto-fill color
+      inputEl.dispatchEvent(new Event("input", { bubbles: true }));
+      // auto-fill color (legacy compat สำหรับ board form)
       const colorWrap = document.querySelector("[data-selected]");
       if (colorWrap && meta.color) {
         colorWrap.dataset.selected = meta.color;
@@ -9933,13 +10059,62 @@ function showAutocomplete(inputEl) {
           b.style.border = b.dataset.color===meta.color ? "3px solid #F59E0B" : "3px solid transparent";
         });
       }
-      removeAutocomplete();
-      // focus ช่อง basket modal ก่อน ถ้าไม่มีค่อย f-amount
-      const bkmB = document.getElementById("bkmBasket");
-      const amtEl = document.getElementById("f-amount");
-      const nextEl = bkmB && document.getElementById("bkAddModal")?.classList.contains("show") ? bkmB : amtEl;
-      if (nextEl) setTimeout(()=>{ nextEl.focus(); nextEl.scrollIntoView({behavior:"smooth",block:"center"}); }, 50);
+      // V4.22: เรียก onSelect callback (ของ attachNameAutocomplete) ถ้ามี
+      if (inputEl._acOpts && typeof inputEl._acOpts.onSelect === "function") {
+        try { inputEl._acOpts.onSelect(name, meta); } catch(err) { console.error(err); }
+      } else {
+        // Legacy fallback: focus ช่อง basket modal ก่อน ถ้าไม่มีค่อย f-amount
+        const bkmB = document.getElementById("bkmBasket");
+        const amtEl = document.getElementById("f-amount");
+        const nextEl = bkmB && document.getElementById("bkAddModal")?.classList.contains("show") ? bkmB : amtEl;
+        if (nextEl) setTimeout(()=>{ nextEl.focus(); nextEl.scrollIntoView({behavior:"smooth",block:"center"}); }, 50);
+      }
+      // clear suppress หลัง event loop จบ
+      setTimeout(() => { inputEl._acSuppress = false; }, 100);
+    };
+
+    const onPointerDown = (e) => {
+      e.preventDefault();   // กัน blur input
+      e.stopPropagation();  // กัน global pointerdown handler ลบ dropdown
+      _downX = e.clientX || 0;
+      _downY = e.clientY || 0;
+      _downTarget = item;
+      _isDown = true;
+    };
+
+    const onPointerUp = (e) => {
+      if (!_isDown) return;
+      _isDown = false;
+      const upX = e.clientX || 0;
+      const upY = e.clientY || 0;
+      const dist = Math.hypot(upX - _downX, upY - _downY);
+      // V4.23 #5: distance < 12px = valid tap (กัน drag-out)
+      // เช็ค elementFromPoint เป็น optional secondary check
+      if (dist < 12) {
+        doPick(e);
+      } else {
+        // drag-out → ตรวจ secondary: ถ้า drag น้อย + ยังอยู่ใน item region → ก็ pick
+        const endTarget = document.elementFromPoint(upX, upY);
+        const stillInItem = endTarget && (endTarget === item || item.contains(endTarget));
+        if (stillInItem) doPick(e);
+        // ถ้า drag-out จริง → ไม่ทำอะไร (user ตั้งใจยกเลิก)
+      }
+    };
+
+    const onPointerCancel = () => { _isDown = false; };
+
+    // pointerdown ไม่ trigger pick ทันที — รอ pointerup เพื่อตรวจ
+    item.addEventListener("pointerdown", onPointerDown);
+    item.addEventListener("pointerup", onPointerUp);
+    item.addEventListener("pointercancel", onPointerCancel);
+    // mousedown/touchend ก็เพิ่ม fallback (กรณี pointer events ไม่ทำงาน)
+    // mousedown ใช้ doPick ตรงๆ เพราะ desktop ไม่มี drag-out concern
+    item.addEventListener("mousedown", (e) => {
+      // ถ้า pointerdown handle แล้ว → ข้าม
+      if (_isDown) return;
+      doPick(e);
     });
+
     dropdown.appendChild(item);
   });
 
@@ -10061,6 +10236,49 @@ function removeAutocomplete() {
   // ใช้ capture phase เพื่อจับทุก scroll ในหน้า
   window.addEventListener("scroll", onViewport, true);
 })();
+
+// V4.22 (D): จับ keyboard hide → ลบ dropdown
+// iOS keyboard เปิด/ปิด → visualViewport.height เปลี่ยน
+(function setupKeyboardHideListener() {
+  if (!window.visualViewport) return;
+  let _lastH = window.visualViewport.height;
+  let _kbTimer = null;
+  window.visualViewport.addEventListener("resize", () => {
+    const cur = window.visualViewport.height;
+    // keyboard close = height เพิ่มขึ้นเยอะ (>100px)
+    if (cur - _lastH > 100) {
+      clearTimeout(_kbTimer);
+      _kbTimer = setTimeout(() => {
+        // ถ้าไม่มี input focus → ลบ dropdown
+        const ae = document.activeElement;
+        if (!ae || ae.tagName !== "INPUT" || !ae._acOpts) {
+          removeAutocomplete();
+          // ลบ mas legacy dropdown ด้วย
+          document.querySelectorAll("[id^=mas-drop-]").forEach(d => d.remove());
+        }
+      }, 50);
+    }
+    _lastH = cur;
+  });
+})();
+
+// V4.22 (C): Global dismiss — pointerdown ที่ไม่ใช่ใน dropdown หรือ input → ลบ dropdown
+// V4.23 (#3): + ยกเลิก pending timers ของ input ทุกตัว
+// ใช้ capture phase เพื่อทำงานก่อน focus loss
+document.addEventListener("pointerdown", (e) => {
+  const t = e.target;
+  if (!t) return;
+  // ถ้าคลิกใน dropdown → ปล่อย (จะถูก handle ที่ item เอง)
+  if (t.closest && t.closest(".name-autocomplete")) return;
+  // ถ้าคลิกที่ input ที่ attached autocomplete → ปล่อย (helper handle เอง)
+  if (t.tagName === "INPUT" && t._acOpts) return;
+  // V4.23 #3: กรณีอื่นทั้งหมด → ยกเลิก pending timers ของทุก input + ลบ dropdown
+  document.querySelectorAll("input").forEach(inp => {
+    if (inp._acCancelPending) inp._acCancelPending();
+  });
+  const dd = document.getElementById("nameAcDropdown");
+  if (dd) removeAutocomplete();
+}, true); // capture phase
 
 // ── ข้อ 15: Swipe sensitivity tuning ─────────────────────────────
 
@@ -10346,83 +10564,69 @@ function openEditItemModal(dayKey, grpKey, itemKey, item) {
   // render pills (เริ่ม = หมวดปัจจุบัน, fromHistory=false)
   editItemRenderGroupPills(grpKey, false);
 
-  // Hook autocomplete + auto-detect group
-  if(n) {
-    // ล้าง handler เก่า
+  // V4.22: ใช้ attachNameAutocomplete helper เดียวกัน — ลบ inline handlers เก่า
+  if (n) {
+    // ล้าง legacy
     n.oninput = null;
     n.onkeydown = null;
     n.onfocus = null;
+    if (n._acDetach) n._acDetach();
 
-    n.oninput = () => {
-      // อัปเดต preview
-      if(prev) prev.textContent = n.value || "ตัวอย่าง";
-      // autocomplete dropdown (debounced)
-      clearTimeout(window._editItemAcTimer);
-      window._editItemAcTimer = setTimeout(() => {
-        if (document.activeElement === n) showAutocomplete(n);
-      }, 100);
-      // auto-detect group ตามชื่อ (ถ้า user ยังไม่ manual override)
+    // กำหนด behaviors เฉพาะของ edit modal
+    const onAuxInput = () => {
+      // preview update
+      if (prev) prev.textContent = n.value || "ตัวอย่าง";
+      // auto-detect group
       if (!_editItemGrpManual) {
         const trimmedName = n.value.trim();
         const realMatch = _editItemNameInHistory(trimmedName);
         if (realMatch) {
-          // เจอชื่อในประวัติจริง → ใช้ scanDetectGroup
           const detected = scanDetectGroup(trimmedName);
-          if (detected && detected !== _editItemGrp) {
-            _editItemGrp = detected;
-          }
-          editItemRenderGroupPills(_editItemGrp, true); // fromHistory = true
+          if (detected && detected !== _editItemGrp) _editItemGrp = detected;
+          editItemRenderGroupPills(_editItemGrp, true);
         } else {
-          // ไม่เจอในประวัติ → ไม่เปลี่ยนหมวด + ซ่อน badge
           editItemRenderGroupPills(_editItemGrp, false);
         }
       }
     };
+    n.addEventListener("input", onAuxInput);
+    n.addEventListener("input", editItemUpdateCustBtn);
 
-    n.onkeydown = (e) => {
-      if (e.key !== "Enter") return;
-      e.preventDefault();
-      e.stopPropagation();
-      // ถ้ามี autocomplete dropdown → เลือก item แรก
-      const dd = document.getElementById("nameAcDropdown");
-      if (dd) {
-        const f = dd.querySelector(".name-autocomplete-item");
-        if (f) {
-          const nameSpan = f.querySelector("span:nth-child(2)");
-          const dotSpan = f.querySelector(".name-autocomplete-dot");
-          const pickedName = nameSpan ? nameSpan.textContent.trim() : "";
-          const pickedColor = dotSpan ? (dotSpan.style.backgroundColor || "") : "";
-          if (pickedName) {
-            n.value = pickedName;
-            if (pickedColor) {
-              _editItemColor = pickedColor;
-              document.querySelectorAll("#editItemColors button").forEach(b => {
-                const active = b.dataset.color === pickedColor || _rgbEqualsHex(pickedColor, b.dataset.color);
-                b.style.border = active ? "2px solid #007AFF" : "2px solid transparent";
-              });
-              if(prev) { prev.style.color = pickedColor; prev.textContent = pickedName; }
-            }
-            // auto-detect group from picked name
-            if (!_editItemGrpManual) {
-              const detected = scanDetectGroup(pickedName);
-              if (detected) {
-                _editItemGrp = detected;
-                editItemRenderGroupPills(detected, true);
-              }
-            }
+    attachNameAutocomplete(n, {
+      debounceMs: 50,
+      onSelect: (pickedName, meta) => {
+        // ใส่ค่า + อัปเดต UI
+        const pickedColor = meta?.color || "";
+        if (pickedColor) {
+          _editItemColor = pickedColor;
+          document.querySelectorAll("#editItemColors button").forEach(b => {
+            const active = b.dataset.color === pickedColor || _rgbEqualsHex(pickedColor, b.dataset.color);
+            b.style.border = active ? "2px solid #007AFF" : "2px solid transparent";
+          });
+          if (prev) { prev.style.color = pickedColor; prev.textContent = pickedName; }
+        }
+        if (prev) prev.textContent = pickedName || "ตัวอย่าง";
+        // auto-detect group
+        if (!_editItemGrpManual) {
+          const detected = scanDetectGroup(pickedName);
+          if (detected) {
+            _editItemGrp = detected;
+            editItemRenderGroupPills(detected, true);
           }
         }
-        dd.remove();
-      }
-      // jump → amount
-      setTimeout(() => a?.focus(), 30);
-    };
+        // jump → amount
+        setTimeout(() => a?.focus(), 50);
+      },
+      onEnter: () => {
+        // ไม่มี dropdown → jump amount
+        setTimeout(() => a?.focus(), 30);
+      },
+    });
   }
   if(a) a.onkeydown = e => { if(e.key==="Enter"){e.preventDefault();saveEditItem();} };
 
   document.getElementById("editItemModal").style.display = "flex";
   editItemUpdateCustBtn();
-  if(n) n.addEventListener("input", editItemUpdateCustBtn);
   // ปุ่ม revert
   const revertBtn = document.getElementById("revertUnpaidBtn");
   if (revertBtn) revertBtn.style.display = item.status==="ชำระแล้ว" ? "inline-flex" : "none";
@@ -10472,7 +10676,9 @@ function closeEditItemModal() {
   document.getElementById("editItemModal").style.display = "none";
   _editItemCtx = null;
   _editItemGrpManual = false;
-  // cleanup autocomplete dropdown
+  // V4.22: detach autocomplete listeners + cleanup dropdown
+  const n = document.getElementById("editItemName");
+  if (n && n._acDetach) n._acDetach();
   removeAutocomplete && removeAutocomplete();
 }
 
@@ -11454,6 +11660,39 @@ function masRenderRows() {
   addBtn.onclick = () => masAddRow();
   area.appendChild(addBtn);
   masUpdateSummary();
+
+  // V4.22: attach autocomplete helper สำหรับทุก name input ใน row
+  masRows.forEach(r => {
+    const input = document.getElementById("mas-name-" + r.id);
+    if (!input) return;
+    attachNameAutocomplete(input, {
+      debounceMs: 50,
+      onSelect: (pickedName, meta) => {
+        const row = masRows.find(x => x.id === r.id);
+        if (!row) return;
+        // ใส่ค่า + auto color/grp
+        const autoColor = (masLastColorByName && masLastColorByName[pickedName]) || meta?.color || "#1C1917";
+        const autoGrp = (masLastGrpByName && masLastGrpByName[pickedName]) || (meta && meta.grp) || masLastGrp || "credit";
+        row.name = pickedName;
+        row.nameColor = autoColor;
+        // ใช้ auto-detect group เสมอ (เพราะมาจากประวัติ)
+        if (!row.grpManual) {
+          // re-run detect ผ่าน scanDetectGroup เพื่อใช้ rule ล่าสุด
+          const detected = (typeof scanDetectGroup === "function") ? scanDetectGroup(pickedName) : autoGrp;
+          if (detected) row.grp = detected;
+        }
+        if (masLastGrpByName) masLastGrpByName[pickedName] = row.grp;
+        if (masLastColorByName) masLastColorByName[pickedName] = autoColor;
+        // re-render เพื่อ update chip color, dot
+        masRenderRows();
+        // jump → amount
+        setTimeout(() => document.getElementById("mas-amt-" + r.id)?.focus(), 50);
+      },
+      onEnter: () => {
+        setTimeout(() => document.getElementById("mas-amt-" + r.id)?.focus(), 30);
+      },
+    });
+  });
 }
 
 // V4.18: เปิด iOS action sheet สำหรับเลือกหมวด (แทน <select>)
@@ -11479,7 +11718,7 @@ async function masOpenGrpPicker(id) {
   masRenderRows();
 }
 
-// V4.18: hook auto-detect group ตอนพิมพ์ชื่อ
+// V4.18 (V4.22 updated): auto-detect group ตอนพิมพ์ — autocomplete ใช้ attachNameAutocomplete แทน
 function masOnNameInput(id, el) {
   const r = masRows.find(x=>x.id===id); if (!r) return;
   r.name = el.value;
@@ -11516,11 +11755,7 @@ function masOnNameInput(id, el) {
       }
     }
   }
-  // autocomplete dropdown
-  clearTimeout(window._masAcTimer);
-  window._masAcTimer = setTimeout(() => {
-    if (document.activeElement === el) showAutocomplete(el);
-  }, 100);
+  // V4.22: autocomplete จัดการโดย attachNameAutocomplete แล้ว (ไม่ต้องเรียก showAutocomplete ที่นี่)
   masUpdateSummary();
 }
 
@@ -11528,10 +11763,15 @@ function masOnNameInput(id, el) {
 
 function masOnNameKey(e, id) {
   if(e.key !== "Enter") return;
-  const drop = document.getElementById("mas-drop-"+id);
-  if(drop) {
-    const first = drop.querySelector(".mas-ac-item");
-    if(first) { first.dispatchEvent(new MouseEvent("mousedown",{bubbles:true})); return; }
+  // V4.22: ใช้ #nameAcDropdown (unified) + dispatch pointerdown
+  const drop = document.getElementById("nameAcDropdown");
+  if (drop) {
+    const first = drop.querySelector(".name-autocomplete-item");
+    if (first) {
+      e.preventDefault();
+      first.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
+      return;
+    }
   }
   e.preventDefault();
   document.getElementById("mas-amt-"+id)?.focus();
