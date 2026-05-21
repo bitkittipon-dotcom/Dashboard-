@@ -3343,14 +3343,14 @@ tr:last-child td { border-bottom: none; }
     <!-- Name field -->
     <div style="background:rgba(118,118,128,0.12);border-radius:10px;padding:10px 13px;margin-bottom:8px;position:relative;">
       <div style="font-size:10.5px;color:#8E8E93;font-weight:600;margin-bottom:2px;letter-spacing:0.02em;">ชื่อลูกค้า</div>
-      <input id="editItemName" autocomplete="off" style="width:100%;background:transparent;border:none;outline:none;font-family:inherit;font-size:15px;color:#1C1917;font-weight:600;padding:0;">
+      <input id="editItemName" autocomplete="off" enterkeyhint="next" style="width:100%;background:transparent;border:none;outline:none;font-family:inherit;font-size:15px;color:#1C1917;font-weight:600;padding:0;">
     </div>
 
     <!-- Amount field -->
     <div style="background:rgba(118,118,128,0.12);border-radius:10px;padding:10px 13px;margin-bottom:12px;display:flex;align-items:baseline;gap:6px;">
       <div style="flex:1;">
         <div style="font-size:10.5px;color:#8E8E93;font-weight:600;margin-bottom:2px;letter-spacing:0.02em;">ยอดเงิน</div>
-        <input id="editItemAmount" type="text" inputmode="decimal" style="width:100%;background:transparent;border:none;outline:none;font-family:inherit;font-size:18px;color:#1C1917;font-weight:700;padding:0;font-variant-numeric:tabular-nums;letter-spacing:-0.01em;">
+        <input id="editItemAmount" type="text" inputmode="decimal" enterkeyhint="done" style="width:100%;background:transparent;border:none;outline:none;font-family:inherit;font-size:18px;color:#1C1917;font-weight:700;padding:0;font-variant-numeric:tabular-nums;letter-spacing:-0.01em;">
       </div>
       <span style="font-size:13px;color:#8E8E93;font-weight:500;">บาท</span>
     </div>
@@ -9943,19 +9943,36 @@ function attachNameAutocomplete(inputEl, options) {
   const handleBlur = () => {
     // V4.23 #1 + #6: ลบ dropdown ที่ owner = input นี้เท่านั้น
     // (ป้องกัน row อื่นโดน blur timer ของ row นี้ทับ)
+    // V4.24: + จับ iOS ✓ button (blur ที่ตอน dropdown ยังเปิดอยู่ + ไม่ได้ไป focus input อื่น)
+    //        → trigger เลือก item แรกของ dropdown (เหมือน Enter)
     setTimeout(() => {
       const ae = document.activeElement;
       if (ae && ae.closest && ae.closest(".name-autocomplete")) return;
       const dd = document.getElementById("nameAcDropdown");
-      if (dd && (dd._acOwner === inputEl || !dd._acOwner)) {
-        // เป็นของ input นี้ → ลบได้
-        // หรือถ้า dropdown ไม่มี owner (legacy) → ลบเหมือนเดิม
-        // ยกเว้น: ถ้า dropdown owner เป็น input อื่นที่ยัง focus อยู่ → ไม่ลบ
-        if (dd._acOwner && dd._acOwner !== inputEl && document.activeElement === dd._acOwner) {
-          return; // ของ input อื่นที่ active → ไม่แตะ
-        }
-        removeAutocomplete();
+      if (!dd) return;
+      const isOwn = (dd._acOwner === inputEl || !dd._acOwner);
+      if (!isOwn) {
+        // dropdown ของ input อื่น — ปล่อย (ตามเงื่อนไข #1 + #6)
+        if (dd._acOwner && document.activeElement === dd._acOwner) return;
       }
+      // V4.24: ✓ button detection — blur แต่ keyboard ปิด + ไม่ได้ไป focus element อื่น
+      // (active = body หรือ ไม่ใช่ input)
+      const focusedSomewhereUseful = ae && ae !== document.body && (ae.tagName === "INPUT" || ae.tagName === "BUTTON" || ae.tagName === "SELECT");
+      if (isOwn && !focusedSomewhereUseful && _userTyped) {
+        // เป็นของเรา + user ตั้งใจ blur (กด ✓) → เลือก item แรก
+        const first = dd.querySelector(".name-autocomplete-item");
+        if (first) {
+          // dispatch pointerdown + pointerup ที่ center (valid tap)
+          const r = first.getBoundingClientRect();
+          const cx = r.left + r.width / 2;
+          const cy = r.top + r.height / 2;
+          first.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, clientX: cx, clientY: cy }));
+          first.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, clientX: cx, clientY: cy }));
+          return;
+        }
+      }
+      // ปกติ: ลบ dropdown
+      if (isOwn) removeAutocomplete();
     }, 200);
   };
 
@@ -10623,7 +10640,28 @@ function openEditItemModal(dayKey, grpKey, itemKey, item) {
       },
     });
   }
-  if(a) a.onkeydown = e => { if(e.key==="Enter"){e.preventDefault();saveEditItem();} };
+  if(a) {
+    a.onkeydown = e => { if(e.key==="Enter"){e.preventDefault();saveEditItem();} };
+    // V4.24: iOS ✓ (done) button → blur → save (เหมือน Enter)
+    a.onblur = (e) => {
+      // delay 100ms ให้ activeElement update
+      setTimeout(() => {
+        const ae = document.activeElement;
+        // ถ้า focus ไปอยู่ที่ปุ่มในโมดัล (save/cancel/delete/chip) → ปล่อยให้ปุ่มนั้นทำงาน
+        if (ae && ae !== document.body && ae.tagName !== "BODY") {
+          // ถ้า focus ไปที่ปุ่ม footer (save/cancel/delete) → ก็ไม่ต้อง auto-save (user จะกดเอง)
+          if (ae.closest && ae.closest("#editItemModal")) return;
+        }
+        // ตรวจ modal ยังเปิด + value ไม่ว่าง → save
+        const modal = document.getElementById("editItemModal");
+        if (!modal || modal.style.display === "none") return;
+        const val = (a.value || "").trim();
+        if (!val) return; // ค่าว่าง → ไม่ save
+        // call save (จะ validate name + close modal)
+        saveEditItem();
+      }, 100);
+    };
+  }
 
   document.getElementById("editItemModal").style.display = "flex";
   editItemUpdateCustBtn();
@@ -11763,13 +11801,19 @@ function masOnNameInput(id, el) {
 
 function masOnNameKey(e, id) {
   if(e.key !== "Enter") return;
-  // V4.22: ใช้ #nameAcDropdown (unified) + dispatch pointerdown
+  // V4.24: ใช้ #nameAcDropdown (unified) + dispatch pointerdown + pointerup
   const drop = document.getElementById("nameAcDropdown");
   if (drop) {
     const first = drop.querySelector(".name-autocomplete-item");
     if (first) {
       e.preventDefault();
-      first.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
+      e.stopPropagation();
+      // dispatch pointerdown + pointerup ที่ center (valid tap)
+      const r = first.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      first.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, clientX: cx, clientY: cy }));
+      first.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, clientX: cx, clientY: cy }));
       return;
     }
   }
