@@ -11642,6 +11642,14 @@ function masAddRow(inheritGrp) {
   });
 }
 
+// V4.25: เพิ่ม row โดยไม่ focus + ไม่ render (caller render เอง)
+function masAddRowSilent(inheritGrp) {
+  const id = ++masRowId;
+  const grp = inheritGrp || masLastGrp;
+  masRows.push({id, name:"", amount:"", grp, nameColor:"#1C1917"});
+  return id;
+}
+
 function masRemoveRow(id) {
   if(masRows.length <= 1) return;
   masRows = masRows.filter(r=>r.id!==id);
@@ -11721,12 +11729,24 @@ function masRenderRows() {
         }
         if (masLastGrpByName) masLastGrpByName[pickedName] = row.grp;
         if (masLastColorByName) masLastColorByName[pickedName] = autoColor;
-        // re-render เพื่อ update chip color, dot
+        // V4.25: ถ้าเป็น row สุดท้าย → เพิ่ม row ใหม่ทันที (ก่อน re-render เพื่อให้แสดงพร้อมกัน)
+        const isLastRow = masRows[masRows.length - 1]?.id === r.id;
+        if (isLastRow) {
+          masAddRowSilent(row.grp); // เพิ่มแบบไม่ focus
+        }
+        // re-render เพื่อ update chip color, dot + แสดง row ใหม่
         masRenderRows();
-        // jump → amount
+        // jump → amount ของ row เดิม (ไม่ใช่ row ใหม่)
         setTimeout(() => document.getElementById("mas-amt-" + r.id)?.focus(), 50);
       },
       onEnter: () => {
+        // V4.25: Enter ที่ name (ไม่มี dropdown) → ถ้าเป็น row สุดท้าย → เพิ่ม row + jump amount
+        const row = masRows.find(x => x.id === r.id);
+        const isLastRow = row && masRows[masRows.length - 1]?.id === r.id;
+        if (isLastRow && row && String(row.name || "").trim()) {
+          masAddRowSilent(row.grp);
+          masRenderRows();
+        }
         setTimeout(() => document.getElementById("mas-amt-" + r.id)?.focus(), 30);
       },
     });
