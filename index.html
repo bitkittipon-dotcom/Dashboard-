@@ -10084,7 +10084,11 @@ function showAutocomplete(inputEl) {
         const bkmB = document.getElementById("bkmBasket");
         const amtEl = document.getElementById("f-amount");
         const nextEl = bkmB && document.getElementById("bkAddModal")?.classList.contains("show") ? bkmB : amtEl;
-        if (nextEl) setTimeout(()=>{ nextEl.focus(); nextEl.scrollIntoView({behavior:"smooth",block:"center"}); }, 50);
+        // V4.26: ใช้ rAF แทน setTimeout 50ms — เร็วกว่า 3 เท่า + iOS reliable
+        if (nextEl) requestAnimationFrame(() => {
+          nextEl.focus();
+          nextEl.scrollIntoView({behavior:"smooth",block:"center"});
+        });
       }
       // clear suppress หลัง event loop จบ
       setTimeout(() => { inputEl._acSuppress = false; }, 100);
@@ -10631,12 +10635,12 @@ function openEditItemModal(dayKey, grpKey, itemKey, item) {
             editItemRenderGroupPills(detected, true);
           }
         }
-        // jump → amount
-        setTimeout(() => a?.focus(), 50);
+        // V4.26: jump → amount ทันที (rAF แทน setTimeout 50ms)
+        requestAnimationFrame(() => a?.focus());
       },
       onEnter: () => {
-        // ไม่มี dropdown → jump amount
-        setTimeout(() => a?.focus(), 30);
+        // ไม่มี dropdown → jump amount ทันที
+        requestAnimationFrame(() => a?.focus());
       },
     });
   }
@@ -11736,8 +11740,8 @@ function masRenderRows() {
         }
         // re-render เพื่อ update chip color, dot + แสดง row ใหม่
         masRenderRows();
-        // jump → amount ของ row เดิม (ไม่ใช่ row ใหม่)
-        setTimeout(() => document.getElementById("mas-amt-" + r.id)?.focus(), 50);
+        // V4.26: jump → amount ของ row เดิม ทันที (rAF แทน setTimeout 50ms)
+        requestAnimationFrame(() => document.getElementById("mas-amt-" + r.id)?.focus());
       },
       onEnter: () => {
         // V4.25: Enter ที่ name (ไม่มี dropdown) → ถ้าเป็น row สุดท้าย → เพิ่ม row + jump amount
@@ -11747,7 +11751,8 @@ function masRenderRows() {
           masAddRowSilent(row.grp);
           masRenderRows();
         }
-        setTimeout(() => document.getElementById("mas-amt-" + r.id)?.focus(), 30);
+        // V4.26: jump ทันที (rAF แทน setTimeout 30ms)
+        requestAnimationFrame(() => document.getElementById("mas-amt-" + r.id)?.focus());
       },
     });
   });
