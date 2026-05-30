@@ -3388,7 +3388,7 @@ tr:last-child td { border-bottom: none; }
     <div style="display:flex;gap:0;border-top:0.5px solid rgba(118,118,128,0.25);margin:0 -16px;">
       <button onclick="closeEditItemModal()" style="flex:1;padding:13px 6px;border:none;background:transparent;color:#007AFF;font-family:inherit;font-size:15px;font-weight:400;cursor:pointer;-webkit-tap-highlight-color:transparent;">ยกเลิก</button>
       <div style="width:0.5px;background:rgba(118,118,128,0.25);"></div>
-      <button id="editItemDeleteBtn" onclick="deleteItemFromModal()" style="flex:1;padding:13px 6px;border:none;background:transparent;color:#FF3B30;font-family:inherit;font-size:15px;font-weight:400;cursor:pointer;-webkit-tap-highlight-color:transparent;">ลบ</button>
+      <button id="editItemDeleteBtn" style="flex:1;padding:13px 6px;border:none;background:transparent;color:#FF3B30;font-family:inherit;font-size:15px;font-weight:400;cursor:pointer;-webkit-tap-highlight-color:transparent;">ลบ</button>
       <div style="width:0.5px;background:rgba(118,118,128,0.25);"></div>
       <button onclick="saveEditItem()" style="flex:1;padding:13px 6px;border:none;background:transparent;color:#007AFF;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;">บันทึก</button>
     </div>
@@ -10669,9 +10669,24 @@ function openEditItemModal(dayKey, grpKey, itemKey, item) {
 
   document.getElementById("editItemModal").style.display = "flex";
   editItemUpdateCustBtn();
-  // ปุ่ม revert
+  // V4.27: สลับปุ่มกลาง ลบ ↔ ยกเลิกชำระ ตามสถานะ
+  const midBtn = document.getElementById("editItemDeleteBtn");
+  if (midBtn) {
+    if (item.status === "ชำระแล้ว") {
+      // จ่ายแล้ว → แสดง "ยกเลิกชำระ" (สีส้ม), เรียก revertItemToUnpaid
+      midBtn.textContent = "ยกเลิกชำระ";
+      midBtn.style.color = "#EA580C";
+      midBtn.onclick = revertItemToUnpaid;
+    } else {
+      // ยังไม่จ่าย → แสดง "ลบ" (สีแดง), เรียก deleteItemFromModal
+      midBtn.textContent = "ลบ";
+      midBtn.style.color = "#FF3B30";
+      midBtn.onclick = deleteItemFromModal;
+    }
+  }
+  // legacy hidden revert button (ไม่ใช้แล้ว แต่เก็บไว้ compat)
   const revertBtn = document.getElementById("revertUnpaidBtn");
-  if (revertBtn) revertBtn.style.display = item.status==="ชำระแล้ว" ? "inline-flex" : "none";
+  if (revertBtn) revertBtn.style.display = "none";
   setTimeout(() => n?.focus(), 80);
 }
 
