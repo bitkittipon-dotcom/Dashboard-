@@ -11538,8 +11538,15 @@ function _showOtherDayWarn(activeDayKey, todayKey) {
       const d = new Date(p.year, p.month-1, p.day);
       return `${THAI_WEEK[d.getDay()]} ${p.day} ${THAI_M_SHORT[p.month-1]} ${p.year + 543}`;
     };
+    // V4.28: format สั้น "D / M / YY" สำหรับปุ่ม
+    const formatShort = (key) => {
+      const p = parseDayKey(key); if (!p) return key;
+      const yy = (p.year + 543) % 100; // 2569 → 69
+      return `${p.day} / ${p.month} / ${yy}`;
+    };
     const activeTxt = formatThai(activeDayKey);
     const todayTxt = formatThai(todayKey);
+    const activeShort = formatShort(activeDayKey);
 
     // สร้าง modal element
     const overlay = document.createElement("div");
@@ -11567,8 +11574,8 @@ function _showOtherDayWarn(activeDayKey, todayKey) {
           <span style="font-size:11.5px;">(วันนี้คือ ${todayTxt})</span>
         </div>
         <div style="display:flex;gap:8px;">
-          <button id="odwBtnToday" style="flex:1;padding:11px;border:1px solid #E7E5E4;background:#fff;border-radius:10px;font-family:inherit;font-size:13px;font-weight:600;color:#57534E;cursor:pointer;-webkit-tap-highlight-color:transparent;">ไปวันนี้แทน</button>
-          <button id="odwBtnContinue" style="flex:1;padding:11px;border:none;background:#1C1917;color:#fff;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;">เพิ่มต่อ</button>
+          <button id="odwBtnToday" style="flex:1;padding:11px;border:1px solid #E7E5E4;background:#fff;border-radius:10px;font-family:inherit;font-size:13px;font-weight:600;color:#57534E;cursor:pointer;-webkit-tap-highlight-color:transparent;">เพิ่มวันนี้</button>
+          <button id="odwBtnContinue" style="flex:1;padding:11px;border:none;background:#1C1917;color:#fff;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;">เพิ่ม ${activeShort}</button>
         </div>
       </div>
     `;
