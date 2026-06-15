@@ -3316,6 +3316,18 @@ tr:last-child td { border-bottom: none; }
   </div>
 </div>
 <style>
+/* V4.34: ป้องกัน iOS Safari autofill yellow/orange highlight — scope แคบ เฉพาะ inputs ในแอป */
+#editItemName:-webkit-autofill,
+#editItemAmount:-webkit-autofill,
+.mas-name-wrap input:-webkit-autofill,
+input#f-name:-webkit-autofill,
+input#f-amount:-webkit-autofill,
+input[name="cust-name-no-fill"]:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px transparent inset !important;
+  -webkit-text-fill-color: #1C1917 !important;
+  transition: background-color 5000s ease-in-out 0s;
+  caret-color: #1C1917;
+}
 @keyframes popIn { from{transform:scale(.85);opacity:0} to{transform:scale(1);opacity:1} }
 @keyframes popInSpring {
   0%   { transform: scale(0.85); opacity: 0; }
@@ -3343,15 +3355,22 @@ tr:last-child td { border-bottom: none; }
 <div id="editItemModal" style="position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:400;display:none;align-items:center;justify-content:center;padding:20px;">
   <div style="background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:18px;width:100%;max-width:340px;padding:18px 16px 0;box-shadow:0 12px 40px rgba(0,0,0,0.18);border:0.5px solid rgba(255,255,255,0.5);animation:popInSpring .4s cubic-bezier(.34,1.56,.64,1);overflow:hidden;">
     <!-- Header -->
-    <div style="text-align:center;margin-bottom:14px;">
+    <div style="text-align:center;margin-bottom:14px;position:relative;">
       <div style="font-size:14px;font-weight:700;color:#1C1917;">แก้ไขรายการ</div>
       <div id="editItemDateLabel" style="font-size:11.5px;color:#8E8E93;margin-top:2px;"></div>
+      <!-- V4.33: ปุ่มย้ายรายการ (ดินสอ) -->
+      <button id="editItemMoveBtn" onclick="onMoveItemClick()" style="position:absolute;right:0;top:-4px;width:32px;height:32px;border-radius:9px;border:none;background:rgba(0,122,255,0.1);color:#007AFF;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:background .15s;" aria-label="ย้ายรายการ" title="ย้ายไปวันอื่น">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+      </button>
     </div>
 
     <!-- Name field -->
     <div style="background:rgba(118,118,128,0.12);border-radius:10px;padding:10px 13px;margin-bottom:8px;position:relative;">
       <div style="font-size:10.5px;color:#8E8E93;font-weight:600;margin-bottom:2px;letter-spacing:0.02em;">ชื่อลูกค้า</div>
-      <input id="editItemName" autocomplete="off" enterkeyhint="next" style="width:100%;background:transparent;border:none;outline:none;font-family:inherit;font-size:15px;color:#1C1917;font-weight:600;padding:0;">
+      <input id="editItemName" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="cust-name-no-fill" enterkeyhint="next" style="width:100%;background:transparent;border:none;outline:none;font-family:inherit;font-size:15px;color:#1C1917;font-weight:600;padding:0;-webkit-text-fill-color:#1C1917;">
     </div>
 
     <!-- Amount field -->
@@ -4936,6 +4955,36 @@ function renderBoard() {
         row.className = "item-row";
         const isFade = false; // ถ้ายัง unpaid ไม่ fade
 
+        // V4.33: Move-select mode — ถ้ากำลังเลือกหลายรายการ → row เปลี่ยน behavior
+        if (window._moveMode?.active) {
+          const selKey = g.key + ":" + key;
+          const isSelected = window._moveMode.selected.has(selKey);
+          // highlight ชุดล่าสุด (batchId === latestBatchId)
+          const latestBatchId = _moveFindLatestBatchId();
+          const isLatestBatch = latestBatchId && item.batchId === latestBatchId;
+          // visual: bg + border
+          if (isSelected) {
+            row.style.background = "rgba(0,122,255,0.08)";
+            row.style.boxShadow = "inset 0 0 0 1.5px #007AFF";
+          } else if (isLatestBatch) {
+            row.style.background = "rgba(255,193,7,0.10)";
+            row.style.boxShadow = "inset 0 0 0 1.5px rgba(255,193,7,0.6)";
+          }
+          // override click → toggle select
+          row.style.cursor = "pointer";
+          row.addEventListener("click", (e) => {
+            // ป้องกัน status button + ปุ่ม edit ทำงาน
+            if (e.target.closest(".status-btn") || e.target.closest(".del-btn") || e.target.closest(".item-name") || e.target.closest(".paid-chip")) return;
+            _moveToggleSelect(g.key, key);
+          });
+          // เพิ่ม checkbox indicator ด้านซ้าย
+          const cb = document.createElement("div");
+          cb.style.cssText = `width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;${isSelected ? 'background:#007AFF;color:#fff;' : 'background:rgba(118,118,128,0.15);color:transparent;border:1.5px solid #C7C7CC;'}`;
+          cb.textContent = isSelected ? "✓" : "";
+          cb.onclick = (e) => { e.stopPropagation(); _moveToggleSelect(g.key, key); };
+          row.appendChild(cb);
+        }
+
         const statusBtn = document.createElement("button");
         statusBtn.className = "status-btn";
         statusBtn.style.borderColor = dot;
@@ -5240,8 +5289,11 @@ function renderBoard() {
         }
         const groupKey = g.key;
         const dayKey   = activeDay;
+        // V4.33: batchId + addedAt (สำหรับไฮไลท์ชุดล่าสุดในโหมดย้าย)
+        const batchId = "b_" + Date.now() + "_" + Math.random().toString(36).slice(2,6);
         db.ref(`days/${dayKey}/${groupKey}`).push({
-          name, note, amount: parsedAmount, status:"รอชำระ", nameColor: color
+          name, note, amount: parsedAmount, status:"รอชำระ", nameColor: color,
+          batchId, addedAt: Date.now()
         }).then(() => {
           playSoundSuccess();
           openForm = null;
@@ -11734,6 +11786,407 @@ function closeEditItemModal() {
   removeAutocomplete && removeAutocomplete();
 }
 
+// ═══════════════════════════════════════════════════════════════
+// V4.33 — Move System (ย้ายรายการไปวันอื่น)
+// ═══════════════════════════════════════════════════════════════
+// state: โหมด multi-select ของ board
+window._moveMode = {
+  active: false,
+  selected: new Set(),  // set ของ "grp:itemKey"
+};
+
+// หา latest batchId ของวันที่ดูอยู่ (สำหรับไฮไลท์ "ชุดล่าสุด")
+function _moveFindLatestBatchId() {
+  try {
+    const dayData = (allDays && allDays[activeDay]) || {};
+    let latestT = 0, latestBatchId = null;
+    for (const grp of ["credit","transfer","fence","delivery"]) {
+      const items = dayData[grp] || {};
+      for (const k of Object.keys(items)) {
+        const item = items[k];
+        const t = item?.addedAt || 0;
+        if (t > latestT && item?.batchId) {
+          latestT = t;
+          latestBatchId = item.batchId;
+        }
+      }
+    }
+    return latestBatchId;
+  } catch (e) { return null; }
+}
+
+// นับจำนวนรายการในชุดล่าสุด (สำหรับแสดงใน chip "เลือกชุดล่าสุด (N)")
+function _moveCountLatestBatch() {
+  const latestId = _moveFindLatestBatchId();
+  if (!latestId) return 0;
+  try {
+    const dayData = (allDays && allDays[activeDay]) || {};
+    let count = 0;
+    for (const grp of ["credit","transfer","fence","delivery"]) {
+      const items = dayData[grp] || {};
+      for (const k of Object.keys(items)) {
+        if (items[k]?.batchId === latestId) count++;
+      }
+    }
+    return count;
+  } catch (e) { return 0; }
+}
+
+// คลิกปุ่มดินสอใน edit modal → ถาม "รายการเดียว / หลายรายการ"
+function onMoveItemClick() {
+  if (!_editItemCtx) return;
+  try { bugBreadcrumb && bugBreadcrumb("moveItemClick"); } catch(e){}
+  const ctx = _editItemCtx;
+  // เรียก action sheet ถาม
+  _moveAskTypeSheet(ctx);
+}
+
+function _moveAskTypeSheet(ctx) {
+  const overlay = document.createElement("div");
+  overlay.id = "moveAskOverlay";
+  overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:600;display:flex;align-items:flex-end;justify-content:center;padding:14px;font-family:'IBM Plex Sans Thai',sans-serif;animation:mvFade 0.18s ease;";
+  overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+  overlay.innerHTML = `
+    <style>
+      @keyframes mvFade { from{opacity:0} to{opacity:1} }
+      @keyframes mvSlideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+      .mv-sheet-btn { width:100%;padding:14px 16px;border:none;background:#fff;font-family:inherit;font-size:15px;font-weight:500;color:#007AFF;cursor:pointer;display:flex;align-items:center;gap:12px;text-align:left;-webkit-tap-highlight-color:transparent; }
+      .mv-sheet-btn:not(:last-child) { border-bottom:0.5px solid rgba(60,60,67,0.18); }
+      .mv-sheet-btn:active { background:rgba(0,0,0,0.04); }
+    </style>
+    <div style="width:100%;max-width:340px;animation:mvSlideUp 0.25s cubic-bezier(.34,1.56,.64,1);">
+      <div style="background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:13px;overflow:hidden;margin-bottom:8px;">
+        <div style="padding:11px 14px;text-align:center;font-size:11.5px;color:#8E8E93;border-bottom:0.5px solid rgba(60,60,67,0.15);">ย้ายรายการไปวันอื่น</div>
+        <button class="mv-sheet-btn" onclick="_moveSingleMode()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/></svg>
+          ย้ายรายการเดียวนี้
+        </button>
+        <button class="mv-sheet-btn" onclick="_moveMultiMode()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          เลือกหลายรายการ
+        </button>
+      </div>
+      <div style="background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:13px;overflow:hidden;">
+        <button class="mv-sheet-btn" style="justify-content:center;font-weight:700;color:#007AFF;" onclick="document.getElementById('moveAskOverlay').remove()">ยกเลิก</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+// "รายการเดียว" — เปิด picker วันที่ทันที
+function _moveSingleMode() {
+  document.getElementById("moveAskOverlay")?.remove();
+  if (!_editItemCtx) return;
+  const ctx = { ..._editItemCtx };
+  closeEditItemModal();
+  // เปิด date picker → ย้ายเดี่ยว
+  _moveOpenDatePicker([ctx], "single");
+}
+
+// "หลายรายการ" — ปิด edit modal + เข้าโหมด select ทั้ง board
+function _moveMultiMode() {
+  document.getElementById("moveAskOverlay")?.remove();
+  // เก็บ ctx เริ่มต้น (รายการที่กดปุ่มดินสอ — จะถูก pre-selected)
+  const initialKey = _editItemCtx ? (_editItemCtx.grpKey + ":" + _editItemCtx.itemKey) : null;
+  closeEditItemModal();
+  // เปิดโหมด select
+  _moveEnterSelectMode(initialKey ? [initialKey] : []);
+}
+
+// เข้าโหมด select
+function _moveEnterSelectMode(initialSelected) {
+  window._moveMode.active = true;
+  window._moveMode.selected = new Set(initialSelected || []);
+  // render toolbar + re-render board (ให้ rows มี checkbox + highlight)
+  _moveRenderToolbar();
+  renderBoard();
+}
+
+// ออกจากโหมด select
+function _moveExitSelectMode() {
+  window._moveMode.active = false;
+  window._moveMode.selected.clear();
+  // V4.34: clear state เพื่อไม่ให้ค้าง
+  window._moveCtxs = null;
+  window._moveTargetDay = null;
+  window._moveMode_type = null;
+  document.getElementById("moveToolbar")?.remove();
+  document.body.style.paddingTop = ""; // reset
+  try { bugBreadcrumb && bugBreadcrumb("moveExitMode"); } catch(e){}
+  renderBoard();
+}
+
+// Render toolbar บน (sticky)
+function _moveRenderToolbar() {
+  document.getElementById("moveToolbar")?.remove();
+  const selectedCount = window._moveMode.selected.size;
+  const totalAmount = _moveCalcSelectedAmount();
+  const latestCount = _moveCountLatestBatch();
+
+  const bar = document.createElement("div");
+  bar.id = "moveToolbar";
+  bar.style.cssText = "position:fixed;top:0;left:0;right:0;background:#007AFF;color:#fff;z-index:550;padding:8px 12px 8px;font-family:'IBM Plex Sans Thai',sans-serif;box-shadow:0 4px 16px rgba(0,122,255,0.25);animation:moveBarSlide 0.25s ease;";
+  bar.innerHTML = `
+    <style>
+      @keyframes moveBarSlide { from{transform:translateY(-100%)} to{transform:translateY(0)} }
+      .mv-chip-action { background:rgba(255,255,255,0.18);border:none;color:#fff;font-size:11px;font-weight:600;padding:5px 11px;border-radius:99px;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;white-space:nowrap; }
+      .mv-chip-action:active { background:rgba(255,255,255,0.28); }
+    </style>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;padding-top:env(safe-area-inset-top,0);">
+      <button onclick="_moveExitSelectMode()" style="background:transparent;border:none;color:#fff;font-size:13.5px;font-weight:500;cursor:pointer;font-family:inherit;padding:4px 0;">ยกเลิก</button>
+      <div style="flex:1;text-align:center;">
+        <div style="font-size:13px;font-weight:700;">${selectedCount > 0 ? `เลือก ${selectedCount} รายการ` : 'เลือกรายการที่จะย้าย'}</div>
+        ${selectedCount > 0 ? `<div style="font-size:10px;opacity:0.85;margin-top:1px;">${totalAmount.toLocaleString('th-TH')} บาท</div>` : ''}
+      </div>
+      <button onclick="_moveConfirmStart()" ${selectedCount === 0 ? 'disabled' : ''} style="background:${selectedCount > 0 ? '#fff' : 'rgba(255,255,255,0.3)'};border:none;color:${selectedCount > 0 ? '#007AFF' : '#fff'};font-size:12px;font-weight:700;padding:6px 12px;border-radius:8px;cursor:${selectedCount > 0 ? 'pointer' : 'default'};font-family:inherit;-webkit-tap-highlight-color:transparent;">ย้าย →</button>
+    </div>
+    <div style="display:flex;gap:5px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;">
+      <button class="mv-chip-action" onclick="_moveSelectAll()">เลือกทั้งหมด</button>
+      ${latestCount > 0 ? `<button class="mv-chip-action" onclick="_moveSelectLatestBatch()" style="background:rgba(255,221,0,0.25);">⚡ เลือกชุดล่าสุด (${latestCount})</button>` : ''}
+      <button class="mv-chip-action" onclick="_moveSelectByStatus('รอชำระ')">เฉพาะ "รอ"</button>
+      <button class="mv-chip-action" onclick="_moveSelectByStatus('ชำระแล้ว')">เฉพาะ "จ่าย"</button>
+      <button class="mv-chip-action" onclick="_moveClearSelection()">ล้าง</button>
+    </div>
+  `;
+  document.body.appendChild(bar);
+  // adjust body padding
+  document.body.style.paddingTop = (bar.offsetHeight + 6) + "px";
+}
+
+function _moveCalcSelectedAmount() {
+  let sum = 0;
+  const dayData = (allDays && allDays[activeDay]) || {};
+  for (const key of window._moveMode.selected) {
+    const [grp, itemKey] = key.split(":");
+    const item = dayData[grp]?.[itemKey];
+    if (item) sum += parseFloat(item.amount) || 0;
+  }
+  return sum;
+}
+
+function _moveToggleSelect(grpKey, itemKey) {
+  const key = grpKey + ":" + itemKey;
+  const s = window._moveMode.selected;
+  if (s.has(key)) s.delete(key);
+  else s.add(key);
+  _moveRenderToolbar();
+  renderBoard();
+}
+
+function _moveSelectAll() {
+  const dayData = (allDays && allDays[activeDay]) || {};
+  for (const grp of ["credit","transfer","fence","delivery"]) {
+    const items = dayData[grp] || {};
+    for (const k of Object.keys(items)) {
+      window._moveMode.selected.add(grp + ":" + k);
+    }
+  }
+  _moveRenderToolbar();
+  renderBoard();
+}
+
+function _moveSelectLatestBatch() {
+  const latestId = _moveFindLatestBatchId();
+  if (!latestId) return;
+  const dayData = (allDays && allDays[activeDay]) || {};
+  // clear ก่อน เพื่อให้เป็น "เลือกเฉพาะชุดล่าสุด"
+  window._moveMode.selected.clear();
+  for (const grp of ["credit","transfer","fence","delivery"]) {
+    const items = dayData[grp] || {};
+    for (const k of Object.keys(items)) {
+      if (items[k]?.batchId === latestId) {
+        window._moveMode.selected.add(grp + ":" + k);
+      }
+    }
+  }
+  _moveRenderToolbar();
+  renderBoard();
+}
+
+function _moveSelectByStatus(status) {
+  const dayData = (allDays && allDays[activeDay]) || {};
+  for (const grp of ["credit","transfer","fence","delivery"]) {
+    const items = dayData[grp] || {};
+    for (const k of Object.keys(items)) {
+      if (items[k]?.status === status) {
+        window._moveMode.selected.add(grp + ":" + k);
+      }
+    }
+  }
+  _moveRenderToolbar();
+  renderBoard();
+}
+
+function _moveClearSelection() {
+  window._moveMode.selected.clear();
+  _moveRenderToolbar();
+  renderBoard();
+}
+
+// ย้าย — เปิด date picker
+function _moveConfirmStart() {
+  if (window._moveMode.selected.size === 0) return;
+  const ctxs = [];
+  for (const key of window._moveMode.selected) {
+    const [grpKey, itemKey] = key.split(":");
+    ctxs.push({ dayKey: activeDay, grpKey, itemKey });
+  }
+  _moveOpenDatePicker(ctxs, "multi");
+}
+
+// เปิด date picker เลือกวันปลายทาง
+function _moveOpenDatePicker(ctxs, mode) {
+  const fromDay = ctxs[0]?.dayKey || activeDay;
+  const count = ctxs.length;
+  // คำนวณยอดรวม
+  let totalAmount = 0;
+  const dayData = (allDays && allDays[fromDay]) || {};
+  for (const c of ctxs) {
+    const item = dayData[c.grpKey]?.[c.itemKey];
+    if (item) totalAmount += parseFloat(item.amount) || 0;
+  }
+
+  // format วันที่
+  const fromTxt = (typeof parseDayKey === "function" && parseDayKey(fromDay))
+    ? `${parseDayKey(fromDay).day} / ${parseDayKey(fromDay).month} / ${(parseDayKey(fromDay).year + 543) % 100}`
+    : fromDay;
+
+  const overlay = document.createElement("div");
+  overlay.id = "moveDateOverlay";
+  overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:700;display:flex;align-items:center;justify-content:center;padding:18px;font-family:'IBM Plex Sans Thai',sans-serif;animation:mvFade 0.2s ease;";
+  overlay.onclick = (e) => { if (e.target === overlay) _moveCloseDatePicker(); };
+  overlay.innerHTML = `
+    <div style="background:rgba(255,255,255,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:16px;max-width:320px;width:100%;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.2);animation:mvSlideUp 0.25s cubic-bezier(.34,1.56,.64,1);">
+      <div style="padding:14px 16px 8px;text-align:center;border-bottom:0.5px solid rgba(60,60,67,0.15);">
+        <div style="font-size:15px;font-weight:700;color:#1C1917;">ย้ายไปวันไหน?</div>
+        <div style="font-size:11.5px;color:#8E8E93;margin-top:2px;">${count} รายการ · ${totalAmount.toLocaleString('th-TH')} บาท</div>
+      </div>
+      <div style="padding:14px;">
+        <div style="background:rgba(118,118,128,0.12);border-radius:10px;padding:12px 14px;text-align:center;margin-bottom:8px;">
+          <div style="font-size:10.5px;color:#8E8E93;margin-bottom:2px;">จากวัน</div>
+          <div style="font-size:14px;font-weight:600;color:#1C1917;">${fromTxt}</div>
+        </div>
+        <div style="text-align:center;color:#8E8E93;font-size:16px;margin:4px 0;">↓</div>
+        <div id="mvToDayBox" onclick="_moveOpenCalendar()" style="background:rgba(0,122,255,0.08);border:1.5px solid rgba(0,122,255,0.3);border-radius:10px;padding:12px 14px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent;">
+          <div style="font-size:10.5px;color:#007AFF;margin-bottom:2px;">ไปยังวัน</div>
+          <div id="mvToDayText" style="font-size:14px;font-weight:700;color:#007AFF;">แตะเพื่อเลือก...</div>
+        </div>
+      </div>
+      <div style="display:flex;border-top:0.5px solid rgba(60,60,67,0.15);">
+        <button onclick="_moveCloseDatePicker()" style="flex:1;padding:13px;border:none;background:transparent;color:#007AFF;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">ยกเลิก</button>
+        <button id="mvConfirmBtn" onclick="_moveDoMove()" disabled style="flex:1;padding:13px;border:none;background:transparent;color:#007AFF;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;border-left:0.5px solid rgba(60,60,67,0.15);opacity:0.4;">ย้าย</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  // store ctxs สำหรับ _moveDoMove
+  window._moveCtxs = ctxs;
+  window._moveTargetDay = null;
+  window._moveMode_type = mode;
+}
+
+// V4.34: ปิด date picker + clear state ถ้าไม่อยู่ใน multi-select mode
+function _moveCloseDatePicker() {
+  document.getElementById("moveDateOverlay")?.remove();
+  // ถ้าไม่ได้อยู่ใน multi-select mode (รายการเดียว) → clear state
+  if (!window._moveMode?.active) {
+    window._moveCtxs = null;
+    window._moveTargetDay = null;
+    window._moveMode_type = null;
+  }
+}
+
+// เปิดปฏิทินเลือกวัน (reuse existing calModal — แต่ override callback)
+function _moveOpenCalendar() {
+  // ใช้ prompt ง่ายๆ ก่อน — เปลี่ยนเป็น calendar UI ภายหลัง
+  // ใช้ format DD-MM-YY (Buddhist year)
+  const ans = prompt("กรอกวันที่ปลายทาง (DD-MM-YY) เช่น 20-06-69", "");
+  if (!ans) return;
+  if (!/^\d{1,2}-\d{1,2}-\d{1,2}$/.test(ans.trim())) {
+    alert("รูปแบบไม่ถูกต้อง ใช้ DD-MM-YY");
+    return;
+  }
+  const [d, m, y] = ans.trim().split("-").map(x => x.padStart(2,"0"));
+  const dayKey = `${d}-${m}-${y}`;
+  // validate
+  if (typeof parseDayKey === "function" && !parseDayKey(dayKey)) {
+    alert("วันที่ไม่ถูกต้อง");
+    return;
+  }
+  if (dayKey === window._moveCtxs?.[0]?.dayKey) {
+    alert("เลือกวันเดิม ไม่ต้องย้าย");
+    return;
+  }
+  // ตรวจวันปิดยอด
+  if (allClosed && allClosed[dayKey]) {
+    alert("วันปลายทางถูกปิดยอดแล้ว — ย้ายไม่ได้");
+    return;
+  }
+  window._moveTargetDay = dayKey;
+  document.getElementById("mvToDayText").textContent = `${parseInt(d)} / ${parseInt(m)} / ${parseInt(y)}`;
+  const btn = document.getElementById("mvConfirmBtn");
+  if (btn) { btn.disabled = false; btn.style.opacity = "1"; }
+}
+
+// ทำการย้ายจริง
+async function _moveDoMove() {
+  if (!window._moveCtxs?.length || !window._moveTargetDay) return;
+  const targetDay = window._moveTargetDay;
+  const ctxs = window._moveCtxs;
+  try { bugBreadcrumb && bugBreadcrumb("moveDoMove", { count: ctxs.length, to: targetDay }); } catch(e){}
+
+  // ตรวจ permission
+  if (!isOwner() && !isToday(targetDay)) {
+    alert("พนักงานย้ายไปวันอื่นได้เฉพาะวันนี้");
+    return;
+  }
+
+  // disable button
+  const btn = document.getElementById("mvConfirmBtn");
+  if (btn) btn.disabled = true;
+
+  try {
+    // เตรียม target day structure ถ้ายังไม่มี
+    if (!allDays[targetDay]) {
+      await db.ref(`days/${targetDay}`).set({ credit:{}, transfer:{}, fence:{}, delivery:{} });
+    }
+
+    let movedCount = 0;
+    for (const ctx of ctxs) {
+      const { dayKey, grpKey, itemKey } = ctx;
+      const item = allDays[dayKey]?.[grpKey]?.[itemKey];
+      if (!item) continue;
+
+      // generate new key + copy ไปวันใหม่
+      const newKey = "itm" + Date.now() + "_" + Math.random().toString(36).slice(2,6);
+      await db.ref(`days/${targetDay}/${grpKey}/${newKey}`).set({
+        ...item,
+        movedAt: Date.now(),
+        movedFrom: dayKey,
+      });
+      // ลบจากวันเก่า
+      await db.ref(`days/${dayKey}/${grpKey}/${itemKey}`).remove();
+      movedCount++;
+    }
+
+    document.getElementById("moveDateOverlay")?.remove();
+    _moveExitSelectMode();
+
+    // toast
+    if (typeof _showToast === "function") {
+      _showToast(`✅ ย้าย ${movedCount} รายการแล้ว`);
+    }
+    renderBoard();
+  } catch(e) {
+    alert("ย้ายไม่สำเร็จ: " + (e.message || ""));
+    if (btn) btn.disabled = false;
+  }
+}
+// ═══════════════════════════════════════════════════════════════
+// END Move System
+// ═══════════════════════════════════════════════════════════════
+
 function saveEditItem() {
   if (!_editItemCtx) return;
   const {dayKey, grpKey, itemKey} = _editItemCtx;
@@ -11746,12 +12199,13 @@ function saveEditItem() {
     return;
   }
   const newGrp = _editItemGrp || grpKey;
-  const payload = { name, amount, nameColor: _editItemColor };
-  // preserve existing status (status ไม่ได้ edit ใน modal นี้ — ใช้ของเดิม)
+  // V4.34: preserve fields ทั้งหมด (batchId, addedAt, paidAt, movedFrom, movedAt, ...)
   const orig = (allDays[dayKey] && allDays[dayKey][grpKey] && allDays[dayKey][grpKey][itemKey]) || {};
-  if (orig.status) payload.status = orig.status;
+  const editedFields = { name, amount, nameColor: _editItemColor };
   // preserve note ถ้ามี (ถึงแม้จะลบ field UI ออกแล้ว แต่ data เก่ายังคงไว้)
-  if (orig.note) payload.note = orig.note;
+  // status, paidAt, batchId, addedAt, movedFrom, movedAt → preserve ทั้งหมด
+  const payload = { ...orig, ...editedFields };
+  try { bugBreadcrumb && bugBreadcrumb("saveEditItem", { sameGroup: newGrp === grpKey }); } catch(e){}
 
   if (newGrp !== grpKey) {
     // ย้ายข้าม group: ลบจาก group เดิม + สร้างใน group ใหม่ (ใช้ key ใหม่)
@@ -11765,7 +12219,7 @@ function saveEditItem() {
   } else {
     // อัปเดตที่เดิม
     db.ref(`days/${dayKey}/${grpKey}/${itemKey}`)
-      .update(payload)
+      .update(editedFields)
       .then(() => closeEditItemModal())
       .catch(e => alert("บันทึกไม่ได้: "+e.message));
   }
@@ -12642,6 +13096,60 @@ function closeMultiAdd() {
   masRemoveAllDrops();
 }
 
+// ═══════════════════════════════════════════════════════════════
+// V4.35 — Thousands format helper (เฉพาะ multi-add board)
+// ═══════════════════════════════════════════════════════════════
+// แปลง raw value → display พร้อม comma (เฉพาะ integer)
+function _masFmtAmtForDisplay(val) {
+  if (val === undefined || val === null || val === "") return "";
+  const clean = String(val).replace(/[^\d]/g, "");
+  if (!clean) return "";
+  return Number(clean).toLocaleString("en-US");
+}
+
+// แปลง display string (มี comma) → clean digits
+function _masStripCommas(val) {
+  return String(val || "").replace(/[^\d]/g, "");
+}
+
+// Input handler: format real-time + รักษา cursor position
+function masOnAmtInput(e, id) {
+  const inp = e.target;
+  const oldVal = inp.value;
+  // เก็บ cursor + นับ digits ก่อน cursor
+  const oldStart = inp.selectionStart || 0;
+  const digitsBeforeCursor = (oldVal.slice(0, oldStart).match(/\d/g) || []).length;
+
+  // strip + format
+  const clean = _masStripCommas(oldVal);
+  const formatted = clean ? Number(clean).toLocaleString("en-US") : "";
+
+  // update value ถ้าเปลี่ยน
+  if (formatted !== oldVal) {
+    inp.value = formatted;
+    // คำนวณ cursor ใหม่ — หา position ที่มี digits = digitsBeforeCursor
+    let newPos = 0;
+    let count = 0;
+    for (let i = 0; i < formatted.length; i++) {
+      if (/\d/.test(formatted[i])) {
+        count++;
+        if (count === digitsBeforeCursor) {
+          newPos = i + 1;
+          break;
+        }
+      }
+    }
+    if (digitsBeforeCursor === 0) newPos = 0;
+    if (digitsBeforeCursor > count) newPos = formatted.length;
+    try { inp.setSelectionRange(newPos, newPos); } catch(err) {}
+  }
+
+  // update state — เก็บเป็น clean digits (ไม่มี comma)
+  const row = masRows.find(x => x.id === id);
+  if (row) row.amount = clean;
+  masUpdateSummary();
+}
+
 function masAddRow(inheritGrp) {
   const id = ++masRowId;
   const grp = inheritGrp || masLastGrp;
@@ -12697,6 +13205,9 @@ function masRenderRows() {
     const isFromHistory = !!(r.name && _editItemNameInHistory && _editItemNameInHistory(String(r.name).trim()));
     const autoDot = (isFromHistory && !r.grpManual) ? `<span class="mas-grp-auto-dot" title="จากประวัติ"></span>` : "";
 
+    // V4.35: render amount พร้อม comma (ถ้ามีค่า)
+    const amtDisplay = _masFmtAmtForDisplay(r.amount);
+
     div.innerHTML = `
       <div class="mas-name-wrap" id="mas-name-wrap-${r.id}">
         <button class="mas-color-btn" id="mas-color-${r.id}" tabindex="-1"
@@ -12706,8 +13217,8 @@ function masRenderRows() {
           oninput="masOnNameInput(${r.id},this)"
           onkeydown="masOnNameKey(event,${r.id})">
       </div>
-      <input class="mas-inp mas-amt" id="mas-amt-${r.id}" placeholder="0" value="${r.amount||""}" type="text" inputmode="decimal" enterkeyhint="next"
-        oninput="masRows.find(x=>x.id===${r.id}).amount=this.value;masUpdateSummary();"
+      <input class="mas-inp mas-amt" id="mas-amt-${r.id}" placeholder="0" value="${amtDisplay}" type="text" inputmode="numeric" enterkeyhint="next"
+        oninput="masOnAmtInput(event,${r.id})"
         onkeydown="masOnAmtKey(event,${r.id})"
         onblur="masOnAmtBlur(event,${r.id})">
       <button class="mas-grp" id="mas-grp-${r.id}" data-grp="${r.grp}" type="button"
@@ -13052,7 +13563,8 @@ document.addEventListener("click", e=>{
 
 function masUpdateSummary() {
   const count = masRows.filter(r=>r.name.trim()).length;
-  const total = masRows.reduce((s,r)=>s+(parseFloat(r.amount)||0),0);
+  // V4.35: defensive — strip comma ก่อน parseFloat
+  const total = masRows.reduce((s,r)=>s+(parseFloat(_masStripCommas(r.amount))||0),0);
   const el = document.getElementById("masSummary");
   if(el) el.textContent = count+" รายการ · ฿"+total.toLocaleString("th-TH");
 }
@@ -13061,16 +13573,21 @@ async function masDoSave() {
   if (!isOwner() && !isToday(activeDay)) {
     alert("พนักงานสามารถเพิ่มได้เฉพาะวันปัจจุบัน"); return;
   }
-  const valid = masRows.filter(r=>r.name.trim() && parseFloat(r.amount)>0);
+  // V4.35: strip comma ก่อน parseFloat (defensive — state ควรเก็บ clean อยู่แล้ว)
+  const valid = masRows.filter(r => r.name.trim() && parseFloat(_masStripCommas(r.amount)) > 0);
   if(!valid.length){ alert("กรุณากรอกชื่อและยอดเงินอย่างน้อย 1 รายการ"); return; }
   const btn = document.querySelector(".mas-save");
   if(btn) btn.disabled = true;
+  // V4.33: 1 batch = 1 batchId (ทุก rows ใน save เดียวกัน)
+  const batchId = "b_" + Date.now() + "_" + Math.random().toString(36).slice(2,6);
+  const addedAt = Date.now();
   try {
     for(const r of valid) {
       const key = "itm"+Date.now()+"_"+Math.random().toString(36).slice(2,6);
       await db.ref(`days/${activeDay}/${r.grp}/${key}`).set({
-        name: r.name, amount: parseFloat(r.amount), status: "รอชำระ",
-        nameColor: r.nameColor||"#1C1917", note:"", paidAt:null
+        name: r.name, amount: parseFloat(_masStripCommas(r.amount)), status: "รอชำระ",
+        nameColor: r.nameColor||"#1C1917", note:"", paidAt:null,
+        batchId, addedAt
       });
       masLastGrpByName[r.name] = r.grp;
       masLastColorByName[r.name] = r.nameColor||"#1C1917";
