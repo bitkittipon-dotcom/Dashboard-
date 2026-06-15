@@ -2493,6 +2493,14 @@ tr:last-child td { border-bottom: none; }
         <span class="nsb-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4v6a2 2 0 0 0 2 2h6"/><path d="M5 5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z"/></svg></span>
         <span class="nsb-label">จัดการข้อมูล</span>
       </button>
+      <button class="nav-secondary-btn" onclick="closeNavSheet(); setTimeout(openBugReport, 200);">
+        <span class="nsb-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2l1.88 1.88"/><path d="M14.12 3.88 16 2"/><path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6"/><path d="M12 20v-9"/><path d="M6.53 9C4.6 8.8 3 7.1 3 5"/><path d="M6 13H2"/><path d="M3 21c0-2.1 1.7-3.9 3.8-4"/><path d="M20.97 5c0 2.1-1.6 3.8-3.5 4"/><path d="M22 13h-4"/><path d="M17.2 17c2.1.1 3.8 1.9 3.8 4"/></svg></span>
+        <span class="nsb-label">แจ้งบัค</span>
+      </button>
+      <button class="nav-secondary-btn" id="navBugAdminBtn" style="display:none;position:relative;" onclick="closeNavSheet(); setTimeout(openBugAdmin, 200);">
+        <span class="nsb-icon" style="position:relative;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span id="navBugBadge" style="position:absolute;top:-4px;right:-6px;background:#FF3B30;color:#fff;font-size:9px;font-weight:700;min-width:15px;height:15px;padding:0 4px;border-radius:99px;display:none;align-items:center;justify-content:center;line-height:1;">0</span></span>
+        <span class="nsb-label">รายงานบั๊ก</span>
+      </button>
     </div>
 
     <div class="nav-sheet-footer">
@@ -3513,7 +3521,7 @@ tr:last-child td { border-bottom: none; }
         <div id="bkMonthLabel" style="font-weight:600;font-size:16px;color:var(--text-primary);letter-spacing:-0.025em;min-width:130px;text-align:center;"></div>
         <button onclick="bkNextMonth()" class="bk-month-nav-btn" style="width:32px;height:32px;border-radius:9px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-family:inherit;transition:all .2s ease;-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;justify-content:center;color:var(--text-secondary);flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
         <button id="bkTodayBtn" onclick="bkActionToday()" style="margin-left:8px;height:32px;padding:0 14px;border-radius:10px;border:none;background:rgba(186,230,253,0.8);color:#0369A1;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;flex-shrink:0;letter-spacing:-0.005em;white-space:nowrap;">กลับ</button>
-        <button onclick="openNavSheet()" aria-label="เมนูหลัก" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:9px;border:none;background:transparent;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;justify-content:center;color:#1C1917;flex-shrink:0;" onmousedown="this.style.background='rgba(0,0,0,0.06)'" onmouseup="this.style.background='transparent'" ontouchstart="this.style.background='rgba(0,0,0,0.06)'" ontouchend="this.style.background='transparent'"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <button onclick="openNavSheet()" aria-label="เมนูหลัก" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:9px;border:none;background:transparent;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;justify-content:center;color:#1C1917;flex-shrink:0;" onmousedown="this.style.background='rgba(0,0,0,0.06)'" onmouseup="this.style.background='transparent'" ontouchstart="this.style.background='rgba(0,0,0,0.06)'" ontouchend="this.style.background='transparent'"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg><span id="bugUnreadBadge" style="position:absolute;top:2px;right:2px;background:#FF3B30;color:#fff;font-size:9px;font-weight:700;min-width:7px;height:7px;border-radius:99px;display:none;align-items:center;justify-content:center;line-height:1;border:1.5px solid #fff;"></span></button>
       </div>
 
       <!-- 3 SUB-TABS: คนตัด / เก็บ / คืน -->
@@ -3721,6 +3729,8 @@ function _updateNetBanner() {
 window.addEventListener("online", () => {
   window._netState.online = true;
   _updateNetBanner();
+  // V4.31: trigger bug flush เมื่อ online กลับมา
+  try { if (typeof bugFlushNow === "function") setTimeout(bugFlushNow, 2000); } catch(e){}
 });
 window.addEventListener("offline", () => {
   window._netState.online = false;
@@ -4036,7 +4046,8 @@ db.ref("closed").on("value", snap => {
   allClosed = snap.val() || {};
   // อัปเดตตัวเลขแจ้งเตือนบนปุ่ม
   const count = Object.keys(allClosed).length;
-  document.getElementById("tabClosedBtn").textContent = count > 0 ? `ปิดยอด (${count})` : "ปิดยอด";
+  const closedBtn = document.getElementById("tabClosedBtn");
+  if (closedBtn) closedBtn.textContent = count > 0 ? `ปิดยอด (${count})` : "ปิดยอด";
   if (activeTab==="closed") renderClosed();
   // re-render ปฏิทินถ้าเปิดอยู่ เพื่อให้ dot อัปเดต
   if (document.getElementById("calModal")?.style.display === "flex") renderCalGrid();
@@ -9842,6 +9853,990 @@ function editItemCustAction() {
   }
 }
 
+// ═══════════════════════════════════════════════════════════════
+// V4.29 — Bug System (Stage 1: Console-only / no Firebase write)
+// ═══════════════════════════════════════════════════════════════
+// SAFETY: feature flag, loop guard, schema versioning, sanitizer,
+//         dedup, batch, offline queue (localStorage)
+// STAGE 1: เก็บใน memory + console.log เท่านั้น — ไม่แตะ Firebase/localStorage
+// ═══════════════════════════════════════════════════════════════
+const BUG_SYSTEM = {
+  ENABLED: true,                  // ⛔ flip false ถ้าระบบมีปัญหา
+  STAGE: 4,                       // 1=console, 2=localStorage, 3=Firebase, 4=UI
+  SCHEMA_VERSION: 1,
+  APP_VERSION: "V4.32",
+  // localStorage
+  LS_KEY_PREFIX: "_bug:",         // กันชนกับ keys อื่นของแอป
+  LS_KEY_QUEUE: "_bug:queue",     // เก็บ queue ของ entries
+  LS_KEY_META: "_bug:meta",       // metadata (version, lastFlush)
+  // Firebase
+  FB_PATH: "bugReports",          // /bugReports/{pushKey}
+  FB_RETRY_MAX: 3,                // ลองส่งใหม่ 3 ครั้ง
+  FB_RETRY_BACKOFF_MS: 1000,      // 1s, 2s, 4s
+  // Stage 4: admin view
+  CLEANUP_DAYS: 30,               // ลบ entries เก่ากว่า N วัน
+  ADMIN_USERS: ["lek"],           // userId ที่เห็น admin view
+  // limits
+  MAX_QUEUE: 50,                  // max entries ใน localStorage queue
+  MAX_BREADCRUMB: 7,              // ringbuffer breadcrumb
+  MAX_STACK_LINES: 10,            // stack trace truncation
+  DEDUP_WINDOW_MS: 3600000,       // 1 ชม. — error เดียวกันใน 1 ชม. → count++
+  BATCH_SIZE: 5,
+  BATCH_INTERVAL_MS: 30000,       // 30 วินาที
+  // privacy
+  PII_BLACKLIST: ["pin","password","token","secret","auth","apiKey","key","credential"],
+};
+
+// in-memory state (เก็บใน session ปัจจุบัน)
+const _bug = {
+  reporting: false,               // loop guard
+  breadcrumbs: [],                // ring buffer (max 7)
+  dedupMap: new Map(),            // hash → {count, firstAt, lastAt}
+  batchQueue: [],                 // pending reports
+  batchTimer: null,
+  sessionId: "s_" + Date.now() + "_" + Math.random().toString(36).slice(2,8),
+  sessionStart: Date.now(),
+};
+
+// ──────────────── Helpers ────────────────
+function _bugTrunc(s, n) {
+  s = String(s || "");
+  return s.length > n ? s.slice(0, n) + "...[truncated]" : s;
+}
+
+function _bugTruncStack(stack) {
+  if (!stack) return "";
+  const lines = String(stack).split("\n");
+  const cut = lines.slice(0, BUG_SYSTEM.MAX_STACK_LINES);
+  return cut.join("\n");
+}
+
+// hash สำหรับ dedup (ไม่ต้อง crypto — แค่ stable string)
+function _bugHash(severity, type, msg, stackFirstLine) {
+  return [severity, type, _bugTrunc(msg, 100), _bugTrunc(stackFirstLine || "", 100)].join("|");
+}
+
+// Privacy sanitizer — ลบ key ใน blacklist + truncate ยาว
+function _bugSanitize(obj, depth) {
+  depth = depth || 0;
+  if (depth > 4) return "[deep]";
+  if (obj === null || obj === undefined) return obj;
+  if (typeof obj === "string") return _bugTrunc(obj, 300);
+  if (typeof obj === "number" || typeof obj === "boolean") return obj;
+  if (Array.isArray(obj)) {
+    return obj.slice(0, 20).map(x => _bugSanitize(x, depth + 1));
+  }
+  if (typeof obj === "object") {
+    const out = {};
+    let count = 0;
+    for (const k of Object.keys(obj)) {
+      if (count++ > 30) { out["..."] = "[truncated]"; break; }
+      // blacklist
+      const lk = String(k).toLowerCase();
+      if (BUG_SYSTEM.PII_BLACKLIST.some(b => lk.includes(b))) {
+        out[k] = "[REDACTED]";
+        continue;
+      }
+      try { out[k] = _bugSanitize(obj[k], depth + 1); }
+      catch (e) { out[k] = "[err:" + e.message + "]"; }
+    }
+    return out;
+  }
+  return String(obj);
+}
+
+// snapshot ของ app state (เบา — แค่ structure ไม่เก็บ raw data)
+function _bugStateSnapshot() {
+  try {
+    return {
+      activeDay: typeof activeDay !== "undefined" ? activeDay : null,
+      activeTab: typeof activeTab !== "undefined" ? activeTab : null,
+      bkYear: typeof bkYear !== "undefined" ? bkYear : null,
+      bkMonth: typeof bkMonth !== "undefined" ? bkMonth : null,
+      bkSubV2: typeof window._bkSubV2 !== "undefined" ? window._bkSubV2 : null,
+      modalsOpen: {
+        editItem: !!document.getElementById("editItemModal") && document.getElementById("editItemModal").style.display === "flex",
+        multiAdd: !!document.getElementById("multiAddModal") && document.getElementById("multiAddModal").classList?.contains("show"),
+        bkAdd: !!document.getElementById("bkAddModal") && document.getElementById("bkAddModal").classList?.contains("show"),
+        summary: !!document.getElementById("bkSummaryModal"),
+        navSheet: !!document.getElementById("navSheet") && document.getElementById("navSheet").classList?.contains("open"),
+      },
+      counts: {
+        days: typeof allDays === "object" ? Object.keys(allDays || {}).length : 0,
+        closed: typeof allClosed === "object" ? Object.keys(allClosed || {}).length : 0,
+        cutters: typeof bkCutters === "object" ? (bkCutters || []).length : 0,
+        customers: typeof bkCustomers === "object" ? (bkCustomers || []).length : 0,
+      },
+      online: typeof navigator !== "undefined" ? navigator.onLine : true,
+      fbConnected: typeof window._netState !== "undefined" ? !!window._netState.fbConnected : null,
+    };
+  } catch (e) {
+    return { snapshotError: e.message };
+  }
+}
+
+// context ของ device/browser/user
+function _bugContext() {
+  try {
+    const ua = navigator.userAgent || "";
+    const isStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+    return {
+      appVersion: BUG_SYSTEM.APP_VERSION,
+      schemaVersion: BUG_SYSTEM.SCHEMA_VERSION,
+      sessionId: _bug.sessionId,
+      sessionDurationMs: Date.now() - _bug.sessionStart,
+      userId: (typeof currentUser !== "undefined" && currentUser) ? currentUser.id : null,
+      userName: (typeof currentUser !== "undefined" && currentUser) ? currentUser.name : null,
+      isOwner: typeof isOwner === "function" ? isOwner() : false,
+      ua: _bugTrunc(ua, 200),
+      screen: { w: screen.width, h: screen.height, dpr: window.devicePixelRatio || 1 },
+      viewport: { w: window.innerWidth, h: window.innerHeight },
+      online: navigator.onLine,
+      pwa: !!isStandalone,
+      lang: navigator.language,
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    };
+  } catch (e) {
+    return { contextError: e.message };
+  }
+}
+
+// ──────────────── Stage 2: localStorage queue ────────────────
+// Quota-safe write — ถ้าเต็ม → ลบเก่าออก แล้วลองใหม่
+function _bugLsWrite(key, value) {
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch (e) {
+    // QuotaExceededError — ลอง free up โดยลบ entry เก่าใน queue
+    try {
+      const raw = localStorage.getItem(BUG_SYSTEM.LS_KEY_QUEUE);
+      if (raw) {
+        const arr = JSON.parse(raw);
+        // ลบครึ่งหนึ่ง (oldest)
+        const trimmed = arr.slice(Math.floor(arr.length / 2));
+        localStorage.setItem(BUG_SYSTEM.LS_KEY_QUEUE, JSON.stringify(trimmed));
+        // retry
+        localStorage.setItem(key, value);
+        return true;
+      }
+    } catch (ee) {
+      try { console.warn("[BugSystem] LS write failed:", e.message); } catch(eee){}
+    }
+    return false;
+  }
+}
+
+function _bugLsRead(key) {
+  try { return localStorage.getItem(key); }
+  catch (e) { return null; }
+}
+
+// อ่าน queue array จาก localStorage
+function _bugLoadQueue() {
+  try {
+    const raw = _bugLsRead(BUG_SYSTEM.LS_KEY_QUEUE);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    if (!Array.isArray(arr)) return [];
+    // schema check — ตอนนี้ v1 ใช้ได้, ถ้าเปลี่ยน version → migration
+    return arr.filter(e => e && typeof e === "object" && e.schemaVersion === BUG_SYSTEM.SCHEMA_VERSION);
+  } catch (e) {
+    try { console.warn("[BugSystem] loadQueue failed:", e.message); } catch(ee){}
+    return [];
+  }
+}
+
+// บันทึก queue array → localStorage
+function _bugSaveQueue(arr) {
+  try {
+    // FIFO cap — ถ้าเกิน MAX_QUEUE → ลบเก่าออก
+    let q = arr;
+    if (q.length > BUG_SYSTEM.MAX_QUEUE) {
+      q = q.slice(q.length - BUG_SYSTEM.MAX_QUEUE);
+    }
+    const ok = _bugLsWrite(BUG_SYSTEM.LS_KEY_QUEUE, JSON.stringify(q));
+    if (ok) {
+      // update meta
+      try {
+        _bugLsWrite(BUG_SYSTEM.LS_KEY_META, JSON.stringify({
+          schemaVersion: BUG_SYSTEM.SCHEMA_VERSION,
+          appVersion: BUG_SYSTEM.APP_VERSION,
+          lastWrite: Date.now(),
+          count: q.length,
+        }));
+      } catch(e) {}
+    }
+    return ok;
+  } catch (e) {
+    try { console.warn("[BugSystem] saveQueue failed:", e.message); } catch(ee){}
+    return false;
+  }
+}
+
+// ล้าง bug-related keys ทั้งหมด (สำหรับ debug หรือ Stage 3 sent confirmation)
+function _bugClearLs() {
+  try {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(BUG_SYSTEM.LS_KEY_PREFIX)) keys.push(k);
+    }
+    keys.forEach(k => localStorage.removeItem(k));
+    return keys.length;
+  } catch (e) {
+    return 0;
+  }
+}
+
+
+function bugBreadcrumb(action, detail) {
+  if (!BUG_SYSTEM.ENABLED) return;
+  try {
+    _bug.breadcrumbs.push({
+      t: Date.now(),
+      action: _bugTrunc(action, 60),
+      detail: detail ? _bugSanitize(detail) : null,
+    });
+    if (_bug.breadcrumbs.length > BUG_SYSTEM.MAX_BREADCRUMB) {
+      _bug.breadcrumbs.shift();
+    }
+  } catch(e) {} // silent
+}
+
+// ──────────────── Main bugReport API ────────────────
+// severity: "critical" | "warning" | "info"
+// type: "uncaught" | "promise" | "firebase" | "domain" | "manual" | "test"
+// data: { message, stack, ...custom }
+function bugReport(severity, type, data) {
+  if (!BUG_SYSTEM.ENABLED) return;
+  if (_bug.reporting) return; // loop guard
+  _bug.reporting = true;
+  try {
+    data = data || {};
+    const msg = String(data.message || data.msg || data.error || "no message");
+    const stack = _bugTruncStack(data.stack || data.error?.stack || "");
+    const stackFirst = (stack.split("\n")[1] || "").trim();
+    const hash = _bugHash(severity, type, msg, stackFirst);
+
+    // dedup check
+    const now = Date.now();
+    const existing = _bug.dedupMap.get(hash);
+    if (existing && (now - existing.lastAt < BUG_SYSTEM.DEDUP_WINDOW_MS)) {
+      existing.count++;
+      existing.lastAt = now;
+      // STAGE 1: console log summary
+      console.log(`[BugSystem] dup #${existing.count}:`, severity, type, msg);
+      // STAGE 2: update entry ใน localStorage (dedup persist)
+      if (BUG_SYSTEM.STAGE >= 2) {
+        try {
+          const q = _bugLoadQueue();
+          const idx = q.findIndex(e => e.hash === hash);
+          if (idx >= 0) {
+            q[idx].count = existing.count;
+            q[idx].lastAt = existing.lastAt;
+            _bugSaveQueue(q);
+          }
+        } catch(e) {}
+      }
+      return;
+    }
+
+    // new entry
+    const entry = {
+      schemaVersion: BUG_SYSTEM.SCHEMA_VERSION,
+      hash,
+      severity: ["critical","warning","info"].includes(severity) ? severity : "info",
+      type: String(type || "unknown"),
+      message: _bugTrunc(msg, 500),
+      stack,
+      data: _bugSanitize(data),
+      breadcrumbs: _bug.breadcrumbs.slice(),
+      state: _bugStateSnapshot(),
+      context: _bugContext(),
+      firstAt: now,
+      lastAt: now,
+      count: 1,
+      status: "new", // new → seen → resolved
+    };
+    _bug.dedupMap.set(hash, entry);
+
+    // STAGE 1: console log
+    console.log(`[BugSystem] ${severity.toUpperCase()} ${type}:`, msg);
+
+    // STAGE 2: บันทึกลง localStorage queue
+    if (BUG_SYSTEM.STAGE >= 2) {
+      try {
+        const q = _bugLoadQueue();
+        q.push(entry);
+        _bugSaveQueue(q);
+      } catch(e) {
+        try { console.warn("[BugSystem] save entry failed:", e.message); } catch(ee){}
+      }
+    }
+
+    // STAGE 3+: เพิ่ม batch queue (จะเขียน Firebase ต่อ stage)
+    if (BUG_SYSTEM.STAGE >= 3) {
+      _bug.batchQueue.push(entry);
+      if (_bug.batchQueue.length >= BUG_SYSTEM.BATCH_SIZE) {
+        _bugFlushBatch();
+      } else if (!_bug.batchTimer) {
+        _bug.batchTimer = setTimeout(_bugFlushBatch, BUG_SYSTEM.BATCH_INTERVAL_MS);
+      }
+    }
+  } catch (e) {
+    // silent — แต่ console log to debug
+    try { console.warn("[BugSystem] error in bugReport:", e.message); } catch(ee){}
+  } finally {
+    _bug.reporting = false;
+  }
+}
+
+// ──────────────── Stage 3: Firebase send + retry ────────────────
+// ตรวจว่าพร้อมส่ง: online + auth + db พร้อม
+function _bugCanSend() {
+  try {
+    if (typeof navigator !== "undefined" && navigator.onLine === false) return false;
+    if (typeof firebase === "undefined" || !firebase) return false;
+    if (typeof db === "undefined" || !db) return false;
+    const auth = firebase.auth ? firebase.auth() : null;
+    if (!auth || !auth.currentUser) return false;
+    return true;
+  } catch (e) { return false; }
+}
+
+// ส่ง entry เดียวไป Firebase พร้อม retry backoff
+function _bugSendOne(entry, attempt) {
+  attempt = attempt || 1;
+  return new Promise((resolve) => {
+    try {
+      const ref = db.ref(BUG_SYSTEM.FB_PATH).push();
+      // เขียน entry + serverTime (ไม่ใส่ entire entry ที่มี breadcrumbs ใหญ่เกิน → trim)
+      const payload = {
+        schemaVersion: entry.schemaVersion,
+        hash: entry.hash,
+        severity: entry.severity,
+        type: entry.type,
+        message: entry.message,
+        stack: entry.stack || "",
+        data: entry.data || {},
+        breadcrumbs: entry.breadcrumbs || [],
+        state: entry.state || {},
+        context: entry.context || {},
+        firstAt: entry.firstAt,
+        lastAt: entry.lastAt,
+        count: entry.count,
+        status: entry.status || "new",
+        _sentAt: Date.now(),
+      };
+      ref.set(payload)
+        .then(() => resolve({ ok: true, key: ref.key }))
+        .catch(err => {
+          if (attempt < BUG_SYSTEM.FB_RETRY_MAX) {
+            const wait = BUG_SYSTEM.FB_RETRY_BACKOFF_MS * Math.pow(2, attempt - 1);
+            setTimeout(() => {
+              _bugSendOne(entry, attempt + 1).then(resolve);
+            }, wait);
+          } else {
+            resolve({ ok: false, error: err?.message || "send failed" });
+          }
+        });
+    } catch (e) {
+      resolve({ ok: false, error: e.message });
+    }
+  });
+}
+
+// Batch flush: ส่ง entries ที่ยังไม่ส่ง (ไม่มี _sent flag)
+async function _bugFlushBatch() {
+  if (_bug.batchTimer) {
+    clearTimeout(_bug.batchTimer);
+    _bug.batchTimer = null;
+  }
+  if (!BUG_SYSTEM.ENABLED) return;
+  if (BUG_SYSTEM.STAGE < 3) {
+    // Stage 1-2: ไม่ส่ง — แค่ clear in-memory queue
+    _bug.batchQueue = [];
+    return;
+  }
+  if (!_bugCanSend()) {
+    // offline / no auth → ลอง schedule retry หลัง 60 วินาที
+    _bug.batchTimer = setTimeout(_bugFlushBatch, 60000);
+    return;
+  }
+
+  // โหลด queue จาก localStorage
+  let q;
+  try { q = _bugLoadQueue(); } catch(e) { q = []; }
+  const pending = q.filter(e => !e._sent);
+  if (!pending.length) {
+    _bug.batchQueue = [];
+    return;
+  }
+
+  // ส่งทีละตัว (BATCH_SIZE = 5)
+  const toSend = pending.slice(0, BUG_SYSTEM.BATCH_SIZE);
+  let successCount = 0;
+  for (const entry of toSend) {
+    try {
+      const result = await _bugSendOne(entry);
+      if (result.ok) {
+        entry._sent = true;
+        entry._fbKey = result.key;
+        entry._sentAt = Date.now();
+        successCount++;
+      } else {
+        // failed — break ไม่ลองตัวอื่น (กัน Firebase down → spam retry)
+        break;
+      }
+    } catch(e) {
+      break;
+    }
+  }
+
+  // save queue กลับ (พร้อม _sent flags ที่ update แล้ว)
+  try { _bugSaveQueue(q); } catch(e) {}
+
+  console.log(`[BugSystem] flushed ${successCount}/${toSend.length} to Firebase`);
+
+  // ถ้ายังมี pending → schedule รอบใหม่
+  const stillPending = q.filter(e => !e._sent).length;
+  if (stillPending > 0 && successCount > 0) {
+    _bug.batchTimer = setTimeout(_bugFlushBatch, BUG_SYSTEM.BATCH_INTERVAL_MS);
+  } else if (stillPending > 0) {
+    // failed บางตัว → backoff นานขึ้น
+    _bug.batchTimer = setTimeout(_bugFlushBatch, 120000); // 2 นาที
+  }
+
+  _bug.batchQueue = [];
+}
+
+// trigger flush manually (เช่น ตอน online กลับมา)
+function bugFlushNow() {
+  if (BUG_SYSTEM.STAGE >= 3) _bugFlushBatch();
+}
+
+// ──────────────── Stage 4: Admin view ────────────────
+// admin state (in-memory)
+_bug.admin = {
+  reports: {},        // {key: entry}
+  listener: null,
+  unreadCount: 0,
+  lastCleanup: 0,
+};
+
+// ตรวจว่า user ปัจจุบันเป็น admin
+function _bugIsAdmin() {
+  try {
+    if (!currentUser || !currentUser.id) return false;
+    return BUG_SYSTEM.ADMIN_USERS.includes(currentUser.id);
+  } catch(e) { return false; }
+}
+
+// เริ่ม listen /bugReports (admin เท่านั้น)
+function _bugStartAdminListener() {
+  if (!_bugIsAdmin()) return;
+  if (_bug.admin.listener) return; // already listening
+  try {
+    const ref = db.ref(BUG_SYSTEM.FB_PATH);
+    _bug.admin.listener = ref.on("value", (snap) => {
+      try {
+        const data = snap.val() || {};
+        _bug.admin.reports = data;
+        // นับ unread (status === "new")
+        const unread = Object.values(data).filter(e => e && e.status === "new").length;
+        _bug.admin.unreadCount = unread;
+        // update badge บน UI
+        _bugUpdateBadge();
+      } catch(e) {
+        console.warn("[BugSystem] admin listener error:", e.message);
+      }
+    });
+    console.log("[BugSystem] admin listener started for", currentUser?.id);
+  } catch(e) {
+    console.warn("[BugSystem] admin listener init failed:", e.message);
+  }
+}
+
+// อัพเดต badge บนปุ่ม ☰
+function _bugUpdateBadge() {
+  try {
+    const count = _bug.admin.unreadCount || 0;
+    const badge = document.getElementById("bugUnreadBadge");
+    if (badge) {
+      // dot only (ไม่แสดงตัวเลข — แค่จุดแดง)
+      badge.style.display = count > 0 ? "flex" : "none";
+    }
+    const navBadge = document.getElementById("navBugBadge");
+    if (navBadge) {
+      navBadge.textContent = count > 99 ? "99+" : String(count);
+      navBadge.style.display = count > 0 ? "inline-flex" : "none";
+    }
+  } catch(e) {
+    // silent — กัน badge update break อะไรไม่ควร break
+  }
+}
+
+// Mark entry as seen/resolved
+function bugMarkStatus(fbKey, newStatus) {
+  if (!_bugIsAdmin()) return Promise.reject("not admin");
+  if (!["new","seen","resolved"].includes(newStatus)) return Promise.reject("bad status");
+  try {
+    return db.ref(BUG_SYSTEM.FB_PATH + "/" + fbKey + "/status").set(newStatus);
+  } catch(e) {
+    return Promise.reject(e.message);
+  }
+}
+
+// ลบ entry
+function bugDelete(fbKey) {
+  if (!_bugIsAdmin()) return Promise.reject("not admin");
+  try {
+    return db.ref(BUG_SYSTEM.FB_PATH + "/" + fbKey).remove();
+  } catch(e) {
+    return Promise.reject(e.message);
+  }
+}
+
+// Auto-cleanup entries > CLEANUP_DAYS
+async function _bugAutoCleanup() {
+  if (!_bugIsAdmin()) return;
+  try {
+    const cutoff = Date.now() - (BUG_SYSTEM.CLEANUP_DAYS * 24 * 60 * 60 * 1000);
+    const data = _bug.admin.reports || {};
+    const toDelete = [];
+    for (const [key, entry] of Object.entries(data)) {
+      const t = entry?.firstAt || entry?._sentAt || 0;
+      if (t && t < cutoff && entry?.status === "resolved") {
+        toDelete.push(key);
+      }
+    }
+    if (toDelete.length === 0) return;
+    for (const key of toDelete) {
+      try { await db.ref(BUG_SYSTEM.FB_PATH + "/" + key).remove(); } catch(e){}
+    }
+    console.log(`[BugSystem] auto-cleanup: deleted ${toDelete.length} old resolved entries`);
+    _bug.admin.lastCleanup = Date.now();
+  } catch(e) {
+    console.warn("[BugSystem] cleanup failed:", e.message);
+  }
+}
+
+// ──────────────── Admin view UI ────────────────
+let _bugAdminFilter = { severity: "all", category: "all", status: "all" };
+
+function openBugAdmin() {
+  if (!_bugIsAdmin()) {
+    alert("ไม่มีสิทธิ์เข้าหน้านี้");
+    return;
+  }
+  bugBreadcrumb("openBugAdmin");
+  const existing = document.getElementById("bugAdminModal");
+  if (existing) existing.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id = "bugAdminModal";
+  overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:9700;display:flex;align-items:flex-end;justify-content:center;font-family:'IBM Plex Sans Thai',sans-serif;animation:bamFadeIn 0.2s ease;";
+  overlay.onclick = (e) => { if (e.target === overlay) closeBugAdmin(); };
+
+  overlay.innerHTML = `
+    <style>
+      @keyframes bamFadeIn { from{opacity:0} to{opacity:1} }
+      @keyframes bamSlideUp { from{transform:translateY(20px)} to{transform:translateY(0)} }
+      .bam-chip { padding:5px 11px; border-radius:99px; font-size:11px; font-weight:600; border:0.5px solid rgba(60,60,67,0.2); background:#fff; color:#57534E; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:all .15s; font-family:inherit; }
+      .bam-chip.active { background:#007AFF; color:#fff; border-color:#007AFF; }
+      .bam-entry { background:#fff; border-radius:11px; padding:11px 12px; margin-bottom:7px; border:0.5px solid rgba(60,60,67,0.15); box-shadow:0 1px 2px rgba(0,0,0,0.03); }
+      .bam-entry.new { border-left:3px solid #FF3B30; }
+      .bam-entry.seen { border-left:3px solid #FF9500; }
+      .bam-entry.resolved { border-left:3px solid #34C759; opacity:0.7; }
+      .bam-sev { display:inline-block; padding:1px 7px; border-radius:99px; font-size:9.5px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; }
+      .bam-sev.critical { background:#FFE5E0; color:#FF3B30; }
+      .bam-sev.warning { background:#FFF4E0; color:#FF9500; }
+      .bam-sev.info { background:#E0F0FF; color:#007AFF; }
+      .bam-action { padding:5px 9px; border-radius:7px; font-size:11px; font-weight:600; border:none; background:rgba(118,118,128,0.12); color:#1C1917; cursor:pointer; -webkit-tap-highlight-color:transparent; font-family:inherit; }
+      .bam-action.primary { background:#007AFF; color:#fff; }
+      .bam-action.danger { background:#FFE5E0; color:#FF3B30; }
+    </style>
+    <div style="background:rgba(245,245,244,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:18px 18px 0 0;width:100%;max-width:520px;max-height:90vh;display:flex;flex-direction:column;animation:bamSlideUp 0.3s cubic-bezier(.34,1.56,.64,1);">
+      <!-- Header -->
+      <div style="padding:14px 16px 10px;border-bottom:0.5px solid rgba(60,60,67,0.15);text-align:center;position:relative;">
+        <div style="font-size:15px;font-weight:700;color:#000;">รายงานบั๊ก</div>
+        <div id="bamSummary" style="font-size:11px;color:#8E8E93;margin-top:2px;">กำลังโหลด...</div>
+        <button onclick="closeBugAdmin()" style="position:absolute;right:12px;top:14px;width:28px;height:28px;border-radius:50%;border:none;background:rgba(118,118,128,0.15);color:#3C3C43;font-size:14px;cursor:pointer;font-family:inherit;">✕</button>
+      </div>
+
+      <!-- Filters -->
+      <div style="padding:10px 14px;border-bottom:0.5px solid rgba(60,60,67,0.15);display:flex;gap:5px;overflow-x:auto;-webkit-overflow-scrolling:touch;">
+        <button class="bam-chip active" data-f="status" data-v="all" onclick="_bamSetFilter('status','all')">ทั้งหมด</button>
+        <button class="bam-chip" data-f="status" data-v="new" onclick="_bamSetFilter('status','new')">🔴 ใหม่</button>
+        <button class="bam-chip" data-f="status" data-v="seen" onclick="_bamSetFilter('status','seen')">👁 ดูแล้ว</button>
+        <button class="bam-chip" data-f="status" data-v="resolved" onclick="_bamSetFilter('status','resolved')">✅ แก้แล้ว</button>
+        <div style="width:1px;background:rgba(60,60,67,0.2);margin:0 3px;"></div>
+        <button class="bam-chip" data-f="severity" data-v="critical" onclick="_bamSetFilter('severity','critical')">Critical</button>
+        <button class="bam-chip" data-f="severity" data-v="warning" onclick="_bamSetFilter('severity','warning')">Warning</button>
+      </div>
+
+      <!-- List -->
+      <div id="bamList" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 12px 14px;"></div>
+
+      <!-- Footer -->
+      <div style="padding:8px 14px 12px;border-top:0.5px solid rgba(60,60,67,0.15);display:flex;gap:6px;">
+        <button onclick="bugSelfTest()" style="flex:1;padding:9px;border:none;border-radius:9px;background:rgba(0,122,255,0.12);color:#007AFF;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">🧪 Self-test</button>
+        <button onclick="_bugAutoCleanup().then(()=>_bamRender())" style="flex:1;padding:9px;border:none;border-radius:9px;background:rgba(118,118,128,0.12);color:#57534E;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">🧹 Cleanup เก่า</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  _bugAdminFilter = { severity: "all", category: "all", status: "all" };
+  _bamRender();
+}
+
+function closeBugAdmin() {
+  bugBreadcrumb("closeBugAdmin");
+  const m = document.getElementById("bugAdminModal");
+  if (m) m.remove();
+}
+
+function _bamSetFilter(key, value) {
+  if (key === "status") _bugAdminFilter.status = value;
+  if (key === "severity") {
+    _bugAdminFilter.severity = (_bugAdminFilter.severity === value) ? "all" : value;
+  }
+  // update chips visual
+  document.querySelectorAll("#bugAdminModal .bam-chip").forEach(c => {
+    const f = c.dataset.f, v = c.dataset.v;
+    if (f === "status") c.classList.toggle("active", _bugAdminFilter.status === v);
+    if (f === "severity") c.classList.toggle("active", _bugAdminFilter.severity === v);
+  });
+  _bamRender();
+}
+
+function _bamRender() {
+  const list = document.getElementById("bamList");
+  const summary = document.getElementById("bamSummary");
+  if (!list) return;
+
+  const data = _bug.admin.reports || {};
+  const entries = Object.entries(data)
+    .map(([key, e]) => ({ key, ...e }))
+    .sort((a, b) => (b.lastAt || b.firstAt || 0) - (a.lastAt || a.firstAt || 0));
+
+  // filter
+  const filtered = entries.filter(e => {
+    if (_bugAdminFilter.status !== "all" && e.status !== _bugAdminFilter.status) return false;
+    if (_bugAdminFilter.severity !== "all" && e.severity !== _bugAdminFilter.severity) return false;
+    return true;
+  });
+
+  // summary
+  const total = entries.length;
+  const unread = entries.filter(e => e.status === "new").length;
+  if (summary) summary.textContent = `รวม ${total} รายการ · 🔴 ${unread} ใหม่ · แสดง ${filtered.length}`;
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div style="text-align:center;padding:32px 20px;color:#8E8E93;font-size:13px;">ไม่มีรายการตามตัวกรอง</div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(e => _bamRenderEntry(e)).join("");
+}
+
+function _bamRenderEntry(e) {
+  const t = e.lastAt || e.firstAt || 0;
+  const timeAgo = _bugTimeAgo(t);
+  const sev = e.severity || "info";
+  const status = e.status || "new";
+  const userId = e.context?.userId || "?";
+  const userName = e.context?.userName || userId;
+  const isOwner = e.context?.isOwner;
+  const category = e.data?.category;
+  const catLabel = { bug:"🐞 บัค", slow:"🐢 ช้า", confuse:"😕 งง", idea:"💡 ข้อเสนอ" }[category] || "";
+  const countText = e.count > 1 ? ` · ×${e.count}` : "";
+
+  return `
+    <div class="bam-entry ${status}">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap;">
+        <span class="bam-sev ${sev}">${sev}</span>
+        <span style="font-size:10.5px;color:#8E8E93;">${e.type}${countText}</span>
+        ${catLabel ? `<span style="font-size:10.5px;color:#57534E;background:rgba(118,118,128,0.1);padding:1px 6px;border-radius:6px;">${catLabel}</span>` : ""}
+        <span style="font-size:10.5px;color:#8E8E93;margin-left:auto;">${timeAgo}</span>
+      </div>
+      <div style="font-size:13px;color:#1C1917;line-height:1.45;margin-bottom:5px;word-break:break-word;">
+        ${_bugEsc(e.message || "")}
+      </div>
+      <div style="font-size:10.5px;color:#8E8E93;margin-bottom:6px;">
+        ${isOwner ? "👑 " : ""}${_bugEsc(userName)} · ${_bugEsc(e.context?.appVersion || "")} ${e.context?.pwa ? "· PWA" : ""}
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;">
+        ${status === "new" ? `<button class="bam-action" onclick="bugMarkStatus('${e.key}','seen').then(()=>{})">👁 ดูแล้ว</button>` : ""}
+        ${status !== "resolved" ? `<button class="bam-action primary" onclick="bugMarkStatus('${e.key}','resolved').then(()=>{})">✅ แก้แล้ว</button>` : ""}
+        ${status === "resolved" ? `<button class="bam-action" onclick="bugMarkStatus('${e.key}','new').then(()=>{})">↺ เปิดใหม่</button>` : ""}
+        <button class="bam-action" onclick="_bamShowDetail('${e.key}')">📋 รายละเอียด</button>
+        <button class="bam-action danger" onclick="if(confirm('ลบ?'))bugDelete('${e.key}').then(()=>{})">🗑</button>
+      </div>
+    </div>
+  `;
+}
+
+function _bamShowDetail(key) {
+  const entry = _bug.admin.reports?.[key];
+  if (!entry) return;
+  const json = JSON.stringify(entry, null, 2);
+  // เปิด detail modal
+  const m = document.createElement("div");
+  m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:9800;display:flex;align-items:center;justify-content:center;padding:18px;font-family:'IBM Plex Sans Thai',sans-serif;";
+  m.onclick = (e) => { if (e.target === m) m.remove(); };
+  m.innerHTML = `
+    <div style="background:#fff;border-radius:14px;max-width:500px;width:100%;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;">
+      <div style="padding:12px 16px;border-bottom:0.5px solid rgba(60,60,67,0.15);display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:14px;font-weight:700;">รายละเอียด</div>
+        <button onclick="this.closest('div[style*=fixed]').remove()" style="border:none;background:rgba(118,118,128,0.15);width:26px;height:26px;border-radius:50%;cursor:pointer;font-family:inherit;">✕</button>
+      </div>
+      <pre style="flex:1;overflow:auto;padding:12px 14px;font-size:10.5px;font-family:'SF Mono',Menlo,monospace;color:#1C1917;line-height:1.5;background:#FAFAF9;margin:0;">${_bugEsc(json)}</pre>
+    </div>
+  `;
+  document.body.appendChild(m);
+}
+
+function _bugEsc(s) {
+  return String(s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+function _bugTimeAgo(t) {
+  if (!t) return "?";
+  const diff = Date.now() - t;
+  const s = Math.floor(diff / 1000);
+  if (s < 60) return s + " วินาทีก่อน";
+  const m = Math.floor(s / 60);
+  if (m < 60) return m + " นาทีก่อน";
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + " ชม.ก่อน";
+  const d = Math.floor(h / 24);
+  return d + " วันก่อน";
+}
+
+
+// ──────────────── Global error listeners ────────────────
+(function setupBugListeners() {
+  if (!BUG_SYSTEM.ENABLED) return;
+  // wait DOM + 2 sec before init (let app stabilize)
+  const init = () => {
+    try {
+      // V4.30: restore queue จาก localStorage (Stage 2+)
+      if (BUG_SYSTEM.STAGE >= 2) {
+        try {
+          const q = _bugLoadQueue();
+          // restore dedupMap จาก queue (เพื่อ dedup ต่อ session ใหม่)
+          q.forEach(entry => {
+            if (entry.hash) _bug.dedupMap.set(entry.hash, entry);
+          });
+          console.log(`[BugSystem] restored ${q.length} entries from localStorage`);
+        } catch(e) {
+          console.warn("[BugSystem] restore failed:", e.message);
+        }
+      }
+
+      window.addEventListener("error", (e) => {
+        try {
+          bugReport("critical", "uncaught", {
+            message: e.message,
+            stack: e.error?.stack || "",
+            filename: e.filename,
+            lineno: e.lineno,
+            colno: e.colno,
+          });
+        } catch(err) {}
+      });
+      window.addEventListener("unhandledrejection", (e) => {
+        try {
+          const r = e.reason;
+          bugReport("critical", "promise", {
+            message: r?.message || String(r),
+            stack: r?.stack || "",
+          });
+        } catch(err) {}
+      });
+      console.log(`[BugSystem] ${BUG_SYSTEM.APP_VERSION} Stage ${BUG_SYSTEM.STAGE} active`);
+
+      // V4.31: trigger initial flush หลัง 5 วินาที (รอ auth ready)
+      if (BUG_SYSTEM.STAGE >= 3) {
+        setTimeout(() => {
+          try { _bugFlushBatch(); } catch(e){}
+        }, 5000);
+      }
+
+      // V4.32: Stage 4 — start admin listener + cleanup
+      if (BUG_SYSTEM.STAGE >= 4) {
+        // รอ currentUser โหลดเสร็จ (login) แล้วค่อย start
+        const tryStart = () => {
+          if (typeof currentUser !== "undefined" && currentUser && _bugIsAdmin()) {
+            _bugStartAdminListener();
+            // schedule auto-cleanup ทุก 24 ชม.
+            setTimeout(_bugAutoCleanup, 60000); // ครั้งแรกหลัง 1 นาที
+            setInterval(_bugAutoCleanup, 86400000); // ทุก 24 ชม.
+          } else {
+            setTimeout(tryStart, 3000);
+          }
+        };
+        setTimeout(tryStart, 6000);
+      }
+    } catch(e) {
+      console.warn("[BugSystem] init failed:", e.message);
+    }
+  };
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => setTimeout(init, 2000));
+  } else {
+    setTimeout(init, 2000);
+  }
+})();
+
+// ──────────────── Self-test ────────────────
+function bugSelfTest() {
+  console.log("[BugSystem] running self-test...");
+  bugBreadcrumb("self-test:start");
+  bugReport("info", "test", { message: "self-test from bugSelfTest()" });
+  console.log("[BugSystem] sessionId:", _bug.sessionId);
+  console.log("[BugSystem] breadcrumbs:", _bug.breadcrumbs);
+  console.log("[BugSystem] dedupMap size:", _bug.dedupMap.size);
+  if (BUG_SYSTEM.STAGE >= 2) {
+    const q = _bugLoadQueue();
+    const pending = q.filter(e => !e._sent).length;
+    const sent = q.filter(e => e._sent).length;
+    console.log(`[BugSystem] localStorage queue: ${q.length} entries (pending: ${pending}, sent: ${sent})`);
+  }
+  if (BUG_SYSTEM.STAGE >= 3) {
+    console.log(`[BugSystem] canSend: ${_bugCanSend()}`);
+  }
+  return "✅ ดูที่ console — Stage " + BUG_SYSTEM.STAGE;
+}
+
+// ──────────────── Manual report UI (Stage 1 console-only) ────────────────
+function openBugReport() {
+  if (!BUG_SYSTEM.ENABLED) {
+    alert("ระบบแจ้งปัญหาปิดอยู่");
+    return;
+  }
+  bugBreadcrumb("openBugReport");
+
+  // ป้องกัน duplicate modal
+  const existing = document.getElementById("bugReportModal");
+  if (existing) { existing.remove(); }
+
+  const overlay = document.createElement("div");
+  overlay.id = "bugReportModal";
+  overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:9700;display:flex;align-items:center;justify-content:center;padding:18px;font-family:'IBM Plex Sans Thai',sans-serif;animation:brmFadeIn 0.2s ease;";
+  overlay.onclick = (e) => { if (e.target === overlay) closeBugReport(); };
+
+  overlay.innerHTML = `
+    <style>
+      @keyframes brmFadeIn { from{opacity:0} to{opacity:1} }
+      @keyframes brmPopIn { from{transform:translateY(10px);opacity:0} to{transform:translateY(0);opacity:1} }
+      .brm-cat { padding:10px 12px; border:0.5px solid rgba(60,60,67,0.2); border-radius:9px; background:#fff; font-size:13px; font-weight:500; color:#1C1917; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:all .15s; text-align:left; display:flex; align-items:center; gap:8px; font-family:inherit; }
+      .brm-cat:hover { background:rgba(0,122,255,0.06); }
+      .brm-cat.active { background:rgba(0,122,255,0.1); border-color:#007AFF; color:#007AFF; }
+      .brm-cat:active { transform: scale(0.97); }
+    </style>
+    <div style="background:rgba(255,255,255,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:16px;max-width:360px;width:100%;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.2);border:0.5px solid rgba(255,255,255,0.5);animation:brmPopIn 0.25s cubic-bezier(.34,1.56,.64,1);">
+      <div style="padding:16px 16px 12px;border-bottom:0.5px solid rgba(60,60,67,0.18);text-align:center;">
+        <div style="font-size:15px;font-weight:700;color:#000;">แจ้งปัญหา/บัค</div>
+        <div style="font-size:11px;color:#8E8E93;margin-top:3px;">ระบบจะแนบข้อมูลเครื่อง + ประวัติคลิกล่าสุดให้</div>
+      </div>
+      <div style="padding:14px 16px 12px;">
+        <div style="font-size:11px;font-weight:600;color:#8E8E93;margin-bottom:8px;letter-spacing:0.02em;">หมวด</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;" id="brmCatGrid">
+          <button class="brm-cat active" data-cat="bug">🐞 บัค (พัง)</button>
+          <button class="brm-cat" data-cat="slow">🐢 ช้า/ไม่ลื่น</button>
+          <button class="brm-cat" data-cat="confuse">😕 งง (UX)</button>
+          <button class="brm-cat" data-cat="idea">💡 ข้อเสนอ</button>
+        </div>
+        <div style="font-size:11px;font-weight:600;color:#8E8E93;margin-bottom:6px;letter-spacing:0.02em;">เกิดอะไรขึ้น? (สั้นๆ ก็ได้)</div>
+        <textarea id="brmText" placeholder="เช่น: กดปุ่ม + แล้วแอปค้าง / เพิ่มลูกค้าใหม่ไม่ได้ ..." style="width:100%;min-height:90px;max-height:140px;padding:11px 13px;border-radius:10px;border:none;font-size:15px;outline:none;font-family:inherit;color:#1C1917;background:rgba(118,118,128,0.12);resize:vertical;box-sizing:border-box;transition:background .2s;" oninput="brmUpdateCount()" onfocus="this.style.background='rgba(0,122,255,0.08)'" onblur="this.style.background='rgba(118,118,128,0.12)'"></textarea>
+        <div id="brmCount" style="font-size:10px;color:#8E8E93;margin-top:4px;text-align:right;">0 ตัวอักษร</div>
+      </div>
+      <div style="padding:0;display:flex;border-top:0.5px solid rgba(60,60,67,0.18);">
+        <button onclick="closeBugReport()" style="flex:1;padding:13px 6px;border:none;background:transparent;color:#007AFF;font-size:15px;font-weight:400;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;">ยกเลิก</button>
+        <button id="brmSendBtn" onclick="submitBugReport()" style="flex:1;padding:13px 6px;border:none;background:transparent;color:#007AFF;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;border-left:0.5px solid rgba(60,60,67,0.18);-webkit-tap-highlight-color:transparent;opacity:0.5;" disabled>ส่ง</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  // category buttons
+  overlay.querySelectorAll(".brm-cat").forEach(btn => {
+    btn.addEventListener("click", () => {
+      overlay.querySelectorAll(".brm-cat").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    });
+  });
+
+  setTimeout(() => document.getElementById("brmText")?.focus(), 100);
+}
+
+function brmUpdateCount() {
+  const txt = document.getElementById("brmText");
+  const count = document.getElementById("brmCount");
+  const sendBtn = document.getElementById("brmSendBtn");
+  if (!txt || !count || !sendBtn) return;
+  const len = (txt.value || "").trim().length;
+  count.textContent = len + " ตัวอักษร";
+  if (len >= 3) {
+    sendBtn.disabled = false;
+    sendBtn.style.opacity = "1";
+  } else {
+    sendBtn.disabled = true;
+    sendBtn.style.opacity = "0.5";
+  }
+}
+
+function closeBugReport() {
+  bugBreadcrumb("closeBugReport");
+  const m = document.getElementById("bugReportModal");
+  if (m) m.remove();
+}
+
+function submitBugReport() {
+  const txt = document.getElementById("brmText");
+  if (!txt) return;
+  const message = (txt.value || "").trim();
+  if (message.length < 3) {
+    alert("กรุณาพิมพ์อย่างน้อย 3 ตัวอักษร");
+    return;
+  }
+  const activeCat = document.querySelector("#brmCatGrid .brm-cat.active");
+  const category = activeCat?.dataset.cat || "bug";
+
+  bugBreadcrumb("submitBugReport", { category });
+  bugReport("info", "manual", {
+    message,
+    category,
+    source: "user",
+  });
+
+  // toast confirm
+  closeBugReport();
+  _showToast("✅ ส่งแล้ว ขอบคุณครับ");
+}
+
+// simple toast helper (ถ้ายังไม่มี)
+function _showToast(msg) {
+  const t = document.createElement("div");
+  t.style.cssText = "position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#fff;padding:11px 20px;border-radius:99px;font-family:'IBM Plex Sans Thai',sans-serif;font-size:13.5px;font-weight:500;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:toastSlide 0.3s ease;";
+  t.innerHTML = `<style>@keyframes toastSlide { from{opacity:0;transform:translate(-50%,10px)} to{opacity:1;transform:translate(-50%,0)} }</style>${msg}`;
+  document.body.appendChild(t);
+  setTimeout(() => {
+    t.style.opacity = "0";
+    t.style.transition = "opacity 0.3s";
+    setTimeout(() => t.remove(), 300);
+  }, 2500);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// END V4.29 Bug System Stage 1
+// ═══════════════════════════════════════════════════════════════
+
 // ── ข้อ 9: Autocomplete (V4.22 — unified helper สำหรับทุก context) ──────────
 let _acTimeout = null;
 
@@ -12537,6 +13532,12 @@ function openNavSheet() {
   navSheetSyncActive();
   // sync unpaid badge
   navSheetUpdateUnpaidBadge();
+  // V4.32: show/hide admin button + update badge
+  try {
+    const adminBtn = document.getElementById("navBugAdminBtn");
+    if (adminBtn) adminBtn.style.display = (typeof _bugIsAdmin === "function" && _bugIsAdmin()) ? "flex" : "none";
+    if (typeof _bugUpdateBadge === "function") _bugUpdateBadge();
+  } catch(e){}
   ov.classList.add("show");
   sh.classList.add("open");
   SX.sheetOpen();
