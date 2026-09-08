@@ -229,6 +229,38 @@ body {
 .skeleton-line.md { width: 75%; }
 .skeleton-line.lg { width: 100%; }
 
+/* ═══ V5.40: สถานะ "โหลดเมื่อใช้จริง" ═══ */
+.lz-fail {
+  margin: 20px 14px; padding: 22px 18px; border-radius: 16px;
+  background: #fff; border: 1px solid #E7E5E4; text-align: center;
+}
+.lz-ic { color: #D97706; margin-bottom: 10px; display: inline-flex; }
+.lz-msg { font-size: 13.5px; color: #57534E; line-height: 1.55; margin-bottom: 14px; }
+.lz-msg b { color: #1C1917; font-weight: 700; }
+.lz-btn {
+  padding: 10px 22px; border-radius: 11px; border: none; background: #1C1917; color: #fff;
+  font-size: 13.5px; font-weight: 700; font-family: inherit; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 7px; -webkit-tap-highlight-color: transparent;
+}
+.lz-btn:active { transform: scale(.96); }
+.lz-note {
+  margin: 8px 14px; padding: 9px 13px; border-radius: 11px;
+  background: rgba(217,119,6,0.07); border: 1px solid rgba(217,119,6,0.18);
+  color: #92400E; font-size: 11.5px; font-weight: 600;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.lz-note button {
+  border: none; background: rgba(217,119,6,0.14); color: #92400E; border-radius: 8px;
+  padding: 5px 11px; font-size: 11px; font-weight: 700; font-family: inherit; cursor: pointer;
+  flex-shrink: 0; -webkit-tap-highlight-color: transparent;
+}
+.lz-dot {
+  display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+  background: currentColor; margin-right: 7px; vertical-align: middle;
+  animation: lzPulse 1.1s ease-in-out infinite;
+}
+@keyframes lzPulse { 0%,100% { opacity: .25; } 50% { opacity: 1; } }
+
 /* ═══ PRESS FEEDBACK on all clickable cards ═══ */
 .group-card { transition: all 0.25s ease-out; }
 .item-row { transition: background 0.2s ease, transform 0.2s ease; }
@@ -1581,14 +1613,7 @@ tr:last-child td { border-bottom: none; }
 }
 .login-back-btn:hover { color:#F59E0B; }
 .login-error { color:#FCA5A5; font-size:12px; text-align:center; min-height:18px; transition: opacity .2s; }
-/* logout btn in topbar */
-#logoutBtn {
-  background:#292524; border:none; border-radius:20px;
-  padding:5px 10px; font-size:11px; font-weight:600;
-  color:#78716C; cursor:pointer; font-family:inherit;
-  transition:all .2s; white-space:nowrap;
-}
-#logoutBtn:hover { background:#3D3530; color:#D6D3D1; }
+/* V5.36 (B24): ลบ CSS ของ #logoutBtn — ไม่มี element นี้ใน HTML แล้ว */
 
 /* ── MINI MONTH CALENDAR POPUP ─────────────────────────────── */
 .mc-overlay {
@@ -3357,6 +3382,7 @@ tr:last-child td { border-bottom: none; }
   color: #A8A29E;
   cursor: not-allowed;
   box-shadow: none;
+  pointer-events: none;   /* V5.36 (B25): เดิมเปลี่ยนแค่สี ยังกดทะลุได้ */
 }
 .bill-btn-pay-amt {
   font-variant-numeric: tabular-nums;
@@ -4450,7 +4476,7 @@ input[name="cust-name-no-fill"]:-webkit-autofill {
     <div style="display:flex;gap:8px;margin-bottom:10px;">
       <div style="flex:1;position:relative;">
         <span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#A8A29E;pointer-events:none;display:inline-flex;align-items:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
-        <input id="cmSearchInput" placeholder="ค้นหาชื่อลูกค้า..." oninput="cmRenderList()" style="width:100%;padding:11px 15px 11px 38px;border-radius:11px;border:1.5px solid transparent;font-size:14px;outline:none;font-family:inherit;background:#F5F5F4;transition:all .2s;" onfocus="this.style.borderColor='#1C1917';this.style.boxShadow='0 0 0 3px rgba(0,0,0,0.06)';this.style.background='#fff'" onblur="this.style.borderColor='transparent';this.style.boxShadow='';this.style.background='#F5F5F4'">
+        <input id="cmSearchInput" placeholder="ค้นหาชื่อลูกค้า..." oninput="cmSearchInputChanged()" style="width:100%;padding:11px 15px 11px 38px;border-radius:11px;border:1.5px solid transparent;font-size:14px;outline:none;font-family:inherit;background:#F5F5F4;transition:all .2s;" onfocus="this.style.borderColor='#1C1917';this.style.boxShadow='0 0 0 3px rgba(0,0,0,0.06)';this.style.background='#fff'" onblur="this.style.borderColor='transparent';this.style.boxShadow='';this.style.background='#F5F5F4'">
       </div>
       <button onclick="cmOpenAddForm()" style="padding:11px 18px;border-radius:11px;border:none;background:#F59E0B;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 12px rgba(245,158,11,0.3);-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;gap:6px;" onmouseover="this.style.background='#D97706';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#F59E0B';this.style.transform=''"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>เพิ่ม</button>
     </div>
@@ -4542,8 +4568,8 @@ input[name="cust-name-no-fill"]:-webkit-autofill {
 <!-- Chart.js + html2canvas: lazy-loaded on demand (saves ~410 KB on first paint) -->
 <script>
 // ═══ V4.38 (B.4): APP_VERSION — single source of truth ═══
-window.APP_VERSION = "V5.33";
-window.APP_VERSION_STRING = "V5.33"; // alias for compatibility
+window.APP_VERSION = "V5.40";
+window.APP_VERSION_STRING = "V5.40"; // alias for compatibility
 
 // ── Firebase ──────────────────────────────────────────────────────
 // V3: defensive check — ถ้า Firebase load ไม่ได้ (offline/sandbox) → แสดง error friendly
@@ -4886,6 +4912,7 @@ function _pendingPaidStart(day, gKey, itemKey, commitFn, cancelFn) {
   const entry = {
     startAt: Date.now(),
     onCancel: cancelFn,
+    onCommit: commitFn,          // V5.35 (B05): เก็บไว้เพื่อ flush ตอนปิดแอป
     timer: setTimeout(() => {
       // V4.72 fix: ตรวจว่า key ยังอยู่ก่อน commit (กัน race กับ .clear())
       if (!window._pendingPaid.has(k)) return;
@@ -4894,6 +4921,22 @@ function _pendingPaidStart(day, gKey, itemKey, commitFn, cancelFn) {
     }, PENDING_MS),
   };
   window._pendingPaid.set(k, entry);
+}
+// ═══ V5.35 (B05): บันทึกคิวที่ค้างทันที ═══
+// คิว "กดจ่ายแล้วรอ 2.5 วิ เผื่อกดยกเลิก" อยู่ใน Map ในหน่วยความจำล้วน
+// สลับไปแอปอื่น / ปิดจอ ระหว่างนั้น = พนักงานเชื่อว่าเก็บเงินแล้ว แต่บิลยังค้างอยู่
+// เรียกตอน pagehide และตอนจอถูกซ่อน — ยกเลิกทีหลังยังทำได้ด้วยปุ่ม "ยกเลิกชำระ"
+function _pendingPaidFlushAll() {
+  if (!window._pendingPaid || !window._pendingPaid.size) return 0;
+  const list = [...window._pendingPaid.values()];
+  window._pendingPaid.clear();
+  let n = 0;
+  for (const entry of list) {
+    try { clearTimeout(entry.timer); } catch(e) {}
+    try { if (entry.onCommit) { entry.onCommit(); n++; } }
+    catch(e) { console.error("[pendingPaid flush]", e); }
+  }
+  return n;
 }
 // ═══════════════════════════════════════════════════════════════
 
@@ -4981,12 +5024,19 @@ db.ref("config/ppNames").on("value", snap => {
   } catch(e) {}
 });
 
-db.ref("customers").on("value", snap => {
-  cmCustomers = snap.val() || {};
-  // V4.39: save cache (debounced)
-  _cacheGenericSaveDebounced(CACHE_KEY_CUSTOMERS, () => cmCustomers, 2000);
-  if (activeTab==="cust") { cmRenderList(); cmRenderQuiet(); }
-});
+// V5.40 (B20): ไม่ผูกตอนเปิดแอปแล้ว — เรียกจาก _lzNeed("customers")
+//              (เข้าแท็บลูกค้า หรือช่องช่วยเติมชื่อ)
+function _lzBindCustomers() {
+  db.ref("customers").on("value", snap => {
+    cmCustomers = snap.val() || {};
+    window._custFromServer = true;
+    // V4.39: save cache (debounced)
+    _cacheGenericSaveDebounced(CACHE_KEY_CUSTOMERS, () => cmCustomers, 2000);
+    if (typeof _lzArrived === "function") _lzArrived("customers");
+    if (typeof cmInvalidateIndex === "function") cmInvalidateIndex();
+    if (activeTab==="cust") { cmRenderList(); cmRenderQuiet(); }
+  }, err => _lzFailed("customers", err && err.message));
+}
 
 // ── Firebase Listener: days ────────────────────────────────────────
 // ══════════════════════════════════════════════════════════════
@@ -5009,6 +5059,66 @@ function isToday(dayKey) {
   const mm = String(now.getMonth()+1).padStart(2,"0");
   const yy = String(now.getFullYear()+543).slice(-2);
   return dayKey === `${dd}-${mm}-${yy}`;
+}
+
+// ═══ V5.34 (B47): ยอดเงินที่เป็นข้อความ ทำให้ยอดรวมกลายเป็น NaN ═══
+// ทุกที่ในแอปบวกเงินด้วย s+(x.amount||0) ซึ่งถ้าเจอ "5,580" จะกลายเป็นการต่อสตริง
+// แก้ที่ปลายทางทีละจุดมีเกิน 30 จุด พลาดง่าย — จึงบังคับชนิดตรงที่ข้อมูลเข้ามาแทน
+// (ไม่เขียนกลับ Firebase — แค่ทำให้ค่าที่แอปใช้เป็นตัวเลขเสมอ)
+
+// ═══ V5.37 (B13/B19): ทำให้ข้อความของผู้ใช้ปลอดภัยก่อนเอาไปต่อเป็น HTML ═══
+// ชื่อลูกค้ามาจากคนพิมพ์ (หรือจากผลสแกน) และถูกวาดในเครื่องคนอื่น
+// ถ้าไม่แปลงก่อน ชื่อที่มี < > จะกลายเป็นแท็กจริง และชื่อที่มี ' " จะทำให้ปุ่มกดไม่ได้ทั้งแถว
+
+// 1) สำหรับข้อความธรรมดาใน HTML
+function _htmlEsc(v) {
+  return String(v == null ? "" : v).replace(/[&<>"']/g,
+    c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" })[c]);
+}
+
+// 2) สำหรับข้อความที่ไปอยู่ในสตริง JavaScript ภายใน attribute เช่น onclick="f('...')"
+//    ต้องหนี 2 ชั้นตามลำดับ: กติกา JavaScript ก่อน แล้วค่อยกติกา HTML
+//    เบราว์เซอร์ถอด HTML คืนก่อน JavaScript อ่าน จึงได้ผลถูกทั้งสองชั้น
+//    (ใช้ตัว escape HTML ล้วนไม่ได้ — ' จะกลายเป็น &#39; แล้วถอดกลับเป็น ' ทำสตริง JS พัง
+//     ซึ่งเป็นสิ่งที่เกิดอยู่จริงที่ปุ่ม "นับย้อนหลัง")
+function _jsAttrEsc(v) {
+  return String(v == null ? "" : v)
+    .replace(/\\/g, "\\\\")
+    .replace(/'/g, "\\'")
+    .replace(/\r?\n/g, "\\n")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function _normAmt(v) {
+  if (typeof v === "number") return Number.isFinite(v) ? v : 0;
+  if (v === null || v === undefined || v === "") return 0;
+  const n = parseFloat(String(v).replace(/[,\s]/g, ""));
+  return Number.isFinite(n) ? n : 0;
+}
+function _normalizeAmounts(root) {
+  if (!root || typeof root !== "object") return root;
+  const FIELDS = ["amount", "ppOrig", "ppOver"];
+  for (const dayKey in root) {
+    const day = root[dayKey];
+    if (!day || typeof day !== "object") continue;
+    for (const gk of ["credit", "transfer", "fence", "delivery"]) {
+      const grp = day[gk];
+      if (!grp || typeof grp !== "object") continue;
+      for (const itemKey in grp) {
+        const it = grp[itemKey];
+        if (!it || typeof it !== "object") continue;
+        for (const f of FIELDS) {
+          if (it[f] === undefined) continue;
+          if (typeof it[f] === "number" && Number.isFinite(it[f])) continue;
+          it[f] = _normAmt(it[f]);
+        }
+      }
+    }
+  }
+  return root;
 }
 
 // ═══ V4.38 (O): Recent-day cache — เก็บ days ล่าสุด 3 วันใน localStorage ═══
@@ -5069,7 +5179,7 @@ function _cacheRestoreDays() {
     if (payload.savedAt && (Date.now() - payload.savedAt) > 7 * 24 * 3600 * 1000) {
       return null;
     }
-    return payload.days || null;
+    return _normalizeAmounts(payload.days) || null;
   } catch(e) {
     return null;
   }
@@ -5140,7 +5250,7 @@ try {
 try {
   const cClosed = _cacheGenericRestore(CACHE_KEY_CLOSED);
   if (cClosed && typeof cClosed === "object") {
-    allClosed = cClosed;
+    allClosed = _normalizeAmounts(cClosed);
     window._cacheClosedRestored = true;
   }
 } catch(e) {}
@@ -5155,8 +5265,136 @@ try {
 } catch(e) {}
 // ═══════════════════════════════════════════════════════════════
 
+// ═══ V5.40 (B20): โหลดเมื่อใช้จริง ═══
+// เดิม เปิดแอปครั้งเดียวดึงทุกอย่าง — คลัง 270 วัน + ตะกร้า 1 ปี + ลูกค้า + คิวรถ
+//      รวมราว 3.2 MB ทั้งที่หน้าแรกใช้แค่ days (ราว 0.5 MB)
+// ใหม่ ก้อนที่เหลือผูก listener ตอนผู้ใช้เข้าไปใช้จริงเท่านั้น
+//      *** ทางเขียนเงินไม่แตะเลยสักบรรทัด — บอร์ด/ค้างชำระ ยังอ่านจาก days เหมือนเดิม ***
+// สถานะ: 0 ยังไม่เริ่ม · 1 กำลังโหลด · 2 มาแล้ว · 3 โหลดไม่สำเร็จ
+window._lz = { closed:0, customers:0, basket:0, trucks:0 };
+window._lzTimers = {};
+const _LZ_TIMEOUT = 12000;
+const _LZ_LABEL = { closed:"ข้อมูลคลัง", customers:"รายชื่อลูกค้า", basket:"ข้อมูลตะกร้า", trucks:"คิวรถ" };
+
+// แคชในเครื่องเติมให้แล้วหรือยัง — ถ้าเติมแล้วห้ามโชว์โครงโหลด (ผู้ใช้มีของดูอยู่แล้ว)
+function _lzHas(k) {
+  if (k === "closed")    return !!window._cacheClosedRestored;
+  if (k === "customers") return !!window._cacheCustRestored;
+  if (k === "basket")    return !!window._cacheBasketRestored;
+  return false;
+}
+function _lzState(k) {
+  const v = window._lz[k];
+  if (v === 2) return "ok";
+  if (_lzHas(k)) return "ok";          // มีของเก่าให้ดูไปก่อน
+  if (v === 3) return "fail";
+  return "loading";
+}
+// ผูก listener ไปแล้วหรือยัง — กันผูกซ้ำซ้อนตอนกดลองใหม่ (จะโหลดซ้ำเปลืองเน็ตเปล่าๆ)
+window._lzBound = {};
+
+function _lzNeed(k) {
+  if (!window._lz.hasOwnProperty(k)) return;
+  if (window._lz[k] === 1 || window._lz[k] === 2) return;   // เริ่มไปแล้ว
+  window._lz[k] = 1;
+  clearTimeout(window._lzTimers[k]);
+  window._lzTimers[k] = setTimeout(() => {
+    if (window._lz[k] !== 1) return;
+    window._lz[k] = 3;
+    console.warn("[lz] " + k + " ไม่มาภายในเวลาที่กำหนด");
+    if (_lzHas(k)) {
+      // มีของเก่าในเครื่องให้ใช้ไปก่อน — บอกให้รู้ว่ายังไม่ใช่ล่าสุด แล้วปล่อยให้ใช้งานต่อ
+      if (typeof showToast === "function")
+        showToast("ดึง" + (_LZ_LABEL[k]||"ข้อมูล") + "ล่าสุดไม่สำเร็จ — ใช้ข้อมูลที่เก็บไว้ในเครื่องไปก่อน", "warn", 3200);
+    } else {
+      _lzRefresh(k);   // ไม่มีอะไรให้ดูเลย → วาดหน้า "ลองใหม่"
+    }
+  }, _LZ_TIMEOUT);
+
+  // Firebase ต่อเน็ตกลับมาเองได้ — ผูกซ้ำไม่ช่วยอะไร นอกจากดาวน์โหลดซ้ำ
+  if (window._lzBound[k]) return;
+  try {
+    if (k === "closed")    { _bindClosedListener(CLOSED_WINDOW_DAYS); _backfillClosedDayTs(); }
+    if (k === "customers") _lzBindCustomers();
+    if (k === "basket")    bkLoadLocal();
+    if (k === "trucks")    _lzBindTrucks();
+    window._lzBound[k] = true;
+  } catch(e) {
+    console.warn("[lz] ผูก listener ไม่สำเร็จ:", k, e && e.message);
+    window._lz[k] = 3;
+    _lzRefresh(k);
+  }
+}
+// listener แจ้ง error กลับมา = ตัวเดิมหลุดแล้ว ต้องผูกใหม่ตอนกดลองใหม่
+function _lzFailed(k, msg) {
+  console.warn("[lz] " + k + " ล้มเหลว:", msg);
+  window._lzBound[k] = false;
+  window._lz[k] = 3;
+  _lzRefresh(k);
+}
+// listener แต่ละตัวเรียกเมื่อข้อมูลมาถึง — การวาดใหม่ listener เดิมทำอยู่แล้ว
+function _lzArrived(k) {
+  clearTimeout(window._lzTimers[k]);
+  window._lz[k] = 2;
+}
+function _lzRetry(k) {
+  window._lz[k] = 0;
+  _lzNeed(k);
+  _lzRefresh(k);
+}
+// ใช้ตอนเปลี่ยนเป็น "ไม่สำเร็จ" หรือกดลองใหม่ (ตอนข้อมูลมา listener วาดเอง)
+function _lzRefresh(k) {
+  try {
+    if (k === "closed") {
+      if (activeTab === "closed")    renderClosed();
+      if (activeTab === "analytics") renderAnalytics();
+      if (activeTab === "cust")      cmRenderList();
+    }
+    if (k === "customers" && activeTab === "cust") { cmRenderList(); cmRenderQuiet(); }
+    if (k === "basket") {
+      if (activeTab === "basket") bkRender();
+      const m = document.getElementById("billModal");
+      if (m && m.style.display === "flex") _billRefreshDeducts();
+    }
+    if (k === "trucks" && activeTab === "truck") truckRender();
+  } catch(e) { console.warn("[lz] วาดใหม่ไม่สำเร็จ:", k, e && e.message); }
+}
+
+function _lzSkelHtml(n) {
+  let h = "";
+  for (let i = 0; i < (n || 3); i++) {
+    h += '<div class="skeleton-card"><div class="skeleton skeleton-line sm" style="margin-bottom:10px;"></div>'
+       + '<div class="skeleton skeleton-line md"></div><div class="skeleton skeleton-line lg"></div></div>';
+  }
+  return '<div style="padding:6px 14px;">' + h + '</div>';
+}
+function _lzFailHtml(k) {
+  const lb = _LZ_LABEL[k] || "ข้อมูล";
+  return '<div class="lz-fail">'
+    + '<div class="lz-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>'
+    + '<div class="lz-msg">ดึง<b>' + _htmlEsc(lb) + '</b>ไม่สำเร็จ<br>'
+    + 'อาจเป็นเพราะเน็ตขาดหรือช้าเกินไป<br>ส่วนอื่นของแอปยังใช้ได้ตามปกติ</div>'
+    + '<button class="lz-btn" onclick="_lzRetry(\'' + k + '\')">'
+    + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>'
+    + 'ลองใหม่</button></div>';
+}
+// วาดสถานะแทนเนื้อหา — คืน true ถ้าวาดไปแล้ว (ผู้เรียกต้อง return ทันที)
+// มีแคชในเครื่อง = "ok" เสมอ → ผู้ใช้ได้เห็นของทันที ไม่ต้องรอ
+function _lzPaint(containerId, k, n) {
+  const st = _lzState(k);
+  if (st === "ok") return false;
+  const el = document.getElementById(containerId);
+  if (!el) return false;
+  el.innerHTML = (st === "fail") ? _lzFailHtml(k) : _lzSkelHtml(n || 3);
+  return true;
+}
+window._lzRetry = _lzRetry;
+// ═══════════════════════════════════════════════════════════════
+
 db.ref("days").on("value", snap => { try {
-  allDays = snap.val() || {};
+  allDays = _normalizeAmounts(snap.val() || {});
+  window._daysFromServer = true;   // V5.35 (B33): ข้อมูลจริงมาถึงแล้ว (ก่อนหน้านี้เป็นแคชในเครื่อง)
+  window._dataVersion = (window._dataVersion || 0) + 1;   // V5.40: ข้อมูลเปลี่ยน → cache ที่คำนวณไว้ใช้ไม่ได้แล้ว
   // O: save cache หลัง Firebase sync (debounced)
   _cacheSaveDebounced();
   if (Object.keys(allDays).length === 0) {
@@ -5298,7 +5536,8 @@ async function _ensureClosedMonth(adYear, month) {
     const snap = await db.ref("closed").orderByChild("dayTs").startAt(start).endAt(end).once("value");
     const got = snap.val() || {};
     if (!Object.keys(got).length) return;
-    Object.assign(_closedExtra, got);
+    Object.assign(_closedExtra, _normalizeAmounts(got));
+    window._dataVersion = (window._dataVersion || 0) + 1;   // V5.40
     Object.assign(allClosed, got);
     // วาดใหม่เฉพาะที่เปิดอยู่ — ครั้งเดียว ไม่วนซ้ำเพราะ _closedMonthsFetched กันไว้แล้ว
     if (document.getElementById("calModal")?.style.display === "flex") renderCalGrid();
@@ -5311,14 +5550,15 @@ async function _ensureClosedMonth(adYear, month) {
 
 function _handleClosedSnap(snap) {
   // V4.78: รวมวันที่ดึงมาเพิ่มรายเดือนเข้าด้วย ไม่งั้นถูกล้างทุกครั้งที่ listener ยิง
-  allClosed = Object.assign({}, _closedExtra, snap.val() || {});
+  allClosed = _normalizeAmounts(Object.assign({}, _closedExtra, snap.val() || {}));
+  window._dataVersion = (window._dataVersion || 0) + 1;   // V5.40
   _closedLoadingMore = false;   // V4.77: ข้อมูลมาถึงแล้ว → ปลดปุ่มดูย้อนหลัง
   // V4.39: save cache (debounced)
+  window._closedFromServer = true;
+  if (typeof _lzArrived === "function") _lzArrived("closed");   // V5.40
   _cacheGenericSaveDebounced(CACHE_KEY_CLOSED, () => allClosed, 2000);
-  // อัปเดตตัวเลขแจ้งเตือนบนปุ่ม
-  const count = Object.keys(allClosed).length;
-  const closedBtn = document.getElementById("tabClosedBtn");
-  if (closedBtn) closedBtn.textContent = count > 0 ? `ปิดยอด (${count})` : "ปิดยอด";
+  // V5.36 (B24): ลบโค้ดอัปเดตป้าย "ปิดยอด (n)" ทิ้ง — ปุ่ม #tabClosedBtn ถูกลบออกจาก HTML ไปแล้ว
+  //              ฟีเจอร์นี้จึงไม่เคยทำงานเลย เหลือไว้แค่ทำให้สับสนตอนไล่แก้
   if (activeTab==="closed") renderClosed();
   // re-render ปฏิทินถ้าเปิดอยู่ เพื่อให้ dot อัปเดต
   if (document.getElementById("calModal")?.style.display === "flex") renderCalGrid();
@@ -5382,8 +5622,9 @@ async function _backfillClosedDayTs() {
 // ถ้ารอ backfill ก่อนแล้วเน็ตหลุด คำสั่งจะค้าง → คลังไม่โหลดเลยทั้งเซสชัน
 // วันที่ยังไม่มี dayTs จะไม่เข้า query ชั่วคราว แต่พอ backfill เขียนเสร็จ
 // listener จะยิงใหม่เองแล้ววันนั้นโผล่มา ไม่ต้องรอกัน
-_bindClosedListener(CLOSED_WINDOW_DAYS);
-_backfillClosedDayTs();
+// V5.40 (B20): ไม่ผูกตอนเปิดแอปแล้ว — เรียกจาก _lzNeed("closed")
+//              (เข้าแท็บคลัง/วิเคราะห์/ลูกค้า · เปิดปฏิทิน · เปิดหน้าจัดการข้อมูล)
+//              closedIndex ยังโหลดตอนเปิดเหมือนเดิม (เล็กมาก) — ด่านกันวันซ้ำจึงยังทำงานครบ
 
 // ── Day Tabs ──────────────────────────────────────────────────────
 
@@ -5433,6 +5674,7 @@ window._calPickerCallback = null;
 window._calPickerMode = false;
 
 function openCal(opts) {
+  if (typeof _lzNeed === "function") _lzNeed("closed");   // V5.40: สีของวันในปฏิทินต้องใช้คลัง
   const modal = document.getElementById("calModal");
   modal.style.display = "flex";
 
@@ -5456,7 +5698,7 @@ function openCal(opts) {
   const now = new Date();
   const curBE = now.getFullYear() + 543;
   // หาปีที่มีข้อมูล
-  const allKeys = [...Object.keys(allDays), ...Object.keys(allClosed)];
+  const allKeys = [...Object.keys(allDays), ...Object.keys(allClosed), ...Object.keys(allClosedIdx||{})];   // V5.40
   const yearsSet = new Set([curBE]);
   allKeys.forEach(k => {
     const p = parseDayKey(k);
@@ -6477,7 +6719,7 @@ function confirmAddDay() {
   if (!isOwner() && !isToday(label)) { alert("พนักงานสร้างได้เฉพาะวันปัจจุบัน"); return; }
   if (allDays[label]) { alert("มีวันนี้อยู่แล้วครับ"); return; }
   // V3: เช็ค allClosed ด้วย (กัน overwrite วันที่ปิดยอดไปแล้ว)
-  if (allClosed[label]) {
+  if (isArchivedDay(label)) {   // V5.40: อ่านจากดัชนีคลังด้วย ครอบคลุมวันที่ยังไม่โหลด
     alert(`วัน ${label} ปิดยอดไปแล้ว — กรุณาเปิดจากหน้าปิดยอด`);
     return;
   }
@@ -6494,7 +6736,11 @@ function confirmAddDay() {
   renderBoard();
 
   // แล้วค่อย sync ขึ้น Firebase
-  db.ref("days/" + label).set({ credit:{}, transfer:{}, fence:{}, delivery:{} })
+  // V5.35 (B10): เดิม set({credit:{},transfer:{},fence:{},delivery:{}}) — Firebase ตัด object ว่างทิ้ง
+  //              จึงไม่มีอะไรถูกเขียนจริง วันใหม่อยู่แค่ในหน่วยความจำแท็บนั้น พอรีเฟรชก็หาย
+  //              เขียน createdAt ซึ่งเป็นค่าจริง Firebase จึงเก็บ node ไว้
+  //              (ทุกจุดในแอปอ่านหมวดแบบ data[g.key]||{} อยู่แล้ว ไม่ต้องมีหมวดเปล่า)
+  db.ref("days/" + label).set({ createdAt: Date.now() })
     .catch(e => {
       alert("บันทึกไม่ได้: " + e.message);
       // ถ้า Firebase ล้มเหลว ลบออกจาก local ด้วย
@@ -6526,7 +6772,7 @@ async function saveEditDay() {
   if (newLabel === editingDay) { closeEditModal(); return; }
   if (allDays[newLabel]) { alert("มีวันชื่อ "+newLabel+" อยู่แล้ว"); return; }
   // V3: เช็คใน allClosed ด้วย (กัน overwrite)
-  if (allClosed[newLabel]) { alert("มีวัน "+newLabel+" ในหน้าปิดยอด"); return; }
+  if (isArchivedDay(newLabel)) { alert("มีวัน "+newLabel+" ในหน้าปิดยอด"); return; }   // V5.40
   // V3: atomic - rollback ถ้า remove fail
   try {
     await db.ref("days/"+newLabel).set(allDays[editingDay]);
@@ -7016,8 +7262,8 @@ function renderBoard() {
         paidItems.forEach(([key,item]) => {
           const chip = document.createElement("span");
           chip.className = "paid-chip";
-          chip.innerHTML = `${item.name}`;
-          chip.title = `${item.name} — กดเพื่อแก้ไข`;
+          chip.textContent = item.name || "";   // V5.37 (B13): เดิมเป็น innerHTML — ชื่อที่มีแท็กจะรันจริง
+          chip.title = `${item.name} — กดเพื่อแก้ไข`;   // title เป็น attribute ผ่าน property ปลอดภัยอยู่แล้ว
           // V4.36: ใน move mode → chip ไม่ทำงาน (กันกดผิด)
           if (window._moveMode?.active) {
             chip.style.opacity = "0.5";
@@ -7067,7 +7313,7 @@ function renderBoard() {
             hint.style.cssText = "font-size:11px;color:#DC2626;margin-top:3px;display:flex;align-items:center;gap:6px;";
             inpName.parentNode.appendChild(hint);
           }
-          hint.innerHTML = `⚠️ ไม่พบ "${name}" ในฐานข้อมูล 
+          hint.innerHTML = `⚠️ ไม่พบ "${_htmlEsc(name)}" ในฐานข้อมูล 
             <button onclick="registerNewCustomerFromForm()" 
               style="background:#F59E0B;border:none;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;color:#1C1917;">
               + ลงทะเบียน
@@ -7144,7 +7390,9 @@ function renderBoard() {
         const note   = noteEl   ? noteEl.value.trim()   : "";
         const color  = colorWrap.dataset.selected || "#1C1917";
         if (!name||!amount) { alert("กรุณากรอกชื่อและยอดเงิน"); return; }
-        const parsedAmount = parseFloat(amount);
+        // V5.34 (B03): "1,234" เคยกลายเป็น 1 เพราะ parseFloat หยุดที่ลูกน้ำ
+        //              (saveEditItem strip ลูกน้ำอยู่แล้ว — ยกวิธีเดียวกันมาใช้)
+        const parsedAmount = parseFloat(String(amount).replace(/[,\s]/g, ""));
         if (isNaN(parsedAmount) || parsedAmount <= 0) {
           alert("ยอดเงินต้องเป็นตัวเลขมากกว่า 0");
           return;
@@ -7524,7 +7772,7 @@ function renderUnpaid() {
       // badge
       const badge = count>=2 ? `<span class="upd-badge">${count}×</span>` : "";
 
-      card.innerHTML = `<span class="upd-name">${item.name}${count>=2?` <span class="upd-bc">×${count}</span>`:""}</span>
+      card.innerHTML = `<span class="upd-name">${_htmlEsc(item.name)}${count>=2?` <span class="upd-bc">×${count}</span>`:""}</span>
         <span class="upd-amt">${fmt(item.amount)}</span>
         <div class="upd-circle"></div>`;
 
@@ -7601,7 +7849,7 @@ function renderUnpaidPerson(container) {
       .join('<span class="upd-gh-bd-sep">·</span>');
 
     const row = document.createElement("div"); row.className = "upd-gh-row";
-    row.innerHTML = `<div class="upd-gh-name">${name}</div>
+    row.innerHTML = `<div class="upd-gh-name">${_htmlEsc(name)}</div>
       <div class="upd-gh-bd">${breakdownHTML}</div>
       <div class="upd-gh-total">${fmt(info.total)}</div>
       <div class="upd-gh-arr">›</div>`;
@@ -7668,7 +7916,7 @@ function renderUnpaidMonth(container) {
       billBtn.title = "รวมบิล "+name;
       billBtn.onclick = e => { e.stopPropagation(); openBillModal(name, info.group); };
       it.innerHTML = `<div class="upd-gh-dot" style="background:${info.color};"></div>
-        <div class="upd-gh-name" style="font-size:13px;">${name}</div>
+        <div class="upd-gh-name" style="font-size:13px;">${_htmlEsc(name)}</div>
         <div class="upd-gh-meta">${info.count} บิล</div>
         <div class="upd-gh-item-amt">${fmt(info.total)}</div>`;
       it.appendChild(billBtn);
@@ -7831,7 +8079,9 @@ function _sortDayKeys(keys) {
 
 function boardNavDay(dir) {
   // รวม allDays + allClosed เรียงตามวันที่จริง (ไม่ใช่ string sort)
-  const allKeys = _sortDayKeys([...new Set([...Object.keys(allDays), ...Object.keys(allClosed)])]);
+  // V5.40: ใช้ดัชนีคลัง (โหลดตอนเปิดแอป เล็กมาก) — ปุ่มเลื่อนวันจึงไปวันในคลังได้
+  //         โดยไม่ต้องรอโหลดเนื้อหาคลัง และครอบคลุมวันเก่ากว่าหน้าต่าง 270 วันด้วย
+  const allKeys = _sortDayKeys([...new Set([...Object.keys(allDays), ...Object.keys(allClosed), ...Object.keys(allClosedIdx||{})])]);
   if (!allKeys.length) return;
   let idx = allKeys.indexOf(activeDay);
   if (idx === -1) {
@@ -7888,6 +8138,7 @@ let _billAllBills = [];  // เก็บ bills ทั้งหมดสำหร
 let _billAccentColor = "#1C1917";
 
 function openBillModal(customerName, group) {
+  if (typeof _lzNeed === "function") _lzNeed("basket");   // V5.40: ต้องใช้ตะกร้ามาหักลบ
   window._ppCurName = customerName;   // V5.07: จำไว้วาดใหม่หลังบันทึกงวด
   // V5.18: อัปเดตสวิตช์โหมด
   try {
@@ -7968,6 +8219,18 @@ function openBillModal(customerName, group) {
   renderBillItems(bills);
 
   // reset deducts แล้วดึงตะกร้าของลูกค้าคนนี้มาหักอัตโนมัติ
+  _billBuildDeducts(customerName);
+  renderDeducts(bills.reduce((s,b)=>s+(b.item.amount||0),0));
+  
+  // V3: trigger initial mode label + summary
+  billUpdateBottomBar();
+
+  document.getElementById("billModal").style.display = "flex";
+}
+
+// ═══ V5.40: แยกบล็อกสร้าง "รายการหักตะกร้า" ออกมาเพื่อเรียกซ้ำได้ ═══
+// จำเป็นเพราะตะกร้าอาจมาถึงหลังหน้ารวมบิลเปิดไปแล้ว — เนื้อในเหมือนเดิมทุกบรรทัด
+function _billBuildDeducts(customerName) {
   billDeducts = [];
   window._billBasketAll = []; // เก็บทั้งหมดสำหรับ filter
   if (typeof bkOrders !== "undefined") {
@@ -8007,12 +8270,19 @@ function openBillModal(customerName, group) {
     }
     billDeducts = [...window._billBasketAll];
   }
-  renderDeducts(bills.reduce((s,b)=>s+(b.item.amount||0),0));
-  
-  // V3: trigger initial mode label + summary
-  billUpdateBottomBar();
+}
 
-  document.getElementById("billModal").style.display = "flex";
+// V5.40: ตะกร้ามาถึงตอนหน้ารวมบิลเปิดค้างอยู่ — เติมรายการหักแล้ววาดยอดใหม่
+//        การติ๊กเดิมยังอยู่ (id เป็น monthKey::ชื่อ::ยอด จึงคงที่)
+function _billRefreshDeducts() {
+  const nm = window._ppCurName;
+  if (!nm) return;
+  const keep = window._deductSelected;
+  _billBuildDeducts(nm);
+  window._deductSelected = keep || new Set();
+  const bills = (window._billDisplayedBills || []).filter(x => !x.isPay);
+  renderDeducts(bills.reduce((s,b)=>s+(b.item.amount||0),0));
+  billUpdateBottomBar();
 }
 
 function billApplyMonthFilter() {
@@ -8432,18 +8702,41 @@ function billUpdateBottomBar() {
   const btnPay = document.getElementById("billBtnPay");
   const btnClear = document.getElementById("billBtnClear");
   if (!btnPay || !btnClear) return;
+
+  // ═══ V5.40: ตะกร้ายังไม่ครบ = ยอดหักยังไม่ครบ = ยอดสุทธิยังไม่ใช่ของจริง ═══
+  //     ห้ามโชว์เลขที่น้อยกว่าจริง และห้ามกดจ่าย จนกว่ารายการหักจะมาครบ
+  //     ต้องเห็น "ของจริงจากเซิร์ฟเวอร์" ไม่ใช่แค่แคชในเครื่อง เพราะแคชเก่าได้ถึง 7 วัน
+  //     (รายการตะกร้าอาจถูกหักไปแล้วจากอีกเครื่อง — จ่ายตามแคชจะหักซ้ำ)
+  const _bkPend = !window._bkFromServer;
+  if (_bkPend) {
+    const _fail = window._lz && window._lz.basket === 3;
+    btnPay.classList.add("disabled"); btnPay.disabled = true;
+    btnPay.innerHTML = _fail
+      ? "ดึงรายการหักไม่สำเร็จ — แตะ \"ลองใหม่\" ด้านบน"
+      : '<span class="lz-dot"></span>กำลังดึงรายการหักตะกร้า';
+    btnClear.style.display = sel.size > 0 ? "inline-block" : "none";
+    const _gt = document.getElementById("billGrandTotal");
+    const _nt = document.getElementById("billNetTotal");
+    const _dt = document.getElementById("billDeductTotal");
+    if (_gt) _gt.textContent = fmt(totalSelected);
+    if (_dt) _dt.textContent = "—";
+    if (_nt) _nt.textContent = "—";
+    try { billUpdateClrDoneBtn(); } catch(e) {}
+    return;
+  }
+
   if (sel.size === 0) {
     // V4: โหมด default — ปุ่มจ่ายแสดง "จ่ายทั้งหมด" พร้อม net (ยังกดได้)
     if (bills.length === 0) {
-      btnPay.classList.add("disabled");
+      btnPay.classList.add("disabled"); btnPay.disabled = true;    // V5.36 (B25)
       btnPay.innerHTML = "ไม่มีบิลค้าง";
     } else {
-      btnPay.classList.remove("disabled");
+      btnPay.classList.remove("disabled"); btnPay.disabled = false;
       btnPay.innerHTML = `จ่ายทั้งหมด <span class="bill-btn-pay-amt">${fmt(netToPay)}</span>`;
     }
     btnClear.style.display = "none";
   } else {
-    btnPay.classList.remove("disabled");
+    btnPay.classList.remove("disabled"); btnPay.disabled = false;   // V5.36 (B25)
     const allCount = bills.length;
     const isAll = sel.size === allCount;
     const label = isAll ? "จ่ายทั้งหมด" : `จ่าย ${sel.size} บิล`;
@@ -8524,15 +8817,16 @@ function billPaySelected() {
 
   // Disable button to prevent double-click
   const btnPay = document.getElementById("billBtnPay");
-  if (btnPay) btnPay.classList.add("disabled");
+  if (btnPay) { btnPay.classList.add("disabled"); btnPay.disabled = true; }   // V5.36 (B25): ตั้ง property จริง ไม่ใช่แค่คลาส
   // V3: timeout safety - ปลด disabled หลัง 15 วินาที กัน button stuck
   const _payBtnTimer = setTimeout(() => {
-    if (btnPay) btnPay.classList.remove("disabled");
+    if (btnPay) { btnPay.classList.remove("disabled"); btnPay.disabled = false; }
     if (typeof showToast === "function") showToast("การจ่ายใช้เวลานานเกินไป — เครือข่ายอาจขาด", "warn", 2500);
   }, 15000);
 
   // Batch update Firebase
   const updates = {};
+  const _alreadyPaid = new Set();   // V5.36 (B52): ใบที่จ่ายไปแล้ว — ห้ามแตะ paidAt
   // V3: เพิ่ม paidAt timestamp สำหรับ sort + tracking
   const _payNow = Date.now();
   selectedBills.forEach(b => {
@@ -8544,7 +8838,14 @@ function billPaySelected() {
     }
     if (basePath) {
       updates[`${basePath}/status`] = "ชำระแล้ว";
-      updates[`${basePath}/paidAt`] = _payNow;
+      // V5.36 (B52): ใบที่อีกเครื่องจ่ายไปแล้ว อย่าเขียนทับวันที่รับเงินเดิม
+      //              ยอดเงินไม่เพี้ยน แต่ประวัติ "รับเงินวันไหน" จะเลื่อนเป็นเวลาที่กดครั้งหลัง
+      //              ต้องอ่านค่า "ล่าสุด" ไม่ใช่ค่าที่ค้างอยู่ในโมดัล — อีกเครื่องจ่ายระหว่างที่โมดัลเปิดอยู่ได้
+      const _live = allDays[b.day]?.[b.group.key]?.[b.key]
+                 || allClosed[b.day]?.[b.group.key]?.[b.key]
+                 || b.item;
+      if (_live && _live.status === "ชำระแล้ว" && _live.paidAt) _alreadyPaid.add(b.day+"::"+b.group.key+"::"+b.key);
+      else updates[`${basePath}/paidAt`] = _payNow;
     }
   });
 
@@ -8552,8 +8853,9 @@ function billPaySelected() {
     clearTimeout(_payBtnTimer);  // V3: cleanup timeout
     // update local cache
     selectedBills.forEach(b => {
-      if (allDays[b.day]?.[b.group.key]?.[b.key])   { allDays[b.day][b.group.key][b.key].status   = "ชำระแล้ว"; allDays[b.day][b.group.key][b.key].paidAt   = _payNow; }
-      if (allClosed[b.day]?.[b.group.key]?.[b.key]) { allClosed[b.day][b.group.key][b.key].status = "ชำระแล้ว"; allClosed[b.day][b.group.key][b.key].paidAt = _payNow; }
+      const _keep = _alreadyPaid.has(b.day+"::"+b.group.key+"::"+b.key);   // V5.36 (B52)
+      if (allDays[b.day]?.[b.group.key]?.[b.key])   { allDays[b.day][b.group.key][b.key].status   = "ชำระแล้ว"; if (!_keep) allDays[b.day][b.group.key][b.key].paidAt   = _payNow; }
+      if (allClosed[b.day]?.[b.group.key]?.[b.key]) { allClosed[b.day][b.group.key][b.key].status = "ชำระแล้ว"; if (!_keep) allClosed[b.day][b.group.key][b.key].paidAt = _payNow; }
     });
     // feedback
     if (typeof SX !== "undefined" && SX.tapPos) SX.tapPos();
@@ -8744,6 +9046,11 @@ function addDeductRow() {
 }
 
 function renderDeducts(grandTotal) {
+  // V5.40: ยอดหักตะกร้ายังไม่ครบ = ตัวเลขสุทธิยังเชื่อไม่ได้ → โชว์สถานะแทน
+  if (typeof _lzPaint === "function" && _lzPaint("deductList", "basket", 2)) {
+    const _t = document.getElementById("deductCountTag"); if (_t) _t.style.display = "none";
+    return;
+  }
   const listEl = document.getElementById("deductList");
   listEl.innerHTML = "";
   let totalDeduct = 0;
@@ -8783,14 +9090,14 @@ function renderDeducts(grandTotal) {
       row.dataset.deductId = deductId;
       row.innerHTML = `
         <div class="deduct-check" style="width:15px;height:15px;border-radius:4px;border:1.5px solid ${isSelected?"#F59E0B":"rgba(124,45,18,0.35)"};background:${isSelected?"#F59E0B":"rgba(255,255,255,0.5)"};flex-shrink:0;display:flex;align-items:center;justify-content:center;">${isSelected?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':""}</div>
-        <div style="flex:1;color:${isSelected?"#7C2D12":"#57534E"};font-weight:600;">${d.name}</div>
+        <div style="flex:1;color:${isSelected?"#7C2D12":"#57534E"};font-weight:600;">${_htmlEsc(d.name)}</div>
         <div style="font-weight:700;color:#B91C1C;letter-spacing:-0.01em;font-variant-numeric:tabular-nums;">−${fmt(d.amount)}</div>`;
       row.addEventListener("click", () => deductToggleBasket(deductId));
     } else {
       // user-added entry — has × delete only
       row.innerHTML = `
         <div style="width:15px;flex-shrink:0;"></div>
-        <div style="flex:1;color:#57534E;font-weight:600;">${d.name}</div>
+        <div style="flex:1;color:#57534E;font-weight:600;">${_htmlEsc(d.name)}</div>
         <div style="font-weight:700;color:#B91C1C;letter-spacing:-0.01em;font-variant-numeric:tabular-nums;">−${fmt(d.amount)}</div>
         <button onclick="removeDeduct(${i})" style="background:none;border:none;color:#B91C1C;cursor:pointer;padding:2px 4px;opacity:0.5;display:inline-flex;align-items:center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`;
     }
@@ -10020,7 +10327,7 @@ function generateInvoiceBill() {
   const html = `<!DOCTYPE html><html><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>บิล ${customerName}</title>
+  <title>บิล ${_htmlEsc(customerName)}</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700;900&display=swap');
     *{box-sizing:border-box;margin:0;padding:0;}
@@ -10123,16 +10430,17 @@ async function closeYod() {
         dayTs: _dayKeyTs(d)
       });
       try {
-        // V3: ทำทั้ง 2 ขั้นใน atomic-like flow (rollback ถ้า remove fail)
-        await db.ref("closed/"+d).set(closedData);
-        // V4.78: ลงรายชื่อในดัชนี — ต้องมีทุกวัน ไม่งั้นเช็ควันซ้ำจะพลาด
-        try { await db.ref("closedIndex/"+d).set(true); } catch(e) { console.warn("[closedIndex] set ไม่สำเร็จ:", e.message); }
+        // V5.35 (B35): เดิมเขียนแยก 3 ก้อน · closedIndex ล้มแล้วปล่อยผ่าน (แค่ warn)
+        //              ทำให้วันนั้นไม่มีในดัชนี เช็ควันซ้ำพลาดได้
+        //              update() ก้อนเดียว = สำเร็จหรือล้มพร้อมกัน ไม่มีสถานะครึ่งๆ
         try {
-          await db.ref("days/"+d).remove();
-        } catch (removeErr) {
-          // rollback closed copy
-          await db.ref("closed/"+d).remove().catch(()=>{});
-          showToast("ปิดยอดไม่ได้ — ลบ days ไม่สำเร็จ", "error", 2500);
+          await db.ref().update({
+            ["closed/"+d]:      closedData,
+            ["closedIndex/"+d]: true,
+            ["days/"+d]:        null,
+          });
+        } catch (moveErr) {
+          showToast("ปิดยอดไม่ได้ — " + (moveErr.message || "เขียนข้อมูลไม่สำเร็จ"), "error", 2500);
           resolve();
           return;
         }
@@ -10217,6 +10525,11 @@ function closedLoadMore() {
 }
 
 function renderClosed() {
+  // V5.40: ยังไม่มาก็โชว์โครงโหลด · ไม่มาเลยก็โชว์ปุ่มลองใหม่ ห้ามค้างที่จอว่าง
+  if (typeof _lzPaint === "function" && _lzPaint("closedList", "closed", 4)) {
+    const _e = document.getElementById("closedEmpty"); if (_e) _e.style.display = "none";
+    return;
+  }
   const listEl  = document.getElementById("closedList");
   const emptyEl = document.getElementById("closedEmpty");
   if (!listEl) return;
@@ -10460,9 +10773,8 @@ function bkSwitchSubV2(tab) {
 
 function bkUpdateActionBarV2() {
   const tab = window._bkSubV2 || "cutter";
-  const info = document.getElementById("bkActionInfo");
-  const btns = document.getElementById("bkActionButtons");
   // V3: Action bar ถูกลบออกแล้ว - update เฉพาะ tab counts
+  // V5.36 (B24): ลบ #bkActionInfo / #bkActionButtons ที่ไม่มีใน HTML แล้ว (ไม่ถูกใช้ต่อด้วย)
 
   // Compute counts/sums
   const mk = bkMonthKey();
@@ -10545,6 +10857,17 @@ function _bkHasFocusedInput() {
 
 function bkRender() {
   try {
+    // V5.40: ตะกร้ายังไม่มา — โชว์โครงโหลดในกล่องเนื้อหา แล้วรอ listener วาดจริง
+    //        *** ต้องวาดลงกล่องชั้นใน (bkContent ฯลฯ) ไม่ใช่ตัวแผง ***
+    //        เพราะแผงมีกล่องลูกที่ bkRenderMatrix/bkRenderOrderBelow ใช้เป็นเป้า
+    //        ถ้าเขียนทับตัวแผง กล่องลูกจะหาย แล้วข้อมูลจริงจะวาดไม่ขึ้นเลย
+    if (typeof _lzPaint === "function" && typeof _lzState === "function" && _lzState("basket") !== "ok") {
+      let _painted = false;
+      ["bkContent","bkOrderContent","bkReturnContent"].forEach(id => {
+        if (_lzPaint(id, "basket", 4)) _painted = true;
+      });
+      if (_painted) { try { bkUpdateLabel(); } catch(e) {} return; }
+    }
     // V4.72: กัน re-render ทำลาย input ที่ user กำลังกรอก
     if (_bkHasFocusedInput()) {
       // Retry ทีหลัง (1 วิ) — หลัง user blur input
@@ -10715,7 +11038,7 @@ function bkSetData(type,personId,dd,field,val) {
   if(!bkData[mk][type][personId]) bkData[mk][type][personId]={};
   if(!bkData[mk][type][personId][dd]) bkData[mk][type][personId][dd]={out:0,in:0};
   // V4.21: กันค่าติดลบ — out/in ต้องเป็น ≥ 0 เสมอ (กัน typo "-5" → -5)
-  const parsed = parseFloat(val) || 0;
+  const parsed = parseFloat(String(val).replace(/[,\s]/g, "")) || 0;   // V5.34 (B44): "1,200" เคยกลายเป็น 1
   bkData[mk][type][personId][dd][field] = Math.max(0, parsed);
   bkSaveLocal();
   // อัปเดตเฉพาะ balance cells ของ row นี้ — ไม่ re-render ทั้งตาราง
@@ -10724,6 +11047,16 @@ function bkSetData(type,personId,dd,field,val) {
 
 // ── Basket: save/load via Firebase ──────────────────────────────
 function bkSaveLocal() {
+  // ═══ V5.40: ด่านกันลบตะกร้าทั้งก้อน ═══
+  // ฟังก์ชันนี้เขียน basket ทั้งก้อนด้วย set() ถ้าตัวแปรยังว่างเพราะยังโหลดไม่เสร็จ
+  // การเซฟครั้งเดียวจะลบข้อมูลตะกร้าทั้งปีทิ้ง — ต้องเห็นของจริงจากเซิร์ฟเวอร์ก่อนเสมอ
+  if (!window._bkFromServer) {
+    console.warn("[basket] ยังไม่ได้ข้อมูลจากเซิร์ฟเวอร์ — ไม่บันทึกทับ");
+    if (typeof showToast === "function")
+      showToast("ข้อมูลตะกร้ายังโหลดไม่เสร็จ — ยังบันทึกไม่ได้ รอสักครู่แล้วลองใหม่", "warn", 3000);
+    if (typeof _lzNeed === "function") _lzNeed("basket");
+    return;
+  }
   bkSaving = true;
   const payload = {
     cutters:   JSON.stringify(bkCutters||[]),
@@ -10772,7 +11105,24 @@ function bkLoadLocal() {
     // V4.39: save cache raw payload (debounced — Firebase blob แล้ว)
     _cacheGenericSaveDebounced(CACHE_KEY_BASKET, () => d, 2000);
     // ไม่ re-render ถ้าเราเป็นคนบันทึกเอง (แค่อัปเดต balance in-place)
+    window._bkFromServer = true;                                  // V5.40: เห็นของจริงจากเซิร์ฟเวอร์แล้ว
+    if (typeof _lzArrived === "function") _lzArrived("basket");
     if (activeTab === "basket" && !bkSaving) bkRender();
+    // V5.40: ตอนเข้าแท็บ ถ้าตารางยังไม่ถูกวาด การเลื่อนไปวันนี้จะไม่เกิดขึ้น
+    //        เลื่อนซ้ำให้ "เฉพาะกรณีที่ครั้งแรกไม่ได้เลื่อนจริง" — ไม่งั้นอนิเมชันจะสะดุด
+    if (activeTab === "basket" && !window._bkScrollDone) {
+      // เช็คธงตอน "ถึงเวลา" ไม่ใช่ตอนตั้งเวลา — ไม่งั้นจะซ้อนกับการเลื่อนของ switchTab (80 ms)
+      // แล้วการเลื่อนสองครั้งพร้อมกันจะทำให้หยุดคนละตำแหน่ง
+      setTimeout(() => {
+        if (window._bkScrollDone) return;
+        try { bkScrollCutterToToday(); } catch(e) {}
+      }, 120);
+    }
+    // V5.40: ถ้าหน้ารวมบิลเปิดค้างอยู่ ต้องเติมรายการหักตะกร้าให้ครบ
+    try {
+      const _bm = document.getElementById("billModal");
+      if (_bm && _bm.style.display === "flex" && typeof _billRefreshDeducts === "function") _billRefreshDeducts();
+    } catch(e) {}
     bkSaving = false;
   });
 }
@@ -10792,7 +11142,7 @@ function bkPersonOptions(type, id, idx) {
   overlay.innerHTML = `
     <div style="background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:400px;padding:16px 0 24px;animation:calPop .2s ease;">
       <div style="padding:0 18px 12px;border-bottom:1px solid #F5F5F4;text-align:center;">
-        <div style="font-weight:600;font-size:16px;color:#1C1917;">${p.name}</div>
+        <div style="font-weight:600;font-size:16px;color:#1C1917;">${_htmlEsc(p.name)}</div>
         <div style="font-size:11px;color:#A8A29E;margin-top:2px;">${type==="cutter"?"คนตัด":"ลูกค้า"}</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:0;">
@@ -10865,7 +11215,8 @@ function bkScrollCutterToToday() {
   if(!table) return;
   const ths = table.querySelectorAll("thead tr:first-child th");
   const todayTh = ths[2 + todayD];
-  if(todayTh) todayTh.scrollIntoView({inline:"center", block:"nearest", behavior:"smooth"});
+  if(todayTh) { todayTh.scrollIntoView({inline:"center", block:"nearest", behavior:"smooth"});
+                window._bkScrollDone = true; }   // V5.40: เลื่อนได้จริงแล้ว ไม่ต้องเลื่อนซ้ำ
 }
 
 function bkScrollOrderToToday() {
@@ -11034,7 +11385,7 @@ function bkRenderMatrix(type) {
       <td class="bk-freeze" style="left:0;${lockBorder}width:80px;min-width:80px;max-width:80px;padding:5px 4px 5px 8px;text-align:left;background:${nameBg} !important;">
         <div onclick="bkPersonOptions('${type}','${person.id}','${pi}')" style="cursor:pointer;display:flex;align-items:center;gap:4px;font-weight:700;">
           <span class="bk-lo-badge bk-lo-${badge.class}" style="display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;padding:2px 5px;border-radius:5px;letter-spacing:-0.2px;min-width:18px;flex-shrink:0;">${badge.text}</span>
-          <span style="text-decoration:underline;text-decoration-style:dotted;text-decoration-color:#A8A29E;">${person.name}</span>
+          <span style="text-decoration:underline;text-decoration-style:dotted;text-decoration-color:#A8A29E;">${_htmlEsc(person.name)}</span>
         </div>
       </td>
       <td data-total="${type}-${person.id}" class="bk-freeze bk-freeze-bal" style="left:80px;text-align:center;width:34px;min-width:34px;max-width:34px;padding-left:2px;padding-right:6px;font-weight:700;background:#fff;color:${currentBal>0?'#DC2626':'#A8A29E'};">
@@ -11089,7 +11440,8 @@ function bkRenderMatrix(type) {
         <td data-bal="${type}-${person.id}-${dd}" class="${balClass}" style="${bg}text-align:center;min-width:34px;">${runBal > 0 ? runBal : '<span class="bk-bal-zero">–</span>'}</td>`;
     }
     // ปุ่มสรุปรายเดือน
-    html += `<td style="text-align:center;"><button onclick="bkShowSummary('${type}','${person.id}','${person.name}')"
+    // V5.37 (B19): เดิมยัดชื่อดิบเข้า onclick — ชื่ออย่าง O'Brien ทำ syntax พัง ปุ่มกดไม่ได้
+    html += `<td style="text-align:center;"><button onclick="bkShowSummary('${_jsAttrEsc(type)}','${_jsAttrEsc(person.id)}','${_jsAttrEsc(person.name)}')"
       style="border:none;background:#EFF6FF;color:#0369A1;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:700;cursor:pointer;">สรุป</button></td>`;
     html += `</tr>`;
   });
@@ -11658,7 +12010,7 @@ function _bkSumRecalc(scope) {
       const r = byDay[+el.dataset.sumDay]; if (!r) return;
       const diff = r.out - r.inn;
       if (!r.has) { el.textContent = "—"; el.className = "bk-sum-diff even"; return; }
-      el.textContent = diff === 0 ? "เท่ากัน" : (diff > 0 ? "ขาด +" : "เกิน ") + diff;
+      el.textContent = diff === 0 ? "เท่ากัน" : (diff > 0 ? "ขาด +" + diff : "เกิน " + Math.abs(diff));   // V5.34 (B23)
       el.className = "bk-sum-diff " + (diff === 0 ? "even" : diff > 0 ? "short" : "over");
     });
     const kpi = document.querySelector("[data-sum-kpi='" + d.id + "']");
@@ -11685,7 +12037,7 @@ function _bkSumRowsHtml(info, type, id) {
     const diff = r.out - r.inn;
     const sum = !r.has ? `<div class="bk-sum-diff even" data-sum-day="${r.d}">—</div>`
       : diff === 0 ? `<div class="bk-sum-diff even" data-sum-day="${r.d}">เท่ากัน</div>`
-      : `<div class="bk-sum-diff ${diff>0?'short':'over'}" data-sum-day="${r.d}">${diff>0?'ขาด +':'เกิน '}${diff}</div>`;
+      : `<div class="bk-sum-diff ${diff>0?'short':'over'}" data-sum-day="${r.d}">${diff>0?'ขาด +'+diff:'เกิน '+Math.abs(diff)}</div>`;   // V5.34 (B23)
     const cell = (field, val, cls) => {
       // 3 สภาพ: มีเลข · เป็น 0 ทั้งที่วันนั้นมีข้อมูล (แสดง ✕) · ยังไม่เคยกรอก (แสดง "แตะ")
       const isRealZero = val <= 0 && r.has;        // วันนั้นมีข้อมูล แต่ช่องนี้เป็น 0 จริง
@@ -11950,7 +12302,7 @@ function _bkmBuildPrintableForMonth(monthData, custName, monthIndex, totalMonths
     const diff = r.out - r.inn;                       // บวก = ขาด · ลบ = เกิน
     const sumHtml = diff === 0
       ? `<div style="text-align:right;color:#C7C7CC;font-weight:500;">เท่ากัน</div>`
-      : `<div style="text-align:right;font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums;color:${diff>0?'#DC2626':'#16A34A'};">${diff>0?'ขาด':'เกิน'} ${diff>0?'+':''}${diff}</div>`;
+      : `<div style="text-align:right;font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums;color:${diff>0?'#DC2626':'#16A34A'};">${diff>0?'ขาด +'+diff:'เกิน '+Math.abs(diff)}</div>`;   // V5.34 (B23) เดิมเกินแล้วได้ลบซ้อน
     // "เริ่มค้าง" = จุดเริ่มนับของทั้งรายงาน → แถวแรกของหน้าแรกเสมอ
     const startTag = (isFirst && ri === 0)
       ? `<span style="color:#DC2626;font-weight:700;font-size:10.5px;margin-left:6px;white-space:nowrap;">( เริ่มค้าง )</span>` : "";
@@ -12080,7 +12432,9 @@ function bkShowSummary(type, id, name) {
           <div style="font-size:11px;color:#8E8E93;margin-top:2px;font-weight:500;line-height:1.2;">${BK_MONTHS_TH[bkMonth-1]} ${bkYear+543}</div>
         </div>
         <!-- V4.72: นับย้อนหลัง (trace back) -->
-        <button onclick="_bkStartTraceBack('${type}','${id}','${_attrEscS(name).replace(/'/g,"\\'")}')" aria-label="นับย้อนหลัง" title="นับย้อนหลัง" data-bkm-hide-on-print
+        <!-- V5.37 (B19): เดิมใช้ _attrEscS ซึ่ง escape ถูกสำหรับ HTML แต่ผิดชนิดสำหรับสตริงใน onclick
+             ( ' กลายเป็น &#39; แล้วเบราว์เซอร์ถอดกลับเป็น ' ก่อน JS อ่าน → สตริงพังเหมือนเดิม ) -->
+        <button onclick="_bkStartTraceBack('${_jsAttrEsc(type)}','${_jsAttrEsc(id)}','${_jsAttrEsc(name)}')" aria-label="นับย้อนหลัง" title="นับย้อนหลัง" data-bkm-hide-on-print
           style="width:28px;height:28px;border:none;background:rgba(124,58,237,0.14);border-radius:50%;cursor:pointer;color:#7C3AED;display:flex;align-items:center;justify-content:center;flex-shrink:0;-webkit-tap-highlight-color:transparent;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
         </button>
@@ -12739,7 +13093,7 @@ function bkRenderOrder() {
             onclick="${oi===0?`bkEditOrderDate('${order.id}')`:''}">
             ${oi===0 ? `<span style="cursor:pointer;text-decoration:underline;text-decoration-style:dotted;">${dk.split("-").slice(2).join("")+"-"+BK_MONTHS_TH[parseInt(dk.split("-")[1])-1]}</span>` : ""}
           </td>
-          <td onclick="bkEditOrderName('${order.id}')" style="cursor:pointer;font-weight:600;">${order.name}</td>
+          <td onclick="bkEditOrderName('${order.id}')" style="cursor:pointer;font-weight:600;">${_htmlEsc(order.name)}</td>
           <td onclick="bkEditOrderBasket('${order.id}')" style="text-align:center;cursor:pointer;font-weight:700;">${order.basket||"-"}</td>
           <td style="text-align:center;">${bkStatusBadge(order)}</td>
           <td><button onclick="bkDeleteOrder('${order.id}')" style="border:none;background:transparent;cursor:pointer;color:#FCA5A5;font-size:13px;">✕</button></td>
@@ -13371,6 +13725,16 @@ function switchTab(tab) {
     activeEl.classList.add("tab-fade-in");
   }
 
+  // V5.40: เข้าแท็บลูกค้าทีไร ล้าง cache รอบหนึ่ง
+  //        (การแก้ข้อมูลในเครื่องบางจังหวะเกิดก่อน listener ยิงกลับ — กันตัวเลขค้าง)
+  if(tab==="cust" && typeof cmInvalidateIndex === "function") cmInvalidateIndex();
+  // ═══ V5.40 (B20): เข้าแท็บไหน ค่อยดึงก้อนของแท็บนั้น ═══
+  if (typeof _lzNeed === "function") {
+    if (tab==="closed" || tab==="analytics" || tab==="summary" || tab==="cust") _lzNeed("closed");
+    if (tab==="cust")   _lzNeed("customers");
+    if (tab==="basket") _lzNeed("basket");
+    if (tab==="truck")  _lzNeed("trucks");
+  }
   if(tab==="basket") {
     bkRender();
     // scroll ไปวันปัจจุบันทุกครั้งที่เปิดหน้าตะกร้า
@@ -13451,12 +13815,18 @@ function fruitImg(name, size) {
 // ================================================================
 const CM_MONTHS = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
 
-function cmGetPurchases(name) {
-  const out = [];
+// ═══ V5.40 (B28/B42): เดิมสแกนฐานข้อมูลทั้งก้อนใหม่ "ต่อลูกค้า 1 คน" ═══
+// หน้าลูกค้าวน cmGetPurchases ทีละคน → ลูกค้า 200 คน = สแกน 200 รอบ
+// และช่องค้นหาสั่งวาดใหม่ทุกตัวอักษรที่พิมพ์ (วัดจริง: เปิดแท็บ 808 ms · พิมพ์ 1 ตัว 161 ms)
+// เปลี่ยนเป็นสแกนรอบเดียวเก็บเข้า Map (ชื่อ → รายการซื้อ) แล้วใช้ซ้ำ
+// ผลลัพธ์ที่คืนออกไปเหมือนเดิมทุกประการ ทั้งลำดับและเนื้อใน — เปลี่ยนแค่วิธีหา
+let _cmIndex = null;
+let _cmIndexVer = -1;
+
+function _cmBuildIndex() {
+  const map = new Map();
   const src = Object.assign({}, allDays, allClosed);
-  const _target = (name||"").trim();
-  if (!_target) return out;
-  // เรียงตาม timestamp จริง ไม่ใช่ string sort
+  // เรียงตาม timestamp จริง ไม่ใช่ string sort  (ลำดับเดิมของ cmGetPurchases)
   const sortedDays = Object.keys(src).sort((a,b) => {
     const pa = cmParseDay(a), pb = cmParseDay(b);
     if (!pa || !pb) return 0;
@@ -13466,12 +13836,29 @@ function cmGetPurchases(name) {
     const data = src[day] || {};
     ["credit","transfer","fence","delivery"].forEach(g => {
       Object.values(data[g] || {}).forEach(item => {
-        if (item && typeof item==="object" && (item.name||"").trim()===_target && item.status)
-          out.push({ day, amount: item.amount||0, note: item.note||"", status: item.status });
+        // V5.34 (B21): งวดผ่อนเป็นแถวแยกในฐานข้อมูล ถ้าไม่กรองจะนับเป็นการซื้อคนละครั้ง
+        //              (บอร์ดกรอง ppOf ออกอยู่แล้ว — ยอดเงินยังถูกเพราะใบหลักลดตามงวด)
+        if (!item || typeof item !== "object" || item.ppOf || !item.status) return;
+        const n = (item.name || "").trim();
+        if (!n) return;
+        let arr = map.get(n);
+        if (!arr) { arr = []; map.set(n, arr); }
+        arr.push({ day, amount: item.amount||0, note: item.note||"", status: item.status });
       });
     });
   });
-  return out;
+  return map;
+}
+
+function cmInvalidateIndex() { _cmIndex = null; _cmIndexVer = -1; }
+
+function cmGetPurchases(name) {
+  const _target = (name||"").trim();
+  if (!_target) return [];
+  const ver = window._dataVersion || 0;
+  if (!_cmIndex || _cmIndexVer !== ver) { _cmIndex = _cmBuildIndex(); _cmIndexVer = ver; }
+  const hit = _cmIndex.get(_target);
+  return hit ? hit.slice() : [];   // คืนสำเนา — ผู้เรียกแก้ array ได้โดยไม่กระทบ cache
 }
 
 function cmParseDay(label) {
@@ -13496,7 +13883,20 @@ function cmGetStatus(lastDay) {
 
 function cmFmt(n) { return Number(n||0).toLocaleString("th-TH",{minimumFractionDigits:0,maximumFractionDigits:0}); }
 
+// V5.40 (B28): เดิมสั่งวาดใหม่ทุกตัวอักษร · บนมือถือรู้สึกหน่วงตอนพิมพ์
+// รอ 200 ms หลังหยุดพิมพ์ค่อยวาด — พิมพ์รวดเดียวจะวาดครั้งเดียว
+let _cmSearchTimer = null;
+function cmSearchInputChanged() {
+  if (_cmSearchTimer) clearTimeout(_cmSearchTimer);
+  _cmSearchTimer = setTimeout(() => { _cmSearchTimer = null; cmRenderList(); }, 200);
+}
+
 function cmRenderList() {
+  // V5.40
+  if (typeof _lzPaint === "function" && _lzPaint("cmCustList", "customers", 5)) {
+    const _e = document.getElementById("cmEmptyMsg"); if (_e) _e.style.display = "none";
+    return;
+  }
   const listEl  = document.getElementById("cmCustList");
   const emptyEl = document.getElementById("cmEmptyMsg");
   const sortLbl = document.getElementById("cmSortLabel");
@@ -13744,6 +14144,14 @@ function cmSaveCustomer() {
   if(!name){alert("กรุณากรอกชื่อลูกค้า");return;}
   // V3: เช็คชื่อซ้ำ (case-insensitive, ยกเว้น customer ตัวเองตอนแก้ไข)
   const nameLower = name.toLowerCase();
+  // V5.40: ถ้ารายชื่อยังไม่มา การเช็คชื่อซ้ำจะผ่านหมด → ห้ามบันทึกจนกว่าจะได้ของจริง
+  if (!window._custFromServer) {
+    if (typeof showToast === "function")
+      showToast("รายชื่อลูกค้ายังโหลดไม่เสร็จ — ยังบันทึกไม่ได้ รอสักครู่แล้วลองใหม่", "warn", 3000);
+    else alert("รายชื่อลูกค้ายังโหลดไม่เสร็จ — รอสักครู่แล้วลองใหม่");
+    if (typeof _lzNeed === "function") _lzNeed("customers");
+    return;
+  }
   const dup = Object.entries(cmCustomers||{}).find(([id, c]) =>
     id !== cmEditingId && (c.name||"").trim().toLowerCase() === nameLower
   );
@@ -13876,17 +14284,14 @@ async function autoArchiveOldDays() {
       dayTs: _dayKeyTs(d)
     });
     try {
-      // ลำดับสำคัญ: เขียนปลายทางให้ครบก่อน แล้วค่อยลบต้นทาง
-      await db.ref("closed/" + d).set(closedData);
-      await db.ref("closedIndex/" + d).set(true);
-      try {
-        await db.ref("days/" + d).remove();
-      } catch (removeErr) {
-        // ลบต้นทางไม่ได้ → ถอนปลายทางคืน ไม่ให้ข้อมูลซ้ำ 2 ที่
-        await db.ref("closed/" + d).remove().catch(()=>{});
-        await db.ref("closedIndex/" + d).remove().catch(()=>{});
-        throw removeErr;
-      }
+      // V5.35 (B35): เดิมเขียน 3 ก้อนแยกกัน · ถ้า closedIndex ล้ม จะกระโดดข้าม rollback
+      //              ไป catch ชั้นนอกที่แค่ warn → วันเดียวอยู่ทั้ง days และ closed ยอดนับซ้ำ
+      //              update() ก้อนเดียว Firebase รับประกันว่าสำเร็จหรือล้มพร้อมกัน ไม่ต้อง rollback เอง
+      await db.ref().update({
+        ["closed/" + d]:      closedData,
+        ["closedIndex/" + d]: true,
+        ["days/" + d]:        null,
+      });
       delete allDays[d];
       n++;
     } catch(e) {
@@ -13905,7 +14310,14 @@ async function autoArchiveOldDays() {
 }
 
 // รันหลังหน้าแรกวาดเสร็จ — ไม่แย่งเวลาโหลด
-setTimeout(() => { try { autoArchiveOldDays(); } catch(e) {} }, 5000);
+// V5.35 (B33): เดิมยิงที่วินาทีที่ 5 ตายตัว · ถ้าเน็ตช้ากว่านั้น จะตัดสินใจย้ายวันเข้าคลัง
+//              จาก snapshot ที่มาจากแคชในเครื่อง (เก่าได้ถึง 7 วัน) และการย้ายไม่มี undo
+//              จึงรอจนกว่า listener จะได้ข้อมูลจริงจาก Firebase ก่อน
+(function _scheduleAutoArchive(tries) {
+  if (window._daysFromServer) { try { autoArchiveOldDays(); } catch(e) {} return; }
+  if (tries >= 12) return;   // รอสูงสุด ~1 นาที · ไม่มาก็ข้ามไป รอบเปิดหน้าใหม่ค่อยลอง
+  setTimeout(() => _scheduleAutoArchive(tries + 1), 5000);
+})(0);
 
 // ═══ V4.83: เตือนเมื่อข้อมูลวันพระใกล้หมด ═══
 // วันพระใช้ปฏิทินจันทรคติ คำนวณสูตรตายตัวไม่ได้ ต้องเติมข้อมูลเป็นปีๆ
@@ -13930,6 +14342,7 @@ function checkHolyDataExpiry() {
 setTimeout(checkHolyDataExpiry, 8000);
 
 function openDataMgr() {
+  if (typeof _lzNeed === "function") _lzNeed("closed");   // V5.40: รายการวันต้องรวมคลังด้วย
   const sel=document.getElementById("dataMgrDaySelect");
   const prev=document.getElementById("dataMgr30Preview");
   if(!sel) return;
@@ -14093,7 +14506,11 @@ function renderAnalytics() {
   });
   const pp=tot>0?Math.round(paid/tot*100):0;
   const wp=tot>0?Math.round(wait/tot*100):0;
-  const avgD=anMode==="year"?12:Math.max(1,fd.length);
+  // V5.34 (B45): เดิมหาร 12 เสมอ — ปีที่เพิ่งเริ่มหรือปีปัจจุบันจึงได้ค่าต่ำกว่าจริงมาก
+  //              หารด้วยจำนวนเดือนที่มีข้อมูลจริง ให้เข้าคู่กับโหมดเดือนที่หารด้วยวันที่มีข้อมูล
+  const avgD=anMode==="year"
+    ? Math.max(1, new Set(fd.map(d=>{const t=cmParseDay(d); return t?t.getMonth():-1;}).filter(m=>m>=0)).size)
+    : Math.max(1,fd.length);
   const avg=Math.round(tot/avgD);
   const kr=document.getElementById("anKpiRow");
   if(kr)kr.innerHTML=`
@@ -14157,7 +14574,9 @@ document.addEventListener("keydown", function(e) {
   if (calModal && calModal.style.display === "flex") { closeCal(); return; }
   // 3. Edit/data modals
   const editItemModal = document.getElementById("editItemModal");
-  if (editItemModal && editItemModal.classList.contains("show")) { closeEditItemModal(); return; }
+  // V5.36 (B29): โมดัลนี้เปิดด้วย style.display="flex" ไม่ได้ใส่คลาส show
+  //              เช็คแบบเดียวกับ billModal/dataMgrModal ที่อยู่ในด่านเดียวกันนี้
+  if (editItemModal && editItemModal.style.display === "flex") { closeEditItemModal(); return; }
   const editDayModal = document.getElementById("editDayModal");
   if (editDayModal && editDayModal.classList.contains("show")) { closeEditModal(); return; }
   const dataMgrModal = document.getElementById("dataMgrModal");
@@ -14185,7 +14604,9 @@ document.addEventListener("keydown", function(e) {
   const billPreview = document.getElementById("billPreviewModal");
   if (billPreview && billPreview.style.display === "flex") { if (typeof closeBillPreview === "function") closeBillPreview(); return; }
   // 10. Nav sheet
-  const navSheet = document.querySelector(".nav-sheet.show");
+  // V5.36 (B30): เดิมหา ".nav-sheet.show" — เมนูใส่คลาส .open ไม่ใช่ .show
+  //              เงื่อนไขจึงเป็นเท็จเสมอ กด ESC ไม่เคยปิดเมนู
+  const navSheet = document.querySelector(".nav-sheet.open");
   if (navSheet) { if (typeof closeNavSheet === "function") closeNavSheet(); return; }
 });
 
@@ -14224,7 +14645,7 @@ document.addEventListener("keydown", function(e) {
       document.getElementById("calModal")?.style.display === "flex" ||
       document.getElementById("dataMgrModal")?.style.display === "flex" ||
       document.getElementById("editDayModal")?.classList.contains("show") ||
-      document.getElementById("editItemModal")?.classList.contains("show") ||
+      document.getElementById("editItemModal")?.style.display === "flex" ||   // V5.36 (B29): เปิดด้วย style ไม่ใช่คลาส
       document.getElementById("cmDetailModal")?.classList.contains("show") ||
       document.getElementById("cmFormModal")?.classList.contains("show") ||
       document.getElementById("truckModal")?.classList.contains("show") ||
@@ -14232,7 +14653,14 @@ document.addEventListener("keydown", function(e) {
       document.getElementById("multiAddModal")?.classList.contains("show") ||
       document.getElementById("bkStatusPickerModal") ||
       document.getElementById("bkPersonOptModal") ||
-      document.querySelector(".nav-sheet.show");
+      // V5.36 (B53): เดิมหา ".nav-sheet.show" ซึ่งไม่มีจริง (เมนูใส่ .open)
+      //              ปัดจากขอบซ้ายเพื่อเปิดเมนู → ตัวจับปัดเปลี่ยนวันก็ทำงานตามด้วย
+      //              ผู้ใช้เปิดเมนูดูอะไรสักอย่าง ปิดเมนู แล้วบอร์ดอยู่คนละวันโดยไม่รู้ตัว
+      document.querySelector(".nav-sheet.open") ||
+      // V5.36 (B55): ฟอร์มเพิ่มรายการฝังอยู่ในบอร์ด ไม่ใช่โมดัลลอย ด่านเดิมจึงมองไม่เห็น
+      //              พอวันเปลี่ยน บอร์ดวาดใหม่ ฟอร์มหายพร้อมทุกอย่างที่พิมพ์ ไม่มีที่กู้คืน
+      //              (Firebase listener เช็ค !openForm ถูกอยู่แล้ว — เอามาตรงกัน)
+      openForm;
     if (anyModalOpen) return;
     if (lockAxis !== "x") return; // ถ้า scroll แนวตั้ง ยกเลิก
     const dx = e.changedTouches[0].clientX - tx;
@@ -14329,6 +14757,40 @@ function playSoundComplete() {
       osc.start(start); osc.stop(end);
     });
   } catch(e){}
+}
+
+// ═══ V5.35 (B08): รายการหนึ่งอยู่ได้ 2 ที่ — days/ (วันที่ยังเปิด) หรือ closed/ (วันที่ปิดยอดแล้ว)
+//     บอร์ดเปิดวันในคลังได้และปุ่มแก้ไขก็โผล่ ถ้าเขียน days/ เสมอ คลังจะไม่เปลี่ยน
+//     แถมสร้างวันใหม่ใน days ที่มีรายการเดียวและไม่มี status → บอร์ดขึ้นวันผี ยอดรวมเพี้ยน ═══
+function _itemBasePath(dayKey) {
+  return allDays[dayKey] ? `days/${dayKey}` : `closed/${dayKey}`;
+}
+
+// ═══ V5.38 (B16): ใบหลักผ่อนจ่ายกับงวดที่จ่ายแล้ว ต้องอยู่ "วันเดียวกัน หมวดเดียวกัน" เสมอ ═══
+// ทุกฟังก์ชันของระบบผ่อนจ่ายหาคู่กันด้วยเงื่อนไขนี้ (ppAddPayment · ppEditPayment · ppDeletePayment)
+// ถ้าย้ายแต่ใบหลัก งวดจะกลายเป็นบิล "ชำระแล้ว" ลอยเดี่ยว แก้ไม่ได้ ลบไม่ได้
+// และบรรทัด "จ่ายแล้ว X / Y" หายไป — เงินที่รับมาแล้วเลยไม่มีที่อ้างอิง
+//
+// คืนค่าเป็นก้อนคำสั่งสำหรับ db.ref().update() เพื่อให้ย้ายพร้อมกันทีเดียว ไม่ขาดกลางคัน
+function _ppMoveUpdates(basePath, dayKey, fromGrp, toGrp, ppId) {
+  const out = {};
+  if (!ppId || fromGrp === toGrp) return out;
+  const dayData = allDays[dayKey] || allClosed[dayKey] || {};
+  const src = dayData[fromGrp] || {};
+  for (const k of Object.keys(src)) {
+    const it = src[k];
+    if (!it || it.ppOf !== ppId) continue;
+    out[`${basePath}/${toGrp}/${k}`]   = it;     // ใช้ key เดิมได้ เพราะคนละหมวดคนละ path
+    out[`${basePath}/${fromGrp}/${k}`] = null;
+  }
+  return out;
+}
+
+// หางวดทั้งหมดของใบหลักใบหนึ่ง (วันเดียวกัน หมวดเดียวกัน)
+function _ppFindPayKeys(dayKey, grpKey, ppId) {
+  if (!ppId) return [];
+  const grp = (allDays[dayKey] || allClosed[dayKey] || {})[grpKey] || {};
+  return Object.keys(grp).filter(k => grp[k] && grp[k].ppOf === ppId);
 }
 
 // ── ข้อ 3: Revert item to unpaid ─────────────────────────────────
@@ -14491,6 +14953,27 @@ const _bug = {
 };
 
 // ──────────────── Helpers ────────────────
+// ═══ V5.37 (B38): กรอง "ค่า" ไม่ใช่แค่ชื่อฟิลด์ ═══
+// ข้อความที่ผู้ใช้พิมพ์ไปอยู่ในฟิลด์ชื่อ message ซึ่งไม่อยู่ในบัญชีดำ จึงผ่านฉลุย
+// แล้วยังถูกก็อปไปอยู่ในฟิลด์ hash อีกชุด
+// เลือกกรองแบบเจาะจง ไม่กวาดเลข 6 หลักทั้งหมด เพราะยอดเงินก็ 6 หลักได้
+function _bugScrub(t) {
+  let s = String(t == null ? "" : t);
+  try {
+    // 1) PIN จริงของทั้ง 3 บัญชี — รู้ค่าแน่นอน ตัดทิ้งได้ตรงๆ
+    if (typeof AUTH_USERS !== "undefined" && Array.isArray(AUTH_USERS)) {
+      AUTH_USERS.forEach(u => {
+        if (u && u.pin) s = s.split(String(u.pin)).join("[PIN]");
+      });
+    }
+  } catch(e) {}
+  // 2) เบอร์โทรไทย (ขึ้นต้น 0 ตามด้วยอีก 8–9 ตัว)
+  s = s.replace(/\b0\d{8,9}\b/g, "[เบอร์โทร]");
+  // 3) เลข 6 หลักที่ตามหลังคำว่า PIN/รหัส/ผ่าน — น่าจะเป็นรหัสที่ผู้ใช้พิมพ์เล่าให้ฟัง
+  s = s.replace(/(pin|PIN|พิน|รหัส|ผ่าน|password)([^\d]{0,12})\d{4,8}/g, "$1$2[รหัส]");
+  return s;
+}
+
 function _bugTrunc(s, n) {
   s = String(s || "");
   return s.length > n ? s.slice(0, n) + "...[truncated]" : s;
@@ -14505,7 +14988,8 @@ function _bugTruncStack(stack) {
 
 // hash สำหรับ dedup (ไม่ต้อง crypto — แค่ stable string)
 function _bugHash(severity, type, msg, stackFirstLine) {
-  return [severity, type, _bugTrunc(msg, 100), _bugTrunc(stackFirstLine || "", 100)].join("|");
+  // V5.37 (B38): hash เดิมเอาข้อความ 100 ตัวแรกมาตรงๆ — ข้อมูลที่กรองไปแล้วจึงรั่วทางนี้อีกชุด
+  return [severity, type, _bugTrunc(_bugScrub(msg), 100), _bugTrunc(stackFirstLine || "", 100)].join("|");
 }
 
 // Privacy sanitizer — ลบ key ใน blacklist + truncate ยาว
@@ -14513,7 +14997,7 @@ function _bugSanitize(obj, depth) {
   depth = depth || 0;
   if (depth > 4) return "[deep]";
   if (obj === null || obj === undefined) return obj;
-  if (typeof obj === "string") return _bugTrunc(obj, 300);
+  if (typeof obj === "string") return _bugTrunc(_bugScrub(obj), 300);   // V5.37 (B38): กรองค่าก่อนตัดความยาว
   if (typeof obj === "number" || typeof obj === "boolean") return obj;
   if (Array.isArray(obj)) {
     return obj.slice(0, 20).map(x => _bugSanitize(x, depth + 1));
@@ -14705,7 +15189,9 @@ function bugReport(severity, type, data) {
   _bug.reporting = true;
   try {
     data = data || {};
-    const msg = String(data.message || data.msg || data.error || "no message");
+    // V5.37 (B38): กรองที่ต้นทางจุดเดียว — ค่านี้ไหลต่อไปทั้ง entry.message และ hash
+    //              (data ทั้งก้อนผ่าน _bugSanitize ซึ่งกรองสตริงทุกตัวอยู่แล้ว)
+    const msg = _bugScrub(String(data.message || data.msg || data.error || "no message"));
     const stack = _bugTruncStack(data.stack || data.error?.stack || "");
     const stackFirst = (stack.split("\n")[1] || "").trim();
     const hash = _bugHash(severity, type, msg, stackFirst);
@@ -15437,7 +15923,7 @@ function submitBugReport() {
 function _showToast(msg) {
   const t = document.createElement("div");
   t.style.cssText = "position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#fff;padding:11px 20px;border-radius:99px;font-family:'IBM Plex Sans Thai',sans-serif;font-size:13.5px;font-weight:500;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:toastSlide 0.3s ease;";
-  t.innerHTML = `<style>@keyframes toastSlide { from{opacity:0;transform:translate(-50%,10px)} to{opacity:1;transform:translate(-50%,0)} }</style>${msg}`;
+  t.innerHTML = `<style>@keyframes toastSlide { from{opacity:0;transform:translate(-50%,10px)} to{opacity:1;transform:translate(-50%,0)} }</style>${_htmlEsc(msg)}`;   // V5.37 (B13)
   document.body.appendChild(t);
   setTimeout(() => {
     t.style.opacity = "0";
@@ -15659,6 +16145,8 @@ function _acFmtRecency(ts) {
 }
 
 function showAutocomplete(inputEl) {
+  // V5.40: รายชื่อมาจาก customers + คลัง — ดึงตอนเริ่มพิมพ์ครั้งแรก
+  if (typeof _lzNeed === "function") { _lzNeed("customers"); _lzNeed("closed"); }
   removeAutocomplete();
   // Track active input for reposition (used when keyboard opens/closes)
   window._acActiveInput = inputEl;
@@ -15775,10 +16263,9 @@ function showAutocomplete(inputEl) {
       if (inputEl._acOpts && typeof inputEl._acOpts.onSelect === "function") {
         try { inputEl._acOpts.onSelect(name, meta); } catch(err) { console.error(err); }
       } else {
-        // Legacy fallback: focus ช่อง basket modal ก่อน ถ้าไม่มีค่อย f-amount
-        const bkmB = document.getElementById("bkmBasket");
-        const amtEl = document.getElementById("f-amount");
-        const nextEl = bkmB && document.getElementById("bkAddModal")?.classList.contains("show") ? bkmB : amtEl;
+        // Legacy fallback: ไปช่องยอดเงินต่อ
+        // V5.36 (B24): เดิมลอง #bkmBasket ก่อน แต่ id นั้นไม่มีใน HTML เงื่อนไขจึงตกมาที่ f-amount เสมอ
+        const nextEl = document.getElementById("f-amount");
         // V4.26: ใช้ rAF แทน setTimeout 50ms — เร็วกว่า 3 เท่า + iOS reliable
         if (nextEl) requestAnimationFrame(() => {
           nextEl.focus();
@@ -16269,6 +16756,11 @@ function openEditItemModal(dayKey, grpKey, itemKey, item) {
         }
       }
     };
+    // V5.36 (B56): onAuxInput เป็น arrow ตัวใหม่ทุกครั้งที่เปิดโมดัล และตอนปิดลบให้แค่ของ autocomplete
+    //              ช่องกรอกเป็น element ถาวรในหน้า handler จึงสะสมทับกัน แต่ละตัวสแกนฐานข้อมูลทั้งก้อน
+    //              (editItemUpdateCustBtn เป็นฟังก์ชันมีชื่อ เบราว์เซอร์กันซ้ำให้เอง ไม่รั่ว)
+    if (n._auxInput) n.removeEventListener("input", n._auxInput);
+    n._auxInput = onAuxInput;
     n.addEventListener("input", onAuxInput);
     n.addEventListener("input", editItemUpdateCustBtn);
 
@@ -16384,7 +16876,8 @@ function deleteItemFromModal() {
   const name = document.getElementById("editItemName")?.value || ctx.itemKey;
   closeEditItemModal();
   openDeleteConfirm(name, () => {
-    db.ref(`days/${ctx.dayKey}/${ctx.grpKey}/${ctx.itemKey}`).remove();
+    // V5.35 (B08): ของวันในคลังอยู่ closed/ ถ้าลบที่ days/ จะไม่มีอะไรเกิดขึ้น
+    db.ref(`${_itemBasePath(ctx.dayKey)}/${ctx.grpKey}/${ctx.itemKey}`).remove();
   });
 }
 
@@ -16395,6 +16888,8 @@ function closeEditItemModal() {
   // V4.22: detach autocomplete listeners + cleanup dropdown
   const n = document.getElementById("editItemName");
   if (n && n._acDetach) n._acDetach();
+  // V5.36 (B56): ปลด handler ที่ผูกไว้ตอนเปิด ไม่งั้นสะสมทุกครั้งที่เปิด-ปิด
+  if (n && n._auxInput) { n.removeEventListener("input", n._auxInput); n._auxInput = null; }
   removeAutocomplete && removeAutocomplete();
 }
 
@@ -16618,10 +17113,17 @@ function _moveSelectLatestBatch() {
 
 function _moveSelectByStatus(status) {
   const dayData = (allDays && allDays[activeDay]) || {};
+  // V5.36 (B40): เดิมไม่ clear ก่อน → กด "เฉพาะรอ" แล้ว "เฉพาะจ่าย" = สะสมเป็นทั้งหมด
+  //              คำว่า "เฉพาะ" สื่อว่าสลับชุด ไม่ใช่บวกเพิ่ม
+  //              (_moveSelectLatestBatch clear ถูกอยู่แล้ว — เอามาตรงกัน)
+  window._moveMode.selected.clear();
   for (const grp of ["credit","transfer","fence","delivery"]) {
     const items = dayData[grp] || {};
     for (const k of Object.keys(items)) {
-      if (items[k]?.status === status) {
+      // V5.38 (B16): งวดผ่อนถูกกรองออกจากบอร์ดแล้ว มองไม่เห็นและเลือกด้วยนิ้วไม่ได้
+      //              แต่ status เป็น "ชำระแล้ว" กด "เฉพาะจ่าย" เลยติดมาด้วยแบบมองไม่เห็น
+      //              (ถ้าย้ายไป งวดจะพรากจากใบหลัก) — ให้ตามใบหลักอย่างเดียว
+      if (items[k]?.status === status && !items[k]?.ppOf) {
         window._moveMode.selected.add(grp + ":" + k);
       }
     }
@@ -16725,7 +17227,7 @@ function _moveOpenCalendar() {
         if (!dayKey) { alert("วันที่ไม่ถูกต้อง"); return; }
         if (typeof parseDayKey === "function" && !parseDayKey(dayKey)) { alert("วันที่ไม่ถูกต้อง"); return; }
         if (dayKey === (window._moveCtxs?.[0]?.dayKey)) { alert("เลือกวันเดิม ไม่ต้องย้าย"); return; }
-        if (allClosed && allClosed[dayKey]) { alert("วันปลายทางถูกปิดยอดแล้ว — ย้ายไม่ได้"); return; }
+        if (isArchivedDay(dayKey)) { alert("วันปลายทางถูกปิดยอดแล้ว — ย้ายไม่ได้"); return; }   // V5.40
         window._moveTargetDay = dayKey;
         const p = parseDayKey(dayKey);
         const el = document.getElementById("mvToDayText");
@@ -16756,35 +17258,53 @@ async function _moveDoMove() {
   if (btn) btn.disabled = true;
 
   try {
-    // เตรียม target day structure ถ้ายังไม่มี
-    if (!allDays[targetDay]) {
-      await db.ref(`days/${targetDay}`).set({ credit:{}, transfer:{}, fence:{}, delivery:{} });
-    }
+    // V5.35 (B07): เดิม "เตรียมโครงวันปลายทาง" ด้วย set({credit:{},transfer:{},fence:{},delivery:{}})
+    //              Firebase ตัด object ว่างทิ้ง → คำสั่งนั้นเท่ากับ "ลบวันปลายทางทั้งวัน"
+    //              ถ้าวันนั้นมีข้อมูลจริงแต่ยังไม่ sync เข้า allDays (เน็ตช้า/เปิดจากแคช 3 วัน)
+    //              Firebase สร้าง path ให้เองอยู่แล้วตอนเขียนรายการ — ไม่ต้องเตรียมโครง
+    //              และรวมเป็น update() ก้อนเดียว เพื่อไม่ให้เกิดสถานะ "ก็อปแล้วแต่ลบไม่สำเร็จ"
+    const _mvAt = Date.now();
+    const _mvUpdates = {};
+    let movedCount = 0;   // นับเฉพาะรายการที่ผู้ใช้เลือกเอง
+    let payCount   = 0;   // งวดผ่อนที่ตามใบหลักไปด้วย
+    let _seq = 0;
+    const _mvKey = () => "itm" + _mvAt + "_" + (_seq++) + "_" + Math.random().toString(36).slice(2,6);
 
-    let movedCount = 0;
     for (const ctx of ctxs) {
       const { dayKey, grpKey, itemKey } = ctx;
       const item = allDays[dayKey]?.[grpKey]?.[itemKey];
       if (!item) continue;
 
-      // generate new key + copy ไปวันใหม่
-      const newKey = "itm" + Date.now() + "_" + Math.random().toString(36).slice(2,6);
-      await db.ref(`days/${targetDay}/${grpKey}/${newKey}`).set({
+      _mvUpdates[`days/${targetDay}/${grpKey}/${_mvKey()}`] = {
         ...item,
-        movedAt: Date.now(),
+        movedAt: _mvAt,
         movedFrom: dayKey,
-      });
-      // ลบจากวันเก่า
-      await db.ref(`days/${dayKey}/${grpKey}/${itemKey}`).remove();
+      };
+      _mvUpdates[`days/${dayKey}/${grpKey}/${itemKey}`] = null;
       movedCount++;
+
+      // V5.38 (B16): ถ้าเป็นใบหลักผ่อนจ่าย ต้องพางวดที่จ่ายแล้วไปวันใหม่ด้วย
+      //              ไม่งั้นงวดจะกลายเป็นบิล "ชำระแล้ว" ลอยเดี่ยวในวันเดิม แก้ไม่ได้ ลบไม่ได้
+      for (const payKey of _ppFindPayKeys(dayKey, grpKey, item.ppId)) {
+        const pay = allDays[dayKey][grpKey][payKey];
+        _mvUpdates[`days/${targetDay}/${grpKey}/${_mvKey()}`] = {
+          ...pay,
+          movedAt: _mvAt,
+          movedFrom: dayKey,
+        };
+        _mvUpdates[`days/${dayKey}/${grpKey}/${payKey}`] = null;
+        payCount++;
+      }
     }
+    if (movedCount) await db.ref().update(_mvUpdates);
 
     document.getElementById("moveDateOverlay")?.remove();
     _moveExitSelectMode();
 
     // toast
     if (typeof _showToast === "function") {
-      _showToast(`✅ ย้าย ${movedCount} รายการแล้ว`);
+      // V5.38 (B16): บอกด้วยว่างวดผ่อนตามไปกี่งวด — ไม่งั้นจำนวนแถวในวันปลายทางจะไม่ตรงกับที่เลือก
+      _showToast(`✅ ย้าย ${movedCount} รายการแล้ว` + (payCount ? ` (พร้อมงวดผ่อน ${payCount} งวด)` : ""));
     }
     renderBoard();
   } catch(e) {
@@ -16837,7 +17357,9 @@ function saveEditItem() {
   }
   const newGrp = _editItemGrp || grpKey;
   // V4.34: preserve fields ทั้งหมด (batchId, addedAt, paidAt, movedFrom, movedAt, ...)
-  const orig = (allDays[dayKey] && allDays[dayKey][grpKey] && allDays[dayKey][grpKey][itemKey]) || {};
+  // V5.38: เดิมอ่านจาก allDays อย่างเดียว — ถ้าเป็นวันในคลัง orig จะเป็น {} ว่าง
+  //        แล้ว payload ที่เขียนกลับจะเหลือแค่ ชื่อ/ยอด/สี → status กับ paidAt หายทั้งคู่
+  const orig = ((allDays[dayKey] || allClosed[dayKey] || {})[grpKey] || {})[itemKey] || {};
   const editedFields = { name, amount, nameColor: _editItemColor };
   // preserve note ถ้ามี (ถึงแม้จะลบ field UI ออกแล้ว แต่ data เก่ายังคงไว้)
   // status, paidAt, batchId, addedAt, movedFrom, movedAt → preserve ทั้งหมด
@@ -16861,16 +17383,22 @@ function saveEditItem() {
     }
 
     // No other unpaid bills → move just this one (original behavior)
-    const newRef = db.ref(`days/${dayKey}/${newGrp}`).push();
-    Promise.all([
-      newRef.set(payload),
-      db.ref(`days/${dayKey}/${grpKey}/${itemKey}`).remove()
-    ])
-    .then(() => closeEditItemModal())
-    .catch(e => alert("บันทึกไม่ได้: "+e.message));
+    // V5.35 (B08): เดิมเขียน days/ เสมอ ทั้งที่ของวันในคลังอยู่ closed/
+    //              ผลคือคลังไม่เปลี่ยน แถมเกิดวันใหม่ใน days ที่มีรายการเดียวและไม่มี status
+    //              (revertItemToUnpaid เลือก path ถูกอยู่แล้ว — ยกวิธีเดียวกันมาใช้)
+    const _base = _itemBasePath(dayKey);
+    // V5.38 (B16): ย้ายงวดผ่อนตามใบหลักไปหมวดใหม่ด้วย และรวมเป็น update() ก้อนเดียว
+    //              เพื่อไม่ให้เกิดสถานะ "ใบหลักไปแล้ว แต่งวดยังค้างหมวดเก่า"
+    const _up = {};
+    _up[`${_base}/${newGrp}/itm${Date.now()}_${Math.random().toString(36).slice(2,8)}`] = payload;
+    _up[`${_base}/${grpKey}/${itemKey}`] = null;
+    Object.assign(_up, _ppMoveUpdates(_base, dayKey, grpKey, newGrp, payload.ppId));
+    db.ref().update(_up)
+      .then(() => closeEditItemModal())
+      .catch(e => alert("บันทึกไม่ได้: "+e.message));
   } else {
     // อัปเดตที่เดิม
-    db.ref(`days/${dayKey}/${grpKey}/${itemKey}`)
+    db.ref(`${_itemBasePath(dayKey)}/${grpKey}/${itemKey}`)
       .update(editedFields)
       .then(() => closeEditItemModal())
       .catch(e => alert("บันทึกไม่ได้: "+e.message));
@@ -16923,22 +17451,30 @@ async function cascadeMoveConfirm() {
   const modal = document.getElementById("cascadeMoveModal");
   if (modal) modal.style.display = "none";
 
-  const promises = [];
+  // V5.38 (B16): รวมทุกอย่างเป็น update() ก้อนเดียว — ย้ายหลายใบข้ามวันพร้อมกัน
+  //              ถ้าแยกเป็นหลายคำสั่งแล้วขาดกลางคัน จะได้บิลซ้ำหรือบิลหาย
+  //              และแต่ละใบที่เป็นใบหลักผ่อนจ่าย ต้องพางวดของตัวเองไปด้วย
+  const _up = {};
+  let _seq = 0;
+  const _newKey = () => `itm${Date.now()}_${_seq++}_${Math.random().toString(36).slice(2,6)}`;
 
   // Move current bill
-  const currentNewRef = db.ref(`days/${editContext.dayKey}/${newGrp}`).push();
-  promises.push(currentNewRef.set(payload));
-  promises.push(db.ref(`days/${editContext.dayKey}/${grpKey}/${editContext.itemKey}`).remove());
+  // V5.35 (B08): เลือก days/ หรือ closed/ ตามที่ของจริงอยู่ เหมือน saveEditItem
+  const _curBase = _itemBasePath(editContext.dayKey);
+  _up[`${_curBase}/${newGrp}/${_newKey()}`] = payload;
+  _up[`${_curBase}/${grpKey}/${editContext.itemKey}`] = null;
+  Object.assign(_up, _ppMoveUpdates(_curBase, editContext.dayKey, grpKey, newGrp, payload.ppId));
 
   // Move all other unpaid bills
   for (const other of otherBills) {
-    const otherNewRef = db.ref(`days/${other.dayKey}/${newGrp}`).push();
-    promises.push(otherNewRef.set(other.item));
-    promises.push(db.ref(`days/${other.dayKey}/${other.grpKey}/${other.itemKey}`).remove());
+    const _oBase = _itemBasePath(other.dayKey);
+    _up[`${_oBase}/${newGrp}/${_newKey()}`] = other.item;
+    _up[`${_oBase}/${other.grpKey}/${other.itemKey}`] = null;
+    Object.assign(_up, _ppMoveUpdates(_oBase, other.dayKey, other.grpKey, newGrp, other.item && other.item.ppId));
   }
 
   try {
-    await Promise.all(promises);
+    await db.ref().update(_up);
     _cascadeCtx = null;
     closeEditItemModal();
   } catch (e) {
@@ -16953,13 +17489,17 @@ function cascadeMoveSingle() {
   const modal = document.getElementById("cascadeMoveModal");
   if (modal) modal.style.display = "none";
 
-  const newRef = db.ref(`days/${editContext.dayKey}/${newGrp}`).push();
-  Promise.all([
-    newRef.set(payload),
-    db.ref(`days/${editContext.dayKey}/${grpKey}/${editContext.itemKey}`).remove()
-  ])
-  .then(() => { _cascadeCtx = null; closeEditItemModal(); })
-  .catch(e => alert("บันทึกไม่ได้: " + e.message));
+  // V5.38: จุดนี้ตกหล่นตอนแก้ B08 ที่ V5.35 — ยังเขียน days/ ตายตัว
+  //        ของวันที่ปิดยอดแล้วอยู่ closed/ ย้ายที่นี่จึงไม่มีผลกับคลัง แถมสร้างวันผี
+  //        และ B16: ใบหลักผ่อนจ่ายต้องพางวดไปหมวดใหม่ด้วย
+  const _base = _itemBasePath(editContext.dayKey);
+  const _up = {};
+  _up[`${_base}/${newGrp}/itm${Date.now()}_${Math.random().toString(36).slice(2,8)}`] = payload;
+  _up[`${_base}/${grpKey}/${editContext.itemKey}`] = null;
+  Object.assign(_up, _ppMoveUpdates(_base, editContext.dayKey, grpKey, newGrp, payload.ppId));
+  db.ref().update(_up)
+    .then(() => { _cascadeCtx = null; closeEditItemModal(); })
+    .catch(e => alert("บันทึกไม่ได้: " + e.message));
 }
 
 // V4.72: Cancel cascade (close modal, keep edit modal open for reconsideration)
@@ -17036,7 +17576,8 @@ const SCAN_GRP_COLOR = {
 
 // ── key management ─────────────────────────────────────────────────
 // โหลด basket data จาก Firebase (sync ทุกอุปกรณ์)
-bkLoadLocal();
+// V5.40 (B20): ไม่ผูกตอนเปิดแอปแล้ว — เรียกจาก _lzNeed("basket")
+//              (เข้าแท็บตะกร้า หรือเปิดหน้ารวมบิล)
 bkInit();
 authInit();
 
@@ -17248,15 +17789,18 @@ function doLogin() {
 function authSuccess(user) {
   currentUser = { id: user.id, name: user.name, role: user.role };
   // save session
-  localStorage.setItem("authSession", JSON.stringify({
-    userId: user.id,
-    lastActive: Date.now()
-  }));
+  // V5.36 (B48): Safari โหมดส่วนตัว / พื้นที่เต็ม → setItem โยน error
+  //              เดิมไม่ครอบ try/catch โค้ดหยุดตรงนี้ หน้าล็อกอินไม่ถูกซ่อน ใส่ PIN ถูกก็เข้าไม่ได้
+  //              จำ session ไม่ได้ไม่เป็นไร — ใช้งานต่อได้ แค่ต้องใส่ PIN ใหม่รอบหน้า
+  try {
+    localStorage.setItem("authSession", JSON.stringify({
+      userId: user.id,
+      lastActive: Date.now()
+    }));
+  } catch(e) { console.warn("[auth] จำ session ไม่ได้:", e.message); }
   // hide login screen
   document.getElementById("loginScreen").style.display = "none";
-  // show logout btn
-  const lb = document.getElementById("logoutBtn");
-  if (lb) { lb.style.display = "inline-block"; lb.textContent = user.name + " ออกระบบ"; }
+  // V5.36 (B24): ลบโค้ดแสดงปุ่ม #logoutBtn ทิ้ง — ปุ่มถูกย้ายไปเมนูหลักแล้ว ไม่มี id นี้ใน HTML
   // apply role restrictions
   applyRoleUI();
   // V3: set initial body tab class
@@ -17280,6 +17824,14 @@ function authSuccess(user) {
     const todayKey2 = `${dd2}-${mm2}-${yy2}`;
     activeDay = allDays[todayKey2] ? todayKey2 : days[days.length-1];
   }
+    // V5.36 (B12): switchTab("board") ตอนโหลดครั้งแรกมีที่เดียวคือใน Firebase listener
+    //              ถ้าเน็ตยังไม่มา listener ไม่ยิง → #boardTab ยัง display:none
+    //              ผู้ใช้เห็นแค่หัวเรื่องกับจอขาว ทั้งที่แคชในเครื่องกู้คืนและวาดเสร็จแล้ว
+    //              (_appInitialized กันซ้ำอยู่แล้ว — ใครถึงก่อนได้ก่อน)
+    if (!window._appInitialized) {
+      window._appInitialized = true;
+      if (typeof switchTab === "function") switchTab("board");
+    }
     renderDayTabs(days);
     if (activeTab === "board") renderBoard();
   }
@@ -17642,7 +18194,7 @@ async function scanSaveAll() {
   for (const r of toSave) {
     const key = "sc"+Date.now()+Math.random().toString(36).slice(2,5);
     await db.ref(`days/${activeDay}/${r.group}/${key}`)
-      .set({name:r.name, note:r.note||"", amount:r.amount||0, status:"รอชำระ"})
+      .set({name:r.name, note:r.note||"", amount:_normAmt(r.amount), status:"รอชำระ"})
       .catch(()=>{});
     saved++;
   }
@@ -17713,10 +18265,10 @@ function _createTodaySilent() {
   // ถ้าปิดยอดไปแล้ว → return null (caller จัดการเอง)
   if (allClosed && allClosed[todayKey]) return null;
   // ทั้ง owner และ staff สร้างวันนี้ได้
-  const empty = { credit:{}, transfer:{}, fence:{}, delivery:{} };
-  allDays[todayKey] = empty;
+  // V5.35 (B10): เขียน createdAt แทนหมวดเปล่า — Firebase ตัด object ว่างทิ้ง วันจะไม่ถูกบันทึก
+  allDays[todayKey] = { credit:{}, transfer:{}, fence:{}, delivery:{} };
   try {
-    db.ref("days/" + todayKey).set(empty).catch(e => {
+    db.ref("days/" + todayKey).set({ createdAt: Date.now() }).catch(e => {
       console.warn("auto-create today sync failed:", e);
       delete allDays[todayKey];
     });
@@ -18653,7 +19205,13 @@ function openBoardSearch() {
   const inp = document.getElementById("boardSearchInp");
   if (inp) {
     inp.focus();
-    inp.addEventListener("input", () => boardSearchQuery(inp.value));
+    // V5.40 (B42): ค้นหาบนบอร์ดสแกนทุกวันทุกหมวดใหม่ทุกตัวอักษร (วัดได้ 197 ms)
+    //              รอ 150 ms หลังหยุดพิมพ์ค่อยค้น — ผลลัพธ์เหมือนเดิม แค่ไม่กระตุก
+    let _bsTimer = null;
+    inp.addEventListener("input", () => {
+      if (_bsTimer) clearTimeout(_bsTimer);
+      _bsTimer = setTimeout(() => { _bsTimer = null; boardSearchQuery(inp.value); }, 150);
+    });
     // Backup focus after layout settles (sometimes iOS needs second try)
     requestAnimationFrame(() => inp.focus());
   }
@@ -18809,13 +19367,20 @@ let truckModalStops = [];
 let truckModalTimes = [];
 
 // ── Firebase sync ──────────────────────────────────────
-db.ref("trucks").on("value", snap => {
-  truckData = snap.val() || {};
-  if (activeTab === "truck") truckRender();
-});
+// V5.40 (B20): ไม่ผูกตอนเปิดแอปแล้ว — เรียกจาก _lzNeed("trucks") ตอนเข้าแท็บคิวรถ
+function _lzBindTrucks() {
+  db.ref("trucks").on("value", snap => {
+    truckData = snap.val() || {};
+    window._trucksFromServer = true;
+    if (typeof _lzArrived === "function") _lzArrived("trucks");
+    if (activeTab === "truck") truckRender();
+  }, err => _lzFailed("trucks", err && err.message));
+}
 
 // ── Render ─────────────────────────────────────────────
 function truckRender() {
+  // V5.40
+  if (typeof _lzPaint === "function" && _lzPaint("truckList", "trucks", 3)) return;
   const list = document.getElementById("truckList");
   if (!list) return;
   list.innerHTML = "";
@@ -19371,7 +19936,9 @@ function showToast(msg, type, duration) {
   const t = document.createElement("div");
   t.className = "toast " + (type || "");
   const icon = TOAST_ICONS[type] || TOAST_ICONS.default;
-  t.innerHTML = `<div class="toast-icon">${icon}</div><div class="toast-msg">${msg}</div>`;
+  // V5.37 (B13): ข้อความมาจากหลายที่ทั่วแอป และหลายที่ต่อชื่อลูกค้าเข้าไปตรงๆ
+  //              ตรวจแล้วไม่มีใครส่ง HTML เข้ามาเลย แปลงได้ปลอดภัย
+  t.innerHTML = `<div class="toast-icon">${icon}</div><div class="toast-msg">${_htmlEsc(msg)}</div>`;
   // tap to dismiss
   t.addEventListener("click", () => removeToast(t));
   container.appendChild(t);
@@ -19514,6 +20081,8 @@ if (document.readyState === "loading") {
 // Draft save อัตโนมัติผ่าน visibilitychange อยู่แล้ว → ไม่ต้อง preventDefault
 window.addEventListener("pagehide", (e) => {
   try {
+    // V5.35 (B05): บันทึกบิลที่กดจ่ายค้างอยู่ก่อน — ต้องมาก่อนอย่างอื่นเพราะเป็นเรื่องเงิน
+    try { if (typeof _pendingPaidFlushAll === "function") _pendingPaidFlushAll(); } catch(err) {}
     if (typeof bkaHasUnsavedDraft === "function" && bkaHasUnsavedDraft()) {
       if (typeof bkaSaveDraft === "function") bkaSaveDraft();
     }
@@ -19538,7 +20107,9 @@ let _visRefreshTimer = null;
 function _refreshCurrentTab() {
   try {
     if (typeof activeTab === "undefined") return;
-    if (activeTab === "board" && typeof renderBoard === "function") { renderBoard(); return; }
+    // V5.35 (B32): Firebase listener เช็ค !openForm อยู่แล้ว แต่ที่นี่ขาดไป
+    //              สลับไปแอปอื่นแล้วกลับมา ฟอร์มเพิ่มรายการที่พิมพ์ค้างเลยถูกล้างเกลี้ยง
+    if (activeTab === "board" && typeof renderBoard === "function") { if (!openForm) renderBoard(); return; }
     if (activeTab === "basket" && typeof bkRender === "function") { bkRender(); return; }
     if (activeTab === "cust" && typeof cmRenderList === "function") {
       cmRenderList();
@@ -19554,6 +20125,8 @@ function _refreshCurrentTab() {
 
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") {
+    // V5.35 (B05): iOS บางกรณีไม่ยิง pagehide — กันไว้อีกชั้น
+    try { if (typeof _pendingPaidFlushAll === "function") _pendingPaidFlushAll(); } catch(err) {}
     try {
       if (typeof bkaHasUnsavedDraft === "function" && bkaHasUnsavedDraft()) {
         if (typeof bkaSaveDraft === "function") bkaSaveDraft();
