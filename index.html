@@ -854,6 +854,19 @@ body.tab-board .edge-handle.active { opacity: 1 !important; }
 .item-row:last-child { border-bottom: none; }
 .status-btn { width: 24px; height: 24px; border-radius: 50%; border: 1.75px solid;   /* V5.20: 1.5 → 1.75px */ cursor: pointer; flex-shrink: 0; font-size: 11px; display: flex; align-items: center; justify-content: center; transition: all .25s cubic-bezier(.34,1.56,.64,1); background: transparent; -webkit-tap-highlight-color: transparent; position: relative; overflow: hidden; }
 .status-btn:hover { transform: scale(1.08); }
+/* ═══ V5.49 (B49): ขยายพื้นที่รับนิ้ว โดยวงกลมที่ตาเห็นเท่าเดิมทุกพิกเซล ═══
+   ปุ่มนี้เปลี่ยนสถานะเงิน กดพลาดคือบิลกลายเป็นชำระแล้วโดยไม่ตั้งใจ
+   ตัวปุ่มขยายเองไม่ได้ เพราะเส้นขอบของมันคือวงกลม และมันครอบ overflow ไว้ให้ pending-fill
+   จึงห่อด้วยกล่องใส 32×44 แล้วดึงกลับด้วย margin ติดลบ — แถวไม่ขยับสักพิกเซล
+   (gap ของแถวคือ 10px ล้ำออกข้างละ 4px จึงไม่ไปแตะชื่อลูกค้าหรือป้ายบิลซ้ำ) */
+.sb-hit { display:flex; align-items:center; justify-content:center;
+  align-self:stretch;              /* สูงเท่าแถวพอดี ไม่ล้ำแถวข้างบน-ข้างล่าง */
+  padding:5px 4px; margin:-5px -4px;
+  /* วัดของจริงบนมือถือ: แถวสูง 34 (padding 5 บน-ล่าง) · วงกลม 22 · ช่องว่างถึงชื่อ 4
+     กิน padding ของแถวด้วย จึงได้สูงเต็ม 34 พอดี ไม่เกินไปทับแถวข้างเคียง
+     กว้างขยายได้ข้างละ 4 เท่าช่องว่างพอดี — ชิดชื่อลูกค้าแต่ไม่ทับ
+     margin ติดลบเท่ากับ padding → ทุกอย่างในแถวอยู่ที่เดิมทุกพิกเซล */
+  flex-shrink:0; cursor:pointer; -webkit-tap-highlight-color:transparent; }
 /* V4.72: pending fill from bottom (2.5s auto commit) */
 .status-btn .pending-fill {
   position: absolute; left: 0; right: 0; bottom: 0; height: 0%;
@@ -4000,14 +4013,16 @@ tr:last-child td { border-bottom: none; }
         <div style="font-weight:600;font-size:14px;color:#991B1B;margin-bottom:6px;">ลบวันที่เลือก</div>
         <div style="font-size:12px;color:#78716C;margin-bottom:10px;">เลือกวันที่ต้องการลบออกจากระบบ</div>
         <select id="dataMgrDaySelect" style="width:100%;padding:11px 13px;border-radius:11px;border:1.5px solid transparent;font-size:14px;font-family:inherit;outline:none;margin-bottom:10px;background:#F5F5F4;transition:all .2s;" onfocus="this.style.borderColor='#1C1917';this.style.boxShadow='0 0 0 3px rgba(0,0,0,0.06)';this.style.background='#fff'" onblur="this.style.borderColor='transparent';this.style.boxShadow='';this.style.background='#F5F5F4'"></select>
-        <button onclick="dataMgrDeleteOne()" style="width:100%;padding:11px;border-radius:11px;border:none;background:#DC2626;color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:all .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 12px rgba(220,38,38,0.25);-webkit-tap-highlight-color:transparent;" onmouseover="this.style.background='#B91C1C';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#DC2626';this.style.transform=''">ลบวันที่นี้</button>
+        <button id="dmDelOneBtn" onclick="dataMgrDeleteOne()" style="width:100%;padding:11px;border-radius:11px;border:none;background:#DC2626;color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:all .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 12px rgba(220,38,38,0.25);-webkit-tap-highlight-color:transparent;" onmouseover="this.style.background='#B91C1C';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#DC2626';this.style.transform=''">ลบวันที่นี้</button>
       </div>
       <div style="background:linear-gradient(135deg,#FFF7F7 0%,#FEF2F2 100%);border-radius:14px;padding:14px 16px;border:1px solid #FECACA;">
         <div style="font-weight:600;font-size:14px;color:#991B1B;margin-bottom:6px;letter-spacing:-0.01em;">ล้างข้อมูล 30 วันเก่าสุด</div>
         <div style="font-size:12px;color:#78716C;margin-bottom:4px;">ลบ 30 วันที่เก่าที่สุดออกจากระบบ</div>
         <div id="dataMgr30Preview" style="font-size:11px;color:#DC2626;font-weight:600;margin-bottom:10px;"></div>
-        <button onclick="dataMgrDelete30()" style="width:100%;padding:11px;border-radius:11px;border:none;background:#991B1B;color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:all .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 12px rgba(153,27,27,0.25);-webkit-tap-highlight-color:transparent;" onmouseover="this.style.background='#7F1D1D';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#991B1B';this.style.transform=''">ล้าง 30 วันเก่าสุด</button>
+        <button id="dmDel30Btn" onclick="dataMgrDelete30()" style="width:100%;padding:11px;border-radius:11px;border:none;background:#991B1B;color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:all .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 12px rgba(153,27,27,0.25);-webkit-tap-highlight-color:transparent;" onmouseover="this.style.background='#7F1D1D';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#991B1B';this.style.transform=''">ล้าง 30 วันเก่าสุด</button>
       </div>
+      <!-- V5.49: บรรทัดเตือนเรื่อง index ของ Rules — ซ่อนไว้ถ้า Rules ถูกอยู่แล้ว -->
+      <div id="dmIndexWarn" style="display:none;border:1px solid #FECACA;background:#FEF2F2;border-radius:12px;padding:12px 14px;margin-bottom:12px;"></div>
       <!-- V4.79: สวิตช์เก็บวันเก่าเข้าคลังอัตโนมัติ -->
       <div style="border:1px solid #E7E5E4;border-radius:12px;padding:12px 14px;margin-bottom:12px;">
         <label style="display:flex;align-items:center;gap:10px;cursor:pointer;-webkit-tap-highlight-color:transparent;">
@@ -4568,8 +4583,89 @@ input[name="cust-name-no-fill"]:-webkit-autofill {
 <!-- Chart.js + html2canvas: lazy-loaded on demand (saves ~410 KB on first paint) -->
 <script>
 // ═══ V4.38 (B.4): APP_VERSION — single source of truth ═══
-window.APP_VERSION = "V5.40";
-window.APP_VERSION_STRING = "V5.40"; // alias for compatibility
+window.APP_VERSION = "V5.49";
+window.APP_VERSION_STRING = "V5.49"; // alias for compatibility
+
+// ═══════════════════════════════════════════════════════════════════
+// V5.49: ดักคำเตือน "ไม่มี index" ของ Firebase
+// ───────────────────────────────────────────────────────────────────
+// การโหลดคลังแบบจำกัดช่วงใช้ orderByChild("dayTs")
+// Firebase จะกรองให้บนเซิร์ฟเวอร์จริงก็ต่อเมื่อ Rules มี:
+//     "closed": { ".indexOn": ["dayTs"] }
+// ถ้าไม่มี มันจะส่งคลังมาทั้งก้อนแล้วค่อยกรองในเครื่อง
+// = หน้าต่าง 270 วันไม่ได้ประหยัดอะไรเลย และไม่มีอะไรบอกใครสักคน
+// (ในไฟล์เขียนเตือนไว้แค่ในคอมเมนต์มาตั้งแต่ V4.76)
+//
+// ต้องติดตั้งตรงนี้ ก่อน Firebase เริ่มทำงาน ไม่งั้นจับคำเตือนแรกไม่ทัน
+window._fbIndexMissing = null;   // null = ยังไม่รู้ · {paths:[...]} = ขาด
+(function _hookFirebaseIndexWarning(){
+  try {
+    const orig = console.warn;
+    console.warn = function(...args) {
+      try {
+        const line = args.map(a => (typeof a === "string" ? a : "")).join(" ");
+        if (line.indexOf("unspecified index") !== -1) {
+          // ตัวอย่างข้อความจริง:
+          //   FIREBASE WARNING: Using an unspecified index. Consider adding
+          //   ".indexOn": "dayTs" at /closed to your security rules for better performance.
+          const m = line.match(/"\.indexOn"\s*:\s*"([^"]+)"\s*at\s+(\/\S*)/);
+          const field = m ? m[1] : "dayTs";
+          const path  = m ? m[2].replace(/^\//, "") : "closed";
+          window._fbIndexMissing = window._fbIndexMissing || { list: [] };
+          const key = path + ":" + field;
+          if (!window._fbIndexMissing.list.some(x => x.key === key)) {
+            window._fbIndexMissing.list.push({ key, path, field });
+            try { _fbIndexNotify(); } catch(e) {}
+          }
+        }
+      } catch(e) {}
+      return orig.apply(console, args);
+    };
+  } catch(e) {}
+})();
+
+// ข้อความ Rules ที่ต้องเอาไปวาง — สร้างจากสิ่งที่ Firebase บอกมาจริง
+function _fbIndexRulesSnippet() {
+  const info = window._fbIndexMissing;
+  if (!info || !info.list.length) return '"closed": { ".indexOn": ["dayTs"] }';
+  const byPath = {};
+  info.list.forEach(x => { (byPath[x.path] = byPath[x.path] || []).push(x.field); });
+  return Object.keys(byPath).map(p =>
+    `"${p}": { ".indexOn": [${[...new Set(byPath[p])].map(f => `"${f}"`).join(", ")}] }`
+  ).join("\n");
+}
+
+// บอกเจ้าของครั้งเดียวพอ · ถ้า Rules ถูกอยู่แล้วจะไม่มีอะไรโผล่มาเลย
+function _fbIndexNotify() {
+  if (window._fbIndexToldOnce) { _fbIndexRenderDataMgr(); return; }
+  window._fbIndexToldOnce = true;
+  try {
+    if (typeof isOwner === "function" && !isOwner()) return;   // เรื่องของเจ้าของ
+    if (typeof showToast === "function") {
+      showToast("Firebase Rules ยังไม่มี index ของคลัง — โหลดช้ากว่าที่ควร\nดูวิธีแก้ในหน้าจัดการข้อมูล", "warn", 7000);
+    }
+  } catch(e) {}
+  _fbIndexRenderDataMgr();
+}
+
+// บรรทัดถาวรในหน้าจัดการข้อมูล — ก็อปไปวางได้เลย
+function _fbIndexRenderDataMgr() {
+  const box = document.getElementById("dmIndexWarn");
+  if (!box) return;
+  const info = window._fbIndexMissing;
+  if (!info || !info.list.length) { box.style.display = "none"; return; }
+  box.style.display = "block";
+  box.innerHTML =
+    '<div style="font-size:13px;font-weight:700;color:#991B1B;margin-bottom:4px;">'
+    + 'Firebase Rules ยังไม่มี index</div>'
+    + '<div style="font-size:11.5px;color:#7F1D1D;line-height:1.65;margin-bottom:8px;">'
+    + 'ทุกครั้งที่เปิดหน้าที่ใช้คลัง Firebase จะส่งข้อมูลมาทั้งก้อนแล้วค่อยกรองในเครื่อง<br>'
+    + 'เปิด Firebase Console → Realtime Database → Rules แล้วเติมบรรทัดนี้</div>'
+    + '<pre style="background:#fff;border:1px solid #FECACA;border-radius:8px;padding:9px 11px;'
+    + 'font-size:11.5px;line-height:1.6;overflow-x:auto;margin:0;white-space:pre;'
+    + 'font-family:ui-monospace,Menlo,monospace;color:#1C1917;">'
+    + _fbIndexRulesSnippet().replace(/&/g,"&amp;").replace(/</g,"&lt;") + '</pre>';
+}
 
 // ── Firebase ──────────────────────────────────────────────────────
 // V3: defensive check — ถ้า Firebase load ไม่ได้ (offline/sandbox) → แสดง error friendly
@@ -5027,7 +5123,9 @@ db.ref("config/ppNames").on("value", snap => {
 // V5.40 (B20): ไม่ผูกตอนเปิดแอปแล้ว — เรียกจาก _lzNeed("customers")
 //              (เข้าแท็บลูกค้า หรือช่องช่วยเติมชื่อ)
 function _lzBindCustomers() {
-  db.ref("customers").on("value", snap => {
+  window._lzRefs = window._lzRefs || {};
+  const _ref = db.ref("customers");
+  const _cb = _ref.on("value", snap => {
     cmCustomers = snap.val() || {};
     window._custFromServer = true;
     // V4.39: save cache (debounced)
@@ -5036,6 +5134,7 @@ function _lzBindCustomers() {
     if (typeof cmInvalidateIndex === "function") cmInvalidateIndex();
     if (activeTab==="cust") { cmRenderList(); cmRenderQuiet(); }
   }, err => _lzFailed("customers", err && err.message));
+  window._lzRefs.customers = { ref:_ref, cb:_cb };
 }
 
 // ── Firebase Listener: days ────────────────────────────────────────
@@ -5098,6 +5197,15 @@ function _normAmt(v) {
   const n = parseFloat(String(v).replace(/[,\s]/g, ""));
   return Number.isFinite(n) ? n : 0;
 }
+// ═══ V5.49 (B04/B31): ยอดเงินไม่รับทศนิยม — ปัดตั้งแต่ตอนกรอก ═══
+// fmt() ปัดแค่ตอนแสดงผล ค่าที่เก็บจริงยังมีเศษ → จอกับฐานข้อมูลไม่ตรงกัน
+// ปัดที่ปลายทางเดียวไม่พอ เพราะมีช่องกรอกเงิน 6 ที่ ต้องปัดทุกที่ที่รับค่าเข้า
+// (หน้าเพิ่มหลายรายการไม่ต้องใช้ — จุด "." เป็นปุ่มลัด และตัดตัวไม่ใช่เลขอยู่แล้ว)
+function _intAmt(v) {
+  const n = _normAmt(v);
+  return Number.isFinite(n) ? Math.round(n) : 0;
+}
+
 function _normalizeAmounts(root) {
   if (!root || typeof root !== "object") return root;
   const FIELDS = ["amount", "ppOrig", "ppOver"];
@@ -5311,8 +5419,13 @@ function _lzNeed(k) {
     }
   }, _LZ_TIMEOUT);
 
-  // Firebase ต่อเน็ตกลับมาเองได้ — ผูกซ้ำไม่ช่วยอะไร นอกจากดาวน์โหลดซ้ำ
-  if (window._lzBound[k]) return;
+  // ปกติไม่ผูกซ้ำ (Firebase ต่อเน็ตกลับมาเองได้ ผูกซ้ำ = ดาวน์โหลดซ้ำเปล่าๆ)
+  // แต่ตอนผู้ใช้กด "ลองใหม่" ต้องปลดตัวเก่าแล้วยิงใหม่จริง ไม่งั้นกดแล้วเหมือนไม่มีอะไรเกิดขึ้น
+  if (window._lzBound[k]) {
+    if (!window._lzForceRebind) return;
+    _lzUnbind(k);
+  }
+  window._lzForceRebind = false;
   try {
     if (k === "closed")    { _bindClosedListener(CLOSED_WINDOW_DAYS); _backfillClosedDayTs(); }
     if (k === "customers") _lzBindCustomers();
@@ -5325,6 +5438,15 @@ function _lzNeed(k) {
     _lzRefresh(k);
   }
 }
+// V5.49: ปลด listener เดิมทิ้ง เพื่อให้ "ลองใหม่" เป็นการเริ่มใหม่จริงๆ
+function _lzUnbind(k) {
+  try {
+    const r = (window._lzRefs || {})[k];
+    if (r && r.ref && r.cb) r.ref.off("value", r.cb);
+  } catch(e) { console.warn("[lz] ปลด listener ไม่สำเร็จ:", k, e && e.message); }
+  window._lzBound[k] = false;
+}
+
 // listener แจ้ง error กลับมา = ตัวเดิมหลุดแล้ว ต้องผูกใหม่ตอนกดลองใหม่
 function _lzFailed(k, msg) {
   console.warn("[lz] " + k + " ล้มเหลว:", msg);
@@ -5339,6 +5461,7 @@ function _lzArrived(k) {
 }
 function _lzRetry(k) {
   window._lz[k] = 0;
+  window._lzForceRebind = true;   // V5.49: กดลองใหม่ = ยิงใหม่จริง ไม่ใช่รอเฉยๆ
   _lzNeed(k);
   _lzRefresh(k);
 }
@@ -5394,34 +5517,26 @@ window._lzRetry = _lzRetry;
 db.ref("days").on("value", snap => { try {
   allDays = _normalizeAmounts(snap.val() || {});
   window._daysFromServer = true;   // V5.35 (B33): ข้อมูลจริงมาถึงแล้ว (ก่อนหน้านี้เป็นแคชในเครื่อง)
-  window._dataVersion = (window._dataVersion || 0) + 1;   // V5.40: ข้อมูลเปลี่ยน → cache ที่คำนวณไว้ใช้ไม่ได้แล้ว
+  window._dataVersion = (window._dataVersion || 0) + 1;   // V5.49: ข้อมูลเปลี่ยน → cache ที่คำนวณไว้ใช้ไม่ได้แล้ว
   // O: save cache หลัง Firebase sync (debounced)
   _cacheSaveDebounced();
   if (Object.keys(allDays).length === 0) {
-    // V3: seed data เฉพาะครั้งแรก (Initial setup) — ไม่ inject ซ้ำหลังจาก user ลบ
-    // ใช้ localStorage flag เพื่อกัน loop:
-    //   user ลบทุกวัน → listener เห็นว่าง → inject seed → user งง
-    if (localStorage.getItem("_seedInjected") === "1") {
-      // user เคย seed แล้ว · ตอนนี้ database ว่างเพราะ user ลบเอง → ไม่ inject ซ้ำ
-      const days = _sortDayKeys(Object.keys(allDays));
-      if (!window._appInitialized) {
-        window._appInitialized = true;
-        switchTab("board");
-      }
-      renderDayTabs(days);
-      if (activeTab==="board") renderBoard();
-      return;
+    // ═══ V5.49 (B36): ไม่มีข้อมูลตัวอย่างอีกแล้ว ═══
+    // ของเดิมเห็นตารางวันว่าง แล้วยิงบิลตัวอย่าง 8 ใบ 27,660 บาท ลงฐานข้อมูลจริง
+    // ตัวกันไม่ให้ยิงซ้ำเก็บใน localStorage = จำแยกรายเครื่อง
+    // เครื่องใหม่จึงไม่รู้ว่าเคยยิงไปแล้ว → ยิงอีกรอบ ทุกเครื่องเห็นหนี้ที่ไม่มีใครเป็น
+    //
+    // "ตารางวันว่าง" ไม่ใช่ความผิดปกติ — คือสภาพปกติของทุกเย็นที่ปิดยอดครบ
+    // ที่ถูกคือแสดงสถานะนั้นตรงๆ แล้วให้ทางไปต่อ ไม่ใช่เติมของปลอมให้
+    const days = _sortDayKeys(Object.keys(allDays));
+    if (!window._appInitialized) {
+      window._appInitialized = true;
+      switchTab("board");
     }
-    localStorage.setItem("_seedInjected", "1");
-    db.ref("days").set({"14-03-69":{
-      credit:{a1:{name:"ดึงไม่",note:"มะยงชิด + บรรจุภัณฑ์",amount:830,status:"รอชำระ"},a2:{name:"โรงนาง",note:"ลำไยพวงทอง + มัดจำตะกร้า",amount:874,status:"รอชำระ"},a3:{name:"น้ำพรัก",note:"มะยงชิด ลก+vip×2",amount:5080,status:"รอชำระ"},a4:{name:"ดวง",note:"มะยงชิด ลก+โจ้+สาว",amount:4440,status:"รอชำระ"}},
-      transfer:{b1:{name:"VIP",note:"มะยงชิด + มัดจำตะกร้า",amount:1100,status:"รอชำระ"},b2:{name:"5215",note:"มะยงชิด โจ้ ×3",amount:2820,status:"รอชำระ"},b3:{name:"สร้อง",note:"มะยงชิด บก×6+vip×4",amount:11400,status:"รอชำระ"}},
-      fence:{},delivery:{c1:{name:"เพ็งา",note:"ลำไยพวงทอง ×1",amount:1116,status:"รอชำระ"}}
-    }});
+    renderDayTabs(days);
+    if (activeTab==="board") renderBoard();
     return;
   }
-  // mark seeded ถ้ามี data อยู่แล้ว (กัน user เพิ่งเข้ามาแต่ database มี data จาก user อื่น)
-  if (!localStorage.getItem("_seedInjected")) localStorage.setItem("_seedInjected", "1");
   const days = _sortDayKeys(Object.keys(allDays));
   if (!activeDay || !allDays[activeDay]) {
     const now2 = new Date();
@@ -5529,16 +5644,27 @@ async function _ensureClosedMonth(adYear, month) {
   if (_closedMonthsFetched[mk]) return;
   const start = new Date(adYear, month - 1, 1).getTime();
   const end   = new Date(adYear, month, 0, 23, 59, 59, 999).getTime();
-  // อยู่ในช่วงที่ listener หลักโหลดอยู่แล้ว → ไม่ต้องดึงซ้ำ
-  if (end >= _closedCutoffTs(_closedWindowDays)) { _closedMonthsFetched[mk] = true; return; }
+  // ═══ V5.49: เดือนที่ "คร่อม" เส้นตัดหน้าต่าง ต้องดึงส่วนที่ขาด ═══
+  // ของเดิมเช็ค end >= cutoff แล้ว return — ปลายเดือนอยู่ในหน้าต่างก็จริง
+  // แต่ต้นเดือนไม่อยู่ → วันต้นเดือนไม่เคยถูกโหลด แถมทำเครื่องหมายว่าดึงแล้ว
+  // จึงไม่มีวันดึงอีกเลย (พิสูจน์: เดือนมี 31 วัน โหลดได้ 17 เรียกซ้ำก็ยัง 17)
+  // ตอนนี้ดึงเฉพาะช่วงที่ listener หลักเอื้อมไม่ถึง คือก่อนเส้นตัด
+  const cutoff   = _closedCutoffTs(_closedWindowDays);
+  const fetchEnd = Math.min(end, cutoff - 1);
+  if (start > fetchEnd) { _closedMonthsFetched[mk] = true; return; }   // ทั้งเดือนอยู่ในหน้าต่างแล้ว
   _closedMonthsFetched[mk] = true;   // กันยิงซ้ำระหว่างรอ
   try {
-    const snap = await db.ref("closed").orderByChild("dayTs").startAt(start).endAt(end).once("value");
+    const snap = await db.ref("closed").orderByChild("dayTs").startAt(start).endAt(fetchEnd).once("value");
     const got = snap.val() || {};
     if (!Object.keys(got).length) return;
-    Object.assign(_closedExtra, _normalizeAmounts(got));
-    window._dataVersion = (window._dataVersion || 0) + 1;   // V5.40
-    Object.assign(allClosed, got);
+    // V5.49: เขียนให้ชัดว่าใช้ตัวที่แปลงแล้ว — ไม่ใช่การแก้บั๊ก
+    //   ผมเคยคิดว่าของเดิมใส่ข้อมูลดิบลง allClosed แล้วยอดจะเป็น NaN
+    //   แต่ทดสอบแล้วไม่จริง: _normalizeAmounts แก้ค่าในตัว object เดิมเลย
+    //   ของเดิมจึงได้ค่าที่แปลงแล้วเหมือนกัน · เปลี่ยนเพื่อให้อ่านแล้วไม่เข้าใจผิด
+    const norm = _normalizeAmounts(got);
+    Object.assign(_closedExtra, norm);
+    window._dataVersion = (window._dataVersion || 0) + 1;   // V5.49
+    Object.assign(allClosed, norm);
     // วาดใหม่เฉพาะที่เปิดอยู่ — ครั้งเดียว ไม่วนซ้ำเพราะ _closedMonthsFetched กันไว้แล้ว
     if (document.getElementById("calModal")?.style.display === "flex") renderCalGrid();
     if (document.getElementById("mcOverlay")?.classList.contains("show")) renderMiniCalGrid();
@@ -5551,15 +5677,24 @@ async function _ensureClosedMonth(adYear, month) {
 function _handleClosedSnap(snap) {
   // V4.78: รวมวันที่ดึงมาเพิ่มรายเดือนเข้าด้วย ไม่งั้นถูกล้างทุกครั้งที่ listener ยิง
   allClosed = _normalizeAmounts(Object.assign({}, _closedExtra, snap.val() || {}));
-  window._dataVersion = (window._dataVersion || 0) + 1;   // V5.40
+  window._dataVersion = (window._dataVersion || 0) + 1;   // V5.49
   _closedLoadingMore = false;   // V4.77: ข้อมูลมาถึงแล้ว → ปลดปุ่มดูย้อนหลัง
   // V4.39: save cache (debounced)
   window._closedFromServer = true;
   if (typeof _lzArrived === "function") _lzArrived("closed");   // V5.40
+  // V5.49: หน้าจัดการข้อมูลเปิดค้างอยู่ → เติมรายการวันให้ครบ + ปลดล็อกปุ่มลบ
+  try {
+    const _dm = document.getElementById("dataMgrModal");
+    if (_dm && _dm.style.display === "flex" && typeof _dataMgrFill === "function") _dataMgrFill();
+  } catch(e) {}
   _cacheGenericSaveDebounced(CACHE_KEY_CLOSED, () => allClosed, 2000);
   // V5.36 (B24): ลบโค้ดอัปเดตป้าย "ปิดยอด (n)" ทิ้ง — ปุ่ม #tabClosedBtn ถูกลบออกจาก HTML ไปแล้ว
   //              ฟีเจอร์นี้จึงไม่เคยทำงานเลย เหลือไว้แค่ทำให้สับสนตอนไล่แก้
   if (activeTab==="closed") renderClosed();
+  // V5.49: สองหน้านี้ก็อ่านคลังเหมือนกัน แต่เดิมไม่ถูกวาดใหม่
+  //        ยืนค้างอยู่ตอนคลังมาถึง = เห็นตัวเลขเก่าไปทั้งเซสชัน
+  try { if (activeTab==="analytics" && typeof renderAnalytics==="function") renderAnalytics(); } catch(e) {}
+  try { if (activeTab==="cust" && typeof cmRenderList==="function") cmRenderList(); } catch(e) {}
   // re-render ปฏิทินถ้าเปิดอยู่ เพื่อให้ dot อัปเดต
   if (document.getElementById("calModal")?.style.display === "flex") renderCalGrid();
   if (document.getElementById("mcOverlay")?.classList.contains("show")) renderMiniCalGrid();
@@ -5583,37 +5718,59 @@ function _bindClosedListener(days) {
 // V4.76: เติม dayTs ให้วันเก่าในคลังที่ยังไม่มี (ทำครั้งเดียว จำสถานะไว้ใน Firebase)
 // ทำตอนนี้ถูกจังหวะ เพราะคลังยังเล็กมาก ถ้าปล่อยไว้จะต้องเติมเป็นพันวัน
 async function _backfillClosedDayTs() {
+  // ═══ V5.49: แยกสองงานออกจากกัน ═══
+  // ของเดิมงานที่ 2 (สร้าง closedIndex) ถูกเขียนไว้ข้างในงานที่ 1 (เติม dayTs)
+  // ซึ่งขึ้นต้นด้วย if (เคยทำแล้ว) return — ใครรัน V4.76 ไปก่อนที่ V4.78
+  // จะเพิ่มงานที่ 2 เข้ามา จะไม่มีวันได้ closedIndex ย้อนหลังเลยตลอดกาล
+  // (พิสูจน์: คลัง 40 วัน → closedIndex ได้ 0 วัน)
+  //
+  // ผลที่ตามมา: ปุ่ม "ล้าง 30 วันเก่าสุด" ที่ V5.45 เลือกวันจากรายชื่อนี้
+  // จะเห็นแต่วันใหม่ แล้วไปล้างวันใหม่แทนวันเก่า — ตรงข้ามกับที่ปุ่มบอก
   try {
-    const flagRef = db.ref("config/closedTsBackfilled");
-    const done = (await flagRef.once("value")).val();
-    if (done) return false;
+    const tsFlagRef  = db.ref("config/closedTsBackfilled");
+    const idxFlagRef = db.ref("config/closedIdxBackfilled");
+    const [tsSnap, idxSnap] = await Promise.all([
+      tsFlagRef.once("value"), idxFlagRef.once("value"),
+    ]);
+    const tsDone  = !!tsSnap.val();
+    const idxDone = !!idxSnap.val();
+    if (tsDone && idxDone) return false;   // เสร็จทั้งคู่แล้วเท่านั้นถึงจะข้าม
+
+    // อ่านคลังทั้งก้อนครั้งเดียว ใช้ร่วมกันทั้งสองงาน
+    // (แพงแต่ทำครั้งเดียวในชีวิตของเครื่องนั้น แล้วธงจะกันไม่ให้ทำอีก)
     const snap = await db.ref("closed").once("value");
     const all = snap.val() || {};
-    const updates = {};
+    const keys = Object.keys(all);
+
+    // ── งานที่ 1 · เติม dayTs ให้วันที่ยังไม่มี ──
     let n = 0;
-    for (const k of Object.keys(all)) {
-      if (all[k] && all[k].dayTs != null) continue;
-      const ts = _dayKeyTs(k);
-      if (ts == null) { console.warn("[closed] key อ่านไม่ออก ข้ามไป:", k); continue; }
-      updates[k + "/dayTs"] = ts; n++;
-    }
-    if (n) await db.ref("closed").update(updates);
-    // V4.78: สร้าง closedIndex จากวันที่มีอยู่ (ใช้ flag แยก เผื่อ dayTs เคยรันไปแล้ว)
-    try {
-      const idxFlag = db.ref("config/closedIdxBackfilled");
-      if (!(await idxFlag.once("value")).val()) {
-        const idx = {};
-        for (const k of Object.keys(all)) idx[k] = true;
-        if (Object.keys(idx).length) await db.ref("closedIndex").update(idx);
-        await idxFlag.set(new Date().toISOString());
-        console.log(`[closedIndex] สร้างรายชื่อ ${Object.keys(idx).length} วัน เรียบร้อย`);
+    if (!tsDone) {
+      const updates = {};
+      for (const k of keys) {
+        if (all[k] && all[k].dayTs != null) continue;
+        const ts = _dayKeyTs(k);
+        if (ts == null) { console.warn("[closed] key อ่านไม่ออก ข้ามไป:", k); continue; }
+        updates[k + "/dayTs"] = ts; n++;
       }
-    } catch(e) { console.warn("[closedIndex] สร้างไม่สำเร็จ:", e.message); }
-    await flagRef.set(new Date().toISOString());
-    console.log(`[closed] เติม dayTs ย้อนหลัง ${n} วัน เรียบร้อย`);
+      if (n) await db.ref("closed").update(updates);
+      await tsFlagRef.set(new Date().toISOString());
+      console.log(`[closed] เติม dayTs ย้อนหลัง ${n} วัน เรียบร้อย`);
+    }
+
+    // ── งานที่ 2 · สร้างรายชื่อวันในคลัง ──
+    // เดินของตัวเอง ไม่ขึ้นกับว่างานที่ 1 เคยทำไปแล้วหรือยัง
+    if (!idxDone) {
+      try {
+        const idx = {};
+        for (const k of keys) idx[k] = true;
+        if (Object.keys(idx).length) await db.ref("closedIndex").update(idx);
+        await idxFlagRef.set(new Date().toISOString());
+        console.log(`[closedIndex] สร้างรายชื่อ ${Object.keys(idx).length} วัน เรียบร้อย`);
+      } catch(e) { console.warn("[closedIndex] สร้างไม่สำเร็จ:", e.message); }
+    }
     return n > 0;
   } catch(e) {
-    console.warn("[closed] เติม dayTs ไม่สำเร็จ:", e.message);
+    console.warn("[closed] เติมย้อนหลังไม่สำเร็จ:", e.message);
     return false;
   }
 }
@@ -6708,13 +6865,61 @@ function renderDayTabs(days) {
 
   renderDayChips();
 }
+// ═══════════════════════════════════════════════════════════════════
+// V5.49 (B39): วันที่นี้มีอยู่จริงไหม
+// ───────────────────────────────────────────────────────────────────
+// คืน null = ใช้ได้ · คืน { msg, suggest } = มีปัญหา (suggest = วันที่น่าจะหมายถึง)
+// ═══════════════════════════════════════════════════════════════════
+function _dayLabelProblem(label) {
+  const m = String(label||"").match(/^(\d{1,2})-(\d{1,2})-(\d{2})$/);
+  if (!m) return { msg: "รูปแบบไม่ถูกต้อง (ตัวอย่าง: 15-03-69)" };
+  const dd = parseInt(m[1], 10), mm = parseInt(m[2], 10), yy = m[3];
+  const yr = parseInt(yy, 10) + 2500 - 543;          // พ.ศ. 2 หลัก → ค.ศ. (เหมือน parseDayKey)
+  const THAI_M = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน",
+                  "กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+  if (mm < 1 || mm > 12) {
+    const sw = parseInt(String(m[2]).split("").reverse().join(""), 10);
+    const ok = sw >= 1 && sw <= 12;
+    return { msg: `ไม่มีเดือนที่ ${mm} — เดือนต้องอยู่ระหว่าง 1 ถึง 12`,
+             suggest: ok ? `${m[1]}-${String(sw).padStart(2,"0")}-${yy}` : null };
+  }
+  const dim = new Date(yr, mm, 0).getDate();          // จำนวนวันจริงของเดือนนั้น
+  if (dd < 1 || dd > dim) {
+    // พิมพ์สลับตัวเลขหรือเปล่า — 31 → 13
+    const sw = parseInt(String(m[1]).split("").reverse().join(""), 10);
+    const ok = sw >= 1 && sw <= dim && sw !== dd;
+    return { msg: `วันที่ ${dd} ไม่มีอยู่จริง — ${THAI_M[mm-1]} ${yr+543} มีถึงวันที่ ${dim}`,
+             suggest: ok ? `${String(sw).padStart(2,"0")}-${m[2]}-${yy}` : null };
+  }
+  return null;
+}
+
 function confirmAddDay() {
-  const label = document.getElementById("newDayInput").value.trim();
+  // V5.49 (B39): let ไม่ใช่ const — ถ้าผู้ใช้รับข้อเสนอวันที่ที่ถูกต้อง ต้องเขียนทับได้
+  let label = document.getElementById("newDayInput").value.trim();
   if (!label) { alert("กรุณากรอกวันที่ครับ"); return; }
   // V3: validate format dd-mm-yy
   if (!/^\d{1,2}-\d{1,2}-\d{2}$/.test(label)) {
     alert("รูปแบบไม่ถูกต้อง (ตัวอย่าง: 15-03-69)");
     return;
+  }
+  // ═══ V5.49 (B39): ตรวจว่าวันนั้นมีอยู่จริง ไม่ใช่แค่รูปแบบถูก ═══
+  // เดิม "31-02-69" ผ่านฉลุย แล้วหัวบอร์ดขึ้น "อังคาร 31 กุมภาพันธ์ 2569"
+  // วันผีแบบนี้เรียงลำดับไม่ได้ และไปโผล่ในคลัง หน้าค้างชำระ สรุปยอด
+  // ในทางปฏิบัติเกิดจากพิมพ์สลับ — ตั้งใจ 13-02-69 แต่พิมพ์ 31-02-69
+  {
+    const _v = _dayLabelProblem(label);
+    if (_v) {
+      if (_v.suggest) {
+        if (!confirm(`${_v.msg}\n\nหมายถึง ${_v.suggest} ใช่ไหม`)) return;
+        label = _v.suggest;
+        document.getElementById("newDayInput").value = label;
+        if (allDays[label]) { alert("มีวันนี้อยู่แล้วครับ"); return; }
+      } else {
+        alert(_v.msg);
+        return;
+      }
+    }
   }
   if (!isOwner() && !isToday(label)) { alert("พนักงานสร้างได้เฉพาะวันปัจจุบัน"); return; }
   if (allDays[label]) { alert("มีวันนี้อยู่แล้วครับ"); return; }
@@ -6825,11 +7030,76 @@ function _bhDateHtml(key) {
   } catch (e) { return key; }
 }
 
+// ═══════════════════════════════════════════════════════════════════
+// V5.49 (B36): หน้าว่างของบอร์ด
+// ───────────────────────────────────────────────────────────────────
+// ขึ้นเมื่อไม่มีวันที่เปิดอยู่เลย · คืน true = วาดแล้ว ผู้เรียกต้อง return
+// ไม่ขึ้นตอนข้อมูลยังเดินทางอยู่ — ไม่งั้นจะแวบว่าง "ไม่มีวัน" ก่อนของจริงมาถึง
+// ═══════════════════════════════════════════════════════════════════
+function _boardPaintEmpty() {
+  if (!window._daysFromServer) return false;
+  if (Object.keys(allDays || {}).length > 0) return false;
+  const grid = document.getElementById("groupsGrid");
+  if (!grid) return false;
+  const nClosed = Object.keys(allClosedIdx || {}).length || Object.keys(allClosed || {}).length;
+  const sc = document.getElementById("summaryCards"); if (sc) sc.innerHTML = "";
+  const sdb = document.getElementById("stickyDateBox"); if (sdb) sdb.style.display = "none";
+  const cy = document.getElementById("closeYodBtn"); if (cy) cy.style.display = "none";
+  grid.innerHTML =
+    '<div id="boardEmpty" style="grid-column:1/-1;background:#fff;border:1px solid #E7E5E4;' +
+    'border-radius:16px;padding:34px 20px;text-align:center;">' +
+      '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#A8A29E" stroke-width="1.5" ' +
+      'stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:12px;">' +
+      '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>' +
+      '<div style="font-size:16px;font-weight:700;color:#1C1917;margin-bottom:6px;">ยังไม่มีวันที่เปิดอยู่</div>' +
+      '<div style="font-size:13px;color:#78716C;line-height:1.7;margin-bottom:20px;">' +
+        (nClosed ? 'ปิดยอดครบทุกวันแล้ว' : 'ยังไม่เคยเปิดวันไหนเลย') +
+        '<br>เปิดวันใหม่เพื่อเริ่มลงบิล</div>' +
+      '<button onclick="_boardOpenToday()" style="width:100%;max-width:280px;padding:13px;border-radius:11px;' +
+      'border:none;background:#1C1917;color:#fff;font-weight:700;font-size:14px;cursor:pointer;' +
+      'font-family:inherit;-webkit-tap-highlight-color:transparent;">เปิดวันนี้</button>' +
+      '<button onclick="openCal()" style="width:100%;max-width:280px;margin-top:8px;padding:12px;' +
+      'border-radius:11px;border:1px solid #E7E5E4;background:#fff;color:#57534E;font-weight:600;' +
+      'font-size:13.5px;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;">' +
+      'เลือกวันอื่นในปฏิทิน</button>' +
+      (nClosed ? '<button onclick="switchTab(\'closed\')" style="width:100%;max-width:280px;margin-top:8px;' +
+        'padding:12px;border-radius:11px;border:1px solid #E7E5E4;background:#fff;color:#57534E;' +
+        'font-weight:600;font-size:13.5px;cursor:pointer;font-family:inherit;' +
+        '-webkit-tap-highlight-color:transparent;">ดูคลัง ' + nClosed + ' วันที่ปิดไปแล้ว</button>' : '') +
+    '</div>';
+  return true;
+}
+// กลับมามีวันแล้ว — เอาหน้าว่างออก (grid ถูกล้างอยู่แล้วในตัว renderBoard)
+function _boardClearEmpty() {
+  const e = document.getElementById("boardEmpty");
+  if (e) e.remove();
+}
+// เปิดวันนี้จากหน้าว่าง — ใช้ทางเดียวกับ "ไปวันนี้แทน" ที่เขียน createdAt
+// (set หมวดเปล่าล้วนไม่ได้ Firebase ตัดทิ้ง วันจะไม่ถูกบันทึก — บทเรียนจาก B10)
+function _boardOpenToday() {
+  const k = (typeof _createTodaySilent === "function") ? _createTodaySilent() : null;
+  if (!k) {
+    alert("วันนี้ปิดยอดไปแล้ว — เปิดจากหน้า \"ปิดยอด\" ปุ่ม \"เปิด\" ครับ");
+    return;
+  }
+  activeDay = k; openForm = null;
+  renderDayTabs(_sortDayKeys(Object.keys(allDays)));
+  renderBoard();
+}
+window._boardOpenToday = _boardOpenToday;
+
 function renderBoard() {
+  // ═══ V5.49 (B36): ไม่มีวันเปิดอยู่เลย → บอกสถานะ ไม่ใช่ปล่อยจอค้าง ═══
+  // เดิม return เฉยๆ จอจะค้างของเก่าหรือว่างเปล่าโดยไม่มีคำอธิบาย
+  // (ก่อนหน้านี้ไม่เคยเห็นปัญหา เพราะมีบิลตัวอย่างมาเติมให้ตลอด)
+  if (!activeDay || !(allDays[activeDay] || allClosed[activeDay])) {
+    if (_boardPaintEmpty()) return;
+  }
   if (!activeDay) return;
   // รองรับทั้ง allDays และ allClosed
   const _dayData = allDays[activeDay] || allClosed[activeDay];
   if (!_dayData) return;
+  _boardClearEmpty();
   // ข้อ 1: อัปเดต sticky date box
   const sdb = document.getElementById("stickyDateBox");
   const sdt = document.getElementById("stickyDateText");
@@ -6842,9 +7112,15 @@ function renderBoard() {
   const all  = GROUPS.flatMap(g=>Object.values(data[g.key]||{}));
   // V5.10: จำนวน "รายการ" ต้องไม่นับงวดผ่อน (ยอดเงินนับได้ตามปกติ เพราะเป็นเงินจริง)
   const _nItems = all.filter(c => !(c && c.ppOf)).length;
-  const tot  = all.reduce((s,c)=>s+(c.amount||0),0);
-  const paid = all.filter(c=>c.status==="ชำระแล้ว").reduce((s,c)=>s+(c.amount||0),0);
-  const wait = all.filter(c=>c.status==="รอชำระ").reduce((s,c)=>s+(c.amount||0),0);
+  // ═══ V5.49 (B26): การ์ดทั้ง 3 ใบนับเฉพาะ "ใบบิลจริง" ═══
+  // บิลผ่อนเก็บเป็น 2 แถว: ใบหลัก (ยอดที่เหลือ) + แถวงวดที่จ่ายมาแล้ว (ppOf)
+  // เดิมยอดเงินบวกแถวงวดเข้าไปด้วย แต่ตัวนับจำนวนรายกรองออก → ในการ์ดเดียวกันไม่ตรงกัน
+  // และเทียบกับหัวหมวด (ซึ่งกรอง ppOf ออก) ไม่ได้เลย
+  // ตอนนี้กรองเหมือนกันหมด → 1,000 + 8,000 = 9,000 ลงตัว และเท่ากับหัวหมวด
+  const _real = all.filter(c => !(c && c.ppOf));
+  const tot  = _real.reduce((s,c)=>s+(c.amount||0),0);
+  const paid = _real.filter(c=>c.status==="ชำระแล้ว").reduce((s,c)=>s+(c.amount||0),0);
+  const wait = _real.filter(c=>c.status==="รอชำระ").reduce((s,c)=>s+(c.amount||0),0);
   const pct  = tot>0?Math.round(paid/tot*100):0;
 
   document.getElementById("summaryCards").innerHTML =
@@ -6963,7 +7239,8 @@ function renderBoard() {
           row.style.cursor = "pointer";
           row.addEventListener("click", (e) => {
             // ป้องกัน status button + ปุ่ม edit ทำงาน
-            if (e.target.closest(".status-btn") || e.target.closest(".del-btn") || e.target.closest(".item-name") || e.target.closest(".paid-chip")) return;
+            // V5.49 (B49): .sb-hit คือกล่องรับนิ้วรอบปุ่มติ๊ก ต้องกันเหมือนตัวปุ่ม
+            if (e.target.closest(".sb-hit") || e.target.closest(".status-btn") || e.target.closest(".del-btn") || e.target.closest(".item-name") || e.target.closest(".paid-chip")) return;
             _moveToggleSelect(g.key, key);
           });
           // เพิ่ม checkbox indicator ด้านซ้าย
@@ -7247,7 +7524,17 @@ function renderBoard() {
         }
 
         // badge อยู่ระหว่างปุ่มติ๊ก กับ ชื่อ (ทุกกลุ่ม)
-        row.appendChild(statusBtn);
+        // V5.49 (B49): ห่อปุ่มติ๊กด้วยกล่องรับนิ้ว 32×44 — แตะขอบนอกวงกลมก็ติด
+        const sbHit = document.createElement("span");
+        sbHit.className = "sb-hit";
+        sbHit.appendChild(statusBtn);
+        sbHit.addEventListener("click", (e) => {
+          // กดโดนตัวปุ่มอยู่แล้ว ไม่ต้องส่งซ้ำ
+          if (e.target !== sbHit) return;
+          e.stopPropagation();
+          statusBtn.click();
+        });
+        row.appendChild(sbHit);
         if (billCount >= 2) row.appendChild(makeBadge(billCount));
         row.appendChild(info);
         if (origEl) row.appendChild(origEl);   // V5.10: ยอดเดิมขีดฆ่า อยู่ซ้ายของยอดคงเหลือ
@@ -7392,7 +7679,7 @@ function renderBoard() {
         if (!name||!amount) { alert("กรุณากรอกชื่อและยอดเงิน"); return; }
         // V5.34 (B03): "1,234" เคยกลายเป็น 1 เพราะ parseFloat หยุดที่ลูกน้ำ
         //              (saveEditItem strip ลูกน้ำอยู่แล้ว — ยกวิธีเดียวกันมาใช้)
-        const parsedAmount = parseFloat(String(amount).replace(/[,\s]/g, ""));
+        const parsedAmount = _intAmt(amount);   // V5.49 (B04/B31): ปัดเป็นจำนวนเต็มตั้งแต่กรอก
         if (isNaN(parsedAmount) || parsedAmount <= 0) {
           alert("ยอดเงินต้องเป็นตัวเลขมากกว่า 0");
           return;
@@ -7537,7 +7824,7 @@ function updToggleCell(cellId, ctx) {
   } else {
     window._updSelected.set(cellId, ctx);
   }
-  // V3: re-render to apply sort (selected → bottom)
+  // V5.49 (B22): ลำดับไม่เปลี่ยนแล้ว แต่ยังต้องวาดใหม่เพื่ออัปเดตสีกับแถบยอดรวม
   // capture scroll for restore
   const _sy = window.scrollY || document.documentElement.scrollTop || 0;
   if (typeof renderUnpaid === "function") renderUnpaid();
@@ -7669,7 +7956,7 @@ function renderUnpaid() {
       Object.values(dayData[g.key]||{}).forEach(item => {
         if (item && item.status === "รอชำระ") {
           counts[g.key]++;
-          if (g.key !== "credit") counts.all++;  // "ทั้งหมด" ไม่นับเชื่อ
+          counts.all++;   // V5.49 (B14): "ทั้งหมด" นับเงินเชื่อด้วย ให้ตรงกับมุมมองต่อคน/ต่อเดือน
         }
       });
     });
@@ -7702,7 +7989,7 @@ function renderUnpaid() {
 
   // filter
   const filtered = _updFilter==="all"
-    ? allEntries.filter(e=>e.grpKey!=="credit")  // ทั้งหมด ไม่นับเชื่อ
+    ? allEntries                                 // V5.49 (B14): ทั้งหมด = รวมเงินเชื่อ
     : allEntries.filter(e=>e.grpKey===_updFilter);
 
   // นับบิลค้างต่อชื่อ (ทั้งหมด ไม่แบ่ง filter)
@@ -7744,12 +8031,13 @@ function renderUnpaid() {
     const grid = document.createElement("div");
     grid.className = "upd-grid";
 
-    // V3: Sort within day — เลือกแล้วไปท้าย, group ตามประเภท, แล้วชื่อ
+    // V3: Sort within day — group ตามประเภท แล้วชื่อ
+    // ═══ V5.49 (B22): เอาการดัน "ที่เลือกแล้ว" ไปท้ายออก ═══
+    // เดิมติ๊กใบแรกแล้วการ์ดเด้งจากตำแหน่ง 1 ไปท้ายสุดทันที
+    // นิ้วยังอยู่ที่เดิมแต่ของหนีไปแล้ว จะเลือกใบติดกันต้องเล็งใหม่ทุกครั้ง
+    // และเสี่ยงกดโดนใบที่เลื่อนขึ้นมาแทน — แถบล่างบอกจำนวนกับยอดรวมอยู่แล้ว
     const grpOrder = {credit:0, transfer:1, fence:2, delivery:3};
     const sortedEntries = [...entries].sort((a, b) => {
-      const aSel = window._updSelected && window._updSelected.has(a.day+"::"+a.grpKey+"::"+a.key) ? 1 : 0;
-      const bSel = window._updSelected && window._updSelected.has(b.day+"::"+b.grpKey+"::"+b.key) ? 1 : 0;
-      if (aSel !== bSel) return aSel - bSel;  // unselected first, selected last
       // group by category
       const gDiff = (grpOrder[a.grpKey]??9) - (grpOrder[b.grpKey]??9);
       if (gDiff !== 0) return gDiff;
@@ -8680,10 +8968,14 @@ function billUpdateBottomBar() {
 
   // V4 FIX: โหมด default (ไม่ติ๊กเลยทั้งบิล/deduct) → นับทุกอย่างที่แสดงอยู่
   //         โหมด selection (มีติ๊กอย่างน้อย 1 ที่) → นับเฉพาะที่ติ๊ก
-  const isSelectionMode = sel.size > 0 || _deductSel.size > 0;
+  // ═══ V5.49 (B01): แยกโหมดเลือกของ "บิล" กับ "รายการหัก" ออกจากกัน ═══
+  // เดิมติ๊กแค่แถวหักตะกร้าก็ทำให้ทั้งก้อนเข้าโหมดเลือก แล้วบิลที่ติ๊ก = 0
+  // ปุ่มเลยขึ้น "จ่ายทั้งหมด 0" ทั้งที่ billPaySelected จ่ายทุกบิล — เลขบนปุ่มโกหก
+  const billSelMode = sel.size > 0;
+  const isSelectionMode = billSelMode || _deductSel.size > 0;   // ใช้กับป้ายกำกับด้านล่างเท่านั้น
 
-  // bills: default = แสดงทั้งหมด, selection = เฉพาะที่ติ๊ก
-  const activeBills = isSelectionMode
+  // bills: ดูที่ติ๊กบิลอย่างเดียว — ให้ตรงกับ billPaySelected เป๊ะ
+  const activeBills = billSelMode
     ? bills.filter(b => sel.has(b.day+"::"+b.group.key+"::"+b.key))
     : bills;
   const totalSelected = activeBills.reduce((s,b)=>s+(b.item.amount||0),0);
@@ -8809,9 +9101,21 @@ function billPaySelected() {
   // V4: confirm — ในโหมด default บังคับ confirm เสมอเพื่อป้องกันพลาด
   const needConfirm = !isSelectionMode || selectedBills.length >= 5 || totalAmount >= 10000;
   if (needConfirm) {
-    const msg = isSelectionMode
-      ? `ยืนยันจ่าย ${selectedBills.length} บิล รวม ${fmt(totalAmount)} บาท?`
-      : `ยืนยันจ่ายทั้งหมด ${selectedBills.length} บิล รวม ${fmt(totalAmount)} บาท?`;
+    // V5.49 (B01): กล่องยืนยันเคยบอกแต่ยอดบิล ไม่พูดถึงรายการหักตะกร้า
+    //              ทำให้ตัวเลขบนปุ่มกับในกล่องไม่ตรงกัน — แยกให้เห็นครบทั้ง 3 บรรทัด
+    const _ded = (typeof billDeducts !== "undefined" && billDeducts) ? billDeducts : [];
+    const _dSel = window._deductSelected || new Set();
+    const _dActive = _dSel.size > 0
+      ? _ded.filter(d => !d.monthKey || _dSel.has(`${d.monthKey}::${d.name}::${d.amount}`))
+      : _ded;
+    const _dTot = _dActive.reduce((s,d)=>s+(d.amount||0), 0);
+    const _net  = Math.max(0, totalAmount - _dTot);
+    const _head = isSelectionMode
+      ? `ยืนยันจ่าย ${selectedBills.length} บิล ?`
+      : `ยืนยันจ่ายทั้งหมด ${selectedBills.length} บิล ?`;
+    const msg = _dTot > 0
+      ? `${_head}\nยอดบิล ${fmt(totalAmount)}\nหักตะกร้า -${fmt(_dTot)}\nรับเงินจริง ${fmt(_net)}`
+      : `${_head}\nรวม ${fmt(totalAmount)} บาท`;
     if (!confirm(msg)) return;
   }
 
@@ -9025,7 +9329,7 @@ function addDeductRow() {
   const amountEl = document.getElementById("deductAmount");
   if (!nameEl || !amountEl) return;
   const name = nameEl.value.trim();
-  const amount = parseFloat(amountEl.value) || 0;
+  const amount = _intAmt(amountEl.value);   // V5.49 (B04/B31)
   if (!name && !amount) {
     if (typeof showToast === "function") showToast("กรุณากรอกชื่อรายการหรือจำนวนเงิน", "warning", 1800);
     else alert("กรุณากรอกชื่อรายการหรือจำนวนเงิน");
@@ -9916,6 +10220,66 @@ function _billStatementRows(list) {
   return (list || []).filter(b => b && b.item && !b.item.ppOf && (+b.item.amount || 0) > 0);
 }
 
+// ═══════════════════════════════════════════════════════════════════
+// V5.49 (B50): ดูภาพบิลก่อน แล้วค่อยเลือกบันทึกหรือแชร์
+// ───────────────────────────────────────────────────────────────────
+// ใช้หน้าตาของ showBillPreviewModal ที่เขียนไว้แล้ว แต่เปลี่ยนปุ่มให้ส่งของ
+// ด้วย blob เหมือนทางเดิม — ทางเก่าของ modal ใช้ dataURL ซึ่งบน iOS เซฟไม่ลง
+// ═══════════════════════════════════════════════════════════════════
+function _billShowPreview(canvas, filename, customerName, todayStr) {
+  canvas.toBlob(blob => {
+    if (!blob) {
+      if (typeof showToast === "function") showToast("สร้างภาพไม่สำเร็จ", "error", 2200);
+      return;
+    }
+    let dataUrl = "";
+    try { dataUrl = canvas.toDataURL("image/png"); } catch(e) {}
+    showBillPreviewModal(dataUrl, customerName, todayStr);
+    // showBillPreviewModal เขียนทับ _billPreviewState — ต้องเติมของจริงหลังจากนั้น
+    window._billPreviewState = Object.assign(window._billPreviewState || {},
+      { blob, filename, customerName, todayStr });
+  }, "image/png");
+}
+
+// ส่งไฟล์ให้ผู้ใช้ · mode: "save" = บันทึกลงเครื่อง · "share" = เปิดแผงแชร์
+function _billDeliver(mode) {
+  const st = window._billPreviewState;
+  if (!st || !st.blob) {
+    if (typeof showToast === "function") showToast("ไม่พบข้อมูลภาพ — กรุณาลองใหม่", "error", 2200);
+    return;
+  }
+  const file = new File([st.blob], st.filename, { type: "image/png" });
+  const canShareFile = !!(navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share);
+  const done = (msg) => {
+    closeBillPreview();
+    if (typeof showToast === "function") showToast(msg, "success", 1500);
+    if (typeof hap === "function") hap([8, 30, 12]);
+  };
+  if (mode === "share" || (mode === "save" && canShareFile)) {
+    if (!canShareFile) {
+      if (typeof showToast === "function") showToast("เครื่องนี้แชร์ไฟล์ไม่ได้ — กดบันทึกแทน", "warn", 2500);
+      return;
+    }
+    navigator.share({ files: [file], title: `บิล ${st.customerName||""}`.trim(),
+                      text: `บิล ${st.customerName||""}`.trim() })
+      .then(() => done(mode === "share" ? "แชร์เรียบร้อย" : "บันทึกภาพสำเร็จ"))
+      .catch(err => {
+        if (err && err.name === "AbortError") return;   // ผู้ใช้กดยกเลิกเอง
+        if (typeof showToast === "function")
+          showToast("ส่งภาพไม่ได้: " + (err && err.message ? err.message : "unknown"), "error", 2500);
+      });
+    return;
+  }
+  // desktop / Android — ดาวน์โหลดตรง
+  const url = URL.createObjectURL(st.blob);
+  const link = document.createElement("a");
+  link.download = st.filename; link.href = url;
+  document.body.appendChild(link); link.click(); document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  done("บันทึกภาพสำเร็จ");
+}
+window._billDeliver = _billDeliver;
+
 function saveBillImage() {
   // V3: prevent double-click
   if (window._billSavingImage) return;
@@ -10089,6 +10453,15 @@ function generateInvoiceBillImage(customerName) {
     const _safeDate = (todayStr || new Date().toISOString().slice(0, 10)).replace(/ /g, "_");
     const _filename = `bill_${_safeFilename}_${_safeDate}.png`;
 
+    // ═══ V5.49 (B50): ให้ดูภาพก่อนส่งลูกค้า ═══
+    // หน้าตัวอย่างเขียนไว้ครบตั้งแต่ V3 แต่ไม่มีใครเรียก — เดิมเซฟทันทีโดยไม่ให้ดู
+    // ต่อสายให้ใช้ได้ แต่ยังส่งของด้วยทางเดิม (blob + Web Share) ซึ่งดีกว่าทางเก่าที่ modal ใช้
+    if (window._billPreviewOn !== false) {
+      window._billSavingImage = false;
+      _billShowPreview(canvas, _filename, customerName, todayStr);
+      return;
+    }
+
     // V4.4: บน iOS ใช้ Web Share API → user เลือก "Save Image" เข้า Photos ได้ทันที
     //       Desktop/Android (รองรับ download attribute) ใช้ direct download
     canvas.toBlob((blob) => {
@@ -10167,11 +10540,11 @@ function showBillPreviewModal(dataUrl, customerName, todayStr) {
       </div>
       <div style="display:flex;gap:8px;padding:12px 14px;border-top:0.5px solid rgba(0,0,0,0.06);">
         <button onclick="closeBillPreview()" style="flex:1;padding:13px 12px;border-radius:11px;border:1px solid rgba(0,0,0,0.08);background:#fff;color:#78716C;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;">ยกเลิก</button>
-        <button onclick="confirmSaveBillImage()" style="flex:${hasShareAPI?1:2};padding:13px 12px;border-radius:11px;border:none;background:#1C1917;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;justify-content:center;gap:6px;">
+        <button onclick="_billDeliver('save')" style="flex:${hasShareAPI?1:2};padding:13px 12px;border-radius:11px;border:none;background:#1C1917;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;justify-content:center;gap:6px;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
           บันทึก
         </button>
-        ${hasShareAPI ? `<button onclick="shareBillImage()" style="flex:1;padding:13px 12px;border-radius:11px;border:none;background:#7C3AED;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;justify-content:center;gap:6px;">
+        ${hasShareAPI ? `<button onclick="_billDeliver('share')" style="flex:1;padding:13px 12px;border-radius:11px;border:none;background:#7C3AED;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;justify-content:center;gap:6px;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/></svg>
           แชร์
         </button>` : ''}
@@ -10405,18 +10778,50 @@ function generateInvoiceBill() {
   const win = window.open("","_blank","width=640,height=900");
   if (win) { win.document.write(html); win.document.close(); }
   else {
-    // fallback: download
+    // ═══ V5.49 (B58): Safari บล็อกหน้าต่างใหม่บ่อย ═══
+    // ทางสำรองมีอยู่แล้ว แต่เดิมไม่บอกอะไรเลย — กดแล้วเหมือนปุ่มเสีย
+    // แล้วจู่ๆ มีไฟล์โผล่ในโฟลเดอร์ดาวน์โหลดโดยไม่รู้ว่ามาจากไหน
+    const _fn = `bill_${String(customerName||"").replace(/[\\/:*?"<>|]/g,"_")}.html`;
     const blob = new Blob([html], {type:"text/html;charset=utf-8"});
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href=url; a.download=`bill_${customerName}.html`; a.click();
+    a.href=url; a.download=_fn; a.click();
     URL.revokeObjectURL(url);
+    try {
+      showToast(`เปิดหน้าต่างพิมพ์ไม่ได้ — บันทึกเป็นไฟล์ให้แล้ว\nเปิดจากโฟลเดอร์ดาวน์โหลด: ${_fn}`, "warn", 5000);
+    } catch(e) {
+      alert(`เปิดหน้าต่างพิมพ์ไม่ได้ (เบราว์เซอร์บล็อกไว้)\n\nบันทึกเป็นไฟล์ให้แล้ว — เปิดจากโฟลเดอร์ดาวน์โหลด\n${_fn}`);
+    }
   }
 }
 
 // ── ปิดยอด ───────────────────────────────────────────────────────
 async function closeYod() {
   if (!isOwner()) { alert("ไม่มีสิทธิ์ปิดยอด"); return; }
+  // ═══ V5.49 (B06): ด่านกันปิดยอดทั้งที่ยังมีหนี้ค้าง ═══
+  // วันที่อยู่ในคลังไม่โผล่ในหน้าค้างชำระและหน้ารวมบิล (ทั้งสองอ่านจาก days เท่านั้น)
+  // ปิดยอดทั้งที่ยังค้าง = หนี้หายจากทุกหน้าที่ใช้ตามเงิน
+  // ปุ่มโผล่เฉพาะตอนจ่ายครบอยู่แล้ว แต่ถ้าจอค้างไว้แล้วอีกเครื่องเพิ่มบิล ปุ่มเก่ายังกดได้
+  try {
+    const _dayNow = allDays[activeDay] || {};
+    const _left = [];
+    (GROUPS || []).forEach(g => {
+      Object.values(_dayNow[g.key] || {}).forEach(it => {
+        if (it && it.status === "รอชำระ" && !it.ppOf) _left.push(it);
+      });
+    });
+    if (_left.length) {
+      const _sum = _left.reduce((s, x) => s + (+x.amount || 0), 0);
+      const _who = [...new Set(_left.map(x => (x.name || "").trim()).filter(Boolean))];
+      const _lbl = _who.slice(0, 3).join(" · ") + (_who.length > 3 ? ` และอีก ${_who.length - 3} คน` : "");
+      alert(`ยังปิดยอดไม่ได้ — วัน ${activeDay} มีบิลค้างอยู่ ${_left.length} ใบ รวม ${fmt(_sum)} บาท\n`
+        + `(${_lbl})\n\n`
+        + `ถ้าปิดยอดตอนนี้ หนี้ก้อนนี้จะหายจากหน้าค้างชำระและหน้ารวมบิล\n`
+        + `กดรับเงินให้ครบก่อน แล้วค่อยปิดยอดอีกที`);
+      return;
+    }
+  } catch(e) { console.warn("[closeYod] ตรวจบิลค้างไม่สำเร็จ:", e && e.message); }
+
   return new Promise(resolve => {
     openDeleteConfirm("ปิดยอด " + activeDay + " ?\nวันนี้จะถูกย้ายไปหน้า 'ปิดยอด'", async () => {
       const d    = activeDay;
@@ -11095,7 +11500,9 @@ function bkTogglePayStatus() {
 let bkSaving = false; // flag ป้องกัน re-render ตอนบันทึกเอง
 
 function bkLoadLocal() {
-  db.ref("basket").on("value", snap => {
+  window._lzRefs = window._lzRefs || {};
+  const _bkRef = db.ref("basket");
+  window._lzRefs.basket = { ref:_bkRef, cb: _bkRef.on("value", snap => {
     const d = snap.val() || {};
     try { bkCutters   = JSON.parse(d.cutters   || "[]"); } catch(e){ bkCutters=[]; }
     try { bkCustomers = JSON.parse(d.customers || "[]"); } catch(e){ bkCustomers=[]; }
@@ -11124,7 +11531,7 @@ function bkLoadLocal() {
       if (_bm && _bm.style.display === "flex" && typeof _billRefreshDeducts === "function") _billRefreshDeducts();
     } catch(e) {}
     bkSaving = false;
-  });
+  }) };
 }
 
 // ── Person options popup ────────────────────────────────────────
@@ -11193,10 +11600,54 @@ function bkToggleLock(type, id) {
 function bkDeletePersonConfirm(type, id) {
   const list = type==="cutter" ? bkCutters : bkCustomers;
   const p = list.find(x=>x.id===id); if(!p) return;
-  if(!confirm(`ลบ "${p.name}"?`)) return;
+  // ═══ V5.49 (B41): ถามก่อนว่าจะลบประวัติตะกร้ารายวันด้วยไหม ═══
+  // เดิมลบแค่ชื่อออกจากรายชื่อ แต่ bkData[เดือน][ประเภท][id] ยังอยู่ในฐานข้อมูลตลอดไป
+  // มองไม่เห็นบนจอ ลบทีหลังไม่ได้ และกินที่ไปเรื่อยๆ
+  const _h = _bkPersonHistory(type, id);
+  const _histTxt = _h.days
+    ? `\n\nมีประวัติตะกร้า ${_h.days} วัน ใน ${_h.months} เดือน`
+    : "";
+  if(!confirm(`ลบ "${p.name}" ออกจากรายชื่อ?${_histTxt}`)) return;
+
+  let _wipe = false;
+  if (_h.days) {
+    _wipe = confirm(`ลบประวัติตะกร้าของ "${p.name}" ทิ้งด้วยไหม?\n\n`
+      + `ตกลง = ลบประวัติ ${_h.days} วันทิ้งถาวร กู้คืนไม่ได้\n`
+      + `ยกเลิก = เก็บประวัติไว้ ลบแค่ชื่อออกจากรายชื่อ`);
+  }
+
   if(type==="cutter") bkCutters = bkCutters.filter(x=>x.id!==id);
   else bkCustomers = bkCustomers.filter(x=>x.id!==id);
+  if (_wipe) _bkWipePersonHistory(type, id);
   bkSaveLocal(); bkRender();
+  if (typeof showToast === "function") {
+    showToast(_wipe ? `ลบ "${p.name}" พร้อมประวัติ ${_h.days} วันแล้ว`
+                    : (_h.days ? `ลบ "${p.name}" แล้ว — ประวัติ ${_h.days} วันยังเก็บไว้`
+                               : `ลบ "${p.name}" แล้ว`), "success", 2400);
+  }
+}
+
+// V5.49 (B41): นับประวัติตะกร้ารายวันของคนคนนี้ — bkData[yyyy-mm][type][id][dd]
+function _bkPersonHistory(type, id) {
+  let days = 0, months = 0;
+  try {
+    Object.keys(bkData || {}).forEach(mk => {
+      const cell = ((bkData[mk] || {})[type] || {})[id];
+      if (!cell) return;
+      const n = Object.keys(cell).length;
+      if (n) { days += n; months++; }
+    });
+  } catch(e) { console.warn("[basket] นับประวัติไม่สำเร็จ:", e && e.message); }
+  return { days, months };
+}
+
+// V5.49 (B41): ลบประวัติของคนคนนี้ทุกเดือน (เรียกเฉพาะตอนผู้ใช้ยืนยันแล้ว)
+function _bkWipePersonHistory(type, id) {
+  try {
+    Object.keys(bkData || {}).forEach(mk => {
+      if (bkData[mk] && bkData[mk][type]) delete bkData[mk][type][id];
+    });
+  } catch(e) { console.warn("[basket] ลบประวัติไม่สำเร็จ:", e && e.message); }
 }
 
 // ── ปุ่มกลับ: scroll ไปวันที่ปัจจุบัน ──────────────────────────
@@ -11659,7 +12110,7 @@ async function ppEditPayment(dayKey, gk, payKey, newAmount) {
 
   const A    = Math.max(0, +pay.amount || 0);              // ยอดงวดเดิม
   const R    = Math.max(0, +grp[mainKey].amount || 0);     // ใบหลักเหลือ
-  const want = parseFloat(String(newAmount).replace(/,/g,"")) || 0;
+  const want = _intAmt(newAmount);   // V5.49 (B04/B31)
   if (want <= 0) return { ok:false, err:"จำนวนต้องมากกว่า 0" };
 
   const ceil    = A + R;                    // ใส่ได้เท่านี้โดยไม่เกินยอดบิล
@@ -11813,13 +12264,15 @@ function ppOpenForm(addEl, cellId) {
     });
 
     ok.addEventListener("click", async () => {
-      const amt = parseFloat(inp.value) || 0;
+      const amt = _intAmt(inp.value);   // V5.49 (B04/B31)
       if (amt <= 0) return;
       ok.disabled = true;
       const r = await ppAddPayment(dayKey, gk, ik, payDay, amt);
       if (!r.ok) { alert("บันทึกไม่สำเร็จ: " + r.err); ok.disabled = false; return; }
       if (r.over > 0) {
-        try { toast(`รับเกินยอดบิล ${fmt(r.over)} — ยอดนี้ไม่ถูกนับ จัดการเอง`); } catch(e) {}
+        // V5.49 (B15): เดิมเรียก toast() ซึ่งไม่มีอยู่ในไฟล์เลย — พังทุกครั้งแล้วถูก catch กลืน
+        //              ข้อความนี้จึงไม่เคยขึ้นบนจอสักครั้งตั้งแต่เขียนมา
+        try { showToast(`รับเกินยอดบิล ${fmt(r.over)} — ยอดนี้ไม่ถูกนับ จัดการกันเอง`, "warn", 3500); } catch(e) {}
       }
       try { if (typeof hap === "function") hap(12); } catch(e) {}
       try { openBillModal(window._ppCurName || item.name || ''); } catch(e) {}
@@ -11859,7 +12312,7 @@ function _ppGet(dayKey, gk, ik) {
 async function ppAddPayment(dayKey, gk, ik, payDay, amount) {
   const item = _ppGet(dayKey, gk, ik);
   if (!item) return { ok: false, err: "ไม่พบบิล" };
-  const want = Math.max(0, parseFloat(amount) || 0);
+  const want = Math.max(0, _intAmt(amount));   // V5.49 (B04/B31)
   if (want <= 0) return { ok: false, err: "จำนวนต้องมากกว่า 0" };
 
   const remainBefore = Math.max(0, +item.amount || 0);
@@ -12789,7 +13242,36 @@ function bkClearGetPendingStats() {
   const pending = bkClearGetPendingPaid();
   const count = pending.length;
   const basket = pending.reduce((s,o) => s + (parseFloat(o.basket) || 0), 0);
-  return { count, basket, ids: pending.map(o => o.id) };
+  // V5.49 (B17): แจกแจงรายเดือน — ปุ่มนับทุกเดือนแต่จอเห็นแค่เดือนที่เปิดอยู่
+  //              ไม่แจกแจงแล้วคนกดจะไม่รู้ว่าเลขที่เกินมาโผล่จากไหน
+  const byM = {};
+  pending.forEach(o => {
+    const p = String(o.dateKey || "").split("-");
+    const mk = (p.length >= 2) ? `${p[0]}-${p[1]}` : "?";
+    if (!byM[mk]) byM[mk] = { mk, count: 0, basket: 0 };
+    byM[mk].count++;
+    byM[mk].basket += parseFloat(o.basket) || 0;
+  });
+  const months = Object.values(byM).sort((a,b) => String(b.mk).localeCompare(String(a.mk)));
+  return { count, basket, months, ids: pending.map(o => o.id) };
+}
+
+// V5.49 (B17): แถวรายเดือนในกล่องยืนยัน · เดือนที่เปิดอยู่มีป้ายกำกับ
+function _bkClearMonthRows(months) {
+  const TH = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+  const cur = `${bkYear}-${String(bkMonth).padStart(2,"0")}`;
+  if (!months || !months.length) return "";
+  return months.map(m => {
+    const p = String(m.mk).split("-");
+    const lb = (p.length >= 2 && TH[parseInt(p[1],10)-1])
+      ? `${TH[parseInt(p[1],10)-1]} ${(parseInt(p[0],10)||0)+543}` : m.mk;
+    const here = (m.mk === cur)
+      ? '<span style="font-size:10px;color:#A8A29E;margin-left:4px;">เดือนที่เปิดอยู่</span>' : "";
+    return '<div style="display:flex;align-items:baseline;gap:8px;padding:3px 0;font-size:12px;">'
+      + '<span style="flex:1;text-align:left;color:#57534E;">' + _htmlEsc(lb) + here + '</span>'
+      + '<span style="font-variant-numeric:tabular-nums;color:#1C1917;font-weight:600;">'
+      + m.count + ' · ' + m.basket.toLocaleString("th-TH") + '</span></div>';
+  }).join("");
 }
 
 // ตรวจว่ามี paid บ้างไหม (แม้ cleared แล้ว) — ถ้าไม่มีเลย ปุ่มก็ไม่แสดง
@@ -12902,13 +13384,15 @@ function bkClearOpenConfirm() {
         </svg>
       </div>
       <div style="font-size:15px;font-weight:700;color:#1C1917;margin-bottom:6px;">โอนเงินเคลียร์ค่าตะกร้า</div>
-      <div style="font-size:12px;color:#78716C;margin-bottom:10px;line-height:1.5;">
+      <div style="font-size:12px;color:#78716C;margin-bottom:9px;line-height:1.5;">
         จะเคลียร์ <b style="color:#166534;">${stats.count} รายการ</b> · รวม <b style="color:#166534;">${stats.basket.toLocaleString('th-TH')} ตะกร้า</b>
       </div>
+      <!-- V5.49 (B17): แจกแจงครบทุกเดือน · ยาวเกินก็เลื่อนดูได้ -->
+      ${stats.months && stats.months.length ? `<div style="border-top:1px solid #E7E5E4;border-bottom:1px solid #E7E5E4;padding:6px 2px;margin-bottom:10px;max-height:132px;overflow-y:auto;-webkit-overflow-scrolling:touch;">${_bkClearMonthRows(stats.months)}</div>` : ""}
       <div style="font-size:10.5px;color:#B91C1C;margin-bottom:16px;line-height:1.4;">รายการที่เคลียร์จะไม่ถูกนับในครั้งต่อไป</div>
       <div style="display:flex;gap:8px;">
         <button id="bkClearCancelBtn" style="flex:1;padding:11px;border:1px solid #E7E5E4;background:#fff;border-radius:9px;font-family:inherit;font-size:13px;font-weight:600;color:#57534E;cursor:pointer;-webkit-tap-highlight-color:transparent;">ยกเลิก</button>
-        <button id="bkClearConfirmBtn" style="flex:1;padding:11px;border:none;background:#16A34A;color:#fff;border-radius:9px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;">ยืนยัน</button>
+        <button id="bkClearConfirmBtn" data-months="${(stats.months||[]).length}" style="flex:1;padding:11px;border:none;background:#16A34A;color:#fff;border-radius:9px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;">ยืนยัน</button>
       </div>
     </div>
   `;
@@ -13661,7 +14145,11 @@ function bkSetOrderStatus(id, newStatus) {
   
   // V3: confirm สำหรับ "หัก" (กระทบ bill modal · เปลี่ยน basket ↔ deduct)
   if (newStatus === "หัก" && o.status !== "หัก") {
-    if (!confirm(`เปลี่ยนสถานะเป็น "หัก" ?\nตะกร้าจำนวน ${o.basket||0} ใบ ของ ${o.name} จะถูกหักจากบิลที่ค้างอยู่`)) return;
+    // V5.49 (B27): ของเดิมเขียนว่า "จะถูกหักจากบิลที่ค้างอยู่" ซึ่งตรงข้ามกับผลจริง
+    //              ผลจริงคือแถวหักลบหายจากหน้ารวมบิล → ยอดที่ต้องเก็บ "เพิ่มขึ้น"
+    if (!confirm(`ปิดเรื่องตะกร้ารายการนี้ ?\n`
+      + `ตะกร้า ${o.basket||0} ใบ ของ ${o.name} — ถือว่าเคลียร์กันแล้ว\n`
+      + `รายการจะหายจากช่องหักลบในหน้ารวมบิล ยอดบิลไม่เปลี่ยน`)) return;
   }
   
   o.status = newStatus;
@@ -13725,7 +14213,7 @@ function switchTab(tab) {
     activeEl.classList.add("tab-fade-in");
   }
 
-  // V5.40: เข้าแท็บลูกค้าทีไร ล้าง cache รอบหนึ่ง
+  // V5.49: เข้าแท็บลูกค้าทีไร ล้าง cache รอบหนึ่ง
   //        (การแก้ข้อมูลในเครื่องบางจังหวะเกิดก่อน listener ยิงกลับ — กันตัวเลขค้าง)
   if(tab==="cust" && typeof cmInvalidateIndex === "function") cmInvalidateIndex();
   // ═══ V5.40 (B20): เข้าแท็บไหน ค่อยดึงก้อนของแท็บนั้น ═══
@@ -13815,7 +14303,7 @@ function fruitImg(name, size) {
 // ================================================================
 const CM_MONTHS = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
 
-// ═══ V5.40 (B28/B42): เดิมสแกนฐานข้อมูลทั้งก้อนใหม่ "ต่อลูกค้า 1 คน" ═══
+// ═══ V5.49 (B28/B42): เดิมสแกนฐานข้อมูลทั้งก้อนใหม่ "ต่อลูกค้า 1 คน" ═══
 // หน้าลูกค้าวน cmGetPurchases ทีละคน → ลูกค้า 200 คน = สแกน 200 รอบ
 // และช่องค้นหาสั่งวาดใหม่ทุกตัวอักษรที่พิมพ์ (วัดจริง: เปิดแท็บ 808 ms · พิมพ์ 1 ตัว 161 ms)
 // เปลี่ยนเป็นสแกนรอบเดียวเก็บเข้า Map (ชื่อ → รายการซื้อ) แล้วใช้ซ้ำ
@@ -13883,7 +14371,7 @@ function cmGetStatus(lastDay) {
 
 function cmFmt(n) { return Number(n||0).toLocaleString("th-TH",{minimumFractionDigits:0,maximumFractionDigits:0}); }
 
-// V5.40 (B28): เดิมสั่งวาดใหม่ทุกตัวอักษร · บนมือถือรู้สึกหน่วงตอนพิมพ์
+// V5.49 (B28): เดิมสั่งวาดใหม่ทุกตัวอักษร · บนมือถือรู้สึกหน่วงตอนพิมพ์
 // รอ 200 ms หลังหยุดพิมพ์ค่อยวาด — พิมพ์รวดเดียวจะวาดครั้งเดียว
 let _cmSearchTimer = null;
 function cmSearchInputChanged() {
@@ -14156,7 +14644,18 @@ function cmSaveCustomer() {
     id !== cmEditingId && (c.name||"").trim().toLowerCase() === nameLower
   );
   if (dup) {
-    if (!confirm(`มีลูกค้าชื่อ "${name}" อยู่แล้ว ต้องการบันทึกซ้ำ?`)) return;
+    // ═══ V5.49 (B43): ห้ามชื่อซ้ำในสมุดรายชื่อ ═══
+    // บิลผูกกับลูกค้าด้วย "ชื่อ" ล้วน ไม่มีรหัสประจำตัว
+    // มีสองคนชื่อเดียวกันเมื่อไหร่ การ์ดทั้งสองใบจะโชว์ยอดก้อนเดียวกัน แยกไม่ออกว่าใครค้างเท่าไหร่
+    // (ตรงนี้คือ "สมุดรายชื่อ" เท่านั้น — การลงบิลไม่ถูกแตะเลย
+    //  ลูกค้าคนเดียวกันยังลงได้หลายบิลในวันเดียวเหมือนเดิมทุกอย่าง)
+    alert(`มีลูกค้าชื่อ "${name}" อยู่แล้ว\n\n`
+      + `ถ้าเป็นคนละคน ต้องตั้งชื่อให้ต่างกัน\n`
+      + `เพราะบิลผูกกับลูกค้าด้วยชื่อ — ชื่อซ้ำจะแยกยอดค้างไม่ได้\n\n`
+      + `เช่น "${name} (ตลาดใหม่)" หรือ "${name} 2"`);
+    const el = document.getElementById("cmName");
+    if (el) { try { el.focus(); el.select(); } catch(e) {} }
+    return;
   }
   const types=cmGetChecks("cmType");
   const data={
@@ -14341,20 +14840,59 @@ function checkHolyDataExpiry() {
 }
 setTimeout(checkHolyDataExpiry, 8000);
 
-function openDataMgr() {
-  if (typeof _lzNeed === "function") _lzNeed("closed");   // V5.40: รายการวันต้องรวมคลังด้วย
+// ═══ V5.49: คลังโหลดทีหลังแล้ว รายการวันในหน้านี้ต้องเติมใหม่เมื่อคลังมาถึง ═══
+// ถ้าไม่เติมใหม่ รายการจะขาดวันในคลัง และปุ่ม "ล้าง 30 วันเก่าสุด"
+// จะไปลบวันที่ไม่ใช่เก่าที่สุดจริง — ข้อมูลหายผิดวันแบบกู้ไม่ได้
+// V5.49 (B34): รายชื่อวันในคลังทั้งหมด เรียงเก่า→ใหม่
+// ดัชนี closedIndex โหลดครบทุกวันเสมอ (เล็กมาก) · allClosed โหลดแค่ช่วงล่าสุด
+function _closedAllKeys() {
+  const idx = Object.keys(allClosedIdx || {});
+  return _sortDayKeys(idx.length ? idx : Object.keys(allClosed || {}));
+}
+function _dataMgrClosedReady() {
+  return (typeof _lzState !== "function") || _lzState("closed") === "ok";
+}
+function _dataMgrFill() {
   const sel=document.getElementById("dataMgrDaySelect");
   const prev=document.getElementById("dataMgr30Preview");
   if(!sel) return;
+  const ready = _dataMgrClosedReady();
   const allKeys=_sortDayKeys([...Object.keys(allDays||{}),...Object.keys(allClosed||{})]);
   sel.innerHTML=allKeys.length?allKeys.map(d=>`<option value="${d}">${d}${allClosed[d]?" (ปิดยอด)":""}</option>`).join(""):"<option>ไม่มีข้อมูล</option>";
-  if(allKeys.length){const n=Math.min(30,allKeys.length);const o=allKeys.slice(0,n);if(prev)prev.textContent=`จะลบ ${n} วัน: ${o[0]} ถึง ${o[n-1]}`;}
-  else if(prev) prev.textContent="ไม่มีข้อมูล";
+  // V5.49 (B34): พรีวิวต้องตรงกับสิ่งที่ปุ่มทำจริง — ปุ่มล้างเฉพาะวันในคลัง
+  const _arch = _closedAllKeys();
+  if(!ready){
+    if(prev) prev.textContent="กำลังโหลดรายการวันในคลัง — ยังลบไม่ได้จนกว่าจะครบ";
+  } else if(_arch.length){
+    const n=Math.min(30,_arch.length);const o=_arch.slice(0,n);
+    if(prev)prev.textContent=`จะล้าง ${n} วันในคลัง: ${o[0]} ถึง ${o[n-1]}`
+      + (Object.keys(allDays||{}).length ? ` · ไม่แตะวันที่เปิดอยู่` : "");
+  } else if(prev) prev.textContent="คลังยังว่าง — ไม่มีอะไรให้ล้าง";
+  // ปุ่มลบต้องกดไม่ได้จนกว่ารายการวันจะครบ — ไม่งั้นลบผิดวัน
+  ["dmDelOneBtn","dmDel30Btn"].forEach(id => {
+    const b = document.getElementById(id);
+    if (!b) return;
+    b.disabled = !ready;
+    b.style.opacity = ready ? "1" : "0.45";
+    b.style.pointerEvents = ready ? "" : "none";
+  });
+}
+function openDataMgr() {
+  if (typeof _lzNeed === "function") _lzNeed("closed");   // V5.40: รายการวันต้องรวมคลังด้วย
+  if(!document.getElementById("dataMgrDaySelect")) return;
+  _dataMgrFill();
+  try { _fbIndexRenderDataMgr(); } catch(e) {}   // V5.49
   _renderAutoArchiveUI();   // V4.79: sync สวิตช์ทุกครั้งที่เปิดหน้านี้
   document.getElementById("dataMgrModal").style.display="flex";
 }
 
 async function dataMgrDeleteOne() {
+  // V5.49: ถ้ารายการวันยังไม่ครบ ห้ามลบ — อาจเลือกวันผิด
+  if(!_dataMgrClosedReady()){
+    alert("รายการวันยังโหลดไม่ครบ — รอสักครู่แล้วลองใหม่ครับ");
+    if (typeof _lzNeed === "function") _lzNeed("closed");
+    return;
+  }
   const day=(document.getElementById("dataMgrDaySelect")||{}).value;
   if(!day)return;
   if(!confirm(`ลบวันที่ ${day} ทั้งหมด?
@@ -14370,23 +14908,61 @@ async function dataMgrDeleteOne() {
 }
 
 async function dataMgrDelete30() {
+  // V5.44: ถ้ารายการวันในคลังยังมาไม่ครบ จะเลือกวันผิด แล้วลบทิ้งถาวร — กันไว้ก่อน
+  if(!_dataMgrClosedReady()){
+    alert("รายการวันยังโหลดไม่ครบ — รอสักครู่แล้วลองใหม่ครับ\n(ถ้าลบตอนนี้จะลบผิดวัน)");
+    if (typeof _lzNeed === "function") _lzNeed("closed");
+    return;
+  }
   // V4.73 FIX: .sort() เรียง string ผิด (key เป็น DD-MM-YY) → ลบผิดวัน
   //            ใช้ _sortDayKeys ที่ parse วันที่จริง เหมือนทุกที่อื่นในแอป
-  const allKeys=_sortDayKeys([...Object.keys(allDays||{}),...Object.keys(allClosed||{})]);
-  if(!allKeys.length){alert("ไม่มีข้อมูลให้ลบครับ");return;}
+  // ═══ V5.49 (B34): ล้างได้เฉพาะวันที่ปิดยอดเก็บเข้าคลังแล้ว ═══
+  // ของเดิมรวมวันที่ยังเปิดอยู่เข้าไปด้วย แล้ว slice(0,30)
+  // ถ้ามีทั้งหมดไม่ถึง 30 วัน = ลบทุกวันที่มี รวมวันที่กำลังลงบิลอยู่ตอนนั้น
+  // ปุ่มนี้มีไว้ล้างของเก่าเพื่อประหยัดพื้นที่ ไม่ควรแตะวันที่ยังทำงานอยู่เลย
+  const _openKeys = Object.keys(allDays||{});
+  // ดัชนีคลังมีครบทุกวัน · allClosed มีเฉพาะช่วงที่โหลดมา (270 วันล่าสุด)
+  // ถ้าเลือกจาก allClosed จะได้ "วันเก่าสุดของช่วงใหม่" ซึ่งไม่ใช่ของเก่าสุดจริง
+  const allKeys   = _closedAllKeys();
+  if(!allKeys.length){
+    alert(_openKeys.length
+      ? `ยังไม่มีอะไรให้ล้างครับ\n\nคลังยังว่าง — วันที่เปิดอยู่ ${_openKeys.length} วัน ปุ่มนี้ไม่แตะ\nต้องปิดยอดเก็บเข้าคลังก่อน ถึงจะล้างได้`
+      : "ไม่มีข้อมูลให้ลบครับ");
+    return;
+  }
   const oldest=allKeys.slice(0,30);
-  if(!confirm(`ล้างข้อมูล ${oldest.length} วัน
-ตั้งแต่ ${oldest[0]} ถึง ${oldest[oldest.length-1]}
+  // เงินที่จะหายไปพร้อมกัน — ต้องเห็นก่อนกด
+  // วันที่อยู่นอกช่วงที่โหลดมา เปิดดูข้างในไม่ได้ ต้องบอกตรงๆ ว่าตรวจไม่ได้กี่วัน
+  let _cn=0, _cs=0, _unseen=0;
+  oldest.forEach(d=>{ const dd=allClosed[d];
+    if(!dd){ _unseen++; return; }
+    (GROUPS||[]).forEach(g=>Object.values(dd[g.key]||{}).forEach(it=>{
+      if(it && it.status==="รอชำระ" && !it.ppOf){ _cn++; _cs+=(+it.amount||0); } })); });
+  const _head = oldest.length < 30
+    ? `ล้างได้ ${oldest.length} วัน — ไม่ใช่ 30\nคลังมีอยู่ ${allKeys.length} วัน ล้างได้ทั้งหมด`
+    : `ล้างข้อมูล 30 วันเก่าสุด\n(คลังมีทั้งหมด ${allKeys.length} วัน)`;
+  const _safe = _openKeys.length
+    ? `\n\nวันที่ยังเปิดอยู่ ${_openKeys.length} วัน จะไม่ถูกแตะ`
+    : "";
+  const _warn = _cn
+    ? `\n\nในนั้นมีบิลค้าง ${_cn} ใบ รวม ${fmt(_cs)} บาท — จะหายไปด้วย`
+    : "";
+  const _unk = _unseen
+    ? `\n\n${_unseen} วันในนั้นเก่าเกินช่วงที่โหลดมา ตรวจยอดค้างข้างในไม่ได้`
+    : "";
+  if(!confirm(`${_head}
+ตั้งแต่ ${oldest[0]} ถึง ${oldest[oldest.length-1]}${_safe}${_warn}${_unk}
 
 ยืนยันหรือไม่?`))return;
   for(const d of oldest){
-    if(allDays[d]){delete allDays[d];await db.ref("days/"+d).remove();}
-    if(allClosed[d]){delete allClosed[d];await db.ref("closed/"+d).remove();}
+    // V5.49 (B34): ไม่แตะ days/ อีกแล้ว — oldest มาจากคลังล้วน
+    // วันที่ยังไม่ได้โหลดมาก็ต้องลบได้ ไม่งั้นของเก่าจริงๆ ล้างไม่ออกสักที
+    delete allClosed[d];
+    await db.ref("closed/"+d).remove().catch(e=>console.warn("[ล้างคลัง]", d, e && e.message));
     // V4.79: ถอนดัชนีตามไปด้วย
     delete _closedExtra[d];
     if(allClosedIdx[d]){delete allClosedIdx[d];await db.ref("closedIndex/"+d).remove().catch(()=>{});}
   }
-  if(!allDays[activeDay]){const r=_sortDayKeys(Object.keys(allDays));activeDay=r[0]||null;}
   document.getElementById("dataMgrModal").style.display="none";
   alert(`ล้างข้อมูล ${oldest.length} วันเรียบร้อยแล้วครับ`);
 }
@@ -14437,23 +15013,91 @@ function anGetFilteredDays() {
   });
 }
 
+// ═══════════════════════════════════════════════════════════════════
+// V5.49 (B18): โหลดไลบรารีกราฟไม่ได้
+// ───────────────────────────────────────────────────────────────────
+// กราฟต้องโหลดจากเน็ต · ตัวเลขสรุปไม่ต้อง — คำนวณจากข้อมูลในเครื่องล้วน
+// จึงให้ตัวเลขทำงานต่อ แล้วบอกตรงๆ ว่าที่ขาดไปคือรูปกราฟ
+// ═══════════════════════════════════════════════════════════════════
+function _anNullChart() { return { destroy(){}, update(){}, resize(){}, render(){} }; }
+
+function _anShowChartFail() {
+  if (document.getElementById("anChartFail")) return;
+  const kr = document.getElementById("anKpiRow");
+  const host = kr && kr.parentNode;
+  if (!host) return;
+  const box = document.createElement("div");
+  box.id = "anChartFail";
+  box.style.cssText = "background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;"
+    + "padding:13px 15px;margin-bottom:12px;display:flex;align-items:center;gap:11px;flex-wrap:wrap;";
+  box.innerHTML =
+    '<div style="flex:1;min-width:170px;font-size:13px;color:#991B1B;line-height:1.6;">'
+    + '<b>โหลดรูปกราฟไม่ได้ — เน็ตไปไม่ถึง</b>'
+    + '<div style="font-weight:400;font-size:11.5px;color:#7F1D1D;margin-top:2px;">'
+    + 'ตัวเลขสรุปด้านล่างยังใช้ได้ตามปกติ ขาดแค่รูป</div></div>'
+    + '<button onclick="_anRetryChart()" style="padding:9px 16px;border-radius:9px;border:none;'
+    + 'background:#991B1B;color:#fff;font-weight:700;font-size:12.5px;cursor:pointer;'
+    + 'font-family:inherit;-webkit-tap-highlight-color:transparent;">ลองใหม่</button>';
+  host.insertBefore(box, kr);
+}
+function _anClearChartFail() {
+  const b = document.getElementById("anChartFail");
+  if (b) b.remove();
+  window._anChartFailed = false;
+}
+function _anRetryChart() {
+  // ถอด Chart จำลองออกก่อน ไม่งั้น typeof Chart จะไม่ใช่ undefined แล้วไม่โหลดใหม่
+  try { if (window.Chart === _anNullChart) delete window.Chart; } catch(e) {}
+  _anClearChartFail();
+  renderAnalytics();
+}
+window._anRetryChart = _anRetryChart;
+
 function renderAnalytics() {
   // V3: lazy-load Chart.js (~210 KB) on first analytics view
   if (typeof Chart === 'undefined') {
-    // Show loading state
-    const kr = document.getElementById("anKpiRow");
-    if (kr && !kr.dataset.loading) {
-      kr.dataset.loading = '1';
-      kr.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-quaternary);"><div style="display:inline-flex;width:40px;height:40px;border-radius:12px;background:var(--bg-subtle);align-items:center;justify-content:center;margin-bottom:10px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg></div><div>กำลังโหลด...</div></div>`;
+    // ═══ V5.49 (B18): โหลดกราฟไม่ได้ ต้องไม่ค้าง "กำลังโหลด..." ตลอดไป ═══
+    // เดิม ensureChart().then() ไม่มี .catch → เน็ตไปไม่ถึง CDN แล้วจอค้างถาวร
+    // แถม rejection หลุดไป unhandledrejection → ยิงรายงานบัคระดับ critical
+    // ขึ้น Firebase ทุกครั้งที่กดเข้าแท็บ กินโควตาฟรีกับเรื่องที่ไม่ใช่บัค
+    // ตอนนี้: จับ error → บอกสาเหตุ + ปุ่มลองใหม่ → แล้วเดินต่อด้วย Chart จำลอง
+    // ที่ไม่วาดอะไร เพื่อให้ "ตัวเลขสรุปทุกช่องยังใช้งานได้" ขาดแค่รูปกราฟ
+    if (window._anChartFailed) {
+      _anShowChartFail();
+      window.Chart = _anNullChart;
+    } else {
+      // Show loading state
+      const kr = document.getElementById("anKpiRow");
+      if (kr && !kr.dataset.loading) {
+        kr.dataset.loading = '1';
+        kr.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-quaternary);"><div style="display:inline-flex;width:40px;height:40px;border-radius:12px;background:var(--bg-subtle);align-items:center;justify-content:center;margin-bottom:10px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg></div><div>กำลังโหลด...</div></div>`;
+      }
+      ensureChart().then(() => {
+        if (kr) delete kr.dataset.loading;
+        _anClearChartFail();
+        renderAnalytics();
+      }).catch(err => {
+        if (kr) delete kr.dataset.loading;
+        window._anChartFailed = true;
+        console.warn("[วิเคราะห์] โหลดกราฟไม่ได้:", err && err.message);
+        renderAnalytics();
+      });
+      return;
     }
-    ensureChart().then(() => { 
-      if (kr) delete kr.dataset.loading;
-      renderAnalytics(); 
-    });
-    return;
   }
   const sel=document.getElementById("anYearSel");
-  if(sel&&!sel.options.length) anInitFilters();
+  // ═══ V5.49: รายการปีต้องสร้างใหม่เมื่อข้อมูลเปลี่ยน ═══
+  // เดิมสร้างครั้งเดียวตอนช่องยังว่าง · คลังมาทีหลังแล้วปีเก่าไม่มีวันโผล่
+  // เก็บปีที่ผู้ใช้เลือกไว้ด้วย จะได้ไม่เด้งกลับไปปีปัจจุบันทุกครั้งที่ข้อมูลขยับ
+  if (sel) {
+    const _ver = (window._dataVersion || 0) + ":" + Object.keys(allClosed || {}).length;
+    if (!sel.options.length || sel.dataset.anVer !== _ver) {
+      const _keep = sel.value;
+      anInitFilters();
+      if (_keep && [...sel.options].some(o => o.value === _keep)) sel.value = _keep;
+      sel.dataset.anVer = _ver;
+    }
+  }
   const allSrc=Object.assign({},allDays,allClosed);
   const fd=anGetFilteredDays();
   const sy=(document.getElementById("anYearSel")||{}).value||"";
@@ -14561,53 +15205,178 @@ function anKpi(label,val,sub,color,bg) {
 // ================================================================
 
 // ── V3: Global ESC handler - ปิด modal/popover ที่เปิดอยู่ ──────
+// ═══════════════════════════════════════════════════════════════════
+// V5.49 (B54): ปุ่มย้อนกลับของเครื่อง / ท่าปัดจากขอบ
+// ───────────────────────────────────────────────────────────────────
+// เดิมทั้งไฟล์ไม่มี popstate/pushState เลย → กดย้อนกลับบน Android = ออกจากแอปทันที
+// กำลังกรอกบิล 8 รายการค้างไว้ เผลอปัดครั้งเดียว พิมพ์ใหม่หมด
+//
+// แอปมีลำดับปิดชั้นสำหรับ ESC อยู่แล้ว 10 ระดับ — ยกมาทำเป็นฟังก์ชันกลาง
+// แล้วให้ทั้ง ESC และปุ่มย้อนกลับเรียกตัวเดียวกัน (ของเดิมยังขาดอีก 10 ชั้น)
+// ไม่แตะการอ่านหรือเขียนข้อมูลสักบรรทัด — เปลี่ยนแค่ "ปิดหน้าต่างไหน"
+// ═══════════════════════════════════════════════════════════════════
+
+// ชั้น 1–4 · เรียงจากบนสุดลงล่าง
+// how: "exists" = สร้างสดแล้วลบทิ้ง · "flex" = เปิดด้วย style.display · "show" = เปิดด้วยคลาส
+const _LAYERS = [
+  // ป๊อปอัปที่ลอยสูงสุด
+  ["bkStatusPickerModal",  "exists", null],
+  ["bkPersonOptModal",     "exists", null],
+  // กล่องยืนยัน
+  ["bkClearConfirmOverlay","exists", "bkClearCloseConfirm"],
+  ["moveAskOverlay",       "exists", null],
+  ["otherDayWarnOverlay",  "exists", null],
+  ["iosPromptModal",       "flex",   null],
+  ["deleteConfirmModal",   "flex",   "closeDeleteConfirm"],
+  // ตัวเลือกวันที่
+  ["moveDateOverlay",      "exists", null],
+  ["mcOverlay",            "show",   "closeMiniCal"],
+  ["calModal",             "flex",   "closeCal"],
+  // หน้าต่างย่อย
+  ["editItemModal",        "flex",   "closeEditItemModal"],
+  ["editDayModal",         "show",   "closeEditModal"],
+  ["cmDetailModal",        "show",   null],
+  ["cmFormModal",          "show",   "cmCloseForm"],
+  ["truckModal",           "show",   "truckCloseModal"],
+  ["bkAddModal",           "show",   "bkCloseAddModal"],
+  ["bkSummaryModal",       "exists", null],
+  ["closedDetailModal",    "flex",   null],
+  ["dataMgrModal",         "flex",   null],
+  ["scanModal",            "flex",   "closeScanModal"],
+  ["bugReportModal",       "exists", null],
+  ["bugAdminModal",        "exists", null],
+  ["billPreviewModal",     "flex",   "closeBillPreview"],
+];
+
+function _lyOpen(id, how) {
+  const el = document.getElementById(id);
+  if (!el) return false;
+  // "exists" = ป๊อปอัปที่สร้างสดตอนเปิด · แต่ต้องเช็คว่ามองเห็นจริงด้วย
+  // ไม่งั้นถ้าเผลอใส่ id ของ element ที่มีอยู่ในหน้าแบบซ่อนไว้ จะกินการกดย้อนกลับทุกครั้ง
+  // แล้วลบ element นั้นทิ้งถาวรจนฟีเจอร์นั้นพังไปเลย
+  if (how === "exists") return el.style.display !== "none";
+  if (how === "show")   return el.classList.contains("show");
+  return el.style.display === "flex" || el.style.display === "block";
+}
+function _lyClose(id, how, fn) {
+  if (fn && typeof window[fn] === "function") { try { window[fn](); return true; } catch(e) {} }
+  const el = document.getElementById(id);
+  if (!el) return false;
+  if (how === "exists")    el.remove();
+  else if (how === "show") el.classList.remove("show");
+  else                     el.style.display = "none";
+  return true;
+}
+
+// มีอะไรพิมพ์ค้างไว้ในหน้าต่าง ＋รายการ กี่แถว
+function _masFilledRows() {
+  try {
+    return (masRows || []).filter(r =>
+      String(r.name || "").trim() || String(r.amount || "").trim()).length;
+  } catch(e) { return 0; }
+}
+// ฟอร์มเพิ่มรายการที่เปิดค้างบนบอร์ด มีตัวอักษรอยู่ไหม
+function _boardFormFilled() {
+  const n = document.getElementById("f-name");
+  const a = document.getElementById("f-amount");
+  return !!((n && n.value.trim()) || (a && a.value.trim()));
+}
+
+// ═══ ปิด "ชั้นบนสุด" ที่เปิดอยู่ · คืน true ถ้าจัดการไปแล้ว ═══
+function _closeTopLayer() {
+  try {
+    // ── ชั้น 1–4 ──
+    for (const [id, how, fn] of _LAYERS) {
+      if (_lyOpen(id, how)) return _lyClose(id, how, fn);
+    }
+
+    // ── ชั้น 4ก · หน้าต่าง ＋รายการ — ถามก่อนถ้าพิมพ์ไว้แล้ว ──
+    const mas = document.getElementById("multiAddModal");
+    if (mas && mas.classList.contains("show")) {
+      const n = _masFilledRows();
+      if (n > 0) {
+        if (!confirm(`ทิ้งที่กรอกไว้?\n\nมี ${n} แถวที่ยังไม่ได้บันทึก\nปิดแล้วต้องพิมพ์ใหม่`)) return true;
+      }
+      if (typeof closeMultiAdd === "function") closeMultiAdd();
+      else mas.classList.remove("show");
+      return true;
+    }
+
+    // ── ชั้น 5 · หน้ารวมบิล — ล้างที่ติ๊กไว้ก่อน แล้วค่อยปิด ──
+    const bill = document.getElementById("billModal");
+    if (bill && bill.style.display === "flex") {
+      const s = window._billSelected, d = window._deductSelected;
+      if (s && s.size && typeof billClearSelection === "function")   { billClearSelection();   return true; }
+      if (d && d.size && typeof deductClearSelection === "function") { deductClearSelection(); return true; }
+      if (typeof closeBillModal === "function") closeBillModal();
+      else bill.style.display = "none";
+      return true;
+    }
+
+    // ── ชั้น 6 · แผงเมนู ──
+    if (document.querySelector(".nav-sheet.open")) {
+      if (typeof closeNavSheet === "function") closeNavSheet();
+      return true;
+    }
+
+    // ── ชั้น 7 · ฟอร์มเพิ่มรายการที่เปิดค้างบนบอร์ด ──
+    if (typeof openForm !== "undefined" && openForm) {
+      if (_boardFormFilled()) {
+        if (!confirm("ทิ้งที่กรอกไว้?\n\nปิดแล้วต้องพิมพ์ใหม่")) return true;
+      }
+      openForm = null;
+      if (typeof renderBoard === "function") renderBoard();
+      return true;
+    }
+
+    // ── ชั้น 8 · โหมดเลือกหลายรายการ ──
+    if (window._moveMode && window._moveMode.active) {
+      if (typeof _moveExitSelectMode === "function") { _moveExitSelectMode(); return true; }
+    }
+    if (typeof activeTab !== "undefined" && activeTab === "unpaid" &&
+        window._updSelected && window._updSelected.size) {
+      if (typeof updClearSelection === "function") { updClearSelection(); return true; }
+    }
+
+    // ── ชั้น 9 · อยู่แท็บอื่น → กลับหน้าบอร์ด ──
+    if (typeof activeTab !== "undefined" && activeTab && activeTab !== "board") {
+      if (typeof switchTab === "function") { switchTab("board"); return true; }
+    }
+  } catch(e) {
+    console.warn("[back] ปิดชั้นไม่สำเร็จ:", e && e.message);
+  }
+  return false;   // ไม่มีอะไรให้ปิดแล้ว
+}
+window._closeTopLayer = _closeTopLayer;
+
+// ═══ ผูกปุ่มย้อนกลับของเครื่อง ═══
+// วิธี: ฝาก "จุดหมายเปล่า" ไว้ในประวัติเบราว์เซอร์ 1 อัน
+//       ถูกย้อนเมื่อไหร่ = ผู้ใช้กดย้อนกลับ → ปิดชั้นบนสุด แล้วฝากใหม่
+(function _backButtonInit() {
+  try {
+    if (!window.history || !history.pushState) return;
+    const arm = () => { try { history.pushState({ _mk: 1 }, ""); } catch(e) {} };
+    arm();
+    window.addEventListener("popstate", () => {
+      if (_closeTopLayer()) { arm(); return; }
+      // ไม่มีอะไรให้ปิดแล้ว → กดอีกครั้งภายใน 2 วิ ถึงจะออกจริง
+      if (window._backExitArmed) { window._backExitArmed = false; history.back(); return; }
+      window._backExitArmed = true;
+      try {
+        if (typeof showToast === "function")
+          showToast("กดย้อนกลับอีกครั้งเพื่อออกจากแอป", "info", 2000);
+      } catch(e) {}
+      clearTimeout(window._backExitTimer);
+      window._backExitTimer = setTimeout(() => { window._backExitArmed = false; }, 2000);
+      arm();
+    });
+  } catch(e) { console.warn("[back] ผูกปุ่มย้อนกลับไม่สำเร็จ:", e && e.message); }
+})();
+
+// ── ปุ่ม ESC บนคีย์บอร์ด ใช้ลำดับเดียวกันกับปุ่มย้อนกลับ ──
 document.addEventListener("keydown", function(e) {
   if (e.key !== "Escape" && e.key !== "Esc") return;
-  // เรียงจาก most-overlay → least
-  // 1. Bottom sheets / pickers (z-index สูงสุด)
-  const statusPicker = document.getElementById("bkStatusPickerModal");
-  if (statusPicker) { statusPicker.remove(); return; }
-  const personOpts = document.getElementById("bkPersonOptModal");
-  if (personOpts) { personOpts.remove(); return; }
-  // 2. Calendar modal
-  const calModal = document.getElementById("calModal");
-  if (calModal && calModal.style.display === "flex") { closeCal(); return; }
-  // 3. Edit/data modals
-  const editItemModal = document.getElementById("editItemModal");
-  // V5.36 (B29): โมดัลนี้เปิดด้วย style.display="flex" ไม่ได้ใส่คลาส show
-  //              เช็คแบบเดียวกับ billModal/dataMgrModal ที่อยู่ในด่านเดียวกันนี้
-  if (editItemModal && editItemModal.style.display === "flex") { closeEditItemModal(); return; }
-  const editDayModal = document.getElementById("editDayModal");
-  if (editDayModal && editDayModal.classList.contains("show")) { closeEditModal(); return; }
-  const dataMgrModal = document.getElementById("dataMgrModal");
-  if (dataMgrModal && dataMgrModal.style.display === "flex") { dataMgrModal.style.display = "none"; return; }
-  // 4. Customer modals
-  const cmDetailModal = document.getElementById("cmDetailModal");
-  if (cmDetailModal && cmDetailModal.classList.contains("show")) { cmDetailModal.classList.remove("show"); return; }
-  const cmFormModal = document.getElementById("cmFormModal");
-  if (cmFormModal && cmFormModal.classList.contains("show")) { if (typeof cmCloseForm === "function") cmCloseForm(); else cmFormModal.classList.remove("show"); return; }
-  // 5. Truck modal
-  const truckModal = document.getElementById("truckModal");
-  if (truckModal && truckModal.classList.contains("show")) { if (typeof truckCloseModal === "function") truckCloseModal(); return; }
-  // 6. Add order / basket modals
-  const bkAddModal = document.getElementById("bkAddModal");
-  if (bkAddModal && bkAddModal.classList.contains("show")) { if (typeof bkCloseAddModal === "function") bkCloseAddModal(); return; }
-  const multiAddModal = document.getElementById("multiAddModal");
-  if (multiAddModal && multiAddModal.classList.contains("show")) { multiAddModal.classList.remove("show"); return; }
-  // 7. Closed detail modal
-  const closedDetailModal = document.getElementById("closedDetailModal");
-  if (closedDetailModal && closedDetailModal.style.display === "flex") { closedDetailModal.style.display = "none"; return; }
-  // 8. Bill modal (สำคัญสุด - ทำท้าย)
-  const billModal = document.getElementById("billModal");
-  if (billModal && billModal.style.display === "flex") { closeBillModal(); return; }
-  // 9. Bill preview
-  const billPreview = document.getElementById("billPreviewModal");
-  if (billPreview && billPreview.style.display === "flex") { if (typeof closeBillPreview === "function") closeBillPreview(); return; }
-  // 10. Nav sheet
-  // V5.36 (B30): เดิมหา ".nav-sheet.show" — เมนูใส่คลาส .open ไม่ใช่ .show
-  //              เงื่อนไขจึงเป็นเท็จเสมอ กด ESC ไม่เคยปิดเมนู
-  const navSheet = document.querySelector(".nav-sheet.open");
-  if (navSheet) { if (typeof closeNavSheet === "function") closeNavSheet(); return; }
+  _closeTopLayer();
 });
 
 // ── ข้อ 15: Swipe sensitivity tuning ────────────────────────────
@@ -17349,7 +18118,7 @@ function saveEditItem() {
   const {dayKey, grpKey, itemKey} = _editItemCtx;
   const name   = (document.getElementById("editItemName")?.value||"").trim();
   const amountRaw = document.getElementById("editItemAmount")?.value || "";
-  const amount = parseFloat(String(amountRaw).replace(/,/g,""));
+  const amount = _intAmt(amountRaw);   // V5.49 (B04/B31)
   if (!name) { alert("กรุณากรอกชื่อลูกค้า"); return; }
   if (isNaN(amount) || amount <= 0) {
     alert("ยอดเงินต้องเป็นตัวเลขมากกว่า 0");
@@ -18155,7 +18924,7 @@ function renderScanResults() {
                 oninput="scanResults[${i}].name=this.value;scanResults[${i}].group=scanDetectGroup(this.value);"
                 style="flex:1;padding:5px 8px;border-radius:6px;border:1px solid #E7E5E4;font-size:12px;outline:none;font-family:inherit;min-width:0;">
               <input type="text" inputmode="decimal" value="${r.amount||''}" placeholder="฿"
-                oninput="scanResults[${i}].amount=parseFloat(this.value)||0"
+                oninput="scanResults[${i}].amount=_intAmt(this.value)"
                 style="width:90px;padding:5px 8px;border-radius:6px;border:1px solid #E7E5E4;font-size:12px;outline:none;font-family:inherit;flex-shrink:0;">
             </div>
             <!-- หมายเหตุ -->
@@ -18190,13 +18959,39 @@ async function scanSaveAll() {
   if (!toSave.length) { alert("ไม่มีรายการที่จะบันทึก"); return; }
   const btn = document.getElementById("scanSaveAllBtn");
   if(btn){ btn.textContent="กำลังบันทึก..."; btn.disabled=true; }
-  let saved=0;
+  // ═══ V5.49 (B46): นับเฉพาะใบที่เขียนสำเร็จจริง ═══
+  // ของเดิม .catch(()=>{}) กลืนทุกความผิดพลาด แล้ว saved++ เดินหน้าต่อ
+  // สิทธิ์หมดอายุ / กฎฐานข้อมูลปฏิเสธ = เขียนไม่ได้สักใบ แต่ขึ้นเขียวว่าสำเร็จ
+  // แล้ว closeScanModal() ล้างรูปกับผลสแกนทิ้ง → ต้องถ่ายใหม่ สแกนใหม่ เสียค่าสแกนซ้ำ
+  // แถมถ้าเน็ตหลุด set() จะค้างไม่ยอม resolve — ปุ่มค้าง "กำลังบันทึก..." ตลอดกาล
+  let saved=0; const failed=[];
   for (const r of toSave) {
     const key = "sc"+Date.now()+Math.random().toString(36).slice(2,5);
-    await db.ref(`days/${activeDay}/${r.group}/${key}`)
-      .set({name:r.name, note:r.note||"", amount:_normAmt(r.amount), status:"รอชำระ"})
-      .catch(()=>{});
-    saved++;
+    try {
+      await Promise.race([
+        db.ref(`days/${activeDay}/${r.group}/${key}`)
+          .set({name:r.name, note:r.note||"", amount:_intAmt(r.amount), status:"รอชำระ"}),
+        new Promise((_,rej)=>setTimeout(()=>rej(new Error("หมดเวลารอ")), _SCAN_SAVE_TIMEOUT)),
+      ]);
+      saved++;
+      r.saved = true;
+    } catch(e) {
+      r.saved = false;
+      r.failMsg = (e && e.message) || "บันทึกไม่สำเร็จ";
+      failed.push(r);
+    }
+  }
+  if (failed.length) {
+    // ไม่ปิด ไม่ล้าง — ของที่ยังไม่ได้บันทึกต้องอยู่ให้กดใหม่ได้
+    scanResults = scanResults.filter(x => !x.saved);
+    if (typeof scanRenderResults === "function") { try { scanRenderResults(); } catch(e) {} }
+    if(btn){ btn.textContent=`ลองบันทึก ${failed.length} ใบที่เหลืออีกครั้ง`; btn.disabled=false; }
+    _scanShowPartial(saved, failed.length);
+    alert(`บันทึกได้ ${saved} จาก ${saved+failed.length} ใบ\n\n`
+      + `อีก ${failed.length} ใบยังไม่ได้บันทึก (${failed[0].failMsg})\n`
+      + `รายการยังอยู่ในหน้านี้ กดปุ่มด้านล่างเพื่อลองใหม่ได้เลย\n`
+      + `ถ้าปิดหน้านี้ไป ${failed.length} ใบนั้นจะหาย ต้องถ่ายใหม่`);
+    return;
   }
   closeScanModal();
   const toast = document.createElement("div");
@@ -18204,6 +18999,28 @@ async function scanSaveAll() {
   toast.style.cssText="position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#166534;color:#fff;padding:12px 22px;border-radius:99px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.2);white-space:nowrap;text-align:center;";
   document.body.appendChild(toast);
   setTimeout(()=>toast.remove(), 4000);
+}
+
+// V5.49 (B46): เน็ตหลุดแล้ว set() ไม่ยอม resolve — ต้องมีเพดานเวลา ไม่งั้นค้างตลอดกาล
+const _SCAN_SAVE_TIMEOUT = 15000;
+
+// แถบสรุปตอนบันทึกไม่ครบ — ค้างไว้บนหน้าต่างสแกน ไม่หายเอง
+function _scanShowPartial(ok, bad) {
+  const box = document.getElementById("scanModal");
+  if (!box) return;
+  let el = document.getElementById("scanPartialBar");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "scanPartialBar";
+    el.style.cssText = "position:sticky;top:0;z-index:60;background:#FEF2F2;border:1px solid #FECACA;"
+      + "border-radius:11px;padding:11px 14px;margin:10px;font-size:13px;font-weight:700;color:#991B1B;"
+      + "line-height:1.6;text-align:center;";
+    const inner = box.querySelector(".modal-box") || box.firstElementChild || box;
+    inner.insertBefore(el, inner.firstChild);
+  }
+  el.innerHTML = `บันทึกได้ ${ok} ใบ · ยังค้างอีก ${bad} ใบ`
+    + `<div style="font-weight:400;font-size:11.5px;color:#7F1D1D;margin-top:3px;">`
+    + `ปิดหน้านี้แล้ว ${bad} ใบที่ค้างจะหาย ต้องถ่ายใหม่</div>`;
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -19205,7 +20022,7 @@ function openBoardSearch() {
   const inp = document.getElementById("boardSearchInp");
   if (inp) {
     inp.focus();
-    // V5.40 (B42): ค้นหาบนบอร์ดสแกนทุกวันทุกหมวดใหม่ทุกตัวอักษร (วัดได้ 197 ms)
+    // V5.49 (B42): ค้นหาบนบอร์ดสแกนทุกวันทุกหมวดใหม่ทุกตัวอักษร (วัดได้ 197 ms)
     //              รอ 150 ms หลังหยุดพิมพ์ค่อยค้น — ผลลัพธ์เหมือนเดิม แค่ไม่กระตุก
     let _bsTimer = null;
     inp.addEventListener("input", () => {
@@ -19369,12 +20186,15 @@ let truckModalTimes = [];
 // ── Firebase sync ──────────────────────────────────────
 // V5.40 (B20): ไม่ผูกตอนเปิดแอปแล้ว — เรียกจาก _lzNeed("trucks") ตอนเข้าแท็บคิวรถ
 function _lzBindTrucks() {
-  db.ref("trucks").on("value", snap => {
+  window._lzRefs = window._lzRefs || {};
+  const _ref = db.ref("trucks");
+  const _cb = _ref.on("value", snap => {
     truckData = snap.val() || {};
     window._trucksFromServer = true;
     if (typeof _lzArrived === "function") _lzArrived("trucks");
     if (activeTab === "truck") truckRender();
   }, err => _lzFailed("trucks", err && err.message));
+  window._lzRefs.trucks = { ref:_ref, cb:_cb };
 }
 
 // ── Render ─────────────────────────────────────────────
