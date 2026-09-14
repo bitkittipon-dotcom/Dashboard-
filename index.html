@@ -4009,6 +4009,15 @@ tr:last-child td { border-bottom: none; }
       <button onclick="document.getElementById('dataMgrModal').style.display='none'" style="background:rgba(255,255,255,.18);border:none;border-radius:50%;width:32px;height:32px;color:#fff;cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1);-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.background='rgba(255,255,255,0.3)';this.style.transform='rotate(90deg)'" onmouseout="this.style.background='rgba(255,255,255,0.18)';this.style.transform=''"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
     </div>
     <div style="padding:20px;display:flex;flex-direction:column;gap:12px;">
+      <!-- ═══ V5.50: สำรองข้อมูลทั้งหมด ═══
+           วางไว้บนสุดเพราะลำดับที่ถูกคือสำรองก่อนลบ
+           ปุ่มนี้อ่านอย่างเดียว ไม่เขียนอะไรลงฐานข้อมูล -->
+      <div style="background:linear-gradient(135deg,#F0FDF4 0%,#ECFDF5 100%);border-radius:14px;padding:14px 16px;border:1px solid #BBF7D0;">
+        <div style="font-weight:600;font-size:14px;color:#166534;margin-bottom:6px;display:flex;align-items:center;gap:7px;letter-spacing:-0.01em;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>สำรองข้อมูลทั้งหมด</div>
+        <div style="font-size:12px;color:#78716C;margin-bottom:4px;">โหลดเก็บไว้เป็นไฟล์ในเครื่อง — กู้คืนได้ถ้าลบพลาด</div>
+        <div id="dmBackupStat" style="font-size:11px;font-weight:700;margin-bottom:10px;"></div>
+        <button id="dmBackupBtn" onclick="dataMgrBackup()" style="width:100%;padding:11px;border-radius:11px;border:none;background:#166534;color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:all .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 12px rgba(22,101,52,0.25);-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;gap:8px;" onmouseover="this.style.background='#14532D';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#166534';this.style.transform=''">สำรองข้อมูลตอนนี้</button>
+      </div>
       <div style="background:linear-gradient(135deg,#FFF7F7 0%,#FEF2F2 100%);border-radius:14px;padding:14px 16px;border:1px solid #FECACA;">
         <div style="font-weight:600;font-size:14px;color:#991B1B;margin-bottom:6px;">ลบวันที่เลือก</div>
         <div style="font-size:12px;color:#78716C;margin-bottom:10px;">เลือกวันที่ต้องการลบออกจากระบบ</div>
@@ -4583,8 +4592,8 @@ input[name="cust-name-no-fill"]:-webkit-autofill {
 <!-- Chart.js + html2canvas: lazy-loaded on demand (saves ~410 KB on first paint) -->
 <script>
 // ═══ V4.38 (B.4): APP_VERSION — single source of truth ═══
-window.APP_VERSION = "V5.49";
-window.APP_VERSION_STRING = "V5.49"; // alias for compatibility
+window.APP_VERSION = "V5.50";
+window.APP_VERSION_STRING = "V5.50"; // alias for compatibility
 
 // ═══════════════════════════════════════════════════════════════════
 // V5.49: ดักคำเตือน "ไม่มี index" ของ Firebase
@@ -14877,12 +14886,157 @@ function _dataMgrFill() {
     b.style.pointerEvents = ready ? "" : "none";
   });
 }
+// ═══════════════════════════════════════════════════════════════
+// V5.50: สำรองข้อมูลทั้งหมด
+// ───────────────────────────────────────────────────────────────
+// หน้านี้มีปุ่มลบสองปุ่มที่กดแล้วไม่มีทางย้อนกลับ แต่ทั้งแอปไม่มีทางสำรองเลย
+// ความเสี่ยงอันดับหนึ่งจึงไม่ใช่คนนอก แต่คือกดลบพลาดเอง
+//
+// สำคัญ: อ่านจาก db.ref("/") ไม่ใช่จาก allDays/allClosed ในหน่วยความจำ
+//        allClosed เก็บแค่หน้าต่าง 270 วันล่าสุด (ดู _bindClosedListener)
+//        ถ้าสำรองจากตัวแปรในเครื่อง ไฟล์จะขาดคลังเก่าไปเงียบๆ
+//        และจะไม่มีใครรู้จนถึงวันที่ต้องเอามาใช้จริง — สายเกินไปแล้ว
+//
+// ไม่มีปุ่ม "กู้คืน" ในแอป โดยตั้งใจ — ปุ่มกู้คืนเขียนทับทั้งฐานได้ในคลิกเดียว
+// อันตรายกว่าปุ่มลบที่กำลังป้องกันอยู่เสียอีก
+//
+// วิธีกู้คืนจริง: Firebase Console → Realtime Database → แท็บ Data
+//                → เลือก "โหนดบนสุด" (ชื่อโปรเจกต์) → เมนูจุดสามจุด → Import JSON
+//                → เลือกไฟล์ที่ปุ่มนี้โหลดไว้
+// ไฟล์จึงต้องมีรูปแบบเดียวกับที่ Console กดออกเอง คือฐานข้อมูลตรงๆ ไม่มีห่อ
+// ═══════════════════════════════════════════════════════════════
+var _BK_KEY  = "lastBackupAt";
+var _BK_TH   = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+var _bkBusy  = false;
+
+function _bkReadLast() {
+  try {
+    var v = parseInt(localStorage.getItem(_BK_KEY) || "0", 10);
+    return (isFinite(v) && v > 0) ? v : 0;
+  } catch (e) { return 0; }   // Safari ส่วนตัว / ปิด storage → ถือว่ายังไม่เคยสำรอง
+}
+function _bkFmtThai(ts) {
+  var d = new Date(ts);
+  return d.getDate() + " " + _BK_TH[d.getMonth()] + " " + String((d.getFullYear() + 543) % 100);
+}
+function _bkStamp(ts) {   // DD-MM-YY แบบเดียวกับคีย์วันในฐานข้อมูล
+  var d = new Date(ts), p = function (n) { return String(n).padStart(2, "0"); };
+  return p(d.getDate()) + "-" + p(d.getMonth() + 1) + "-" + p((d.getFullYear() + 543) % 100);
+}
+function _bkRenderStat() {
+  var el = document.getElementById("dmBackupStat");
+  if (!el) return;
+  var last = _bkReadLast();
+  if (!last) {
+    el.style.color = "#B45309";
+    el.textContent = "ยังไม่เคยสำรองข้อมูลเลย";
+    return;
+  }
+  var days = Math.floor((Date.now() - last) / 86400000);
+  if (days > 30) {
+    el.style.color = "#B45309";
+    el.textContent = "สำรองล่าสุด " + _bkFmtThai(last) + " — ผ่านมา " + days + " วันแล้ว";
+  } else {
+    el.style.color = "#15803D";
+    el.textContent = "สำรองล่าสุด " + _bkFmtThai(last);
+  }
+}
+
+// ส่งไฟล์ให้ผู้ใช้ — ทางเดียวกับปุ่ม "บันทึกรูปบิล" ที่พิสูจน์บน iOS แล้วตั้งแต่ V4.4
+// iOS: Web Share API → ผู้ใช้เลือก "บันทึกลงไฟล์"
+// คอม/แอนดรอยด์: <a download> ตรงๆ
+// คืน "cancel" ถ้าผู้ใช้กดยกเลิกแผงแชร์ — จะได้ไม่บันทึกวันที่สำรองทั้งที่ยังไม่ได้ไฟล์
+function _bkDeliver(blob, filename) {
+  try {
+    var file = new File([blob], filename, { type: "application/json" });
+    if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+      return navigator.share({ files: [file], title: filename })
+        .then(function () { return "share"; })
+        .catch(function (err) {
+          if (err && err.name === "AbortError") return "cancel";
+          return _bkDownload(blob, filename);   // แชร์พังด้วยเหตุอื่น → ยังมีทางที่สอง
+        });
+    }
+  } catch (e) { /* เบราว์เซอร์เก่าไม่มี File/canShare → ตกไปใช้ download */ }
+  return Promise.resolve(_bkDownload(blob, filename));
+}
+function _bkDownload(blob, filename) {
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  return "download";
+}
+
+var _BK_SPIN = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="animation:spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
+
+function _bkSetBtn(html, busy) {
+  var b = document.getElementById("dmBackupBtn");
+  if (!b) return;
+  b.innerHTML = html;
+  b.style.opacity = busy ? "0.75" : "";
+  b.style.pointerEvents = busy ? "none" : "";
+}
+
+async function dataMgrBackup() {
+  if (_bkBusy) return;
+  _bkBusy = true;
+  _bkSetBtn(_BK_SPIN + "กำลังรวบรวมข้อมูล…", true);
+  try {
+    // อ่านทั้งฐานครั้งเดียวจากเซิร์ฟเวอร์ — ครบทุกโหนด รวมโหนดที่แอปยังไม่รู้จัก
+    var snap = await db.ref("/").once("value");
+    var data = snap.val() || {};
+    // ตัดโหนดระบบที่ขึ้นต้นด้วยจุด (เช่น .info) ออกก่อนเขียนไฟล์
+    // Firebase ห้ามจุดในชื่อคีย์ ข้อมูลจริงจึงไม่มีทางขึ้นต้นด้วยจุด
+    // ถ้าปล่อยติดไปในไฟล์ การนำเข้ากลับจะถูกปฏิเสธ — กู้ไม่ได้ทั้งไฟล์เพราะคีย์เดียว
+    Object.keys(data).forEach(function (k) { if (k.charAt(0) === ".") delete data[k]; });
+    var now  = Date.now();
+    // ═══ รูปแบบไฟล์: ระดับบนสุดคือฐานข้อมูลตรงๆ ไม่มีห่อ ไม่มีหัวไฟล์ ═══
+    // ของเดิมผมห่อไว้เป็น {_backupOf,_version,_savedAt,data:{...}} เพื่อให้รู้ที่มา
+    // แต่ Firebase Console → Import JSON เอาไฟล์ไปวางที่โหนดที่เลือกตรงๆ
+    // ห่อไว้แล้วนำเข้าที่ราก จะได้ /_backupOf /_version /_savedAt /data
+    // แอปจะมองว่าฐานข้อมูลว่างเปล่า — กู้ไม่ได้จริงทั้งที่ไฟล์ครบ
+    // รูปแบบนี้เท่ากับที่ Console กดออกเองทุกอย่าง จึงกู้คืนได้ด้วยวิธีเดียวกัน
+    // ส่วนที่มา: วันที่อยู่ในชื่อไฟล์ · เวอร์ชันแอปอยู่ใน config/version ในตัวข้อมูลอยู่แล้ว
+    var text = JSON.stringify(data);
+    var fn   = "ตลาด-สำรอง-" + _bkStamp(now) + ".json";
+    var blob = new Blob([text], { type: "application/json" });
+    var how  = await _bkDeliver(blob, fn);
+    if (how === "cancel") {   // ผู้ใช้ยกเลิกเอง → ไม่ใช่ความสำเร็จ อย่าบันทึกวันที่
+      _bkBusy = false;
+      _bkSetBtn("สำรองข้อมูลตอนนี้", false);
+      return;
+    }
+    try { localStorage.setItem(_BK_KEY, String(now)); } catch (e) {}
+    _bkRenderStat();
+    // ต้องใช้ blob.size (ไบต์จริง) ไม่ใช่ text.length (จำนวนตัวอักษร)
+    // ภาษาไทยตัวละ 3 ไบต์ใน UTF-8 — ใช้ length จะบอกขนาดต่ำกว่าจริงเกือบครึ่ง
+    // (วัดแล้ว: ไฟล์จริง 2.70 MB แต่ length บอก 1.7 MB)
+    var mb = blob.size / 1048576;
+    if (typeof showToast === "function") {
+      showToast("สำรองแล้ว · " + fn + (mb >= 0.05 ? "  (" + mb.toFixed(1) + " MB)" : ""), "success", 3000);
+    }
+    if (typeof hap === "function") hap([8, 30, 12]);
+  } catch (e) {
+    // เน็ตขาด / สิทธิ์ไม่พอ / เบราว์เซอร์บล็อก — บอกให้รู้ว่าเกิดอะไรขึ้น ไม่ใช่เงียบ
+    var m = (e && e.message) ? e.message : "ไม่ทราบสาเหตุ";
+    if (typeof showToast === "function") showToast("สำรองไม่สำเร็จ — " + m + "\nลองใหม่อีกครั้ง", "error", 4500);
+  }
+  _bkBusy = false;
+  _bkSetBtn("สำรองข้อมูลตอนนี้", false);
+}
+window.dataMgrBackup = dataMgrBackup;
+
 function openDataMgr() {
   if (typeof _lzNeed === "function") _lzNeed("closed");   // V5.40: รายการวันต้องรวมคลังด้วย
   if(!document.getElementById("dataMgrDaySelect")) return;
   _dataMgrFill();
   try { _fbIndexRenderDataMgr(); } catch(e) {}   // V5.49
   _renderAutoArchiveUI();   // V4.79: sync สวิตช์ทุกครั้งที่เปิดหน้านี้
+  try { _bkRenderStat(); } catch(e) {}   // V5.50: บรรทัด "สำรองล่าสุด …"
   document.getElementById("dataMgrModal").style.display="flex";
 }
 
