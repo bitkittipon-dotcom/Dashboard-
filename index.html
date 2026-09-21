@@ -2348,14 +2348,20 @@ tr:last-child td { border-bottom: none; }
 
 .bkm-min {
   background:rgba(118,118,128,0.16); border:none;
-  border-radius:50%;
-  width:28px; height:28px; cursor:pointer;
+  border-radius:99px;
+  width:44px; height:28px; padding:0; cursor:pointer;
   display:flex; align-items:center; justify-content:center; color:#007AFF;
+  font-family:inherit; font-size:13px; font-weight:600; line-height:1;
+  letter-spacing:-0.01em; white-space:nowrap;
   transition: all .2s;
   -webkit-tap-highlight-color: transparent;
   flex-shrink:0;
 }
 .bkm-min:active { transform: scale(0.92); }
+
+/* V5.60: กันที่ฝั่งปุ่มปิดให้กว้างเท่าปุ่ม "ย่อ" (44) วันที่จะได้อยู่กึ่งกลางเป๊ะเหมือนเดิม
+          ปุ่มปิดยังเป็นวงกลม 28 เท่าเดิม แค่ชิดขวาอยู่ในกล่องกว้าง 44 */
+.bkm-head-rsp { width:44px; flex-shrink:0; display:flex; justify-content:flex-end; }
 
 .bkm-close {
   background:rgba(118,118,128,0.16); border:none; border-radius:50%;
@@ -2674,6 +2680,54 @@ tr:last-child td { border-bottom: none; }
   cursor:wait;
   pointer-events:none;
 }
+/* ═══ V5.61: กล่อง "ทำรูปเสร็จแล้ว" — จังหวะที่สองของการบันทึกรูปหลายเดือน ═══ */
+#bkImgReadyOverlay {
+  position:fixed; inset:0; z-index:9600;
+  background:rgba(0,0,0,0.42);
+  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center; padding:22px;
+  font-family:'IBM Plex Sans Thai',sans-serif;
+  animation: bmFadeIn .2s ease;
+}
+.bkimg-card {
+  background:#fff; border-radius:17px; width:100%; max-width:300px;
+  padding:18px 16px 14px; text-align:center;
+  box-shadow:0 14px 42px rgba(0,0,0,0.26);
+  border:0.5px solid rgba(0,0,0,0.07);
+}
+.bkimg-t  { font-size:16px; font-weight:700; color:#131211; letter-spacing:-0.01em; }
+.bkimg-s  { font-size:12px; color:#8E8E93; margin-top:3px; line-height:1.55; }
+.bkimg-thumbs {
+  display:flex; gap:5px; justify-content:center; flex-wrap:wrap;
+  margin:13px 0 14px;
+}
+.bkimg-th {
+  width:34px; height:46px; border-radius:5px; flex-shrink:0;
+  background-color:#F4F1EC; background-size:cover; background-position:top center;
+  border:0.5px solid rgba(0,0,0,0.10);
+}
+.bkimg-th.more {
+  display:flex; align-items:center; justify-content:center;
+  font-size:11.5px; font-weight:700; color:#8E8E93; background-color:#EDEAE4;
+}
+.bkimg-go {
+  width:100%; border:none; border-radius:12px; padding:13px;
+  background:#F59E0B; color:#fff; font-family:inherit;
+  font-size:15px; font-weight:700; letter-spacing:-0.01em; cursor:pointer;
+  box-shadow:0 4px 14px rgba(245,158,11,0.32);
+  -webkit-tap-highlight-color:transparent;
+  transition:all .2s;
+}
+.bkimg-go:active { background:#D97706; transform:scale(0.98); }
+.bkimg-go:disabled { opacity:.6; cursor:wait; }
+.bkimg-hint { font-size:11.5px; color:#8E8E93; margin-top:9px; line-height:1.6; }
+.bkimg-x {
+  border:none; background:transparent; color:#007AFF; font-family:inherit;
+  font-size:14px; font-weight:600; padding:10px 14px 4px; cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.bkimg-x:active { opacity:.45; }
+
 .bkm-btn-spinner {
   width:14px; height:14px;
   border:2px solid currentColor;
@@ -2684,15 +2738,51 @@ tr:last-child td { border-bottom: none; }
 @keyframes bkmSpin { to { transform:rotate(360deg); } }
 
 /* V4.19: column header + row grid (32 | 1fr | 50 | 64 | 22) */
-.bka-col-head { display:grid; grid-template-columns:32px 1fr 50px 64px 22px; gap:5px; padding:8px 12px 4px; flex-shrink:0; }
+.bka-col-head { display:grid; grid-template-columns:44px 1fr 50px 64px 22px; gap:5px; padding:8px 12px 4px; flex-shrink:0; }
 .bka-col-head span { font-size:10px; font-weight:600; color:#8E8E93; text-align:center; letter-spacing:0.02em; }
 .bka-rows { overflow-y:auto; flex:1; padding:0 12px 4px; -webkit-overflow-scrolling: touch; }
-.bka-row { display:grid; grid-template-columns:32px 1fr 50px 64px 22px; gap:5px; align-items:center; padding:6px 0; border-bottom:0.5px solid rgba(60,60,67,0.12); }
+.bka-row { display:grid; grid-template-columns:44px 1fr 50px 64px 22px; gap:5px; align-items:center; padding:6px 0; border-bottom:0.5px solid rgba(60,60,67,0.12); }
 .bka-row:last-of-type { border-bottom:none; }
 
 /* date chip (replaces text+button) */
 .bka-date-btn { width:100%; padding:6px 0; border-radius:7px; border:none; background:rgba(118,118,128,0.12); color:#1C1917; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; text-align:center; -webkit-tap-highlight-color:transparent; transition: background .2s; }
 .bka-date-btn:active { background:rgba(0,122,255,0.2); }
+/* V5.62: เดือนต่อท้ายวัน — ตัวเล็กสีเทา ตายังจับเลขวันได้ก่อนเหมือนเดิม */
+.bka-date-btn em { font-style:normal; font-size:11px; font-weight:600; color:#8E8E93; }
+
+/* ═══ V5.62: กดค้างที่ช่องวัน/สถานะ แล้วเลื่อนขึ้นลงเปลี่ยนค่า ═══
+   touch-action:none = นิ้วที่วางบนสองช่องนี้เป็นของเราล้วน ไม่ให้รายการเลื่อนแทรก
+   (ถ้าจะเลื่อนรายการ ให้ลากที่ที่อื่นในแถว)
+   -webkit-touch-callout:none = กันเมนูคัดลอกของ iPhone เด้งตอนกดค้าง */
+.bka-date-btn, .bka-status {
+  touch-action:none;
+  -webkit-touch-callout:none;
+  -webkit-user-select:none; user-select:none;
+}
+.bka-spin-live { transform:scale(1.12); box-shadow:0 6px 18px rgba(0,0,0,0.22); position:relative; z-index:3; }
+.bka-spin {
+  position:fixed; z-index:680; pointer-events:none;
+  transform:translate(-50%,-50%);
+  font-family:'IBM Plex Sans Thai',sans-serif;
+}
+.bka-spin-glass {
+  background:rgba(255,255,255,0.94);
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  border-radius:13px; padding:5px 7px;
+  box-shadow:0 12px 34px rgba(0,0,0,0.26);
+  border:0.5px solid rgba(0,0,0,0.08);
+  display:flex; flex-direction:column;
+  min-width:92px;   /* ตรึงความกว้างไว้ ไม่งั้นแถบจะขยับซ้ายขวาตอนตัวหนังสือยาวไม่เท่ากัน */
+}
+.bka-spin-o {
+  height:26px; display:flex; align-items:center; justify-content:center;
+  font-size:12.5px; font-weight:600; color:#8E8E93;
+  white-space:nowrap; padding:0 10px; border-radius:7px;
+}
+.bka-spin-o.d2  { opacity:.3; font-size:11.5px; }
+.bka-spin-o.d1  { opacity:.6; }
+.bka-spin-o.cur { opacity:1; font-size:14.5px; font-weight:700; color:#131211; background:rgba(0,122,255,0.13); }
+.bka-spin-o.dead{ opacity:.12; }
 
 .bka-inp {
   width:100%;
@@ -2928,6 +3018,23 @@ tr:last-child td { border-bottom: none; }
 
 /* เส้นผมคั่นเฉพาะรอยต่อวัน (เดิมเป็นเส้น 2px เข้ม) */
 .bk-table .bk-day-divider { border-left: none !important; box-shadow: inset 1px 0 0 rgba(0,0,0,0.08); }
+
+/* ═══ V5.63: ทำให้กรอบตารางเป็นตัวเลื่อนแทนทั้งหน้า ═══
+   เหตุผล: position:sticky ยึดกับกรอบที่เลื่อนได้ตัวใกล้สุดเสมอ
+   ของเดิมกรอบสูงเท่าตารางพอดี → ไม่มีอะไรให้เลื่อน → คำสั่ง sticky ข้างล่างไม่เคยติด
+   ตอนนี้กรอบสูงเท่าที่เหลือบนจอ หัวตารางจึงค้างได้จริง
+   --bk-headh = ความสูงจริงของแถบเดือน+แท็บ วัดใหม่ทุกครั้งที่วาด/หมุนจอ
+   (ห้ามใส่เลขตายตัว ความสูงเปลี่ยนตามฟอนต์และขนาดจอ)
+   dvh = ความสูงจอจริงบน iPhone ที่แถบ URL ยืดหดได้ · vh เป็นทางถอยของเครื่องเก่า */
+#bkContent {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh  - var(--bk-headh, 101px) - 8px);
+  height: calc(100dvh - var(--bk-headh, 101px) - 8px);
+  overflow: hidden;
+}
+#bkMatrixScroll { flex: 1 1 auto; min-height: 0; }
+#bkContent > .bk-add-btn { flex-shrink: 0; }
 
 /* หัวตารางค้างบนเวลาเลื่อนลง
    หมายเหตุ: บั๊ก sticky thead บน iOS เกิดกับ border-collapse:collapse
@@ -4950,7 +5057,7 @@ input[name="cust-name-no-fill"]:-webkit-autofill {
     <!-- ━━━ TAB CONTENT ━━━ -->
     <!-- Tab: คนตัด (Matrix) -->
     <div id="bkPaneCutter" class="bk-pane-v2" style="display:block;">
-      <div id="bkContent" style="overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;padding:8px 0 4px;"></div>
+      <div id="bkContent" style="padding:8px 0 4px;"></div>
     </div>
 
     <!-- Tab: เก็บตะกร้า (Order list) -->
@@ -5077,8 +5184,8 @@ input[name="cust-name-no-fill"]:-webkit-autofill {
 <!-- Chart.js + html2canvas: lazy-loaded on demand (saves ~410 KB on first paint) -->
 <script>
 // ═══ V4.38 (B.4): APP_VERSION — single source of truth ═══
-window.APP_VERSION = "V5.58";
-window.APP_VERSION_STRING = "V5.58"; // alias for compatibility
+window.APP_VERSION = "V5.63";
+window.APP_VERSION_STRING = "V5.63"; // alias for compatibility
 
 // ═══════════════════════════════════════════════════════════════════
 // V5.49: ดักคำเตือน "ไม่มี index" ของ Firebase
@@ -11737,6 +11844,13 @@ window._bkScrollMemory = {            // scroll position per tab
 };
 
 function bkSwitchSubV2(tab) {
+  // V5.63: แท็บตารางใช้กรอบเลื่อนเอง (ไม่ต้องมีที่ว่างท้ายหน้า)
+  //        แท็บ เก็บ/คืน เป็นรายการที่เลื่อนทั้งหน้า ต้องคืนที่ว่างให้เหมือนเดิม
+  try {
+    const _bt = document.getElementById("basketTab");
+    if (_bt) _bt.style.paddingBottom = (tab === "cutter" || tab === "customer") ? "0px" : "80px";
+  } catch(e) {}
+
   // 1. Save scroll of current tab BEFORE switch
   if (window._bkSubV2) {
     window._bkScrollMemory[window._bkSubV2] = window.scrollY || document.documentElement.scrollTop;
@@ -12318,7 +12432,7 @@ function bkRenderMatrix(type) {
     return bal;
   }
 
-  let html = `<div style="overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;">
+  let html = `<div id="bkMatrixScroll" style="overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;">
   <table class="bk-table" id="bkMatrix">
   <thead><tr>
     <th class="bk-freeze bk-th-name" rowspan="2">ชื่อ</th>
@@ -12536,6 +12650,14 @@ function bkRenderMatrix(type) {
   addBtn.textContent = `＋ เพิ่ม${type==="cutter"?"คนตัด":"ลูกค้า"}`;
   addBtn.onclick = () => bkAddPerson(type);
   container.appendChild(addBtn);
+
+  // V5.63: ตารางเลื่อนในกรอบตัวเองแล้ว ที่ว่าง 80 จุดท้ายหน้า (เผื่อไว้ตอนหน้าเลื่อนทั้งหน้า)
+  //        จะกลายเป็นช่องว่างค้างอยู่ถาวร → ตัดทิ้งเฉพาะตอนอยู่แท็บตาราง
+  //        แท็บ เก็บ/คืน เป็นรายการยาวที่ยังเลื่อนทั้งหน้า ต้องคืนที่ว่างให้เหมือนเดิม
+  try {
+    const bt = document.getElementById("basketTab");
+    if (bt) bt.style.paddingBottom = "0px";
+  } catch(e) {}
 }
 
 // ── Person CRUD ─────────────────────────────────────────────────
@@ -13317,6 +13439,8 @@ function _bkRenderTraceBackModal() {
 function _bkExitTraceBack() {
   const ctx = window._bkTraceBackCtx;
   window._bkTraceBackCtx = null;
+  // V5.61: ออกจากโหมดนี้แล้วชุดรูปที่ทำไว้ใช้ไม่ได้อีก คืนหน่วยความจำทิ้ง
+  try { _bkImgCloseReady(); _bkImgFreeBatch(); } catch (e) {}
   if (ctx) {
     // Reopen single-month summary for the same customer
     bkShowSummary(ctx.type, ctx.id, ctx.name);
@@ -13652,6 +13776,176 @@ async function _bkmGenerateImage() {
   }
 }
 
+// ═══════════════════════════════════════════════════════════════
+// V5.61 — บันทึกรูปหลายเดือนทีเดียวครบ
+// ═══════════════════════════════════════════════════════════════
+// เดิม: ยิง <a download> ทีละใบ N ครั้งติดกัน
+//       Safari บน iPhone ยอมให้ครั้งเดียวต่อการกดหนึ่งครั้ง ที่เหลือบล็อกเงียบ
+//       (วัดจริงกับข้อมูลสำรอง: สมพร 7 เดือน → ยิงออกไป 7 ครั้ง ได้จริงใบเดียว)
+// ใหม่: ทำรูปให้ครบก่อน เก็บเป็น File ไว้ แล้วยื่นเข้า navigator.share({files}) ทีเดียว
+//       iOS ขึ้นแผงแชร์ → "บันทึกรูปภาพ" → ลงคลังรูปครบทุกใบพร้อมกัน
+//
+// ทำไมต้องสองจังหวะ: Safari ให้เปิดแผงแชร์ได้เฉพาะทันทีหลังนิ้วแตะ
+//   ทำรูป 7 ใบกินเวลา ~12 วินาที ซึ่งเกินสิทธิ์นั้น → เรียก share ต่อท้ายจะถูกปฏิเสธ
+//   จึงต้องทำเสร็จก่อน แล้วให้กดปุ่มในกล่องอีกทีหนึ่ง
+window._bkImgBatch = null;   // { key, name, files:[File], urls:[blobURL], months:[...] }
+
+// เครื่องนี้ยื่นไฟล์ชุดนี้เข้าแผงแชร์ได้ไหม — ต้องถามด้วย "ของที่จะส่งจริง" ไม่ใช่ของสมมติ
+function _bkImgCanShare(payload) {
+  try { return !!(navigator.share && navigator.canShare && navigator.canShare(payload)); }
+  catch (e) { return false; }
+}
+
+// กุญแจของชุดรูป — ผูกกับยอดจริง ถ้าข้อมูลขยับ ชุดเก่าจะใช้ไม่ได้ ต้องทำใหม่
+function _bkImgBatchKey(ctx) {
+  const ms = (ctx && ctx.months) || [];
+  return [ctx.type, ctx.id, ms.length,
+    ms.map(m => `${m.year}.${m.month}.${m.carry}.${m.totalOut}.${m.totalIn}.${m.endBal}`).join("|")
+  ].join("#");
+}
+
+function _bkImgFreeBatch() {
+  try { (window._bkImgBatch && window._bkImgBatch.urls || []).forEach(u => URL.revokeObjectURL(u)); }
+  catch (e) {}
+  window._bkImgBatch = null;
+}
+
+// ทำรูปทุกเดือน เก็บเป็น File + blob URL (ไว้ทำรูปย่อในกล่อง)
+async function _bkImgMakeBatch(ctx, btn) {
+  const out = { key: _bkImgBatchKey(ctx), name: ctx.name, files: [], urls: [], months: ctx.months.slice() };
+  const safeName = String(ctx.name || "").replace(/[\\/:*?"<>|]/g, "_");
+  const total = ctx.months.length;
+  for (let i = 0; i < total; i++) {
+    const m = ctx.months[i];
+    if (btn) btn.innerHTML = `<span class="bkm-btn-spinner"></span><span>กำลังทำรูป ${i+1} / ${total}</span>`;
+    // ปล่อยให้จอได้วาดเลขความคืบหน้าก่อน ไม่งั้นตัวเลขจะค้าง
+    await new Promise(r => setTimeout(r, 16));
+    const card = _bkmBuildPrintableForMonth(m, ctx.name, i, total);
+    document.body.appendChild(card);
+    try {
+      const canvas = await html2canvas(card, {
+        scale: 2, backgroundColor: '#ffffff', logging: false, useCORS: true, width: 380,
+      });
+      const blob = await new Promise((resolve, reject) => {
+        canvas.toBlob(b => b ? resolve(b) : reject(new Error('blob fail')), 'image/png');
+      });
+      const filename = `สรุปยอด_${safeName}_${m.year+543}-${String(m.month).padStart(2,'0')}.png`;
+      out.files.push(new File([blob], filename, { type: 'image/png' }));
+      out.urls.push(URL.createObjectURL(blob));
+    } finally {
+      card.remove();
+    }
+  }
+  return out;
+}
+
+function _bkImgCloseReady() {
+  const el = document.getElementById('bkImgReadyOverlay');
+  if (el) el.remove();
+}
+
+// กล่องจังหวะที่สอง — รูปทำเสร็จแล้ว รอแค่นิ้วแตะเพื่อเปิดแผงแชร์
+function _bkImgOpenReady() {
+  const b = window._bkImgBatch;
+  if (!b || !b.files.length) return;
+  _bkImgCloseReady();
+
+  const n = b.files.length;
+  const m0 = b.months[0], m1 = b.months[n-1];
+  const range = (n > 1 && (m0.year !== m1.year || m0.month !== m1.month))
+    ? `${BK_MONTHS_TH[m0.month-1]} ${m0.year+543} — ${BK_MONTHS_TH[m1.month-1]} ${m1.year+543}`
+    : `${BK_MONTHS_TH[m0.month-1]} ${m0.year+543}`;
+
+  const SHOW = 7;
+  const thumbs = b.urls.slice(0, SHOW)
+    .map(u => `<div class="bkimg-th" style="background-image:url('${u}')"></div>`).join("")
+    + (n > SHOW ? `<div class="bkimg-th more">+${n - SHOW}</div>` : "");
+
+  const canShare = _bkImgCanShare({ files: b.files });
+  const goLabel  = canShare ? "บันทึกลงคลังรูป" : "ดาวน์โหลดทีละใบ";
+  const hint = canShare
+    ? 'จะขึ้นแผงแชร์ของเครื่อง — เลือก "บันทึกรูปภาพ" ครั้งเดียวได้ครบทุกใบ'
+    : 'เครื่องนี้ยื่นรูปเข้าแผงแชร์ไม่ได้ จะดาวน์โหลดให้ทีละใบแทน';
+
+  const ov = document.createElement('div');
+  ov.id = 'bkImgReadyOverlay';
+  ov.onclick = (e) => { if (e.target === ov) _bkImgCloseReady(); };
+  ov.innerHTML = `
+    <div class="bkimg-card">
+      <div class="bkimg-t">ทำรูปเสร็จแล้ว</div>
+      <div class="bkimg-s">${n} รูป · ${_htmlEsc(b.name || "")}<br>${range}</div>
+      <div class="bkimg-thumbs">${thumbs}</div>
+      <button class="bkimg-go" id="bkImgGoBtn" onclick="_bkImgShareBatch(this)">${goLabel}</button>
+      <div class="bkimg-hint">${hint}</div>
+      <button class="bkimg-x" onclick="_bkImgCloseReady()">ปิด</button>
+    </div>`;
+  document.body.appendChild(ov);
+  try { if (typeof hap === 'function') hap(12); } catch (e) {}
+}
+
+// ถอยไปทางเดิม: ดาวน์โหลดทีละใบ (คอมพิวเตอร์ทำได้ปกติ)
+async function _bkImgDownloadBatch(b) {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  let ok = 0;
+  for (let i = 0; i < b.files.length; i++) {
+    const a = document.createElement('a');
+    a.href = b.urls[i];
+    a.download = b.files[i].name;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    ok++;
+    if (i < b.files.length - 1) await new Promise(r => setTimeout(r, isIOS ? 800 : 300));
+  }
+  if (typeof showToast === 'function') {
+    showToast(isIOS
+      ? `ทำรูปครบ ${b.files.length} ใบแล้ว — เครื่องนี้ต้องกดค้างบันทึกทีละใบ`
+      : `บันทึก ${ok} รูปแล้ว`, isIOS ? 'info' : 'success', isIOS ? 4000 : 2000);
+  }
+  return ok;
+}
+
+// จังหวะที่สอง — นิ้วแตะสดๆ ตรงนี้ แผงแชร์จึงเปิดได้
+async function _bkImgShareBatch(btn) {
+  const b = window._bkImgBatch;
+  if (!b || !b.files.length) {
+    if (typeof showToast === 'function') showToast('รูปหายไปแล้ว — กด "บันทึกรูป" ใหม่อีกครั้ง', 'error', 3000);
+    _bkImgCloseReady();
+    return;
+  }
+  const payload = { files: b.files };
+  if (!_bkImgCanShare(payload)) {
+    _bkImgCloseReady();
+    await _bkImgDownloadBatch(b);
+    return;
+  }
+  const label = btn ? btn.textContent : "";
+  try {
+    if (btn) { btn.disabled = true; btn.textContent = 'กำลังเปิดแผงแชร์...'; }
+    await navigator.share(payload);
+    _bkImgCloseReady();
+    if (typeof showToast === 'function') showToast(`ส่ง ${b.files.length} รูปเข้าแผงแชร์แล้ว`, 'success', 2000);
+    try { if (typeof hap === 'function') hap([8, 30, 12, 30, 8]); } catch (e) {}
+  } catch (e) {
+    // กดยกเลิกเอง = ไม่ใช่ความผิดพลาด ปล่อยกล่องค้างไว้ให้กดใหม่ได้
+    if (e && e.name === 'AbortError') return;
+    console.error('[bkImgShare]', e);
+    if (typeof showToast === 'function') {
+      if (e && e.name === 'NotAllowedError') {
+        showToast('เครื่องไม่ยอมเปิดแผงแชร์รอบนี้ — กดปุ่มเดิมอีกครั้งได้เลย รูปยังอยู่ ไม่ต้องรอทำใหม่', 'error', 4500);
+      } else {
+        showToast('เปิดแผงแชร์ไม่สำเร็จ: ' + (e.message || 'error') + ' — กำลังดาวน์โหลดให้ทีละใบแทน', 'error', 4000);
+        _bkImgCloseReady();
+        await _bkImgDownloadBatch(b);
+      }
+    }
+  } finally {
+    if (btn && document.body.contains(btn)) { btn.disabled = false; btn.textContent = label; }
+  }
+}
+
 // ดึงชื่อไฟล์จาก title + month ของ summary modal
 function _bkmGetFilename() {
   const overlay = document.getElementById('bkSummaryModal');
@@ -13693,65 +13987,65 @@ async function _bkmSaveImage(btn) {
     if (typeof html2canvas === 'undefined') throw new Error('html2canvas load fail');
 
     if (isTraceBack) {
-      // V4.72: Multi-image save — 1 PNG per month
+      // ═══ V5.61: ทำรูปให้ครบก่อน แล้วค่อยให้กดยื่นเข้าแผงแชร์ทีเดียว ═══
+      // ของเดิม (V4.72) ยิง <a download> ทีละใบตรงนี้เลย — iPhone รับแค่ใบแรก
       const ctx = window._bkTraceBackCtx;
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      let successCount = 0;
+      const key = _bkImgBatchKey(ctx);
 
-      for (let i = 0; i < ctx.months.length; i++) {
-        const m = ctx.months[i];
-
-        // Update button label to show progress
-        if (btn) btn.innerHTML = `<span class="bkm-btn-spinner"></span><span>กำลังสร้าง ${i+1}/${ctx.months.length}...</span>`;
-
-        // Build printable card for this month
-        const card = _bkmBuildPrintableForMonth(m, ctx.name, i, ctx.months.length);
-        document.body.appendChild(card);
-        try {
-          const canvas = await html2canvas(card, {
-            scale: 2, backgroundColor: '#ffffff', logging: false, useCORS: true, width: 380,
-          });
-          const blob = await new Promise((resolve, reject) => {
-            canvas.toBlob(b => b ? resolve(b) : reject(new Error('blob fail')), 'image/png');
-          });
-          const safeName = ctx.name.replace(/[\\/:*?"<>|]/g, '_');
-          const filename = `สรุปยอด_${safeName}_${m.year+543}-${String(m.month).padStart(2,'0')}.png`;
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = filename;
-          a.target = '_blank';
-          a.rel = 'noopener';
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          setTimeout(() => URL.revokeObjectURL(url), 60000);
-          successCount++;
-          // Delay between downloads (iOS Safari can block multiple concurrent)
-          if (i < ctx.months.length - 1) {
-            await new Promise(r => setTimeout(r, isIOS ? 800 : 300));
-          }
-        } finally {
-          card.remove();
-        }
+      // ถ้าเพิ่งทำชุดเดียวกันไปและยอดยังไม่ขยับ ใช้ของเดิม ไม่ต้องรออีก 12 วินาที
+      if (!window._bkImgBatch || window._bkImgBatch.key !== key) {
+        _bkImgFreeBatch();
+        window._bkImgBatch = await _bkImgMakeBatch(ctx, btn);
       }
+      const batch = window._bkImgBatch;
 
-      if (typeof showToast === 'function') {
-        if (isIOS) {
-          showToast(`สร้าง ${successCount} รูป — กดค้างเพื่อบันทึกแต่ละรูป`, 'info', 3500);
-        } else {
-          showToast(`บันทึก ${successCount} รูปแล้ว`, 'success', 2000);
-        }
+      if (_bkImgCanShare({ files: batch.files })) {
+        _bkImgOpenReady();
+      } else {
+        // เครื่องที่ยื่นไฟล์เข้าแผงแชร์ไม่ได้ (คอมพิวเตอร์ส่วนใหญ่) → ทางเดิม
+        await _bkImgDownloadBatch(batch);
+        try { if (typeof hap === 'function') hap([8, 30, 12, 30, 8]); } catch (e) {}
       }
-      if (typeof hap === 'function') hap([8, 30, 12, 30, 8]);
       return;
     }
 
-    // Single-month save (original behavior)
+    // ═══ V5.62: เดือนเดียวก็ยื่นเข้าแผงแชร์ได้ ═══
+    // ใบเดียวใช้เวลาทำรูปแค่ราว 1–2 วินาที ซึ่งยังทันสิทธิ์เปิดแผงแชร์ของ Safari
+    // (หลายเดือนใช้ ~12 วินาที เลยต้องมีกล่องคั่น — เดือนเดียวไม่ต้อง กดปุ่มเดียวจบ)
     const blob = await _bkmGenerateImage();
     const filename = _bkmGetFilename();
-    const url = URL.createObjectURL(blob);
 
+    const oneFile = new File([blob], filename, { type: 'image/png' });
+    const onePayload = { files: [oneFile] };
+    if (_bkImgCanShare(onePayload)) {
+      try {
+        await navigator.share(onePayload);
+        if (typeof showToast === 'function') showToast('ส่ง 1 รูปเข้าแผงแชร์แล้ว', 'success', 1800);
+        if (typeof hap === 'function') hap([8, 30, 12]);
+        return;
+      } catch (e2) {
+        if (e2 && e2.name === 'AbortError') return;   // กดยกเลิกเอง
+        if (e2 && e2.name === 'NotAllowedError') {
+          // Safari ไม่ทัน — รูปทำไว้แล้ว เก็บไว้แล้วขึ้นกล่องให้กดอีกที ไม่ต้องรอทำใหม่
+          _bkImgFreeBatch();
+          window._bkImgBatch = {
+            key: 'single#' + filename,
+            name: (document.getElementById('bkSummaryModal') || {}).dataset
+                    ? (document.getElementById('bkSummaryModal').dataset.bkName || '') : '',
+            files: [oneFile],
+            urls: [URL.createObjectURL(blob)],
+            months: [{ year: (typeof bkYear !== 'undefined' ? bkYear : new Date().getFullYear()),
+                       month: (typeof bkMonth !== 'undefined' ? bkMonth : new Date().getMonth()+1) }],
+          };
+          _bkImgOpenReady();
+          return;
+        }
+        console.warn('[bkmSave] แชร์ไม่ได้ ถอยไปดาวน์โหลด:', e2 && e2.message);
+      }
+    }
+
+    // ทางเดิม: ดาวน์โหลด (คอมพิวเตอร์ หรือเครื่องที่ยื่นไฟล์เข้าแผงแชร์ไม่ได้)
+    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = filename;
@@ -14460,18 +14754,16 @@ function bkaRenderRows(){
   const _attrEsc = s => String(s||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
   bkaRows.forEach(r=>{
     const div=document.createElement("div"); div.className="bka-row";
-    // แสดงวันที่เฉพาะวัน (dd)
-    const _dtDay = r.date ? r.date.split("-")[2] : "";
-    const _dtDisplay = _dtDay ? parseInt(_dtDay, 10) : "วัน";
+    // V5.62: แสดงวันและเดือน เช่น 25/9 — เพราะหมุนวันข้ามเดือนได้ เลขวันอย่างเดียวจะกำกวม
     div.innerHTML=`
-      <button type="button" class="bka-date-btn" id="bka-dt-disp-${r.id}" onclick="bkaOpenDatePicker(${r.id})">${_attrEsc(_dtDisplay)}</button>
+      <button type="button" class="bka-date-btn" id="bka-dt-disp-${r.id}" data-row="${r.id}" onclick="bkaOpenDatePicker(${r.id})">${_bkaDayLabel(r.date)}</button>
       <input class="bka-inp bka-name-inp" id="bka-nm-${r.id}" placeholder="ชื่อ *" value="${_attrEsc(r.name)}" autocomplete="off"
         oninput="bkaOnName(${r.id},this)"
         onkeydown="bkaOnNameKey(event,${r.id})">
       <input class="bka-inp bka-num" id="bka-bk-${r.id}" placeholder="0" value="${_attrEsc(r.basket)}" type="text" inputmode="decimal" min="0" step="0.5"
         oninput="bkaRows.find(x=>x.id===${r.id}).basket=this.value;bkaUpdateSummary();"
         onkeydown="bkaOnBkKey(event,${r.id})">
-      <button class="bka-status" id="bka-st-${r.id}" data-s="${_attrEsc(r.status)}" type="button"
+      <button class="bka-status" id="bka-st-${r.id}" data-row="${r.id}" data-s="${_attrEsc(r.status)}" type="button"
         onclick="bkaOpenStatusPicker(${r.id})">${_attrEsc(r.status)}</button>
       <button class="bka-del" onclick="bkaRemoveRow(${r.id})" aria-label="ลบ">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -14485,8 +14777,221 @@ function bkaRenderRows(){
   bkaUpdateSummary();
 }
 
+// ═══════════════════════════════════════════════════════════════
+// V5.62 — กดค้างที่ช่องวัน/ช่องสถานะ แล้วเลื่อนนิ้วขึ้นลงเปลี่ยนค่า
+// ═══════════════════════════════════════════════════════════════
+// ทำไมต้องกดค้างก่อน ไม่ใช่ลากได้เลย: รายการในหน้าต่างเลื่อนขึ้นลงได้
+// ถ้าลากได้ทันที นิ้วที่ตั้งใจเลื่อนรายการจะเผลอเปลี่ยนวันของลูกค้าโดยไม่รู้ตัว
+// ตัวเลขทั้งหมดผ่านการลองบนแบบจำลองแล้ว
+var BKA_SPIN_HOLD = 400;   // กดค้างกี่มิลลิวินาทีถึงติด
+var BKA_SPIN_STEP = 26;    // ขยับกี่จุดเท่ากับเลื่อนหนึ่งช่อง
+var BKA_SPIN_SLOP = 10;    // ขยับเกินนี้ก่อนครบเวลา = ไม่ได้ตั้งใจหมุน ยกเลิก
+var BKA_DAY_BACK  = 60;    // วันย้อนหลังได้ไกลสุด
+var BKA_DAY_FWD   = 1;     // วันล่วงหน้าได้ไกลสุด
+
+function _bkaMidnight(d) { var x = new Date(d); x.setHours(0,0,0,0); return x; }
+function _bkaDateStr(d) {
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+}
+function _bkaParseDate(str) {
+  var p = String(str || "").split("-");
+  if (p.length < 3) return null;
+  var d = new Date(parseInt(p[0],10), parseInt(p[1],10)-1, parseInt(p[2],10));
+  return isNaN(d.getTime()) ? null : d;
+}
+// วันในแถวห่างจากวันนี้กี่วัน (บวก = อนาคต)
+function _bkaDayOffset(str) {
+  var d = _bkaParseDate(str); if (!d) return 0;
+  return Math.round((_bkaMidnight(d).getTime() - _bkaMidnight(new Date()).getTime()) / 86400000);
+}
+function _bkaDateFromOffset(off) {
+  var d = _bkaMidnight(new Date()); d.setDate(d.getDate() + off); return _bkaDateStr(d);
+}
+// ป้ายในช่อง: เลขวันตัวใหญ่ เดือนตัวเล็กสีเทา
+function _bkaDayLabel(str) {
+  var p = String(str || "").split("-");
+  if (p.length < 3) return "วัน";
+  var d = parseInt(p[2],10), m = parseInt(p[1],10);
+  if (!d || !m) return "วัน";
+  return d + '<em>/' + m + '</em>';
+}
+// ป้ายเต็มในแถบที่ลอยขึ้นมา เช่น "25 ก.ย."
+function _bkaDayLong(off) {
+  var d = _bkaMidnight(new Date()); d.setDate(d.getDate() + off);
+  return d.getDate() + " " + BK_MONTHS_TH[d.getMonth()];
+}
+
+var _bkaSpin = null;
+
+function _bkaSpinOpts(kind, cur) {
+  var out = [];
+  for (var k = -2; k <= 2; k++) {
+    var v = null;
+    if (kind === "dt") {
+      var off = cur + k;
+      if (off >= -BKA_DAY_BACK && off <= BKA_DAY_FWD) v = _bkaDayLong(off);
+    } else {
+      var i = cur + k;
+      if (i >= 0 && i < BKA_STATUS.length) v = BKA_STATUS[i];
+    }
+    out.push(v);
+  }
+  return out;
+}
+
+function _bkaSpinPaint() {
+  var sp = _bkaSpin; if (!sp || !sp.pop) return;
+  var opts = _bkaSpinOpts(sp.kind, sp.cur);
+  var cls = ["d2","d1","cur","d1","d2"];
+  var html = "";
+  for (var k = 0; k < 5; k++) {
+    html += '<div class="bka-spin-o ' + cls[k] + (opts[k] === null ? " dead" : "") + '">'
+          + (opts[k] === null ? "–" : _htmlEsc(opts[k])) + '</div>';
+  }
+  sp.pop.firstChild.innerHTML = html;
+}
+
+function _bkaSpinShow(el, kind) {
+  var pop = document.createElement("div");
+  pop.id = "bkaSpinPop";
+  pop.className = "bka-spin";
+  pop.style.left = "-9999px"; pop.style.top = "-9999px";   // วางจริงหลังวัดขนาดแล้ว
+  pop.innerHTML = '<div class="bka-spin-glass"></div>';
+  document.body.appendChild(pop);
+  return pop;
+}
+
+// วางแถบหลังรู้ขนาดจริง — กันทะลุขอบจอทั้งสี่ด้าน
+// (ช่องวันอยู่ชิดซ้ายสุดของแถว ถ้าวางกึ่งกลางช่องดื้อๆ แถบจะยื่นพ้นจอบนมือถือจอแคบ)
+function _bkaSpinPlace(sp) {
+  if (!sp || !sp.pop || !sp.el) return;
+  var r  = sp.el.getBoundingClientRect();
+  var pr = sp.pop.getBoundingClientRect();
+  var hw = pr.width / 2, hh = pr.height / 2;
+  var vw = window.innerWidth || 360, vh = window.innerHeight || 640;
+  sp.pop.style.left = Math.min(Math.max(r.left + r.width/2, hw + 8), vw - hw - 8) + "px";
+  sp.pop.style.top  = Math.min(Math.max(r.top  + r.height/2, hh + 8), vh - hh - 8) + "px";
+}
+
+function _bkaSpinApply(sp, commit) {
+  var row = sp.row; if (!row) return;
+  if (sp.kind === "dt") {
+    row.date = _bkaDateFromOffset(sp.cur);
+    var el = document.getElementById("bka-dt-disp-" + sp.id);
+    if (el) el.innerHTML = _bkaDayLabel(row.date);
+  } else {
+    row.status = BKA_STATUS[sp.cur];
+    var b = document.getElementById("bka-st-" + sp.id);
+    if (b) { b.setAttribute("data-s", row.status); b.textContent = row.status; }
+  }
+  if (commit) { try { bkaUpdateSummary(); } catch (e) {} }
+}
+
+function _bkaSpinEnd() {
+  var sp = _bkaSpin; if (!sp) return;
+  clearTimeout(sp.timer);
+  if (sp.live) {
+    _bkaSpinApply(sp, true);
+    if (sp.el) sp.el.classList.remove("bka-spin-live");
+    if (sp.pop) sp.pop.remove();
+    var rows = document.getElementById("bkaRows");
+    if (rows) rows.style.overflowY = sp.prevOv || "";
+    document.removeEventListener("touchmove", _bkaSpinMoveLive, { passive: false });
+    // กัน onclick เดิม (เปิดปฏิทิน/แผงสถานะ) เด้งตามมาหลังปล่อยนิ้ว
+    window._bkaSpunAt = Date.now();
+    try { if (typeof hap === "function") hap([8, 30, 12]); } catch (e) {}
+  }
+  _bkaSpin = null;
+}
+
+function _bkaSpinPt(e) { return (e.touches && e.touches[0]) ? e.touches[0] : e; }
+
+function _bkaSpinStep(e) {
+  var sp = _bkaSpin; if (!sp || !sp.live) return;
+  var p = _bkaSpinPt(e);
+  var n = sp.start + Math.round(-(p.clientY - sp.sy) / BKA_SPIN_STEP);
+  n = (sp.kind === "dt")
+    ? Math.max(-BKA_DAY_BACK, Math.min(BKA_DAY_FWD, n))
+    : Math.max(0, Math.min(BKA_STATUS.length - 1, n));
+  if (n === sp.cur) return;
+  sp.cur = n;
+  _bkaSpinPaint();
+  _bkaSpinApply(sp, false);
+  try { if (typeof hap === "function") hap(6); } catch (er) {}
+}
+
+// ตัวจัดการแบบ non-passive — ผูกเฉพาะตอนหมุนอยู่ ไม่ผูกค้างไว้ทั้งแอป
+// (ถ้าผูกค้าง เบราว์เซอร์จะเลิกใช้ทางลัดการเลื่อนทั้งหน้า แล้วแอปจะหนืดทั้งตัว)
+function _bkaSpinMoveLive(e) {
+  if (!_bkaSpin || !_bkaSpin.live) return;
+  if (e.cancelable) e.preventDefault();
+  _bkaSpinStep(e);
+}
+
+(function () {
+  function chipOf(t) {
+    if (!t || !t.closest) return null;
+    var el = t.closest(".bka-date-btn, .bka-status");
+    if (!el || !el.closest("#bkaRows")) return null;
+    return el;
+  }
+
+  function down(e) {
+    if (_bkaSpin) return;
+    var el = chipOf(e.target); if (!el) return;
+    var id = parseInt(el.getAttribute("data-row"), 10);
+    if (isNaN(id)) return;
+    var row = (typeof bkaRows !== "undefined" ? bkaRows : []).filter(function (x) { return x.id === id; })[0];
+    if (!row) return;
+    var kind = el.classList.contains("bka-date-btn") ? "dt" : "st";
+    var p = _bkaSpinPt(e);
+    var start;
+    if (kind === "dt") {
+      start = Math.max(-BKA_DAY_BACK, Math.min(BKA_DAY_FWD, _bkaDayOffset(row.date)));
+    } else {
+      start = BKA_STATUS.indexOf(row.status);
+      if (start < 0) start = 0;
+    }
+    _bkaSpin = { el: el, kind: kind, id: id, row: row, sx: p.clientX, sy: p.clientY,
+                 start: start, cur: start, live: false, pop: null, timer: null, prevOv: "" };
+    _bkaSpin.timer = setTimeout(function () {
+      var sp = _bkaSpin; if (!sp) return;
+      sp.live = true;
+      sp.el.classList.add("bka-spin-live");
+      sp.pop = _bkaSpinShow(sp.el, sp.kind);
+      _bkaSpinPaint();
+      _bkaSpinPlace(sp);
+      var rows = document.getElementById("bkaRows");
+      if (rows) { sp.prevOv = rows.style.overflowY; rows.style.overflowY = "hidden"; }
+      document.addEventListener("touchmove", _bkaSpinMoveLive, { passive: false });
+      try { if (typeof hap === "function") hap(12); } catch (er) {}
+    }, BKA_SPIN_HOLD);
+  }
+
+  // ตัวเฝ้าแบบ passive — แค่ดูว่านิ้วขยับก่อนครบเวลาไหม (ถ้าขยับ = ตั้งใจเลื่อน ไม่ใช่หมุน)
+  function watch(e) {
+    var sp = _bkaSpin; if (!sp) return;
+    if (sp.live) { _bkaSpinStep(e); return; }
+    var p = _bkaSpinPt(e);
+    if (Math.abs(p.clientX - sp.sx) > BKA_SPIN_SLOP || Math.abs(p.clientY - sp.sy) > BKA_SPIN_SLOP) {
+      clearTimeout(sp.timer);
+      _bkaSpin = null;
+    }
+  }
+
+  document.addEventListener("touchstart", down, { passive: true });
+  document.addEventListener("touchmove",  watch, { passive: true });
+  document.addEventListener("touchend",   _bkaSpinEnd);
+  document.addEventListener("touchcancel",_bkaSpinEnd);
+  document.addEventListener("mousedown",  down);
+  document.addEventListener("mousemove",  watch);
+  document.addEventListener("mouseup",    _bkaSpinEnd);
+})();
+
 // V4.19: เปิด iOS action sheet สำหรับเลือก status (แทน <select>)
 async function bkaOpenStatusPicker(id) {
+  // V5.62: เพิ่งหมุนเลือกไป อย่าเปิดแผงซ้ำ (นิ้วปล่อยแล้วเบราว์เซอร์ยังยิง click ตามมา)
+  if (Date.now() - (window._bkaSpunAt || 0) < 600) return;
   const r = bkaRows.find(x=>x.id===id); if (!r) return;
   if (typeof hap === "function") hap(8);
   const opts = BKA_STATUS.map(s => ({
@@ -14512,13 +15017,14 @@ async function bkaOpenStatusPicker(id) {
 
 function bkaRefreshDayDisplay(id) {
   const r = bkaRows.find(x=>x.id===id); if(!r) return;
-  const day = r.date ? r.date.split("-")[2] : "";
   const el = document.getElementById("bka-dt-disp-"+id);
-  if(el) el.textContent = day ? parseInt(day) : "วัน";
+  if(el) el.innerHTML = _bkaDayLabel(r.date);   // V5.62: วัน/เดือน
 }
 
 // V3: open custom calendar picker for basket date
 function bkaOpenDatePicker(id) {
+  // V5.62: เพิ่งหมุนเลือกไป อย่าเปิดปฏิทินซ้ำ
+  if (Date.now() - (window._bkaSpunAt || 0) < 600) return;
   const r = bkaRows.find(x => x.id === id);
   if (!r) return;
   openCal({
@@ -15288,9 +15794,16 @@ function bkSyncHeadOffset() {
       var th1 = t.querySelector("thead tr:first-child th.bk-th-day");
       if (th1) t.style.setProperty("--bk-h1", th1.getBoundingClientRect().height + "px");
     });
+    // V5.63: ความสูงของแถบเดือน+แท็บ → เอาไปหักออกจากความสูงกรอบตาราง
+    var sh = document.getElementById("bkStickyHeader");
+    if (sh) {
+      var h = Math.round(sh.getBoundingClientRect().height);
+      if (h > 0) document.documentElement.style.setProperty("--bk-headh", h + "px");
+    }
   } catch(e) {}
 }
 window.addEventListener("resize", bkSyncHeadOffset);
+window.addEventListener("orientationchange", function(){ setTimeout(bkSyncHeadOffset, 250); });
 
 // ═══ V4.93: ไฮไลต์แถวที่กำลังพิมพ์ (ตารางคนตัด) ═══
 // ใช้ event delegation ตัวเดียว แทนการใส่ handler ทุกช่อง (ตารางมีหลายพันช่อง)
@@ -17922,6 +18435,8 @@ function anKpi(label,val,sub,color,bg) {
 // how: "exists" = สร้างสดแล้วลบทิ้ง · "flex" = เปิดด้วย style.display · "show" = เปิดด้วยคลาส
 const _LAYERS = [
   // ป๊อปอัปที่ลอยสูงสุด
+  // V5.61: กล่อง "ทำรูปเสร็จแล้ว" (z-index 9600 สูงกว่าหน้าสรุปยอด 9500 จึงต้องปิดก่อน)
+  ["bkImgReadyOverlay",    "exists", "_bkImgCloseReady"],
   ["bkStatusPickerModal",  "exists", null],
   ["bkPersonOptModal",     "exists", null],
   // กล่องยืนยัน
@@ -23484,6 +23999,8 @@ function navSheetSwitch(tab) {
       handle.classList.remove("active");
       handle.style.transform = "";
     }
+    // V5.59: จำไว้ว่าเพิ่งปัดไป เพื่อกัน click ของที่จับยิงซ้ำตามมา
+    if (dx > 6) window._edgeSwipedAt = Date.now();
     if (dx > TRIGGER && dy < 60) {
       openNavSheet();
     }
@@ -23496,11 +24013,26 @@ function navSheetSwitch(tab) {
   zone.addEventListener("mousemove",  onMove);
   window.addEventListener("mouseup",  onEnd);
 
-  // also: tap on the visible handle opens the sheet
+  // ═══ V5.59: ที่จับสีส้มต้องรับการปัดด้วย ═══
+  // มันตั้ง pointer-events:auto ทับ CSS ไว้ (เพื่อให้แตะแล้วเปิดเมนูได้)
+  // แต่เดิมมีแค่ตัวจัดการ click — นิ้วที่เริ่มปัดตรงที่จับจึงไม่ถึงโซนปัดเลย
+  // วัดจริงบนจอ 844: ที่จับกินช่วง y 396–448 ซึ่งเป็นตรงที่นิ้วโป้งวางพอดี
+  //                  ปัดตรงนั้น 5 จุดจาก 14 จุดที่ทดสอบ ไม่มีอะไรเกิดขึ้นเลย
+  // ตอนนี้ผูกชุดเดียวกันเข้ากับที่จับ แล้วกัน click ซ้ำหลังปัด
   if (handle) {
     handle.style.pointerEvents = "auto";
     handle.style.cursor = "pointer";
-    handle.addEventListener("click", () => openNavSheet());
+    handle.addEventListener("touchstart", onStart, { passive: true });
+    handle.addEventListener("touchmove",  onMove,  { passive: true });
+    handle.addEventListener("touchend",   onEnd);
+    handle.addEventListener("mousedown",  onStart);
+    handle.addEventListener("mousemove",  onMove);
+    // แตะเฉยๆ (ไม่ได้ลาก) ยังเปิดเมนูได้เหมือนเดิม
+    // แต่ถ้าเพิ่งปัดไป อย่าเปิดซ้ำ ไม่งั้นเมนูจะเปิดแล้วปิดทันที
+    handle.addEventListener("click", function () {
+      if (Date.now() - (window._edgeSwipedAt || 0) < 600) return;
+      openNavSheet();
+    });
   }
 })();
 
@@ -23919,16 +24451,16 @@ setTimeout(() => setBodyTabClass(activeTab || "board"), 50);
 <div id="bkAddModal">
   <div id="bkAddModalBox">
     <div class="bkm-head">
-      <button class="bkm-min" onclick="bkMinimizeModal()" aria-label="ย่อ" title="ซ่อนชั่วคราว">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      </button>
+      <button class="bkm-min" onclick="bkMinimizeModal()" aria-label="ย่อ" title="ซ่อนชั่วคราว">ย่อ</button>
       <div class="bkm-date-wrap">
         <div class="bkm-date-day" id="bkmDateDay">—</div>
         <div class="bkm-date-month" id="bkmDateMonth"></div>
       </div>
-      <button class="bkm-close" onclick="bkCloseAddModal()" aria-label="ปิด">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+      <div class="bkm-head-rsp">
+        <button class="bkm-close" onclick="bkCloseAddModal()" aria-label="ปิด">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
     </div>
     <div class="bkm-summary" id="bkaSummary">0 รายการ · 0 ใบ</div>
     <div class="bka-col-head">
