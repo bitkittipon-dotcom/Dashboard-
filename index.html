@@ -3019,6 +3019,36 @@ tr:last-child td { border-bottom: none; }
 /* เส้นผมคั่นเฉพาะรอยต่อวัน (เดิมเป็นเส้น 2px เข้ม) */
 .bk-table .bk-day-divider { border-left: none !important; box-shadow: inset 1px 0 0 rgba(0,0,0,0.08); }
 
+/* ═══ V5.64: เลขวันวาบขึ้นตอนปัดเปลี่ยนวัน ═══
+   ไม่มีพื้นรอง เลขใหญ่จางๆ ลอยอยู่ที่ 64% ของความสูงจอ (ล่างการ์ดแถวแรก)
+   pointer-events:none = แตะทะลุผ่านได้ ไม่เคยบังการกดของข้างหลัง
+   z-index 250 = อยู่เหนือบอร์ด แต่ต่ำกว่าหน้าต่างทุกบาน (บานต่ำสุดคือ editItemModal 400) */
+#dayHud {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 250;
+  opacity: 0;
+  display: none;
+}
+#dayHud.on { opacity: 1; }
+#dayHudBox {
+  position: absolute; left: 50%; top: 64%;
+  transform: translate(-50%, -50%) scale(0.92);
+  display: flex; flex-direction: column; align-items: center;
+  font-family: 'IBM Plex Sans Thai', sans-serif;
+}
+#dayHud.on #dayHudBox { transform: translate(-50%, -50%) scale(1); }
+#dayHudNum {
+  font-size: 132px; font-weight: 700;
+  letter-spacing: -0.045em; line-height: 0.95;
+  font-variant-numeric: tabular-nums;
+  color: rgba(28, 25, 23, 0.18);
+}
+#dayHudWd {
+  font-size: 22px; font-weight: 600; margin-top: 2px; line-height: 1;
+  color: rgba(28, 25, 23, 0.23);
+}
+
 /* ═══ V5.63: ทำให้กรอบตารางเป็นตัวเลื่อนแทนทั้งหน้า ═══
    เหตุผล: position:sticky ยึดกับกรอบที่เลื่อนได้ตัวใกล้สุดเสมอ
    ของเดิมกรอบสูงเท่าตารางพอดี → ไม่มีอะไรให้เลื่อน → คำสั่ง sticky ข้างล่างไม่เคยติด
@@ -4044,7 +4074,22 @@ tr:last-child td { border-bottom: none; }
   padding:2px 3px; min-height:0;
   display:flex; flex-direction:column;
   gap:1px; overflow:hidden;
+  position:relative;   /* V5.65: ให้พื้นสีของช่องที่เก็บครบเกาะได้ */
 }
+
+/* ═══ V5.65: ช่องที่เคยมีรายการแล้วจ่ายครบทุกใบ → พื้นดำใส 7% ═══
+   ของเดิมช่องพวกนี้ขาวล้วน แยกไม่ออกจาก "ยังโหลดไม่ขึ้น"
+   ลงสีแล้วกวาดตาทีเดียวรู้เลยว่าช่องไหนจบงานแล้ว
+   ไม่ลงให้ช่องที่ไม่เคยมีอะไรเลย เพราะอยากให้สีดำแปลว่า "เก็บครบ" ตรงตัว
+   (ถ้าจะให้ลงทุกช่องว่าง แก้เงื่อนไขที่ avBuildCell บรรทัดเดียว)
+   pointer-events:none = กดทะลุผ่านได้ ไม่บังการกดเข้าไปดูวัน */
+.av-quad-done::before {
+  content:''; position:absolute; inset:0;
+  background:rgba(0,0,0,0.07);
+  pointer-events:none;
+}
+/* วันที่จ่ายครบทั้งวันมีผ้าคลุมดำ 45% ทั้งการ์ดอยู่แล้ว ไม่ต้องทับซ้อนอีกชั้น */
+.av-cell-paid .av-quad-done::before { display:none; }
 
 .av-item {
   display:flex; align-items:center; justify-content:space-between; gap:2px;
@@ -4094,6 +4139,32 @@ tr:last-child td { border-bottom: none; }
 .av-item.av-paid .av-nm-badge {
   color:#78716C;
   opacity:0.35;
+}
+
+/* ═══ V5.66: ค้างเกินสองวัน → พื้นส้มสว่างกระพริบ ═══
+   ทุกกลุ่มยกเว้นเงินเชื่อ (เงินเชื่อค้างยาวเป็นเรื่องปกติ ถ้านับด้วยจะกระพริบ 129 รายการ
+   จนไม่มีความหมาย — วัดจากข้อมูลจริงแล้ว)
+   ตัวหนังสือต้องเป็นดำหมึก เพราะสีประจำกลุ่มบนพื้นส้มสว่างเหลือความต่างแค่ 2.3–2.9
+   ซึ่งอ่านไม่ออก (ดำหมึกได้ 6.70) กลุ่มยังรู้ได้จากช่องที่รายการอยู่
+   เครื่องที่เปิด "ลดการเคลื่อนไหว" ไว้ จะค้างสีส้มไม่กระพริบ — ยังเห็นชัดเหมือนกัน */
+@keyframes avLatePulse {
+  0%, 100% { background: rgba(249,115,22,0.12); }
+  50%      { background: rgba(249,115,22,0.92); }
+}
+.av-item.av-item-late {
+  border-radius: 3px;
+  animation: avLatePulse 1.1s ease-in-out infinite;
+}
+.av-item.av-item-late .av-item-nm,
+.av-item.av-item-late .av-item-amt {
+  color: #1C1917 !important;
+  font-weight: 800 !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .av-item.av-item-late {
+    animation: none;
+    background: rgba(249,115,22,0.55);
+  }
 }
 
 /* V4.72: Skipped payment highlight (H1: solid red + white text) */
@@ -5184,8 +5255,8 @@ input[name="cust-name-no-fill"]:-webkit-autofill {
 <!-- Chart.js + html2canvas: lazy-loaded on demand (saves ~410 KB on first paint) -->
 <script>
 // ═══ V4.38 (B.4): APP_VERSION — single source of truth ═══
-window.APP_VERSION = "V5.63";
-window.APP_VERSION_STRING = "V5.63"; // alias for compatibility
+window.APP_VERSION = "V5.67";
+window.APP_VERSION_STRING = "V5.67"; // alias for compatibility
 
 // ═══════════════════════════════════════════════════════════════════
 // V5.49: ดักคำเตือน "ไม่มี index" ของ Firebase
@@ -10314,6 +10385,31 @@ function avIsToday(dayKey) {
 
 // Compute bill counts (unpaid) per customer name — one pass
 // Scope: allDays only (allClosed = archived, not current focus)
+// ═══ V5.66: รายการค้างเกินสองวัน ═══
+// เกินสองวัน = วันของรายการเก่ากว่าวันนี้ตั้งแต่ 3 วันขึ้นไป (2 วันพอดียังไม่นับ)
+// นับจากวันจริงวันนี้ ไม่ใช่วันที่กำลังเปิดดู
+var AV_LATE_DAYS = 2;
+var AV_LATE_SKIP_GROUP = "credit";   // เงินเชื่อไม่นับ ค้างยาวเป็นเรื่องปกติของกลุ่มนี้
+
+function _avAgeDays(dayKey) {
+  try {
+    var p = (typeof parseDayKey === "function") ? parseDayKey(dayKey) : null;
+    if (!p || !p.day) return -1;                 // วันพิเศษอย่าง "15 ค้างจ่าย" ไม่นับ
+    var d = new Date(p.year, p.month - 1, p.day);
+    if (isNaN(d.getTime())) return -1;
+    d.setHours(0, 0, 0, 0);
+    var t = new Date(); t.setHours(0, 0, 0, 0);
+    return Math.round((t.getTime() - d.getTime()) / 86400000);
+  } catch (e) { return -1; }
+}
+
+function _avIsLate(dayKey, gKey, item) {
+  if (!item) return false;
+  if (gKey === AV_LATE_SKIP_GROUP) return false;
+  if (item.status === "ชำระแล้ว") return false;
+  return _avAgeDays(dayKey) > AV_LATE_DAYS;
+}
+
 // V4.72: Detect "skipped payment" — unpaid bill that has NEWER paid bills for same customer
 // Cache: window._skippedSet = Set of "day::gKey::itemKey" strings
 window._skippedSet = new Set();
@@ -10734,6 +10830,11 @@ function avBuildCell(dayKey) {
     const unpaid = entries.filter(([, x]) => x.status !== "ชำระแล้ว");
     const paid = entries.filter(([, x]) => x.status === "ชำระแล้ว");
 
+    // V5.65: เคยมีรายการ แล้วจ่ายครบทุกใบ → ลงพื้นดำใส ให้รู้ว่าจบงานแล้ว
+    //        ช่องที่ไม่เคยมีอะไรเลย (entries.length === 0) ปล่อยขาวไว้
+    //        อยากให้ลงทุกช่องว่างแทน → เปลี่ยนเป็น  if (unpaid.length === 0)
+    if (entries.length > 0 && unpaid.length === 0) quad.classList.add("av-quad-done");
+
     // Show all unpaid items (Q5: no truncation)
     unpaid.forEach(([itemKey, item]) => {
       quad.appendChild(avBuildItem(dayKey, gKey, itemKey, item));
@@ -10789,6 +10890,12 @@ function avBuildItem(dayKey, gKey, itemKey, item) {
   // V4.72: Apply skipped-payment highlight if this item is skipped
   if (window._skippedSet?.has(`${dayKey}::${gKey}::${itemKey}`)) {
     el.classList.add("av-item-skipped");
+  }
+
+  // V5.66: ค้างเกินสองวัน → ส้มกระพริบ
+  //        แดง (บิลถูกข้าม) สำคัญกว่า ถ้าเป็นแดงอยู่แล้วไม่ต้องทับด้วยส้ม
+  if (!el.classList.contains("av-item-skipped") && _avIsLate(dayKey, gKey, item)) {
+    el.classList.add("av-item-late");
   }
 
   el.addEventListener("click", (e) => {
@@ -18458,6 +18565,8 @@ const _LAYERS = [
   ["dbtStModal",           "flex",   "dbtCloseStatus"],
   ["debtorModal",          "flex",   "closeDebtors"],
   // หน้าต่างย่อย
+  // V5.67: กล่องถามย้ายบิล ลอยทับหน้าต่างแก้รายการอยู่ ต้องปิดก่อนตัวที่มันทับ
+  ["cascadeMoveModal",     "flex",   "cascadeMoveCancel"],
   ["editItemModal",        "flex",   "closeEditItemModal"],
   ["editDayModal",         "show",   "closeEditModal"],
   ["cmDetailModal",        "show",   null],
@@ -18471,6 +18580,9 @@ const _LAYERS = [
   ["bugReportModal",       "exists", null],
   ["bugAdminModal",        "exists", null],
   ["billPreviewModal",     "flex",   "closeBillPreview"],
+  // V5.67: หน้ารายการทั้งหมด — เป็นหน้าเต็มจอ ต้องปิดทีหลังป๊อปอัปทุกตัว
+  //        หน้านี้ปิดตัวเองก่อนเปิดหน้ารวมบิลเสมอ จึงไม่ชนกับชั้น 5
+  ["allViewModal",         "flex",   "avHide"],
 ];
 
 function _lyOpen(id, how) {
@@ -18623,9 +18735,15 @@ function _anyLayerOpen() {
       window._navSelfTimer = setTimeout(function () { window._navSelfPop = false; }, 800);
       try { history.back(); } catch (e) { window._navSelfPop = false; }
     };
+    // ═══ V5.67: กันไม่ให้ย้อนกลับพาออกจากแอป ═══
+    // ของเดิมถอดอาวุธเมื่อไม่มีหน้าต่างเปิด → อยู่บอร์ดเฉยๆ ย้อนทีเดียวหลุดออกจากแอป
+    // ตอนนี้ฝากไว้ตลอด ไม่ถอดอีกเลย · _navDisarm ยังอยู่แต่ไม่มีใครเรียกแล้ว
+    //
+    // จะถอยกลับเป็นแบบเดิม (ยอมให้ออกจากบอร์ดได้ แลกกับไม่มีรายการค้างในประวัติ)
+    // แก้บรรทัดล่างนี้เป็น:  var open = _anyLayerOpen(); if (open) window._navArm(); else window._navDisarm();
+    // แล้วเอา window._navArm() ที่ท้ายบล็อกนี้ออก กับคืน popstate ให้เป็น "ปล่อยเบราว์เซอร์ทำงานปกติ"
     window._navSync = function () {
-      var open = _anyLayerOpen();
-      if (open) window._navArm(); else window._navDisarm();
+      window._navArm();
     };
 
     window.addEventListener("popstate", function () {
@@ -18633,8 +18751,9 @@ function _anyLayerOpen() {
       if (window._navSelfPop) { window._navSelfPop = false; return; }
       window._navArmed = false;                 // รายการของเราถูกใช้ไปแล้ว
       if (_closeTopLayer()) { setTimeout(window._navSync, 80); return; }
-      // ไม่มีอะไรให้ปิด → ปล่อยให้เบราว์เซอร์ทำงานปกติ
-      // (ของเดิม push กลับทันที = ต้นเหตุอาการเด้ง)
+      // V5.67: ไม่มีอะไรให้ปิด = อยู่บอร์ดเฉยๆ → ฝากใหม่ทันที ไม่ให้หลุดออกจากแอป
+      // ต้องฝากตรงนี้เลย ห้ามใส่ setTimeout ไม่งั้นเบราว์เซอร์จะเดินหน้าออกไปก่อน
+      window._navArm();
     });
 
     // หน้าต่างเปิด/ปิดได้จากหลายที่มาก ดักที่ DOM เปลี่ยนแทนการไปแก้ทุกฟังก์ชัน
@@ -18648,6 +18767,10 @@ function _anyLayerOpen() {
     } catch (e) { console.warn("[back] ดักการเปลี่ยนหน้าจอไม่ได้:", e && e.message); }
     document.addEventListener("click", kick, true);
     document.addEventListener("touchend", kick, true);
+
+    // V5.67: ฝากตั้งแต่เปิดแอป ไม่ต้องรอให้แตะอะไรก่อน
+    //        ไม่งั้นเปิดแอปมาแล้วย้อนกลับทันที ยังหลุดออกอยู่
+    window._navArm();
   } catch(e) { console.warn("[back] ผูกปุ่มย้อนกลับไม่สำเร็จ:", e && e.message); }
 })();
 
@@ -18656,6 +18779,62 @@ document.addEventListener("keydown", function(e) {
   if (e.key !== "Escape" && e.key !== "Esc") return;
   _closeTopLayer();
 });
+
+// ═══════════════════════════════════════════════════════════════
+// V5.64 — เลขวันวาบขึ้นกลางจอตอนปัดเปลี่ยนวัน
+// ═══════════════════════════════════════════════════════════════
+// ปัดเปลี่ยนวันแล้วเดิมต้องละสายตาไปมองแถบวันที่ด้านบนทุกครั้งว่าถึงวันไหนแล้ว
+// ตอนนี้เลขวันตัวใหญ่จางๆ วาบขึ้นตรงที่ตามองอยู่ แล้วหายเอง
+//
+// ตั้งใจให้เป็นชั้นลอยล้วนๆ: ไม่แตะตรรกะการปัด ไม่แตะการวาดบอร์ด
+// ลบฟังก์ชันนี้กับบล็อก CSS #dayHud ทิ้งก็กลับเป็นเดิมทุกประการ
+var DAY_HUD_HOLD = 180;   // ค้างกี่มิลลิวินาทีก่อนเริ่มจาง
+var DAY_HUD_FADE = 270;   // จางกี่มิลลิวินาที (รวม 0.45 วินาที)
+var _dayHudTimer = null;
+
+function _dayHudEl() {
+  var el = document.getElementById("dayHud");
+  if (el) return el;
+  el = document.createElement("div");
+  el.id = "dayHud";
+  el.setAttribute("aria-hidden", "true");   // ไม่ต้องให้โปรแกรมอ่านจอพูดซ้ำ
+  el.innerHTML = '<div id="dayHudBox"><div id="dayHudNum"></div><div id="dayHudWd"></div></div>';
+  document.body.appendChild(el);
+  return el;
+}
+
+// dayKey รูปแบบ "dd-mm-yy" (พ.ศ. สองหลัก) — วันที่พิเศษอย่าง "15 ค้างจ่าย" จะ parse ไม่ผ่าน
+// กรณีนั้นไม่ต้องวาบอะไร ดีกว่าโชว์เลขมั่ว
+function _dayHudShow(dayKey) {
+  try {
+    var p = (typeof parseDayKey === "function") ? parseDayKey(dayKey) : null;
+    if (!p || !p.day) return;
+    var el  = _dayHudEl();
+    var num = document.getElementById("dayHudNum");
+    var wdl = document.getElementById("dayHudWd");
+    var WK = ["วันอาทิตย์","วันจันทร์","วันอังคาร","วันพุธ","วันพฤหัสบดี","วันศุกร์","วันเสาร์"];
+    var d = new Date(p.year, p.month - 1, p.day);
+    num.textContent = p.day;
+    wdl.textContent = isNaN(d.getTime()) ? "" : WK[d.getDay()];
+
+    // ปัดรัวๆ: เริ่มนับใหม่ทุกครั้ง ไม่ต่อคิว ไม่ซ้อนกัน เห็นเลขล่าสุดเสมอ
+    clearTimeout(_dayHudTimer);
+    el.style.display = "block";
+    el.style.transition = "none";
+    var box = document.getElementById("dayHudBox");
+    if (box) box.style.transition = "none";
+    el.classList.add("on");
+    void el.offsetWidth;                    // บังคับให้วาดก่อน ไม่งั้นจะไม่เห็นตอนแรก
+
+    _dayHudTimer = setTimeout(function () {
+      el.style.transition = "opacity " + DAY_HUD_FADE + "ms ease";
+      if (box) box.style.transition = "transform " + DAY_HUD_FADE + "ms ease";
+      el.classList.remove("on");
+      // ซ่อนสนิทหลังจางจบ จะได้ไม่มี element ค้างเป็นชั้นทับอยู่เฉยๆ
+      _dayHudTimer = setTimeout(function () { el.style.display = "none"; }, DAY_HUD_FADE + 40);
+    }, DAY_HUD_HOLD);
+  } catch (e) {}
+}
 
 // ── ข้อ 15: Swipe sensitivity tuning ────────────────────────────
 (function() {
@@ -18733,9 +18912,11 @@ document.addEventListener("keydown", function(e) {
     if (dx < 0 && idx < allSwipeKeys.length-1) {
       activeDay = allSwipeKeys[idx+1]; openForm=null;
       renderDayTabs(allSwipeKeys); renderBoard();
+      _dayHudShow(activeDay);   // V5.64: บอกวันให้รู้ โดยไม่ต้องละสายตาไปมองแถบด้านบน
     } else if (dx > 0 && idx > 0) {
       activeDay = allSwipeKeys[idx-1]; openForm=null;
       renderDayTabs(allSwipeKeys); renderBoard();
+      _dayHudShow(activeDay);   // V5.64
     }
   }, {passive:true});
 })();
