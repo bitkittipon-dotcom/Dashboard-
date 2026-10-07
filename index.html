@@ -3101,6 +3101,78 @@ tr:last-child td { border-bottom: none; }
 .bk-today-dot { display:inline-flex; align-items:center; justify-content:center;
   min-width:20px; height:20px; border-radius:50%; background:#1C1917; color:#fff; font-size:10.5px; font-weight:700; }
 
+/* ═══ V5.68: มัดจำตะกร้า ═══ */
+/* ป้ายในช่องค้างของตารางคนตัด — แบบ ค1 บีบระยะในช่องให้เม็ดลงได้โดยแถวโตขึ้นแค่ 1px
+   (แถวสูง 34px ถูกกำหนดโดยช่องกรอกตัวเลขของวัน ช่องค้างมีที่ว่างเหลืออยู่แล้ว) */
+.bk-table td.bk-freeze-bal.has-dep { padding-top:3px; padding-bottom:3px; line-height:1; }
+.bk-dep-pill {
+  display:block; margin:1px auto 0; background:#44504B; color:#fff;
+  font-size:8px; font-weight:700; border-radius:99px; line-height:11px;
+  letter-spacing:-0.3px; width:fit-content; padding:0 4px;
+}
+/* ป้ายในหน้าสรุปเดือน */
+.bk-sum-row.dep-done { background:#EEF2F0; }
+.bk-sum-row.dep-done .bk-sum-cell { color:#6B7670 !important; }
+.bk-sum-row.dep-done .bk-sum-day { color:#6B7670; }
+.bk-sum-deptag {
+  display:inline-flex; align-items:center; gap:3px; background:#44504B; color:#fff;
+  border-radius:5px; font-size:10px; font-weight:700; padding:1px 6px; letter-spacing:-0.2px;
+  white-space:nowrap;
+}
+.bk-sum-deptag svg { width:9px; height:9px; flex-shrink:0; }
+/* แถบบอกยอดมัดจำใต้ยอดสามช่อง */
+.bk-dep-strip {
+  display:flex; align-items:center; gap:8px; padding:9px 14px; background:#EEF2F0;
+  font-size:13px; color:#2F4A44; font-variant-numeric:tabular-nums; cursor:pointer;
+  border-radius:10px; margin:6px 0;
+}
+.bk-dep-strip svg { width:15px; height:15px; flex-shrink:0; }
+.bk-dep-strip b { font-weight:700; }
+.bk-dep-strip .go { margin-left:auto; color:#007AFF; font-size:12.5px; font-weight:600; }
+/* หน้าต่างมัดจำ */
+.bk-dep-tiles { display:grid; grid-template-columns:repeat(3,1fr); border-bottom:1px solid #EFEFEF; }
+.bk-dep-tiles > div { padding:13px 5px; text-align:center; border-left:1px solid #EFEFEF; }
+.bk-dep-tiles > div:first-child { border-left:0; }
+.bk-dep-tiles .k { display:block; font-size:11px; color:#8E8E93; margin-bottom:3px; }
+.bk-dep-tiles .v { font-size:19px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.15; }
+.bk-dep-tiles .v small { font-size:11px; font-weight:500; color:#8E8E93; }
+.bk-dep-led { width:100%; border-collapse:collapse; font-size:13px; font-variant-numeric:tabular-nums; }
+.bk-dep-led th { font-size:10.5px; font-weight:400; color:#8E8E93; padding:6px 9px;
+  text-align:right; border-bottom:1px solid #E3E3E3; background:#FAFAFA; }
+.bk-dep-led th:nth-child(-n+2), .bk-dep-led td:nth-child(-n+2) { text-align:left; }
+.bk-dep-led td { padding:10px 9px; text-align:right; border-bottom:1px solid #EFEFEF; cursor:pointer; }
+.bk-dep-led .in { color:#44504B; font-weight:700; }
+.bk-dep-led .ret { color:#0F6B5F; font-weight:700; }
+.bk-dep-led .bal { font-weight:700; }
+.bk-dep-led .src { display:block; font-size:11px; color:#8E8E93; font-weight:400; }
+.bk-dep-led .dots { color:#C7C7CC; }
+/* หน้าเลือกวัน */
+.bk-pick-row { display:grid; grid-template-columns:1fr 46px 46px 72px 46px; gap:6px;
+  padding:9px 12px; align-items:center; font-size:13px; border-bottom:1px solid #EFEFEF;
+  font-variant-numeric:tabular-nums; cursor:pointer; }
+.bk-pick-row.on { background:#FFFBEB; }
+.bk-pick-row.locked { background:#EEF2F0; cursor:default; }
+.bk-pick-row.na { opacity:.45; cursor:default; }
+.bk-pick-day { display:flex; align-items:center; gap:7px; font-weight:600; white-space:nowrap; }
+.bk-pick-mark { width:19px; height:19px; border-radius:50%; border:1.5px solid #D1D1D6;
+  display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; }
+.bk-pick-row.on .bk-pick-mark { background:#F59E0B; border-color:#F59E0B; }
+.bk-pick-mark svg { width:11px; height:11px; color:#fff; }
+.bk-pick-o { text-align:center; color:#1E3A8A; font-weight:700; }
+.bk-pick-i { text-align:center; color:#DC2626; font-weight:700; }
+.bk-pick-s { text-align:right; color:#DC2626; font-weight:700; font-size:12px; white-space:nowrap; }
+.bk-pick-b { text-align:right; color:#DC2626; font-weight:700; }
+.bk-dep-bar { position:sticky; bottom:0; background:#fff; border-top:1px solid #EFEFEF; padding:11px 14px; }
+.bk-dep-fld { flex:1; border:1px solid #E3E3E3; border-radius:9px; padding:5px 9px; min-width:0; }
+.bk-dep-fld span { display:block; font-size:10.5px; color:#8E8E93; }
+.bk-dep-fld input { width:100%; border:0; background:transparent; font-family:inherit;
+  font-size:15px; font-weight:700; font-variant-numeric:tabular-nums; color:#1C1917; padding:0; }
+.bk-dep-btn { flex:1; text-align:center; padding:11px 0; border-radius:11px; font-size:15px;
+  font-weight:700; border:0; font-family:inherit; cursor:pointer; }
+.bk-dep-btn.p { background:#44504B; color:#fff; }
+.bk-dep-btn.s { background:#F2F2F7; color:#3A3A3C; }
+.bk-dep-btn:disabled { opacity:.4; }
+
 /* ช่องค้างรายวันที่เป็น 0 */
 .bk-bal-zero { color:#D6D3D1; font-weight:500; }
 /* V4.96: ตัดพื้นแดงของช่องค้างออก — ต้องเป็น "ขาวทึบ" ไม่ใช่ transparent
@@ -4036,6 +4108,17 @@ tr:last-child td { border-bottom: none; }
   cursor:pointer;
   transition:transform .15s;
   min-height:78px;
+}
+/* ═══ V5.69: ข้ามการจัดวางการ์ดที่ยังไม่เข้ามาในจอ ═══
+   หน้านี้วาดการ์ดทุกวันพร้อมกัน (จริง ~170 ใบ) แต่จอเห็นพร้อมกันแค่ 22 ใบ
+   เวลาที่เสียไปเกือบทั้งหมดคือการให้เบราว์เซอร์จัดวางของ 3,000 ชิ้น ไม่ใช่การสร้างการ์ด
+   บรรทัดนี้บอกว่า "การ์ดที่ยังไม่เข้ามาในจอ ไม่ต้องจัดวาง" — วัดแล้วเร็วขึ้น 77%
+   ไม่เปลี่ยนวิธีใช้งานเลย · เครื่องที่ยังไม่รองรับจะไม่มีผลอะไร เท่าเดิมเป๊ะ
+   77px = ความสูงการ์ด 87 ลบขอบใน 8 ลบเส้นขอบ 1.5 — จองไว้ให้แถบเลื่อนยาวเท่าของจริง
+   แก้ padding หรือ min-height ของ .av-cell เมื่อไหร่ ต้องมาแก้เลขนี้ด้วย */
+.av-cell {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 77px;
 }
 .av-cell:active { transform:scale(0.98); }
 
@@ -5255,8 +5338,8 @@ input[name="cust-name-no-fill"]:-webkit-autofill {
 <!-- Chart.js + html2canvas: lazy-loaded on demand (saves ~410 KB on first paint) -->
 <script>
 // ═══ V4.38 (B.4): APP_VERSION — single source of truth ═══
-window.APP_VERSION = "V5.67";
-window.APP_VERSION_STRING = "V5.67"; // alias for compatibility
+window.APP_VERSION = "V5.69";
+window.APP_VERSION_STRING = "V5.69"; // alias for compatibility
 
 // ═══════════════════════════════════════════════════════════════════
 // V5.49: ดักคำเตือน "ไม่มี index" ของ Firebase
@@ -10385,8 +10468,10 @@ function avIsToday(dayKey) {
 
 // Compute bill counts (unpaid) per customer name — one pass
 // Scope: allDays only (allClosed = archived, not current focus)
-// ═══ V5.66: รายการค้างเกินสองวัน ═══
-// เกินสองวัน = วันของรายการเก่ากว่าวันนี้ตั้งแต่ 3 วันขึ้นไป (2 วันพอดียังไม่นับ)
+// ═══ V5.66: รายการค้างหลายวัน ═══
+// V5.69: เลื่อนเส้นให้เร็วขึ้นหนึ่งวัน — เดิม "เกิน 2 วัน" (ต้อง 3 วันขึ้นไป)
+//        ตอนนี้ "ตั้งแต่ 2 วันขึ้นไป" วันนี้ 7 จึงเตือนวันที่ 5 ด้วย
+//        วันนี้กับเมื่อวาน (0–1 วัน) ยังเงียบ ของที่เพิ่งออกไปเมื่อวานยังไม่ถือว่าช้า
 // นับจากวันจริงวันนี้ ไม่ใช่วันที่กำลังเปิดดู
 var AV_LATE_DAYS = 2;
 var AV_LATE_SKIP_GROUP = "credit";   // เงินเชื่อไม่นับ ค้างยาวเป็นเรื่องปกติของกลุ่มนี้
@@ -10407,7 +10492,7 @@ function _avIsLate(dayKey, gKey, item) {
   if (!item) return false;
   if (gKey === AV_LATE_SKIP_GROUP) return false;
   if (item.status === "ชำระแล้ว") return false;
-  return _avAgeDays(dayKey) > AV_LATE_DAYS;
+  return _avAgeDays(dayKey) >= AV_LATE_DAYS;   // V5.69: ตั้งแต่ 2 วัน ไม่ใช่เกิน 2 วัน
 }
 
 // V4.72: Detect "skipped payment" — unpaid bill that has NEWER paid bills for same customer
@@ -12130,7 +12215,93 @@ function bkGetDaysInMonth(y,m) {
 // V4.72: Balance helpers — single source of truth
 // "เก็บเกิน = กำไร (ไม่นับ), เก็บไม่ครบ = หนี้ค้าง (นับ)"
 // Rule: runBal = max(0, prev + out - in)
-function _bkNextBal(prev, out, inp) {
+// ═══════════════════════════════════════════════════════════════
+// V5.68: มัดจำตะกร้า — ชั้นข้อมูล
+// ───────────────────────────────────────────────────────────────
+// ยึดมัดจำ = ตกลงกับคนตัดว่าตะกร้าของวันนั้นๆ ไม่ต้องตามคืนแล้ว
+//            เรายึดเงินมัดจำไว้แทน ใบละเท่าไหร่แล้วแต่ตกลง
+//            ใบพวกนั้นออกจากยอดค้างทันที แต่ไม่ใช่การ "เก็บมา"
+//            เพราะตะกร้าจริงยังไม่ได้กลับเข้าลาน
+// เก็บยังไง: เก็บเป็นรายการยึดก้อนเดียว (bkDeposits) ไม่เขียนเลขซ้ำลงข้อมูลรายวัน
+//            เวลาเดินยอดค่อยเปิดดัชนีที่ทำไว้ในหน่วยความจำ
+//            เก็บสองที่แล้วไม่ตรงกันคือบั๊กที่หาสาเหตุยากที่สุด จึงเลี่ยง
+// รูปร่าง:  bkDeposits["cutter|c3"]["dep_169..."] = {
+//              at, rate, qty, mk:"2026-10",
+//              days:{ "01":20, "02":30 },   // ยึดทั้งวัน จำนวน = ที่ขาดของวันนั้น
+//              carry: 0,                    // ยึดจากแถวยกมากี่ใบ (เก็บที่วัน "00")
+//              returns:{ "ret_...":{at,qty,amount} } }
+var bkDeposits = {};
+function _bkDepKey(type, id) { return String(type) + "|" + String(id); }
+
+// ── ดัชนีรายวัน: _bkDepIdx["cutter|c3"]["2026-10"]["01"] = 20 ──
+// "00" = ยึดจากยอดยกมาของเดือนนั้น ต้องหักก่อนเริ่มเดินวันที่ 1
+var _bkDepIdx = null;
+function _bkDepInvalidate() { _bkDepIdx = null; }
+function _bkDepBuild() {
+  var idx = {};
+  try {
+    Object.keys(bkDeposits || {}).forEach(function (pk) {
+      var byDep = bkDeposits[pk] || {};
+      Object.keys(byDep).forEach(function (did) {
+        var d = byDep[did]; if (!d || !d.mk) return;
+        idx[pk] = idx[pk] || {};
+        idx[pk][d.mk] = idx[pk][d.mk] || {};
+        if (+d.carry > 0) idx[pk][d.mk]["00"] = (idx[pk][d.mk]["00"] || 0) + (+d.carry || 0);
+        var days = d.days || {};
+        Object.keys(days).forEach(function (dd) {
+          idx[pk][d.mk][dd] = (idx[pk][d.mk][dd] || 0) + (+days[dd] || 0);
+        });
+      });
+    });
+  } catch (e) { console.warn("[มัดจำ] ทำดัชนีไม่สำเร็จ:", e && e.message); }
+  _bkDepIdx = idx;
+  return idx;
+}
+// จำนวนใบที่ถูกยึดมัดจำของ type/id ในเดือน mk วันที่ dd ("00" = จากยอดยกมา)
+function _bkDepAt(type, id, mk, dd) {
+  var idx = _bkDepIdx || _bkDepBuild();
+  var m = idx[_bkDepKey(type, id)];
+  if (!m || !m[mk]) return 0;
+  return +m[mk][dd] || 0;
+}
+// เดือนไหนบ้างที่คนนี้มีมัดจำ — ใช้กันเดือนที่ไม่มีข้อมูลรายวันแต่มีมัดจำหลุดจากการเดินยอด
+function _bkDepMonths(type, id) {
+  var idx = _bkDepIdx || _bkDepBuild();
+  var m = idx[_bkDepKey(type, id)];
+  return m ? Object.keys(m) : [];
+}
+// สรุปของคนคนหนึ่ง: ยึดไปกี่ใบ · คืนไปแล้วกี่ใบ · ถือไว้กี่ใบ · เงินที่ถืออยู่
+function _bkDepSummary(type, id) {
+  var out = { taken: 0, returned: 0, held: 0, money: 0, moneyTaken: 0, moneyBack: 0, count: 0 };
+  var byDep = (bkDeposits || {})[_bkDepKey(type, id)] || {};
+  Object.keys(byDep).forEach(function (did) {
+    var d = byDep[did]; if (!d) return;
+    var q = +d.qty || 0, rate = +d.rate || 0;
+    var ret = 0, back = 0;
+    Object.keys(d.returns || {}).forEach(function (rid) {
+      ret  += +((d.returns[rid] || {}).qty) || 0;
+      back += +((d.returns[rid] || {}).amount) || 0;
+    });
+    out.count++; out.taken += q; out.returned += ret;
+    out.held += Math.max(0, q - ret);
+    out.moneyTaken += q * rate; out.moneyBack += back;
+  });
+  out.money = out.moneyTaken - out.moneyBack;
+  return out;
+}
+// รวมทั้งร้าน — ใช้โชว์ใต้แถบคนตัด/เก็บ/คืน
+function _bkDepTotalAll() {
+  var t = { held: 0, money: 0, people: 0 };
+  Object.keys(bkDeposits || {}).forEach(function (pk) {
+    var sp = pk.split("|"); var sm = _bkDepSummary(sp[0], sp.slice(1).join("|"));
+    if (sm.held > 0 || sm.money > 0) { t.people++; t.held += sm.held; t.money += sm.money; }
+  });
+  return t;
+}
+// วันนี้ถูกยึดมัดจำไปแล้วหรือยัง (ใช้ล็อกช่องไม่ให้แก้)
+function _bkDayLocked(type, id, mk, dd) { return _bkDepAt(type, id, mk, dd) > 0; }
+
+function _bkNextBal(prev, out, inp, dep) {
   // V4.99b: บังคับเป็นตัวเลขก่อนคำนวณ
   // ถ้าค่าเป็นสตริง (เช่นมีคนแก้ใน Firebase Console ตรงๆ) JS จะ "ต่อสตริง" แทนบวก
   //   10 + "5" → "105"  ไม่ใช่ 15  → ยอดเพี้ยนมหาศาลแบบเงียบๆ
@@ -12138,15 +12309,17 @@ function _bkNextBal(prev, out, inp) {
   const p = +prev || 0;   // unary + เร็วกว่า Number() ~1.7 เท่า ได้ผลเหมือนกัน
   const o = +out  || 0;
   const i = +inp  || 0;
-  return Math.max(0, p + o - i);
+  const d = +dep  || 0;   // V5.68: ใบที่ยึดมัดจำไปแล้ว ออกจากยอดค้างเหมือนกัน
+  return Math.max(0, p + o - i - d);
 }
 // คำนวณส่วนเกินที่ถูก cap (เพื่อแสดง badge "+N")
 // return: จำนวนที่เกิน (ถ้ามี), ไม่งั้น 0
-function _bkExcess(prev, out, inp) {
+function _bkExcess(prev, out, inp, dep) {
   const p = +prev || 0;   // V4.99b: กันสตริงเหมือน _bkNextBal
   const o = +out  || 0;
   const i = +inp  || 0;
-  const raw = p + o - i;
+  const d = +dep  || 0;
+  const raw = p + o - i - d;
   return raw < 0 ? -raw : 0;
 }
 
@@ -12176,25 +12349,36 @@ function bkCalcCarryOver(type, personId, refYear, refMonth) {
   const cutoff = startY * 12 + (startM - 1);   // เดือนอ้างอิง (ไม่นับรวม)
 
   const months = [];
-  for (const mk in bkData) {
+  const _seenMk = {};
+  const _addMonth = (mk) => {
     const m = /^(\d{4})-(\d{2})$/.exec(mk);
-    if (!m) continue;
+    if (!m) return;
     const y = +m[1], mo = +m[2];
-    if (y * 12 + (mo - 1) >= cutoff) continue;          // เดือนปัจจุบันหรืออนาคต ข้าม
+    if (y * 12 + (mo - 1) >= cutoff) return;             // เดือนปัจจุบันหรืออนาคต ข้าม
+    if (_seenMk[mk]) return;
+    _seenMk[mk] = 1; months.push({ y, mo, mk });
+  };
+  for (const mk in bkData) {
     if (!bkData[mk] || !bkData[mk][type] || !bkData[mk][type][personId]) continue;
-    months.push({ y, mo, mk });
+    _addMonth(mk);
   }
+  // V5.68: เดือนที่ไม่มีข้อมูลรายวันเลยแต่มีมัดจำ ต้องนับด้วย ไม่งั้นมัดจำก้อนนั้นหายไปเฉยๆ
+  _bkDepMonths(type, personId).forEach(_addMonth);
   if (!months.length) return 0;
   months.sort((a, b) => (a.y - b.y) || (a.mo - b.mo));   // เก่า → ใหม่
 
   let bal = 0;
   for (const { y, mo, mk } of months) {
-    const rec = bkData[mk][type][personId];
+    const rec = (bkData[mk] && bkData[mk][type] && bkData[mk][type][personId]) || {};
     const days = bkGetDaysInMonth(y, mo);
+    // V5.68: มัดจำที่ยึดจาก "ยอดยกมา" ของเดือนนี้ หักก่อนเริ่มเดินวันที่ 1
+    bal = Math.max(0, bal - _bkDepAt(type, personId, mk, "00"));
     for (let d = 1; d <= days; d++) {
-      const e = rec[String(d).padStart(2, "0")];
-      if (!e) continue;
-      bal = _bkNextBal(bal, e.out, e.in);   // เจ๊าที่ 0 ทุกวัน เหมือนบนจอ
+      const dd = String(d).padStart(2, "0");
+      const e = rec[dd];
+      const dep = _bkDepAt(type, personId, mk, dd);
+      if (!e && !dep) continue;
+      bal = _bkNextBal(bal, e ? e.out : 0, e ? e.in : 0, dep);   // เจ๊าที่ 0 ทุกวัน เหมือนบนจอ
     }
   }
   return bal;   // _bkNextBal คุมให้ >= 0 อยู่แล้ว
@@ -12210,14 +12394,17 @@ function bkUpdateRowBalance(type, personId) {
   const todayD = now.getDate();
   const isCurrentMonth = (bkYear === now.getFullYear() && bkMonth === now.getMonth()+1);
   
-  let runBal = carry;
+  const _mkNow = bkMonthKey();
+  // V5.68: มัดจำที่ยึดจากยอดยกมาของเดือนนี้ หักก่อนเริ่มวันที่ 1
+  let runBal = Math.max(0, carry - _bkDepAt(type, personId, _mkNow, "00"));
   for (let d = 1; d <= days; d++) {
     const dd = String(d).padStart(2,"0");
     const entry = bkGetData(type, personId, dd);
     const out = entry.out||0, inp = entry.in||0;
+    const dep = _bkDepAt(type, personId, _mkNow, dd);
     // V4.72: ใช้ _bkNextBal — cap ที่ 0 (เก็บเกิน = ไม่ carry ต่อ)
-    const excess = _bkExcess(runBal, out, inp);
-    runBal = _bkNextBal(runBal, out, inp);
+    const excess = _bkExcess(runBal, out, inp, dep);
+    runBal = _bkNextBal(runBal, out, inp, dep);
     const cell = document.querySelector(`[data-bal="${type}-${personId}-${dd}"]`);
     if (cell) {
       cell.textContent = runBal > 0 ? runBal : "";
@@ -12249,7 +12436,14 @@ function bkUpdateRowBalance(type, personId) {
   // V4.72: cap ≥ 0 → 2 states (red/gray), แสดง "" เมื่อ 0 (consistency กับ day cell)
   const totalCell = document.querySelector(`[data-total="${type}-${personId}"]`);
   if (totalCell) {
-    totalCell.textContent = runBal > 0 ? runBal : "";
+    // V5.68: เดิมเขียนทับ textContent ตรงๆ ซึ่งลบป้ายมัดจำทิ้งทุกครั้งที่พิมพ์เลขในแถวนั้น
+    //        ต้องวาดป้ายกลับเข้าไปด้วย ไม่งั้นป้ายหายจนกว่าจะวาดตารางใหม่ทั้งหน้า
+    const _ds = _bkDepSummary(type, personId);
+    const _txt = runBal > 0 ? String(runBal) : "";
+    totalCell.innerHTML = _txt + (_ds.held > 0
+      ? `<span class="bk-dep-pill" onclick="event.stopPropagation();bkDepOpen(${JSON.stringify(type)},${JSON.stringify(personId)},${JSON.stringify((((type==="cutter"?bkCutters:bkCustomers)||[]).find(x=>x.id===personId)||{}).name||"")})">${_ds.held}</span>`
+      : "");
+    totalCell.classList.toggle("has-dep", _ds.held > 0);
     totalCell.style.background = runBal > 0 ? "#FEF2F2" : "#FAFAF9";
     totalCell.style.color = runBal > 0 ? "#DC2626" : "#A8A29E";
     totalCell.style.fontWeight = "700";
@@ -12288,7 +12482,12 @@ function bkSaveLocal() {
     customers: JSON.stringify(bkCustomers||[]),
     orders:    JSON.stringify(bkOrders||[]),
     data:      JSON.stringify(bkData||{}),
-    payStatus: bkPayStatus||"รอชำระ"
+    payStatus: bkPayStatus||"รอชำระ",
+    // ═══ V5.68: มัดจำตะกร้า ═══
+    // ฟังก์ชันนี้เขียนทับโหนด basket ทั้งก้อนด้วย set()
+    // ถ้าไม่ใส่คีย์นี้ลงไป การเซฟครั้งถัดไปจะลบมัดจำทิ้งทั้งหมดแบบเงียบๆ
+    // ที่โหลดกลับอยู่ใน bkLoadLocal ต้องแก้คู่กันเสมอ
+    deposits:  JSON.stringify(bkDeposits||{})
   };
   // V3: timeout reset เพื่อกัน flag ค้าง (กรณี listener ไม่ trigger)
   if (window._bkSavingTimer) clearTimeout(window._bkSavingTimer);
@@ -12311,6 +12510,395 @@ function bkSaveLocal() {
   });
 }
 
+// ═══════════════════════════════════════════════════════════════
+// V5.68: มัดจำตะกร้า — หน้าจอ
+// ═══════════════════════════════════════════════════════════════
+const _BK_DEP_RATE = 100;   // ราคาตั้งต้นต่อใบ แก้ได้ทุกครั้งที่ยึด
+
+function _bkDepIcon(sz) {
+  return `<svg width="${sz||15}" height="${sz||15}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7.5h15l-1.3 12a1 1 0 0 1-1 .9H6.8a1 1 0 0 1-1-.9Z"/><path d="M6.6 12h10.8M6.9 16h10.2"/><path d="M10 7.5l-.5 12.9M14 7.5l.5 12.9"/></svg>`;
+}
+function _bkDepLock() {
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2" fill="currentColor" stroke="none"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>`;
+}
+
+// แถบใต้ยอดในหน้าสรุปเดือน — กดแล้วเข้าหน้ามัดจำ
+function _bkDepStripHtml(type, id, name) {
+  const sm = _bkDepSummary(type, id);
+  const go = `onclick="bkDepOpen('${_jsAttrEsc(type)}','${_jsAttrEsc(id)}','${_jsAttrEsc(name)}')"`;
+  if (sm.held <= 0 && sm.count === 0) {
+    return `<div class="bk-dep-strip" style="background:#FAFAFA;color:#8E8E93;" ${go}>
+      ${_bkDepIcon(15)}<span>ยังไม่เคยยึดมัดจำกับคนนี้</span><span class="go">ยึดมัดจำ ›</span></div>`;
+  }
+  return `<div class="bk-dep-strip" ${go}>${_bkDepIcon(15)}
+    <span>มัดจำ <b>${sm.taken} ใบ</b> · คืนแล้ว <b>${sm.returned}</b> · ถือไว้ <b>${sm.money.toLocaleString()}</b></span>
+    <span class="go">ดูรายการ ›</span></div>`;
+}
+
+// ── หน้าต่างมัดจำ ──────────────────────────────────────────────
+function bkDepCloseModal() {
+  const m = document.getElementById("bkDepModal"); if (m) m.remove();
+  try { if (typeof _navSync === "function") _navSync(); } catch(e) {}
+}
+function bkDepOpen(type, id, name) {
+  const old = document.getElementById("bkDepModal"); if (old) old.remove();
+  const ov = document.createElement("div");
+  ov.id = "bkDepModal";
+  ov.dataset.t = type; ov.dataset.id = id; ov.dataset.name = name || "";
+  ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:9550;display:flex;align-items:center;justify-content:center;padding:16px;font-family:'IBM Plex Sans Thai',sans-serif;";
+  ov.onclick = (e) => { if (e.target === ov) bkDepCloseModal(); };
+  document.body.appendChild(ov);
+  _bkDepRender();
+  try { if (typeof _navSync === "function") _navSync(); } catch(e) {}
+}
+function _bkDepRender() {
+  const ov = document.getElementById("bkDepModal"); if (!ov) return;
+  const type = ov.dataset.t, id = ov.dataset.id, name = ov.dataset.name;
+  const sm = _bkDepSummary(type, id);
+  const byDep = (bkDeposits || {})[_bkDepKey(type, id)] || {};
+
+  // ไล่รายการเรียงวัน ใหม่สุดอยู่บน · "เหลือ" = มัดจำคงค้างหลังรายการนั้น
+  const ev = [];
+  Object.keys(byDep).forEach(did => {
+    const d = byDep[did]; if (!d) return;
+    ev.push({ kind:"take", at:+d.at||0, did, qty:+d.qty||0, rate:+d.rate||0,
+              money:(+d.qty||0)*(+d.rate||0), src:_bkDepSrcText(d) });
+    Object.keys(d.returns || {}).forEach(rid => {
+      const r = d.returns[rid] || {};
+      ev.push({ kind:"ret", at:+r.at||0, did, rid, qty:+r.qty||0, money:+r.amount||0 });
+    });
+  });
+  ev.sort((a,b) => a.at - b.at);
+  let run = 0;
+  ev.forEach(e => { run += (e.kind === "take" ? e.qty : -e.qty); e.bal = run; });
+  ev.reverse();
+
+  const rows = ev.length ? ev.map(e => `
+    <tr onclick="bkDepRowTap('${_jsAttrEsc(e.did)}','${_jsAttrEsc(e.rid||"")}')">
+      <td>${_bkDepDate(e.at)}</td>
+      <td>${e.kind==="take" ? `ยึดมัดจำ<span class="src">${e.src} · ใบละ ${e.rate}</span>` : "รับคืน"}</td>
+      <td class="${e.kind==="take"?"in":"ret"}">${e.kind==="take"?"+":"−"}${e.qty}</td>
+      <td class="${e.kind==="take"?"in":"ret"}">${e.kind==="take"?"+":"−"}${e.money.toLocaleString()}</td>
+      <td class="bal">${e.bal}</td>
+      <td class="dots">⋯</td>
+    </tr>`).join("")
+    : `<tr><td colspan="6" style="text-align:center;color:#8E8E93;padding:22px 10px;">ยังไม่เคยยึดมัดจำกับคนนี้</td></tr>`;
+
+  ov.innerHTML = `
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:400px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,0.22);">
+    <div style="display:flex;align-items:center;gap:8px;padding:13px 14px;border-bottom:1px solid #EFEFEF;flex-shrink:0;">
+      <button onclick="bkDepCloseModal()" aria-label="ปิด" style="width:32px;height:32px;border:0;border-radius:50%;background:#F2F2F7;color:#636366;font-size:16px;cursor:pointer;font-family:inherit;">✕</button>
+      <div style="flex:1;text-align:center;min-width:0;">
+        <div style="font-size:16px;font-weight:700;line-height:1.2;">มัดจำตะกร้า</div>
+        <div style="font-size:11.5px;color:#8E8E93;">${_htmlEsc(name)} · ${type==="cutter"?"คนตัด":"ลูกค้า"}</div>
+      </div><span style="width:32px;"></span>
+    </div>
+    <div class="bk-dep-tiles" style="flex-shrink:0;">
+      <div><span class="k">ถือมัดจำอยู่</span><span class="v">${sm.held} <small>ใบ</small></span></div>
+      <div><span class="k">เงินที่ถือไว้</span><span class="v">${sm.money.toLocaleString()}</span></div>
+      <div><span class="k">คืนไปแล้ว</span><span class="v">${sm.returned} <small>ใบ</small></span></div>
+    </div>
+    <div style="display:flex;gap:9px;padding:12px 14px;flex-shrink:0;">
+      <button class="bk-dep-btn p" onclick="bkDepPick('${_jsAttrEsc(type)}','${_jsAttrEsc(id)}','${_jsAttrEsc(name)}')">ยึดมัดจำ</button>
+      <button class="bk-dep-btn s" onclick="bkDepReturnAsk()" ${sm.held<=0?"disabled":""}>รับคืน</button>
+    </div>
+    <div style="overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;">
+      <table class="bk-dep-led"><thead><tr>
+        <th>วันที่</th><th>รายการ</th><th>ใบ</th><th>เงิน</th><th>เหลือ</th><th></th>
+      </tr></thead><tbody>${rows}</tbody></table>
+    </div>
+  </div>`;
+}
+// ── หน้าเลือกวันที่จะยึดมัดจำ ─────────────────────────────────
+// ยึด "ทั้งวัน" เท่านั้น — จำนวนของวันนั้นคือที่ขาดจริง (ออกไป − เก็บมา)
+// แถวยกมาเลือกได้ด้วย หมายถึงทุกอย่างก่อนเดือนนี้
+function bkDepPickClose() {
+  const m = document.getElementById("bkDepPickModal"); if (m) m.remove();
+  window._bkDepSel = null;
+  try { if (typeof _navSync === "function") _navSync(); } catch(e) {}
+}
+function bkDepPick(type, id, name) {
+  const info = _bkGetMonthSummary(type, id, bkYear, bkMonth);
+  window._bkDepSel = { type, id, name, mk: bkMonthKey(),
+                       days: {}, carry: false, rate: _BK_DEP_RATE, last: null, info };
+  const old = document.getElementById("bkDepPickModal"); if (old) old.remove();
+  const ov = document.createElement("div");
+  ov.id = "bkDepPickModal";
+  ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:9700;display:flex;align-items:center;justify-content:center;padding:16px;font-family:'IBM Plex Sans Thai',sans-serif;";
+  ov.onclick = (e) => { if (e.target === ov) bkDepPickClose(); };
+  document.body.appendChild(ov);
+  _bkDepPickRender();
+  try { if (typeof _navSync === "function") _navSync(); } catch(e) {}
+}
+// จำนวนที่ยึดได้ของวันนั้น = ที่ขาดจริง ลบที่ยึดไปแล้ว
+function _bkDepAvail(info, dd) {
+  const d = +dd;
+  const r = info.rowsAll.find(x => x.d === d);
+  if (!r) return 0;
+  return Math.max(0, (r.out - r.inn) - (r.dep || 0));
+}
+function _bkDepSelTotal() {
+  const S = window._bkDepSel; if (!S) return 0;
+  let t = S.carry ? Math.max(0, S.info.carry - S.info.carryDep) : 0;
+  Object.keys(S.days).forEach(dd => { t += S.days[dd]; });
+  return t;
+}
+function _bkDepPickRender() {
+  const ov = document.getElementById("bkDepPickModal"); const S = window._bkDepSel;
+  if (!ov || !S) return;
+  const info = S.info;
+  const carryLeft = Math.max(0, info.carry - info.carryDep);
+  const tick = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>`;
+
+  let rows = "";
+  if (info.carry > 0) {
+    const done = carryLeft <= 0;
+    rows += `<div class="bk-pick-row${done?' locked':(S.carry?' on':'')}" ${done?'':`onclick="_bkDepTapCarry()"`}>
+      <div class="bk-pick-day"><span class="bk-pick-mark">${S.carry?tick:''}</span>↩ ยกมาจากเดือนก่อน</div>
+      <div></div><div></div>
+      <div class="bk-pick-s">${done?`<span class="bk-sum-deptag">${_bkDepLock()}มัดจำ ${info.carryDep}</span>`:''}</div>
+      <div class="bk-pick-b">+${carryLeft||info.carry}</div></div>`;
+  }
+  info.rowsAll.forEach(r => {
+    if (!r.has) return;
+    const dep = r.dep || 0;
+    const avail = Math.max(0, (r.out - r.inn) - dep);
+    const on = !!S.days[String(r.d).padStart(2,"0")];
+    const cls = dep > 0 ? "locked" : (avail <= 0 ? "na" : (on ? "on" : ""));
+    const click = (dep > 0 || avail <= 0) ? "" : `onclick="_bkDepTapDay('${String(r.d).padStart(2,"0")}')"`;
+    rows += `<div class="bk-pick-row ${cls}" ${click}>
+      <div class="bk-pick-day"><span class="bk-pick-mark">${on?tick:''}</span>${r.d} <span style="color:#A8A29E;font-weight:400;">/ ${info.month}</span></div>
+      <div class="bk-pick-o">${r.out||''}</div>
+      <div class="bk-pick-i">${r.inn>0?r.inn:'✕'}</div>
+      <div class="bk-pick-s">${dep>0 ? `<span class="bk-sum-deptag">${_bkDepLock()}มัดจำ ${dep}</span>`
+                                     : (avail>0 ? 'ขาด +'+avail : 'เท่ากัน')}</div>
+      <div class="bk-pick-b">${r.bal>0?r.bal:'–'}</div></div>`;
+  });
+
+  const total = _bkDepSelTotal();
+  const rate = +S.rate || 0;
+  ov.innerHTML = `
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:400px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,0.22);">
+    <div style="display:flex;align-items:center;gap:8px;padding:13px 14px;border-bottom:1px solid #EFEFEF;flex-shrink:0;">
+      <button onclick="bkDepPickClose()" aria-label="ปิด" style="width:32px;height:32px;border:0;border-radius:50%;background:#F2F2F7;color:#636366;font-size:16px;cursor:pointer;font-family:inherit;">✕</button>
+      <div style="flex:1;text-align:center;min-width:0;">
+        <div style="font-size:16px;font-weight:700;line-height:1.2;">${_htmlEsc(S.name)}</div>
+        <div style="font-size:11.5px;color:#8E8E93;">เลือกวันที่จะยึดมัดจำ</div>
+      </div>
+      <button onclick="_bkDepClearSel()" style="border:0;border-radius:99px;background:#F2F2F7;color:#3A3A3C;font-size:13px;font-weight:600;padding:6px 11px;cursor:pointer;font-family:inherit;">ล้าง</button>
+    </div>
+    <div style="padding:9px 14px;background:#FFFBEB;font-size:12.5px;color:#92400E;flex-shrink:0;border-bottom:1px solid #EFEFEF;">
+      แตะวันเริ่ม แล้วแตะวันจบ จะเลือกให้ทั้งช่วง · แตะซ้ำเพื่อเอาวันนั้นออก · ยึดได้ทั้งวันเท่านั้น
+    </div>
+    <div style="overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;">${rows}</div>
+    <div class="bk-dep-bar" style="flex-shrink:0;">
+      <div style="display:flex;align-items:baseline;gap:6px;font-size:13.5px;margin-bottom:9px;flex-wrap:wrap;">
+        <span>เลือกไว้</span><b style="font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;">${total} ใบ</b>
+        <span style="margin-left:auto;font-weight:700;color:#2F4A44;font-variant-numeric:tabular-nums;">× ${rate} = ${(total*rate).toLocaleString()} บาท</span>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:9px;">
+        <div class="bk-dep-fld"><span>จำนวนใบที่ยึด</span>
+          <input type="text" inputmode="numeric" value="${total}" readonly style="color:#8E8E93;"></div>
+        <div class="bk-dep-fld"><span>ราคาต่อใบ</span>
+          <input id="bkDepRate" type="text" inputmode="decimal" value="${rate}" onchange="_bkDepSetRate(this.value)"></div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="bk-dep-btn s" onclick="bkDepPickClose()">ยกเลิก</button>
+        <button class="bk-dep-btn p" onclick="bkDepConfirm()" ${total<=0?"disabled":""}>ยึดมัดจำ ${total} ใบ</button>
+      </div>
+    </div>
+  </div>`;
+}
+function _bkDepSetRate(v) {
+  const S = window._bkDepSel; if (!S) return;
+  S.rate = Math.max(0, parseFloat(String(v).replace(/[,\s]/g,"")) || 0);
+  _bkDepPickRender();
+}
+function _bkDepClearSel() {
+  const S = window._bkDepSel; if (!S) return;
+  S.days = {}; S.carry = false; S.last = null; _bkDepPickRender();
+}
+function _bkDepTapCarry() {
+  const S = window._bkDepSel; if (!S) return;
+  S.carry = !S.carry; S.last = null; _bkDepPickRender();
+}
+// แตะวันแรก = เลือกวันเดียว · แตะวันที่สอง = เลือกทั้งช่วง · แตะวันที่เลือกอยู่ = เอาออก
+function _bkDepTapDay(dd) {
+  const S = window._bkDepSel; if (!S) return;
+  const avail = _bkDepAvail(S.info, dd);
+  if (avail <= 0) return;
+  if (S.days[dd]) { delete S.days[dd]; S.last = null; _bkDepPickRender(); return; }
+  if (S.last && S.last !== dd) {
+    const a = Math.min(+S.last, +dd), b = Math.max(+S.last, +dd);
+    for (let d = a; d <= b; d++) {
+      const k = String(d).padStart(2,"0");
+      const av = _bkDepAvail(S.info, k);
+      if (av > 0) S.days[k] = av;
+    }
+    S.last = null;
+  } else {
+    S.days[dd] = avail; S.last = dd;
+  }
+  _bkDepPickRender();
+}
+function bkDepConfirm() {
+  const S = window._bkDepSel; if (!S) return;
+  const total = _bkDepSelTotal();
+  if (total <= 0) return;
+  const rate = +S.rate || 0;
+  const pk = _bkDepKey(S.type, S.id);
+  bkDeposits[pk] = bkDeposits[pk] || {};
+  const did = "dep_" + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  bkDeposits[pk][did] = {
+    at: Date.now(), rate, qty: total, mk: S.mk,
+    days: JSON.parse(JSON.stringify(S.days)),
+    carry: S.carry ? Math.max(0, S.info.carry - S.info.carryDep) : 0,
+    returns: {}
+  };
+  _bkDepInvalidate();
+  bkSaveLocal();
+  bkDepPickClose();
+  if (typeof showToast === "function")
+    showToast(`ยึดมัดจำ ${total} ใบ · ${(total*rate).toLocaleString()} บาท`, "success", 2600);
+  _bkDepRefreshScreens(S.type, S.id, S.name);
+}
+// วาดหน้าที่เกี่ยวข้องใหม่หลังข้อมูลมัดจำเปลี่ยน
+function _bkDepRefreshScreens(type, id, name) {
+  try { if (document.getElementById("bkDepModal")) _bkDepRender(); } catch(e) {}
+  try {
+    const sm = document.getElementById("bkSummaryModal");
+    if (sm) { sm.remove(); bkShowSummary(type, id, name); }
+  } catch(e) {}
+  try { if (activeTab === "basket") bkRender(); } catch(e) {}
+}
+
+// ── รับคืน ────────────────────────────────────────────────────
+// ตัดจากก้อนที่ยึดเก่าสุดก่อน เงินคืนจึงคิดตามราคาของก้อนนั้น ไม่ใช่ราคาปัจจุบัน
+function bkDepReturnAsk() {
+  const ov = document.getElementById("bkDepModal"); if (!ov) return;
+  const type = ov.dataset.t, id = ov.dataset.id, name = ov.dataset.name;
+  const sm = _bkDepSummary(type, id);
+  if (sm.held <= 0) return;
+  iosPrompt({ title: "รับคืนกี่ใบ", subtitle: `ถือมัดจำอยู่ ${sm.held} ใบ`, initialValue: "", inputType: "decimal" })
+    .then(v => {
+      const q = Math.floor(parseFloat(String(v||"").replace(/[,\s]/g,"")) || 0);
+      if (!q || q <= 0) return;
+      if (q > sm.held) {
+        if (typeof showToast === "function")
+          showToast(`คืนได้มากสุด ${sm.held} ใบ — รับคืนเกินที่ยึดไว้ไม่ได้`, "warn", 3000);
+        return;
+      }
+      const money = _bkDepApplyReturn(type, id, q);
+      bkSaveLocal();
+      if (typeof showToast === "function")
+        showToast(`รับคืน ${q} ใบ · คืนเงิน ${money.toLocaleString()} บาท`, "success", 2800);
+      _bkDepRefreshScreens(type, id, name);
+    });
+}
+function _bkDepApplyReturn(type, id, qty) {
+  const byDep = (bkDeposits || {})[_bkDepKey(type, id)] || {};
+  const ids = Object.keys(byDep).sort((a,b) => (+byDep[a].at||0) - (+byDep[b].at||0));
+  let left = qty, money = 0;
+  for (const did of ids) {
+    if (left <= 0) break;
+    const d = byDep[did];
+    let ret = 0;
+    Object.keys(d.returns || {}).forEach(r => { ret += +((d.returns[r]||{}).qty) || 0; });
+    const room = Math.max(0, (+d.qty||0) - ret);
+    if (room <= 0) continue;
+    const take = Math.min(room, left);
+    const amt = take * (+d.rate || 0);
+    d.returns = d.returns || {};
+    d.returns["ret_" + Date.now().toString(36) + Math.random().toString(36).slice(2,6)] =
+      { at: Date.now(), qty: take, amount: amt };
+    left -= take; money += amt;
+  }
+  _bkDepInvalidate();
+  return money;
+}
+
+// ── แตะบรรทัดในตาราง → แก้ หรือ ลบ ───────────────────────────
+function bkDepRowTap(did, rid) {
+  const ov = document.getElementById("bkDepModal"); if (!ov) return;
+  const type = ov.dataset.t, id = ov.dataset.id, name = ov.dataset.name;
+  const d = ((bkDeposits||{})[_bkDepKey(type,id)]||{})[did]; if (!d) return;
+  const isRet = !!rid;
+  const r = isRet ? (d.returns||{})[rid] : null;
+  if (isRet && !r) return;
+
+  const old = document.getElementById("bkDepEditSheet"); if (old) old.remove();
+  const sh = document.createElement("div");
+  sh.id = "bkDepEditSheet";
+  sh.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9750;display:flex;align-items:flex-end;justify-content:center;font-family:'IBM Plex Sans Thai',sans-serif;";
+  sh.onclick = (e) => { if (e.target === sh) sh.remove(); };
+  const retCount = Object.keys(d.returns||{}).length;
+  sh.innerHTML = `
+    <div style="background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:400px;padding:16px 0 24px;">
+      <div style="padding:0 18px 12px;border-bottom:1px solid #F5F5F4;text-align:center;">
+        <div style="font-weight:700;font-size:16px;">${isRet ? `รับคืน ${r.qty} ใบ` : `ยึดมัดจำ ${d.qty} ใบ`}</div>
+        <div style="font-size:11.5px;color:#A8A29E;margin-top:2px;">${isRet ? `คืนเงิน ${(+r.amount||0).toLocaleString()} บาท` : `${_bkDepSrcText(d)} · ใบละ ${d.rate}`}</div>
+      </div>
+      ${isRet ? "" : `<button onclick="_bkDepEditRate('${_jsAttrEsc(did)}')" style="width:100%;padding:14px 20px;border:0;background:transparent;text-align:left;font-size:15px;color:#007AFF;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;">แก้ราคาต่อใบ</button>`}
+      <button onclick="_bkDepRemove('${_jsAttrEsc(did)}','${_jsAttrEsc(rid||"")}')" style="width:100%;padding:14px 20px;border:0;background:transparent;text-align:left;font-size:15px;color:#DC2626;font-weight:600;cursor:pointer;font-family:inherit;">
+        ${isRet ? "ลบรายการคืนนี้" : "ยกเลิกการยึดนี้"}
+      </button>
+      <div style="padding:9px 20px 0;font-size:11.5px;color:#A8A29E;text-align:center;line-height:1.5;">
+        ${isRet ? "ลบแล้วใบที่คืนจะกลับไปเป็นมัดจำค้างเหมือนเดิม และต้องขอเงินคืนจากเขาเอง"
+                : (retCount ? "รายการนี้มีการคืนไปแล้ว ต้องลบรายการคืนก่อน"
+                            : "ยกเลิกแล้วใบที่ยึดจะกลับไปเป็นตะกร้าค้างของวันเดิม และต้องคืนเงินให้เขาเอง")}
+      </div>
+    </div>`;
+  document.body.appendChild(sh);
+}
+function _bkDepEditRate(did) {
+  const ov = document.getElementById("bkDepModal"); if (!ov) return;
+  const type = ov.dataset.t, id = ov.dataset.id, name = ov.dataset.name;
+  const d = ((bkDeposits||{})[_bkDepKey(type,id)]||{})[did]; if (!d) return;
+  const sh = document.getElementById("bkDepEditSheet"); if (sh) sh.remove();
+  iosPrompt({ title: "ราคาต่อใบ", subtitle: "บาทต่อตะกร้าหนึ่งใบ", initialValue: String(d.rate||""), inputType: "decimal" }).then(v => {
+    const n = Math.max(0, parseFloat(String(v||"").replace(/[,\s]/g,"")) || 0);
+    if (!n) return;
+    d.rate = n; bkSaveLocal(); _bkDepRefreshScreens(type, id, name);
+    if (typeof showToast === "function") showToast("แก้ราคาแล้ว", "success", 1800);
+  });
+}
+function _bkDepRemove(did, rid) {
+  const ov = document.getElementById("bkDepModal"); if (!ov) return;
+  const type = ov.dataset.t, id = ov.dataset.id, name = ov.dataset.name;
+  const pk = _bkDepKey(type, id);
+  const d = ((bkDeposits||{})[pk]||{})[did]; if (!d) return;
+  const sh = document.getElementById("bkDepEditSheet"); if (sh) sh.remove();
+  if (rid) {
+    if (!confirm("ลบรายการคืนนี้?\n\nใบที่คืนจะกลับไปเป็นมัดจำค้างเหมือนเดิม")) return;
+    delete d.returns[rid];
+  } else {
+    const retCount = Object.keys(d.returns||{}).length;
+    if (retCount) {
+      alert("ยกเลิกไม่ได้\n\nรายการนี้มีการคืนไปแล้ว " + retCount + " ครั้ง\nต้องลบรายการคืนก่อน ไม่งั้นเงินกับใบจะไม่ตรงกัน");
+      return;
+    }
+    if (!confirm(`ยกเลิกการยึด ${d.qty} ใบ?\n\n${d.qty} ใบจะกลับไปเป็นตะกร้าค้างของวันเดิม\nและต้องคืนเงิน ${((+d.qty||0)*(+d.rate||0)).toLocaleString()} บาทให้เขาเอง`)) return;
+    delete bkDeposits[pk][did];
+    if (!Object.keys(bkDeposits[pk]).length) delete bkDeposits[pk];
+  }
+  _bkDepInvalidate(); bkSaveLocal(); _bkDepRefreshScreens(type, id, name);
+  if (typeof showToast === "function") showToast("ลบแล้ว", "success", 1800);
+}
+
+function _bkDepDate(ts) {
+  try { const d = new Date(+ts || 0);
+    return d.getDate() + " " + BK_MONTHS_TH[d.getMonth()]; } catch(e) { return "-"; }
+}
+function _bkDepSrcText(d) {
+  if (+d.carry > 0 && !Object.keys(d.days||{}).length) return "จากยอดยกมา";
+  const ks = Object.keys(d.days || {}).sort();
+  if (!ks.length) return "—";
+  const first = +ks[0], last = +ks[ks.length-1];
+  const base = ks.length === 1 ? ("วันที่ " + first)
+             : (ks.length === (last-first+1) ? `วันที่ ${first}–${last}` : `${ks.length} วัน`);
+  return base + (+d.carry > 0 ? " + ยกมา" : "");
+}
+
 function bkTogglePayStatus() {
   bkPayStatus = (bkPayStatus==="รอชำระ") ? "ชำระแล้ว" : "รอชำระ";
   bkSaveLocal();
@@ -12329,6 +12917,9 @@ function bkLoadLocal() {
     try { bkOrders    = JSON.parse(d.orders    || "[]"); } catch(e){ bkOrders=[]; }
     try { bkData      = JSON.parse(d.data      || "{}"); } catch(e){ bkData={}; }
     try { bkPayStatus = d.payStatus || "รอชำระ"; } catch(e){ bkPayStatus="รอชำระ"; }
+    // V5.68: มัดจำตะกร้า — คู่กับ payload ใน bkSaveLocal ต้องมีครบทั้งสองที่
+    try { bkDeposits = JSON.parse(d.deposits || "{}") || {}; } catch(e){ bkDeposits={}; }
+    _bkDepInvalidate();
     // V4.39: save cache raw payload (debounced — Firebase blob แล้ว)
     _cacheGenericSaveDebounced(CACHE_KEY_BASKET, () => d, 2000);
     // ไม่ re-render ถ้าเราเป็นคนบันทึกเอง (แค่อัปเดต balance in-place)
@@ -12390,6 +12981,13 @@ function bkPersonOptions(type, id, idx) {
           style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;${(function(){const lst=type==='cutter'?bkCutters:bkCustomers;const realIdx=lst.findIndex(x=>x.id===id);return realIdx>=lst.length-1?'opacity:.3;pointer-events:none;':'';})()}">
           ↓ ลงไป
         </button>` : `<div style="padding:10px 20px;font-size:11.5px;color:#A8A29E;text-align:center;background:#FAFAF9;border-bottom:1px solid #F5F5F4;line-height:1.5;">🔒 ล็อกตำแหน่งก่อน<br>เพื่อย้ายคนนี้ขึ้น/ลง</div>`}
+        <button onclick="document.getElementById('bkPersonOptModal').remove();bkDepOpen('${type}','${id}',${JSON.stringify(p.name)});"
+          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;display:inline-flex;align-items:center;gap:8px;color:#007AFF;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7.5h15l-1.3 12a1 1 0 0 1-1 .9H6.8a1 1 0 0 1-1-.9Z"/><path d="M6.6 12h10.8M6.9 16h10.2"/><path d="M10 7.5l-.5 12.9M14 7.5l.5 12.9"/></svg>
+          มัดจำตะกร้า
+          ${(function(){ const sm=_bkDepSummary(type,id);
+             return sm.held>0 ? `<span style="margin-left:auto;background:#EEF2F0;color:#2F4A44;font-size:12px;font-weight:700;border-radius:99px;padding:2px 9px;font-variant-numeric:tabular-nums;">${sm.held} ใบ</span>` : ''; })()}
+        </button>
         <button onclick="bkDeletePersonConfirm('${type}','${id}');document.getElementById('bkPersonOptModal').remove();"
           style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;color:#DC2626;font-weight:600;">
           🗑️ ลบรายชื่อ
@@ -12424,9 +13022,14 @@ function bkDeletePersonConfirm(type, id) {
   // เดิมลบแค่ชื่อออกจากรายชื่อ แต่ bkData[เดือน][ประเภท][id] ยังอยู่ในฐานข้อมูลตลอดไป
   // มองไม่เห็นบนจอ ลบทีหลังไม่ได้ และกินที่ไปเรื่อยๆ
   const _h = _bkPersonHistory(type, id);
-  const _histTxt = _h.days
-    ? `\n\nมีประวัติตะกร้า ${_h.days} วัน ใน ${_h.months} เดือน`
+  // V5.68: ถ้ายังถือเงินมัดจำของคนนี้อยู่ ต้องบอกก่อน ลบไปแล้วไม่มีทางรู้ว่าเคยถือไว้เท่าไหร่
+  const _dsum = _bkDepSummary(type, id);
+  const _depTxt = _dsum.held > 0
+    ? `\n\n⚠ คนนี้มีมัดจำค้างอยู่ ${_dsum.held} ใบ — เงินที่ถือไว้ ${_dsum.money.toLocaleString()} บาท`
     : "";
+  const _histTxt = (_h.days
+    ? `\n\nมีประวัติตะกร้า ${_h.days} วัน ใน ${_h.months} เดือน`
+    : "") + _depTxt;
   if(!confirm(`ลบ "${p.name}" ออกจากรายชื่อ?${_histTxt}`)) return;
 
   let _wipe = false;
@@ -12467,6 +13070,9 @@ function _bkWipePersonHistory(type, id) {
     Object.keys(bkData || {}).forEach(mk => {
       if (bkData[mk] && bkData[mk][type]) delete bkData[mk][type][id];
     });
+    // V5.68: ลบประวัติมัดจำตามไปด้วย ไม่งั้นเหลือเป็นเศษที่ไม่มีเจ้าของ
+    delete bkDeposits[_bkDepKey(type, id)];
+    _bkDepInvalidate();
   } catch(e) { console.warn("[basket] ลบประวัติไม่สำเร็จ:", e && e.message); }
 }
 
@@ -12530,11 +13136,13 @@ function bkRenderMatrix(type) {
   // V4.21: ใช้ bkCalcCarryOver ตัวกลาง (single source of truth)
   // V4.72: ใช้ _bkNextBal — cap ที่ 0 ทุก step
   function calcBalance(personId, upToDay) {
-    let bal = bkCalcCarryOver(type, personId);
+    const mkNow = bkMonthKey();
+    // V5.68: หักมัดจำที่ยึดจากยอดยกมาก่อน แล้วค่อยเดินทีละวันพร้อมมัดจำรายวัน
+    let bal = Math.max(0, bkCalcCarryOver(type, personId) - _bkDepAt(type, personId, mkNow, "00"));
     for(let d=1; d<=upToDay; d++) {
       const dd = String(d).padStart(2,"0");
       const entry = bkGetData(type, personId, dd);
-      bal = _bkNextBal(bal, entry.out, entry.in);
+      bal = _bkNextBal(bal, entry.out, entry.in, _bkDepAt(type, personId, mkNow, dd));
     }
     return bal;
   }
@@ -12643,7 +13251,10 @@ function bkRenderMatrix(type) {
     
     const currentBal = calcBalance(person.id, days);
     const carry = bkCalcCarryOver(type, person.id);
-    let runBal = carry;
+    const _mkRow = bkMonthKey();
+    // V5.68: หักมัดจำที่ยึดจากยอดยกมาของเดือนนี้ก่อนเริ่มเดิน
+    let runBal = Math.max(0, carry - _bkDepAt(type, person.id, _mkRow, "00"));
+    const _depRow = _bkDepSummary(type, person.id);
 
     const badge = getLastOutBadge(person);
     // V3: สี bg ของ sticky cells ต้องทึบ (ไม่งั้นจะมองทะลุ)
@@ -12659,8 +13270,11 @@ function bkRenderMatrix(type) {
           <span style="text-decoration:underline;text-decoration-style:dotted;text-decoration-color:#A8A29E;">${_htmlEsc(person.name)}</span>
         </div>
       </td>
-      <td data-total="${type}-${person.id}" class="bk-freeze bk-freeze-bal" style="left:80px;text-align:center;width:34px;min-width:34px;max-width:34px;padding-left:2px;padding-right:6px;font-weight:700;background:#fff;color:${currentBal>0?'#DC2626':'#A8A29E'};">
-        ${currentBal > 0 ? currentBal : '<span class="bk-bal-zero">–</span>'}
+      <td data-total="${type}-${person.id}" class="bk-freeze bk-freeze-bal${_depRow.held>0?' has-dep':''}" style="left:80px;text-align:center;width:34px;min-width:34px;max-width:34px;padding-left:2px;padding-right:6px;font-weight:700;background:#fff;color:${currentBal>0?'#DC2626':'#A8A29E'};">
+        ${currentBal > 0 ? currentBal : '<span class="bk-bal-zero">–</span>'}${
+          _depRow.held > 0
+            ? `<span class="bk-dep-pill" onclick="event.stopPropagation();bkDepOpen('${_jsAttrEsc(type)}','${_jsAttrEsc(person.id)}','${_jsAttrEsc(person.name)}')">${_depRow.held}</span>`
+            : ''}
       </td>
       <td style="text-align:center;background:${carry>0?"#FEF2F2":"#FAFAF9"};font-weight:${carry>0?"700":"400"};color:${carry>0?"#DC2626":"#A8A29E"};font-size:11px;border:1px solid #F0E68C;">
         ${carry > 0 ? carry : ""}
@@ -12670,8 +13284,9 @@ function bkRenderMatrix(type) {
       const entry = bkGetData(type, person.id, dd);
       const out = entry.out||0, inp = entry.in||0;
       // V4.72: ใช้ _bkNextBal + คำนวณ excess สำหรับ badge +N
-      const excess = _bkExcess(runBal, out, inp);
-      runBal = _bkNextBal(runBal, out, inp);
+      const _depD = _bkDepAt(type, person.id, _mkRow, dd);
+      const excess = _bkExcess(runBal, out, inp, _depD);
+      runBal = _bkNextBal(runBal, out, inp, _depD);
       const bg = "background:#fff;";   // V4.94: พื้นขาวล้วน
       const balClass = runBal > 0 ? "bk-cell-bal-warn" : "bk-cell-bal";
       const divider = d > 1 ? ' bk-day-divider' : '';
@@ -12820,24 +13435,35 @@ function _bkGetMonthSummary(type, id, year, month) {
   const mk = `${year}-${String(month).padStart(2, "0")}`;
   const rows = [];
   const rowsAll = [];
-  let runBal = carry;
-  let totalOut = 0, totalIn = 0;
+  // V5.68: มัดจำที่ยึดจากยอดยกมา หักก่อนเริ่มเดิน และเก็บไว้บอกหน้าจอด้วย
+  const carryDep = _bkDepAt(type, id, mk, "00");
+  let runBal = Math.max(0, carry - carryDep);
+  let totalOut = 0, totalIn = 0, totalDep = 0;
+  let visOut = 0, visIn = 0;
   let hasData = false;
   for (let d = 1; d <= days; d++) {
     const dd = String(d).padStart(2, "0");
     const e = (bkData[mk]?.[type]?.[id]?.[dd]) || {out:0, in:0};
     const out = e.out || 0;
     const inn = e.in || 0;
-    runBal = _bkNextBal(runBal, out, inn);
+    const dep = _bkDepAt(type, id, mk, dd);
+    runBal = _bkNextBal(runBal, out, inn, dep);
     totalOut += out;
     totalIn += inn;
-    const has = !!(out || inn);
-    if (has) { hasData = true; rows.push({d, out, inn, bal: runBal}); }
+    totalDep += dep;
+    // V5.68: ยอดสำหรับ "รูปที่ส่งให้คนตัด" — วันที่ยึดมัดจำไปแล้วหายไปจากรูป
+    //        ยอดหัวรูปจึงต้องไม่นับวันพวกนั้นด้วย ไม่งั้นแถวกับยอดรวมจะไม่ตรงกัน
+    if (!dep) { visOut += out; visIn += inn; }
+    const has = !!(out || inn || dep);
+    if (has) { hasData = true; rows.push({d, out, inn, dep, bal: runBal}); }
     // V5.02: rowsAll = ทุกวันในเดือน (รวมวันว่าง) สำหรับหน้าที่แก้ไขได้
     //        rows เดิมยังเก็บเฉพาะวันที่มีข้อมูล — รูปที่บันทึกใช้ตัวนี้ จะได้ไม่ยาวเกินจำเป็น
-    rowsAll.push({d, out, inn, bal: runBal, has});
+    rowsAll.push({d, out, inn, dep, bal: runBal, has});
   }
-  return { year, month, carry, rows, rowsAll, endBal: runBal, totalOut, totalIn, hasData };
+  return { year, month, carry, carryDep, rows, rowsAll, endBal: runBal,
+           totalOut, totalIn, totalDep, hasData,
+           visOut, visIn, visCarry: Math.max(0, carry - carryDep),
+           visRows: rows.filter(r => !r.dep) };
 }
 
 // ═══ V5.18: โหมดผ่อนจ่ายรายคน — อ่าน/เขียน ═══
@@ -13248,6 +13874,18 @@ function _bkSumTap(el) {
   try {
     if (!el || el.querySelector("input")) return;
     const d = el.dataset;
+    // ═══ V5.68: วันที่ยึดมัดจำไปแล้ว ห้ามแก้ตัวเลข ═══
+    // ถ้าปล่อยให้แก้ จำนวนที่ยึดจะเกินของที่มีจริงในวันนั้น
+    // ยอดค้างจะติดลบแล้วถูกปัดเป็น 0 เงียบๆ — เพี้ยนโดยไม่มีใครรู้
+    {
+      const _mk = `${d.y}-${String(d.m).padStart(2,"0")}`;
+      const _dep = _bkDepAt(d.t, d.id, _mk, d.d);
+      if (_dep > 0) {
+        if (typeof showToast === "function")
+          showToast(`วันนี้ยึดมัดจำไว้ ${_dep} ใบแล้ว — ต้องยกเลิกมัดจำก่อนถึงจะแก้ตัวเลขได้`, "warn", 3200);
+        return;
+      }
+    }
     const cur = d.v || "";
     const inp = document.createElement("input");
     inp.type = "text";
@@ -13313,8 +13951,12 @@ function _bkSumRerender(scope) {
 }
 
 // สร้างแถวทั้งเดือน (ทุกวัน รวมวันว่าง) แบบแตะแก้ไขได้
-function _bkSumRowsHtml(info, type, id) {
+function _bkSumRowsHtml(info, type, id, hideDep) {
   return info.rowsAll.map(r => {
+    // V5.68: วันที่ยึดมัดจำแล้ว — บนจอให้เห็น (จะได้รู้ว่าไม่ถูกนับเป็นค้างแล้ว)
+    //        ส่วนหน้าย้อนหลังที่เป็นพรีวิวของรูป ส่งธง hideDep มาเพื่อซ่อนให้เหมือนรูป
+    if (hideDep && r.dep > 0) return "";
+    const isDep = r.dep > 0;
     const diff = r.out - r.inn;
     const sum = !r.has ? `<div class="bk-sum-diff even" data-sum-day="${r.d}">—</div>`
       : diff === 0 ? `<div class="bk-sum-diff even" data-sum-day="${r.d}">เท่ากัน</div>`
@@ -13329,10 +13971,13 @@ function _bkSumRowsHtml(info, type, id) {
       const emptyCls = (val > 0 || isRealZero) ? '' : ' empty';
       return `<div class="bk-sum-cell ${cls}${emptyCls}" data-t="${type}" data-id="${id}" data-y="${info.year}" data-m="${info.month}" data-d="${String(r.d).padStart(2,'0')}" data-f="${field}" data-v="${val||''}" onclick="_bkSumTap(this)">${shown}</div>`;
     };
-    return `<div class="bk-sum-row${r.has?'':' blank'}">
+    const sumCell = isDep
+      ? `<div class="bk-sum-diff" data-sum-day="${r.d}" style="display:flex;justify-content:flex-end;"><span class="bk-sum-deptag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2" fill="currentColor" stroke="none"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>มัดจำ ${r.dep}</span></div>`
+      : sum;
+    return `<div class="bk-sum-row${r.has?'':' blank'}${isDep?' dep-done':''}">
       <div class="bk-sum-day">${r.d}<span>/</span>${info.month}</div>
       ${cell("out", r.out, "o")}${cell("in", r.inn, "i")}
-      ${sum}
+      ${sumCell}
       <div class="bk-sum-bal${r.bal>0?'':' z'}" data-bal-day="${r.d}">${r.bal>0?r.bal:'–'}</div>
     </div>`;
   }).join("");
@@ -13447,7 +14092,7 @@ function _bkRenderTraceBackModal() {
   //        ออกไป/เก็บมา จัดกึ่งกลางให้ตรงกับหัวคอลัมน์ · สรุป/ค้าง ชิดขวาเพื่ออ่านเทียบแนวตั้ง
   // V5.02: ใช้ตัวสร้างแถวร่วมกับหน้าสรุปเดือนเดียว — ทุกวัน แตะแก้ไขได้ ทุกเดือน
   const rowsHtml = `<div data-sum-scope data-t="${type}" data-id="${id}" data-y="${m.year}" data-m="${m.month}">`
-    + _bkSumRowsHtml(m, type, id) + `</div>`;
+    + _bkSumRowsHtml(m, type, id, true) + `</div>`;   // V5.68: พรีวิวของรูป จึงซ่อนวันที่ยึดแล้วเหมือนกัน
 
     return `<div data-tb-month="${idx}" style="display:${idx === months.length-1 ? 'block' : 'none'};">
       <div style="background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E7E5E4;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
@@ -13581,7 +14226,8 @@ function _bkmBuildPrintableForMonth(monthData, custName, monthIndex, totalMonths
     </div>` : "";
   // V4.89: คอลัมน์ใหม่ = วัน | ออกไป | เก็บมา | สรุป | ค้าง (ต้องตรงกับ _bkRenderTraceBackModal)
   const _bkGrid = "1fr 50px 54px 68px 46px";
-  const rowsHtml = m.rows.map((r, ri) => {
+  // V5.68: วันที่ยึดมัดจำไปแล้วไม่ขึ้นในรูป — เรื่องนั้นจบไปแล้ว ไม่เกี่ยวกับการคืนอีก
+  const rowsHtml = m.visRows.map((r, ri) => {
     const diff = r.out - r.inn;                       // บวก = ขาด · ลบ = เกิน
     const sumHtml = diff === 0
       ? `<div style="text-align:right;color:#C7C7CC;font-weight:500;">เท่ากัน</div>`
@@ -13614,11 +14260,11 @@ function _bkmBuildPrintableForMonth(monthData, custName, monthIndex, totalMonths
     <div style="padding:12px 16px 14px;background:#FAFAF9;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;border-bottom:0.5px solid rgba(60,60,67,0.12);">
       <div>
         <div style="font-size:9.5px;color:#8E8E93;font-weight:600;letter-spacing:0.02em;">ออกไป</div>
-        <div style="font-size:22px;font-weight:800;color:#007AFF;font-variant-numeric:tabular-nums;line-height:1.1;margin-top:3px;letter-spacing:-0.02em;">${m.totalOut}</div>
+        <div style="font-size:22px;font-weight:800;color:#007AFF;font-variant-numeric:tabular-nums;line-height:1.1;margin-top:3px;letter-spacing:-0.02em;">${m.visOut}</div>
       </div>
       <div style="border-left:0.5px solid rgba(60,60,67,0.15);border-right:0.5px solid rgba(60,60,67,0.15);">
         <div style="font-size:9.5px;color:#8E8E93;font-weight:600;letter-spacing:0.02em;">เก็บมา</div>
-        <div style="font-size:22px;font-weight:800;color:#16A34A;font-variant-numeric:tabular-nums;line-height:1.1;margin-top:3px;letter-spacing:-0.02em;">${m.totalIn}</div>
+        <div style="font-size:22px;font-weight:800;color:#16A34A;font-variant-numeric:tabular-nums;line-height:1.1;margin-top:3px;letter-spacing:-0.02em;">${m.visIn}</div>
       </div>
       <div>
         <div style="font-size:9.5px;color:#8E8E93;font-weight:600;letter-spacing:0.02em;">ค้างปัจจุบัน</div>
@@ -13654,16 +14300,20 @@ function bkShowSummary(type, id, name) {
 
   // สร้างข้อมูลต่อวัน
   let rows = [];
-  let runBal = carry;
-  let totalOut=0, totalIn=0;
+  const _mkSum = bkMonthKey();
+  // V5.68: หักมัดจำที่ยึดจากยอดยกมาก่อน แล้วเดินทีละวันพร้อมมัดจำรายวัน
+  //        ต้องตรงกับที่ _bkGetMonthSummary คำนวณเป๊ะ ไม่งั้นเลขหัวกับเลขในตารางจะไม่เท่ากัน
+  let runBal = Math.max(0, carry - _bkDepAt(type, id, _mkSum, "00"));
+  let totalOut=0, totalIn=0, totalDep=0;
   for(let d=1; d<=days; d++) {
     const dd = String(d).padStart(2,"0");
     const e = bkGetData(type, id, dd);
     const out=e.out||0, inn=e.in||0;
+    const dep=_bkDepAt(type, id, _mkSum, dd);
     // V4.72: ใช้ _bkNextBal — cap ที่ 0
-    runBal = _bkNextBal(runBal, out, inn);
-    totalOut+=out; totalIn+=inn;
-    if(out||inn) rows.push({d, out, inn, bal:runBal});
+    runBal = _bkNextBal(runBal, out, inn, dep);
+    totalOut+=out; totalIn+=inn; totalDep+=dep;
+    if(out||inn||dep) rows.push({d, out, inn, dep, bal:runBal});
   }
 
   // V4.20 + V4.72: 2-state color (cap แล้วไม่มี < 0)
@@ -13751,6 +14401,7 @@ function bkShowSummary(type, id, name) {
 
       <!-- Scrollable rows -->
       <div style="overflow-y:auto;padding:0 0 12px;-webkit-overflow-scrolling:touch;flex:1;">
+        ${_bkDepStripHtml(type, id, name)}
         ${carryRow}
         ${tableRows}
         ${emptyMsg}
@@ -18544,6 +19195,10 @@ const _LAYERS = [
   // ป๊อปอัปที่ลอยสูงสุด
   // V5.61: กล่อง "ทำรูปเสร็จแล้ว" (z-index 9600 สูงกว่าหน้าสรุปยอด 9500 จึงต้องปิดก่อน)
   ["bkImgReadyOverlay",    "exists", "_bkImgCloseReady"],
+  // V5.68: หน้าเลือกวันยึดมัดจำ (z 9700) ต้องปิดก่อนหน้าต่างมัดจำ (z 9550)
+  ["bkDepEditSheet",       "exists", null],
+  ["bkDepPickModal",       "exists", "bkDepPickClose"],
+  ["bkDepModal",           "exists", "bkDepCloseModal"],
   ["bkStatusPickerModal",  "exists", null],
   ["bkPersonOptModal",     "exists", null],
   // กล่องยืนยัน
