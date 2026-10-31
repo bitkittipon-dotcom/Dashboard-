@@ -1371,6 +1371,58 @@ tr:last-child td { border-bottom: none; }
   .day-tabs-row1 { padding: 5px 8px 0 !important; gap: 4px !important; }
 }
 
+/* ═══ V5.81: ชุดค่าสำหรับแท็บเล็ตขึ้นไป ═══
+   ของเดิมมีแค่ชุดมือถือ (max-width:500px) จอที่กว้างกว่านั้นเลยตกไปใช้ค่า default
+   ซึ่งตั้งไว้หลวมมาก — วัดได้ว่า iPad แนวนอนเห็นรายการได้แค่ครึ่งเดียวของมือถือ
+   ชุดนี้บีบให้แน่นขึ้น แต่ยังโปร่งกว่ามือถือตามระยะมองที่ไกลกว่า
+   ตัวที่ทำให้แถวสูงคือ padding กับปุ่ม "..." ไม่ใช่ตัวหนังสือ จึงลดสองตัวนั้นเป็นหลัก
+   ตัวหนังสือลดแค่ 14 → 12.5 px (ยังใหญ่กว่ามือถือที่ 11 px) */
+@media (min-width: 501px) {
+  /* ═══ ห้ามใส่ .summary-cards / .summary-card ตรงนี้เด็ดขาด ═══
+     ลองแล้วและพลาดมาแล้ว: หัวบอร์ดมีกฎของตัวเอง
+       .board-hero .summary-cards { gap:0; margin:0 }   .board-hero .summary-cards > * { padding:0 6px }
+     ซึ่งไม่มี !important กฎที่ใส่ตรงนี้พร้อม !important จึงชนะ
+     ผลคือหัวบอร์ดบนแท็บเล็ต "สูงขึ้น" 136 → 158 px สวนทางกับที่ตั้งใจทั้งก้อน
+     การ์ดสรุปสูงแค่ 28 px อยู่แล้ว ไม่ได้เปลืองอะไร ปล่อยไว้เถอะ
+     เรื่องเดียวกันกับ .dt-select — มันถูกใช้ในหน้าวิเคราะห์ด้วย ไม่ใช่แค่บอร์ด
+
+     และห้ามใส่ .content ด้วย เหตุผลหนักกว่าเพื่อน:
+       .content ห่อทุกแท็บ (8 แท็บ) และ switchTab() สั่ง inline padding:0 ให้หน้าตะกร้ากับหน้าคิวรถ
+       กฎในสไตล์ชีตที่มี !important ชนะ inline เสมอ สองหน้านั้นจึงถูกดันลง 70 px
+       และปุ่มล่างของหน้าตะกร้าหลุดพ้นขอบจอไปเลย — ลองแล้ว เจอแล้ว ถอดออกแล้ว
+       ที่ได้คืนมาคือขอบ 2-4 px ไม่คุ้มกันเลย */
+  .groups-grid { gap: 8px !important; }
+  .group-header { padding: 7px 11px 6px !important; }
+  .item-row { padding: 6px 12px !important; gap: 8px !important; }
+  .item-name { font-size: 12.5px !important; }
+  .item-amount { font-size: 12.5px !important; }
+  .item-note { font-size: 10px !important; }
+  .status-btn { width: 22px !important; height: 22px !important; font-size: 10px !important; }
+  .del-btn { min-width: 26px !important; min-height: 26px !important;
+             font-size: 14px !important; padding: 4px 6px !important; }
+  .paid-chips-row { padding: 3px 7px 5px !important; gap: 4px !important; }
+  .paid-chip { font-size: 10px !important; padding: 3px 9px 3px 7px !important; }
+  .add-group-btn { font-size: 12px !important; padding: 8px !important; }
+}
+
+/* ═══ V5.82: แท็บเล็ตแนวนอน วางสี่หมวดเรียงเดียว ═══
+   ต้อง "กว้าง" และ "แนวนอน" ทั้งคู่ — ใช้ความกว้างอย่างเดียวไม่ได้
+   เพราะ iPad Pro 12.9 แนวตั้งก็กว้าง 1024 แต่สูง 1366 ซึ่ง 2 คอลัมน์ดีกว่า
+   และใช้ max-height ก็ไม่ได้ เพราะ iPad Pro 12.9 แนวนอนสูงตั้ง 1024
+   เกณฑ์ 1000 ไม่ใช่ 900 เพราะวัดแล้วที่ 900 การ์ดเหลือ 213 px แคบกว่าที่แอปเคยยอม
+
+   max-width อยู่ที่กริด ไม่ใช่ .content เด็ดขาด
+   .content ห่อทั้ง 8 แท็บ แตะแล้วรั่วไปทุกหน้า (เคยทำพลาดมาแล้วตอน V5.81)
+   กริดจึงกางออกเองด้วย width กับ margin-left ไม่ยุ่งกับกล่องแม่ */
+@media (min-width: 1000px) and (orientation: landscape) {
+  .groups-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    max-width: 1240px !important;
+    width: calc(100vw - 28px) !important;
+    margin-left: calc(50% - min(620px, 50vw - 14px)) !important;
+  }
+}
+
 /* ── CUSTOMER MODULE ── */
 .cm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:400;display:none;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;}
 .cm-overlay.show{display:flex;animation:cmOvIn .3s ease;}
@@ -1843,12 +1895,368 @@ tr:last-child td { border-bottom: none; }
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 13px;
-  font-weight: 700;
+  /* V5.71 (แบบ ข): เดิม 13px หนา 700 สีเต็ม — ทั้งคอลัมน์แดงจนแย่งสายตาไปจากตัวเลข
+     ลดเหลือ 10px น้ำหนัก 500 จาง 42% · ยังอ่านออกในที่ร่มและกลางแดด แต่เงียบลงมาก */
+  font-size: 10px;
+  font-weight: 500;
   color: #DC2626;
+  opacity: 0.42;
   pointer-events: none;
   z-index: 2;
 }
+
+/* V5.71: ช่องที่มี ✕ ไม่ต้องมีขีด "-" ซ้อนอยู่ข้างหลัง
+   ของเดิมขีดนี้ถูก ✕ ตัวหนาทับไว้พอดีเลยไม่เคยเห็น พอ ✕ จางลงมันจะโผล่มากวน
+   คลาส has-x ติดจากสองที่: ตอนวาดตารางใหม่ และตอนพิมพ์เลขแล้วอัปเดตแถวเดียว */
+.bk-cell-in-wrap.has-x input::placeholder { color: transparent; }
+.bk-cell-in-wrap.has-x input::-webkit-input-placeholder { color: transparent; }
+
+/* V5.72: ขีด "-" ของช่องที่ยังไม่ได้กรอก — เล็กลงและจางลง
+   พอ ✕ เบาลงแล้ว ขีดกลายเป็นของที่ดังที่สุดในคอลัมน์แทน ทั้งที่มันแปลว่า "ยังไม่มีอะไร"
+   #D6D3D1 คือสีที่แอปใช้กับ "ค้างเป็นศูนย์" อยู่แล้ว ใช้สีเดิมในระบบ ไม่เพิ่มสีใหม่
+   กฎของ has-x ข้างบนชนะกฎนี้อยู่แล้วเพราะเจาะจงกว่า ช่องที่มี ✕ จึงยังไม่มีขีด */
+.bk-table input::placeholder { font-size: 9px; color: #D6D3D1; }
+.bk-table input::-webkit-input-placeholder { font-size: 9px; color: #D6D3D1; }
+
+/* ═══ V5.78: เข้าใช้งานด้วยบัญชีจริง ═══ */
+.bkow-ovl { position: fixed; inset: 0; z-index: 9560; background: rgba(0,0,0,.45);
+  display: flex; align-items: flex-end; justify-content: center; }
+.bkow-sh { width: 100%; max-width: 440px; background: #fff; border-radius: 18px 18px 0 0;
+  padding: 20px 18px calc(18px + env(safe-area-inset-bottom)); animation: calPop .2s ease;
+  font-family: -apple-system, "Noto Sans Thai", sans-serif; color: #1C1917; }
+.bkow-sh .lg { width: 46px; height: 46px; border-radius: 13px; background: #44504B; color: #fff;
+  display: flex; align-items: center; justify-content: center; margin: 0 auto 11px; }
+.bkow-sh .lg svg { width: 24px; height: 24px; }
+.bkow-sh h2 { font-size: 17px; font-weight: 700; margin: 0 0 3px; text-align: center; }
+.bkow-sh .t2 { font-size: 12.5px; color: #8E8E93; text-align: center; margin: 0 0 15px; line-height: 1.55; }
+.bkow-sh input { width: 100%; border: 1.5px solid #E3E3E3; border-radius: 11px; background: #fff;
+  padding: 12px 13px; font-family: inherit; font-size: 16px; color: #1C1917; outline: none;
+  margin-bottom: 9px; appearance: none; box-sizing: border-box; }
+.bkow-sh input:focus { border-color: #44504B; }
+.bkow-sh .err { background: #FEF2F2; color: #9F1239; border-radius: 10px; padding: 10px 12px;
+  font-size: 12.5px; line-height: 1.55; margin-bottom: 10px; }
+.bkow-sh .err b { font-weight: 700; }
+.bkow-sh .err code { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px;
+  background: rgba(0,0,0,.05); border-radius: 4px; padding: 1px 4px; }
+.bkow-go { width: 100%; border: 0; border-radius: 12px; padding: 13px 0; font-family: inherit;
+  font-size: 15px; font-weight: 700; background: #44504B; color: #fff; }
+.bkow-go[disabled] { background: #E3E3E7; color: #A8A29E; }
+.bkow-skip { width: 100%; border: 0; background: transparent; color: #8E8E93; font-family: inherit;
+  font-size: 13px; padding: 12px 0 2px; }
+.bkow-hint { font-size: 11.5px; color: #8E8E93; line-height: 1.6; margin-top: 12px; text-align: center; }
+.bkow-ok { text-align: center; }
+.bkow-ok .tick { width: 46px; height: 46px; border-radius: 50%; background: #DCFCE7; color: #15803D;
+  display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; }
+.bkow-ok .tick svg { width: 24px; height: 24px; }
+/* แถวรหัสบัญชี */
+.bkow-uid { display: flex; align-items: center; gap: 8px; background: #F2F2F7; border-radius: 11px;
+  padding: 10px 12px; margin-top: 12px; }
+.bkow-uid .k { font-size: 11.5px; color: #8E8E93; flex: 0 0 auto; }
+.bkow-uid .v { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; color: #1C1917;
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.bkow-uid .c { color: #007AFF; font-size: 12.5px; font-weight: 600; white-space: nowrap;
+  background: none; border: 0; font-family: inherit; padding: 2px 4px; }
+
+/* ═══ V5.80: กันที่กรอกไว้ไม่ให้หาย ═══ */
+@keyframes _dnudge {
+  0%, 100% { transform: translateX(0); }
+  18% { transform: translateX(-7px); }
+  38% { transform: translateX(6px); }
+  58% { transform: translateX(-4px); }
+  78% { transform: translateX(2px); }
+}
+._dshake { animation: _dnudge .42s cubic-bezier(.36,.07,.19,.97); }
+._dpill {
+  position: fixed; left: 14px; right: 14px; z-index: 2147483000;
+  top: calc(14px + env(safe-area-inset-top, 0px));
+  max-width: 420px; margin: 0 auto;
+  background: #1C1917; color: #fff; border-radius: 13px; padding: 11px 14px;
+  font-family: 'IBM Plex Sans Thai', -apple-system, sans-serif;
+  font-size: 12.5px; line-height: 1.5; text-align: center; pointer-events: none;
+  box-shadow: 0 8px 26px rgba(0,0,0,.34);
+  opacity: 0; transform: translateY(-8px);
+  transition: opacity .18s ease, transform .18s ease;
+}
+._dpill.on { opacity: 1; transform: translateY(0); }
+._dpill b { font-weight: 700; }
+@media (max-width: 380px) { ._dpill { font-size: 12px; padding: 10px 12px; } }
+
+/* ═══ V5.79: จอเตือนตอนฐานข้อมูลไม่ให้เข้า ═══ */
+.bkdn-ovl { position: fixed; inset: 0; z-index: 10040; background: rgba(28,25,23,.55);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center; padding: 20px; }
+.bkdn-sh { width: 100%; max-width: 360px; background: #fff; border-radius: 20px;
+  padding: 28px 22px 20px; text-align: center; box-shadow: 0 18px 50px rgba(0,0,0,.3);
+  max-height: 92vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.bkdn-sh .ic { width: 54px; height: 54px; border-radius: 50%; background: #FEF3C7; color: #92400E;
+  display: flex; align-items: center; justify-content: center; margin: 0 auto 13px; }
+.bkdn-sh .ic.bad { background: #FEE2E2; color: #991B1B; }
+.bkdn-sh .ic svg { width: 27px; height: 27px; }
+.bkdn-sh h2 { font-size: 18px; font-weight: 700; margin: 0 0 6px; color: #1C1917; letter-spacing: -0.01em; }
+.bkdn-sh .t2 { font-size: 13px; color: #57534E; line-height: 1.6; margin: 0; }
+.bkdn-sh .hint { background: #F5F5F4; border-radius: 12px; padding: 12px 13px; font-size: 12.5px;
+  color: #44403C; text-align: left; margin-top: 14px; line-height: 1.65; }
+.bkdn-sh .hint b { font-weight: 700; }
+.bkdn-uid { display: flex; align-items: center; gap: 8px; background: #fff; border-radius: 9px;
+  padding: 8px 10px; margin-top: 8px; }
+.bkdn-uid .v { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; color: #1C1917;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1 1 auto; text-align: left; }
+.bkdn-uid .c { color: #007AFF; font-size: 12px; font-weight: 600; white-space: nowrap;
+  background: none; border: 0; font-family: inherit; padding: 2px 4px; }
+.bkdn-sh .go { width: 100%; margin-top: 14px; padding: 13px 0; border: 0; border-radius: 13px;
+  background: #44504B; color: #fff; font-size: 15px; font-weight: 700; font-family: inherit;
+  -webkit-tap-highlight-color: transparent; }
+.bkdn-sh .go[disabled] { opacity: .55; }
+.bkdn-sh .sub { width: 100%; margin-top: 8px; padding: 11px 0; border: 0; border-radius: 13px;
+  background: #F2F2F7; color: #44504B; font-size: 13.5px; font-weight: 600; font-family: inherit;
+  -webkit-tap-highlight-color: transparent; }
+.bkdn-err { background: #FEE2E2; color: #991B1B; border-radius: 10px; padding: 9px 11px;
+  font-size: 12.5px; margin-top: 10px; text-align: left; line-height: 1.55; }
+
+/* ═══ V5.79: แถวรายชื่อเจ้าของในการ์ดบัญชีของเครื่องนี้ ═══ */
+.bkow-own { border-radius: 11px; padding: 10px 12px; font-size: 12.5px; margin-top: 9px;
+  display: flex; align-items: flex-start; gap: 7px; text-align: left; line-height: 1.5; }
+.bkow-own.ok { background: #DCFCE7; color: #15803D; font-weight: 600; }
+.bkow-own.lock { background: #FEF3C7; color: #92400E; }
+.bkow-own svg { width: 14px; height: 14px; flex: 0 0 auto; margin-top: 2px; }
+.bkow-ownbtn { width: 100%; padding: 11px; border-radius: 11px; border: 0; background: #44504B;
+  color: #fff; font-weight: 700; font-size: 13.5px; font-family: inherit; margin-top: 9px;
+  -webkit-tap-highlight-color: transparent; cursor: pointer; }
+.bkow-ownbtn[disabled] { opacity: .55; }
+
+/* ═══ V5.77: หน้าจัดการบัญชีลูกน้อง ═══ */
+.bkac-ovl { position: fixed; inset: 0; z-index: 9500; background: rgba(0,0,0,.45);
+  display: flex; align-items: flex-end; justify-content: center; }
+.bkac-box { width: 100%; max-width: 480px; max-height: 92vh; background: #F2F2F7;
+  border-radius: 18px 18px 0 0; display: flex; flex-direction: column; overflow: hidden;
+  animation: calPop .2s ease; font-family: -apple-system, "Noto Sans Thai", sans-serif; }
+.bkac-h { background: #fff; border-bottom: 1px solid #E3E3E3; padding: 13px 14px;
+  text-align: center; position: relative; flex: 0 0 auto; }
+.bkac-h b { display: block; font-size: 16px; font-weight: 700; color: #1C1917; }
+.bkac-h span { font-size: 11.5px; color: #8E8E93; }
+.bkac-x { position: absolute; left: 10px; top: 11px; border: 0; background: transparent;
+  color: #007AFF; font-family: inherit; font-size: 14px; font-weight: 600; padding: 4px 6px; }
+.bkac-body { overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: 0 10px calc(16px + env(safe-area-inset-bottom)); }
+.bkac-grp { font-size: 11px; font-weight: 700; color: #8E8E93; padding: 14px 6px 6px; }
+.bkac-c { background: #fff; border-radius: 13px; padding: 12px 14px; margin-bottom: 8px; }
+.bkac-c.off { opacity: .72; }
+.bkac-c.ask { border: 1.5px solid #FDE68A; background: #FFFBEB; }
+.bkac-l1 { display: flex; align-items: center; gap: 8px; }
+.bkac-l1 b { font-size: 15px; font-weight: 700; color: #1C1917; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bkac-tag { font-size: 11px; font-weight: 700; border-radius: 99px; padding: 2px 8px; flex: 0 0 auto; }
+.bkac-tag.on { background: #DCFCE7; color: #15803D; }
+.bkac-tag.no { background: #F2F2F7; color: #636366; }
+.bkac-tag.ask { background: #FEF3C7; color: #92400E; }
+.bkac-when { margin-left: auto; font-size: 11.5px; color: #8E8E93; white-space: nowrap; flex: 0 0 auto; }
+.bkac-em { font-size: 11.5px; color: #8E8E93; margin-top: 3px; word-break: break-all; }
+.bkac-btns { display: flex; gap: 7px; margin-top: 9px; }
+.bkac-btns button { flex: 1; border: 0; border-radius: 9px; padding: 8px 2px; font-family: inherit;
+  font-size: 12.5px; font-weight: 600; background: #F2F2F7; color: #007AFF; min-width: 0;
+  -webkit-tap-highlight-color: transparent; }
+.bkac-btns button.red { background: #FBE3E1; color: #DC2626; }
+.bkac-btns button.green { background: #E8F3EC; color: #15803D; }
+.bkac-btns button.dark { background: #44504B; color: #fff; }
+.bkac-add { display: block; width: 100%; border: 1.5px dashed #D1D1D6; border-radius: 13px;
+  padding: 13px 0; background: transparent; color: #8E8E93; font-family: inherit;
+  font-size: 14px; font-weight: 600; margin-top: 4px; }
+.bkac-sum { background: #fff; border-radius: 13px; padding: 12px 14px; margin-top: 10px;
+  font-size: 12.5px; color: #44504B; line-height: 1.6; }
+.bkac-sum b { font-weight: 700; }
+.bkac-sum span { color: #8E8E93; }
+.bkac-note { font-size: 11.5px; color: #8E8E93; line-height: 1.6; padding: 12px 6px 0; }
+.bkac-note b { color: #92400E; font-weight: 600; }
+.bkac-empty { background: #fff; border-radius: 13px; padding: 24px 18px; text-align: center;
+  color: #8E8E93; font-size: 13px; line-height: 1.65; }
+/* ฟอร์มเพิ่มคน */
+.bkac-f { position: fixed; inset: 0; z-index: 9520; background: rgba(0,0,0,.45);
+  display: flex; align-items: flex-end; justify-content: center; }
+.bkac-f .in { width: 100%; max-width: 440px; background: #fff; border-radius: 18px 18px 0 0;
+  padding: 18px 18px calc(18px + env(safe-area-inset-bottom)); animation: calPop .2s ease;
+  font-family: -apple-system, "Noto Sans Thai", sans-serif; }
+.bkac-f h2 { font-size: 17px; font-weight: 700; margin: 0 0 2px; text-align: center; color: #1C1917; }
+.bkac-f .t2 { font-size: 12.5px; color: #8E8E93; text-align: center; margin: 0 0 14px; }
+.bkac-f input { width: 100%; border: 1.5px solid #E3E3E3; border-radius: 11px; background: #fff;
+  padding: 12px 13px; font-family: inherit; font-size: 16px; color: #1C1917; outline: none;
+  margin-bottom: 9px; appearance: none; box-sizing: border-box; }
+.bkac-f input:focus { border-color: #44504B; }
+.bkac-f .err { background: #FEF2F2; color: #9F1239; border-radius: 10px; padding: 10px 12px;
+  font-size: 12.5px; line-height: 1.55; margin-bottom: 10px; }
+.bkac-f .err b { font-weight: 700; }
+.bkac-f .err code { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px;
+  background: rgba(0,0,0,.05); border-radius: 4px; padding: 1px 4px; }
+.bkac-f .row { display: flex; gap: 9px; margin-top: 4px; }
+.bkac-f .row button { flex: 1; border: 0; border-radius: 12px; padding: 13px 0; font-family: inherit;
+  font-size: 15px; font-weight: 700; }
+.bkac-f .row .ok { background: #44504B; color: #fff; }
+.bkac-f .row .ok[disabled] { background: #E3E3E7; color: #A8A29E; }
+.bkac-f .row .no { background: #F2F2F7; color: #1C1917; }
+.bkac-f .hint { font-size: 11.5px; color: #8E8E93; line-height: 1.6; margin-top: 11px; text-align: center; }
+
+/* ═══ V5.76: ลิงก์ให้คนตัดดูยอด ═══ */
+.bkcv-ovl { position: fixed; inset: 0; z-index: 9460; background: rgba(0,0,0,.42);
+  display: flex; align-items: flex-end; justify-content: center; }
+.bkcv-sh { width: 100%; max-width: 440px; background: #fff; border-radius: 18px 18px 0 0;
+  padding: 18px 18px calc(20px + env(safe-area-inset-bottom)); animation: calPop .2s ease;
+  font-family: -apple-system, "Noto Sans Thai", sans-serif; color: #1C1917; }
+.bkcv-sh h2 { font-size: 17px; font-weight: 700; margin: 0 0 2px; text-align: center; }
+.bkcv-sh .t2 { font-size: 12.5px; color: #8E8E93; text-align: center; margin: 0 0 14px; }
+.bkcv-url { background: #F2F2F7; border-radius: 11px; padding: 11px 13px; font-size: 12px;
+  color: #44504B; word-break: break-all; line-height: 1.5; font-family: ui-monospace, Menlo, monospace;
+  margin-bottom: 12px; -webkit-user-select: all; user-select: all; }
+.bkcv-row { display: flex; gap: 9px; }
+.bkcv-row button { flex: 1; border: 0; border-radius: 12px; padding: 13px 0; font-family: inherit;
+  font-size: 15px; font-weight: 700; -webkit-tap-highlight-color: transparent; }
+.bkcv-b1 { background: #44504B; color: #fff; }
+.bkcv-b2 { background: #F2F2F7; color: #1C1917; }
+.bkcv-b3 { background: #FBE3E1; color: #DC2626; }
+.bkcv-note { font-size: 11.5px; color: #8E8E93; line-height: 1.55; margin-top: 12px; text-align: center; }
+.bkcv-note b { color: #92400E; font-weight: 600; }
+
+/* ═══ V5.74: ยอดจากลูกน้อง ═══ */
+/* จุดส้มมุมช่อง "เก็บมา" — บอกว่าวันนั้นมีของลูกน้องรออยู่ ยังไม่ได้ลง
+   ลอยอยู่ในช่องที่ position:relative อยู่แล้ว จึงไม่กินความกว้างสักพิกเซล
+   ไม่แตะตัวเลข ไม่แตะเส้น แค่บอกว่า "ตรงนี้มีของค้าง" */
+.bk-inbox-dot {
+  position: absolute; top: 2px; right: 2px;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #F59E0B; pointer-events: none; z-index: 3;
+}
+/* แถวปุ่มท้ายตาราง — แบ่งครึ่งตามที่เลือก (แบบ ข) */
+.bk-foot-row { display: flex; gap: 8px; margin: 12px 14px; }
+/* flex-basis 0 + min-width 0 + border-box = แบ่งครึ่งเป๊ะเท่ากัน ไม่ว่าข้อความข้างในจะยาวต่างกันแค่ไหน
+   ถ้าไม่ใส่ min-width:0 ปุ่มที่ข้อความยาวกว่าจะดันตัวเองให้กว้างกว่าอีกปุ่ม */
+/* เบราว์เซอร์คิด flex-basis:0 จากกล่องเนื้อหา ไม่ใช่กล่องนอก ระยะในซ้ายขวาจึงถูกบวกเพิ่มทีหลัง
+   สองปุ่มมีระยะในไม่เท่ากัน (6 กับ 11) เลยกว้างต่างกัน 10px — บังคับให้เท่ากันซะ
+   ใช้ > button ไม่ใช่ > * เพราะ * ไม่เพิ่มค่าความเจาะจง กฎเดิมของ .bk-add-btn จะชนะไปเฉยๆ */
+.bk-foot-row > button { flex: 1 1 0; min-width: 0; box-sizing: border-box;
+  padding-left: 6px; padding-right: 6px; }
+.bk-foot-row .bk-add-btn { margin: 0; width: auto; padding-left: 6px; padding-right: 6px; }
+.bk-rep-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px;
+  padding: 11px 6px; border-radius: 11px; border: 1.5px solid transparent;
+  background: #F2F2F7; color: #44504B;
+  font-family: inherit; font-size: 13px; font-weight: 600; letter-spacing: -0.01em;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: all .25s cubic-bezier(.34,1.56,.64,1);
+}
+.bk-rep-btn svg { width: 15px; height: 15px; flex: 0 0 auto; }
+.bk-rep-btn.has { background: #44504B; color: #fff; }
+.bk-rep-btn:active { transform: scale(0.96); }
+.bk-rep-cnt {
+  background: #F59E0B; color: #3A2A05; border-radius: 99px;
+  font-size: 11px; font-weight: 800; padding: 1px 7px; font-variant-numeric: tabular-nums;
+}
+/* หน้ารายงาน */
+.bkrp-ovl { position: fixed; inset: 0; z-index: 9400; background: rgba(0,0,0,.4);
+  display: flex; align-items: flex-end; justify-content: center; }
+.bkrp-box { width: 100%; max-width: 480px; max-height: 92vh; background: #F2F2F7;
+  border-radius: 18px 18px 0 0; display: flex; flex-direction: column; overflow: hidden;
+  animation: calPop .2s ease; }
+.bkrp-h { background: #fff; border-bottom: 1px solid #E3E3E3; padding: 13px 14px;
+  text-align: center; position: relative; flex: 0 0 auto; }
+.bkrp-h b { display: block; font-size: 16px; font-weight: 700; color: #1C1917; }
+.bkrp-h span { font-size: 11.5px; color: #8E8E93; }
+.bkrp-x { position: absolute; left: 10px; top: 11px; border: 0; background: transparent;
+  color: #007AFF; font-family: inherit; font-size: 14px; font-weight: 600; padding: 4px 6px; }
+.bkrp-body { overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 16px; }
+.bkrp-day { background: #fff; margin-top: 8px; }
+.bkrp-top { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #FAFAF9; }
+.bkrp-top b { font-size: 15px; font-weight: 700; color: #1C1917; }
+.bkrp-top .wd { font-size: 11px; color: #8E8E93; }
+.bkrp-top .tg { margin-left: auto; font-size: 11px; font-weight: 700; border-radius: 99px; padding: 2px 9px; }
+.bkrp-top .tg.wait { background: #FEF3C7; color: #92400E; }
+.bkrp-top .tg.done { background: #EEF2F0; color: #6B7670; }
+.bkrp-day.done .bkrp-top { background: #F6F7F6; }
+.bkrp-rnd { padding: 4px 14px 8px; font-size: 11px; color: #8E8E93; line-height: 1.55; background: #FAFAF9; }
+.bkrp-day.done .bkrp-rnd { background: #F6F7F6; }
+.bkrp-hd, .bkrp-r { display: grid; grid-template-columns: 1fr 58px 76px 56px; gap: 6px;
+  padding: 7px 14px; align-items: center; font-variant-numeric: tabular-nums; }
+.bkrp-hd { font-size: 10.5px; color: #A8A29E; border-top: 1px solid #F2F2F2; }
+.bkrp-hd span:nth-child(2), .bkrp-hd span:nth-child(3) { text-align: center; }
+.bkrp-hd span:nth-child(4) { text-align: right; }
+.bkrp-r { font-size: 13.5px; border-top: 1px solid #F2F2F2; }
+.bkrp-r .n { font-weight: 600; color: #1C1917; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bkrp-r .n.gone { color: #A8A29E; font-weight: 400; }
+.bkrp-r .s { text-align: center; color: #16A34A; font-weight: 700; }
+.bkrp-r .o { text-align: center; font-size: 11.5px; color: #8E8E93; }
+.bkrp-r .o.has { color: #B45309; font-weight: 600; }
+.bkrp-r .w { text-align: right; font-weight: 700; }
+.bkrp-r .w.new { color: #16A34A; } .bkrp-r .w.q { color: #B45309; }
+.bkrp-r .w.sk { color: #C7C7CC; font-weight: 400; font-size: 12px; }
+.bkrp-btn { display: block; width: 100%; border: 0; margin: 0; padding: 12px 0;
+  font-family: inherit; font-size: 15px; font-weight: 700; background: #44504B; color: #fff; }
+.bkrp-btn:active { opacity: .85; }
+.bkrp-btn.ghost { background: #F6F7F6; color: #6B7670; font-weight: 600; font-size: 13px;
+  border-top: 1px solid #EFEFEF; }
+.bkrp-empty { background: #fff; margin-top: 8px; padding: 26px 20px; text-align: center;
+  color: #8E8E93; font-size: 13.5px; line-height: 1.65; }
+.bkrp-old { background: #fff; margin-top: 8px; padding: 13px 14px; font-size: 12.5px;
+  color: #92400E; text-align: center; }
+/* V5.75: ของที่ลงไม่ได้ — บอกเหตุผลไว้ในการ์ดของวันนั้นเลย */
+.bkrp-block { padding: 9px 14px; background: #FFFBEB; border-top: 1px solid #FDE68A;
+  font-size: 12px; color: #92400E; line-height: 1.55; }
+.bkrp-block b { font-weight: 700; }
+.bkrp-block div + div { margin-top: 4px; }
+/* แผ่นเลือกตอนเลขชนกัน */
+.bkrp-sh { position: fixed; inset: 0; z-index: 9450; background: rgba(0,0,0,.42);
+  display: flex; align-items: flex-end; justify-content: center; }
+.bkrp-sh .in { width: 100%; max-width: 480px; max-height: 92vh; background: #fff;
+  border-radius: 18px 18px 0 0; display: flex; flex-direction: column;
+  overflow: hidden; animation: calPop .2s ease; }
+.bkrp-sh .hd { padding: 15px 16px 12px; text-align: center; border-bottom: 1px solid #EFEFEF; flex: 0 0 auto; }
+.bkrp-sh .hd b { display: block; font-size: 17px; font-weight: 700; color: #1C1917; }
+.bkrp-sh .hd span { font-size: 12px; color: #8E8E93; }
+.bkrp-sh .sc { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.bkrp-grp { padding: 9px 16px 4px; font-size: 11px; font-weight: 700; color: #8E8E93;
+  background: #FAFAF9; border-top: 1px solid #EFEFEF; }
+.bkrp-ok { display: flex; align-items: center; gap: 8px; padding: 8px 16px;
+  font-size: 14px; border-top: 1px solid #F5F5F4; }
+.bkrp-ok .n { font-weight: 600; flex: 1; color: #1C1917; }
+.bkrp-ok .v { color: #8E8E93; font-size: 12.5px; }
+.bkrp-ok .v b { color: #16A34A; font-size: 14px; }
+.bkrp-cq { padding: 10px 16px 12px; border-top: 1px solid #F5F5F4; }
+.bkrp-cq .l1 { display: flex; align-items: baseline; gap: 8px; font-size: 14px; margin-bottom: 8px; }
+.bkrp-cq .l1 .n { font-weight: 600; color: #1C1917; }
+.bkrp-cq .l1 .d { font-size: 12px; color: #8E8E93; margin-left: auto; }
+.bkrp-ch { display: flex; gap: 8px; }
+.bkrp-ch button { flex: 1; border-radius: 10px; padding: 9px 2px; font-family: inherit;
+  font-size: 13px; font-weight: 600; line-height: 1.25; background: #F2F2F7; color: #1C1917;
+  border: 1.5px solid transparent; -webkit-tap-highlight-color: transparent; }
+.bkrp-ch button i { display: block; font-style: normal; font-size: 10.5px; font-weight: 400;
+  color: #8E8E93; margin-top: 1px; font-variant-numeric: tabular-nums; }
+.bkrp-ch button.pick { background: #E8F3EC; border-color: #16A34A; color: #166534; }
+.bkrp-ch button.pick i { color: #2E7D55; }
+.bkrp-sh .ft { padding: 12px 16px calc(14px + env(safe-area-inset-bottom)); flex: 0 0 auto;
+  border-top: 1px solid #EFEFEF; }
+.bkrp-sh .ft .bkrp-btn { border-radius: 12px; }
+
+/* V5.73: สวิตช์ "ลูกน้องลงตะกร้า" ในชีตคนตัด
+   ขนาดเท่าสวิตช์มาตรฐานของ iOS (49x30 ลูกกลม 26) นิ้วโป้งกดติดทุกครั้ง
+   ระยะวิ่งของลูกกลม = 49 - 2 - 26 - 2 = 19px
+   ใช้ transform ไม่ใช่ left เพราะลื่นกว่าและไม่ทำให้เบราว์เซอร์คำนวณผังใหม่ */
+.bk-sw {
+  width: 49px; height: 30px; border-radius: 99px; flex: 0 0 auto;
+  position: relative; background: #E3E3E7;
+  transition: background .18s ease;
+}
+.bk-sw i {
+  position: absolute; top: 2px; left: 2px;
+  width: 26px; height: 26px; border-radius: 50%; background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.25);
+  transition: transform .18s ease;
+}
+.bk-sw.on { background: #34C759; }
+.bk-sw.on i { transform: translateX(19px); }
+/* กันไม่ให้ซาฟารีขึ้นกล่องเทาตอนแตะค้าง และกันการลากแล้วเลือกตัวอักษร */
+.bk-staff-row { -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
+
+/* V5.72: ขณะพิมพ์ ให้ ✕ หายไปทันที
+   ✕ ถูกวางลอยทับกลางช่อง พอแตะเข้าไปพิมพ์ "26" จะเห็นเป็น 2✕6 อ่านไม่ออก
+   :focus-within ทำงานทันทีที่นิ้วแตะ ไม่ต้องรอ event ใดๆ และไม่ต้องแตะโค้ด
+   พอพิมพ์เสร็จออกจากช่อง แอปคำนวณใหม่แล้วตัดสินเองว่าจะมี ✕ ไหม */
+.bk-cell-in-wrap:focus-within .bk-warn-x { display: none; }
 /* V4.72: Badge เก็บเกิน (in > out + prev) — informative only, ไม่กระทบยอดค้าง */
 .bk-warn-plus {
   position: absolute;
@@ -3214,7 +3622,7 @@ tr:last-child td { border-bottom: none; }
 .bk-sum-cell.empty { background:#FAFAF9; border:1px dashed #E7E5E4; }
 .bk-sum-cell:active { background:#F5F5F4; }
 .bk-sum-tap { color:#C4C0BB; font-weight:400; font-size:11px; }
-.bk-sum-x { color:#DC2626; font-weight:800; }
+.bk-sum-x { color:#DC2626; font-weight:500; font-size:10px; opacity:0.42; }   /* V5.71: เท่ากับ ✕ ในตาราง */
 .bk-sum-inp { width:100%; border:1.5px solid #F59E0B; border-radius:7px; background:#fff;
   text-align:center; font-family:inherit; font-size:13px; font-weight:700; padding:4px 2px;
   font-variant-numeric:tabular-nums; outline:none;
@@ -4525,7 +4933,7 @@ tr:last-child td { border-bottom: none; }
 </div>
 
 <!-- CLOSED DAY DETAIL MODAL -->
-<div id="closedDetailModal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:500;display:none;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;" onclick="if(event.target===this){this.style.display='none';}">
+<div id="closedDetailModal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:500;display:none;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;" onclick="if(event.target===this&&!_dirtyBlock(this)){this.style.display='none';}">
   <div style="background:#fff;border-radius:22px;width:100%;max-width:480px;margin:auto;overflow:hidden;animation:popInSpring .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 24px 60px rgba(0,0,0,0.18);">
     <div style="background:linear-gradient(135deg,#166534 0%,#15803D 100%);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;">
       <div>
@@ -4706,7 +5114,7 @@ tr:last-child td { border-bottom: none; }
   </div>
 </div>
 
-<div id="dbtViewModal" style="position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:660;display:none;align-items:center;justify-content:center;padding:14px;" onclick="if(event.target===this)dbtCloseView()">
+<div id="dbtViewModal" style="position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:660;display:none;align-items:center;justify-content:center;padding:14px;" onclick="if(event.target===this&&!_dirtyBlock(this))dbtCloseView()">
   <div class="dbtv-wrap">
     <img id="dbtvImg" alt="รูปที่แนบไว้ในบันทึกการตาม">
     <div class="dbtv-top"><b id="dbtvWhen"></b><span id="dbtvCount"></span>
@@ -4756,6 +5164,26 @@ tr:last-child td { border-bottom: none; }
       </div>
       <div id="dmMigCard" style="display:none;"></div>
       <div id="dmBlkCard" style="display:none;"></div>
+      <!-- V5.78: บัญชีของเครื่องนี้ -->
+      <div style="background:linear-gradient(135deg,#FAFAF9 0%,#F2F2F7 100%);border-radius:14px;padding:14px 16px;border:1px solid #E3E3E3;">
+        <div style="font-weight:600;font-size:14px;color:#44504B;margin-bottom:6px;display:flex;align-items:center;gap:7px;letter-spacing:-0.01em;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>บัญชีของเครื่องนี้</div>
+        <div id="dmOwnState" style="font-size:12px;color:#78716C;margin-bottom:10px;">—</div>
+        <div id="dmOwnUidRow"></div>
+        <div id="dmOwnOwnRow"></div>
+        <button id="dmOwnBtn" onclick="bkOwnOpen(false)" style="width:100%;padding:11px;border-radius:11px;border:none;background:#F2F2F7;color:#44504B;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;margin-top:10px;">
+          เข้าใช้งานด้วยบัญชีจริง
+        </button>
+      </div>
+
+      <!-- V5.77: บัญชีลูกน้อง -->
+      <div style="background:linear-gradient(135deg,#F7F8F7 0%,#EEF2F0 100%);border-radius:14px;padding:14px 16px;border:1px solid #D7E0DB;">
+        <div style="font-weight:600;font-size:14px;color:#2F4A44;margin-bottom:6px;display:flex;align-items:center;gap:7px;letter-spacing:-0.01em;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 18.5V20"/><circle cx="10" cy="8" r="3.4"/><path d="M19 11h2M20 10v2"/></svg>บัญชีลูกน้อง</div>
+        <div style="font-size:12px;color:#78716C;margin-bottom:10px;">คนที่กรอกตะกร้าแทนคุณได้ — เปิด ปิด เพิ่มคน ได้ที่นี่</div>
+        <button onclick="bkAcOpen()" style="width:100%;padding:11px;border-radius:11px;border:none;background:#44504B;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;">
+          เปิดหน้าจัดการบัญชี<span id="dmAcCnt"></span>
+        </button>
+      </div>
+
       <div style="background:linear-gradient(135deg,#FFF7F7 0%,#FEF2F2 100%);border-radius:14px;padding:14px 16px;border:1px solid #FECACA;">
         <div style="font-weight:600;font-size:14px;color:#991B1B;margin-bottom:6px;">ลบวันที่เลือก</div>
         <div style="font-size:12px;color:#78716C;margin-bottom:10px;">เลือกวันที่ต้องการลบออกจากระบบ</div>
@@ -5338,8 +5766,8 @@ input[name="cust-name-no-fill"]:-webkit-autofill {
 <!-- Chart.js + html2canvas: lazy-loaded on demand (saves ~410 KB on first paint) -->
 <script>
 // ═══ V4.38 (B.4): APP_VERSION — single source of truth ═══
-window.APP_VERSION = "V5.69";
-window.APP_VERSION_STRING = "V5.69"; // alias for compatibility
+window.APP_VERSION = "V5.82";
+window.APP_VERSION_STRING = "V5.82"; // alias for compatibility
 
 // ═══════════════════════════════════════════════════════════════════
 // V5.49: ดักคำเตือน "ไม่มี index" ของ Firebase
@@ -5434,6 +5862,16 @@ if (typeof firebase === "undefined") {
   throw new Error("Firebase SDK not loaded");
 }
 
+// V5.77: เก็บค่าตั้งต้นไว้ เพราะหน้าจัดการบัญชีต้องเปิด "แอปตัวที่สอง" ด้วยค่าชุดเดียวกัน
+window.__FB_CFG__ = {
+  apiKey: "AIzaSyAB1dpXsxrG1aJkAivXiaT5JqhTnPype4g",
+  authDomain: "tossaporn-9781a.firebaseapp.com",
+  databaseURL: "https://tossaporn-9781a-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "tossaporn-9781a",
+  storageBucket: "tossaporn-9781a.firebasestorage.app",
+  messagingSenderId: "504275614843",
+  appId: "1:504275614843:web:000cc1421fbf2646daf6de"
+};
 firebase.initializeApp({
   apiKey: "AIzaSyAB1dpXsxrG1aJkAivXiaT5JqhTnPype4g",
   authDomain: "tossaporn-9781a.firebaseapp.com",
@@ -5586,12 +6024,18 @@ window._netState.online = navigator.onLine !== false;
 // ต้องไปเปิด Anonymous sign-in ที่ Firebase Console → Authentication → Sign-in method
 // แล้วตั้ง Rules ตามไฟล์ firebase-rules.md
 // V4.39: dead code cleanup — ลบ _firebaseAuthReady/Failed (ไม่มีที่ใช้)
-firebase.auth().signInAnonymously()
-  .catch(err => {
-    console.warn("[Firebase] Anonymous Auth not enabled — DB rules อาจปิดอยู่");
-    console.warn("[Firebase]", err.message);
-    // silent fail (DB rules อาจ public อยู่แล้ว)
-  });
+// V5.78: ถ้าเครื่องนี้เคยเข้าด้วยบัญชีจริงไว้แล้ว ห้ามล็อกอินแบบไม่ระบุตัวตนทับ
+//   ของเดิมสั่ง signInAnonymously() ทุกครั้งที่เปิดแอป ซึ่งจะเตะบัญชีจริงทิ้งทุกรอบ
+//   พอเปลี่ยนกฎแล้วจะกลายเป็นเข้าแอปตัวเองไม่ได้ เพราะรหัสบัญชีเปลี่ยนไปเรื่อยๆ
+firebase.auth().onAuthStateChanged(function (u) {
+  if (u) return;                       // มีคนล็อกอินอยู่แล้ว ไม่ว่าจะแบบไหน — ปล่อยไว้
+  firebase.auth().signInAnonymously()
+    .catch(err => {
+      console.warn("[Firebase] Anonymous Auth not enabled — DB rules อาจปิดอยู่");
+      console.warn("[Firebase]", err.message);
+      // silent fail (DB rules อาจ public อยู่แล้ว)
+    });
+});
 
 // V3: Theme system removed — บังคับ light mode เสมอ
 // ลบ data-theme="dark" attribute ถ้ามีจาก localStorage เก่า
@@ -5872,7 +6316,7 @@ window.allDbtDue = {};
 db.ref("config/dbtDue").on("value", snap => {
   window.allDbtDue = snap.val() || {};
   try { dbtSyncDot(); } catch (e) {}
-}, err => console.warn("[dbtDue]", err && err.message));
+}, err => { try { if (window._denySee) window._denySee(err); else window.__denyQ = err; } catch (x) {} console.warn("[dbtDue]", err && err.message); });
 
 db.ref("config/ppNames").on("value", snap => {
   ppNames = snap.val() || {};
@@ -5882,7 +6326,7 @@ db.ref("config/ppNames").on("value", snap => {
     const m = document.getElementById("billModal");
     if (m && m.style.display !== "none" && window._ppCurName) openBillModal(window._ppCurName);
   } catch(e) {}
-});
+}, function (e) { try { if (window._denySee) window._denySee(e); else window.__denyQ = e; } catch (x) {} });
 
 // V5.40 (B20): ไม่ผูกตอนเปิดแอปแล้ว — เรียกจาก _lzNeed("customers")
 //              (เข้าแท็บลูกค้า หรือช่องช่วยเติมชื่อ)
@@ -6344,7 +6788,7 @@ db.ref("days").on("value", snap => { try {
   // V4.72: re-render all view if open
   if (window._avOpen) avRender();
   } catch(e) { console.error("Firebase listener error:", e); }
-});
+}, function (e) { try { if (window._denySee) window._denySee(e); else window.__denyQ = e; } catch (x) {} });
 
 // ── Firebase Listener: closed ──────────────────────────────────────
 // V4.76 (รอบ 1-2 ของแผนลดโควตาโหลด):
@@ -6391,7 +6835,7 @@ function _closedCutoffTs(days) {
 let allClosedIdx = {};
 db.ref("closedIndex").on("value", snap => {
   allClosedIdx = snap.val() || {};
-}, err => console.warn("[closedIndex]", err && err.message));
+}, err => { try { if (window._denySee) window._denySee(err); else window.__denyQ = err; } catch (x) {} console.warn("[closedIndex]", err && err.message); });
 
 // วันนี้อยู่ในคลังไหม — ครอบคลุมทั้งที่โหลดมาแล้วและที่ยังไม่โหลด
 function isArchivedDay(key) {
@@ -6477,9 +6921,10 @@ function _bindClosedListener(days) {
   _closedQuery = db.ref("closed").orderByChild("dayTs").startAt(_closedCutoffTs(days));
   _closedQuery.on("value", _handleClosedSnap, err => {
     // index ยังไม่ได้ใส่ใน Rules หรือ query ใช้ไม่ได้ → ถอยกลับไปโหลดทั้งหมด
+    try { if (window._denySee) window._denySee(err); else window.__denyQ = err; } catch (x) {}
     console.warn("[closed] query ล้มเหลว → fallback โหลดทั้งหมด:", err && err.message);
     _closedQuery = db.ref("closed");
-    _closedQuery.on("value", _handleClosedSnap);
+    _closedQuery.on("value", _handleClosedSnap, function (e) { try { if (window._denySee) window._denySee(e); else window.__denyQ = e; } catch (x) {} });
   });
 }
 
@@ -9773,7 +10218,7 @@ function _clrOpenConfirm(rows) {
         <button class="clr-yes">เคลียร์ ${rows.length} ใบ</button>
       </div>
     </div>`;
-  ov.addEventListener("click", e => { if (e.target === ov) ov.remove(); });
+  ov.addEventListener("click", e => { if (e.target === ov && !_dirtyBlock(ov)) ov.remove(); });
   ov.querySelector(".clr-no").addEventListener("click", () => ov.remove());
   ov.querySelector(".clr-yes").addEventListener("click", () => { ov.remove(); _clrStart(rows); });
   document.body.appendChild(ov);
@@ -12430,6 +12875,13 @@ function bkUpdateRowBalance(type, personId) {
       } else {
         warnEl.innerHTML = "";
       }
+      // V5.71: ช่องไหนมี ✕ ให้ซ่อนขีด "-" ที่อยู่ข้างหลัง
+      //        ต้องทำตรงนี้ด้วย ไม่ใช่แค่ตอนวาดตารางใหม่ ไม่งั้นพิมพ์เลขแล้วขีดโผล่กลับมา
+      try {
+        const _wrap = warnEl.parentElement;
+        if (_wrap && _wrap.classList.contains("bk-cell-in-wrap"))
+          _wrap.classList.toggle("has-x", !!warnEl.querySelector(".bk-warn-x"));
+      } catch (e) {}
     }
   }
   // อัปเดต current total cell
@@ -12493,6 +12945,8 @@ function bkSaveLocal() {
   if (window._bkSavingTimer) clearTimeout(window._bkSavingTimer);
   window._bkSavingTimer = setTimeout(() => { bkSaving = false; }, 3000);
   db.ref("basket").set(payload).then(() => {
+    // V5.76: บันทึกแล้วอัปเดตสำเนาของคนตัดที่ออกลิงก์ไว้ (หน่วง 2.5 วิ กันเขียนรัว)
+    try { _cvPublishAllSoon(); } catch(e) {}
     // success - listener จะ reset flag (เพราะ Firebase trigger value event)
     // ถ้า listener ไม่ trigger (offline cache) → timer จะ reset เอง
   }).catch(err => {
@@ -12546,7 +13000,7 @@ function bkDepOpen(type, id, name) {
   ov.id = "bkDepModal";
   ov.dataset.t = type; ov.dataset.id = id; ov.dataset.name = name || "";
   ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:9550;display:flex;align-items:center;justify-content:center;padding:16px;font-family:'IBM Plex Sans Thai',sans-serif;";
-  ov.onclick = (e) => { if (e.target === ov) bkDepCloseModal(); };
+  ov.onclick = (e) => { if (e.target === ov && !_dirtyBlock(ov)) bkDepCloseModal(); };
   document.body.appendChild(ov);
   _bkDepRender();
   try { if (typeof _navSync === "function") _navSync(); } catch(e) {}
@@ -12625,7 +13079,7 @@ function bkDepPick(type, id, name) {
   const ov = document.createElement("div");
   ov.id = "bkDepPickModal";
   ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:9700;display:flex;align-items:center;justify-content:center;padding:16px;font-family:'IBM Plex Sans Thai',sans-serif;";
-  ov.onclick = (e) => { if (e.target === ov) bkDepPickClose(); };
+  ov.onclick = (e) => { if (e.target === ov && !_dirtyBlock(ov)) bkDepPickClose(); };
   document.body.appendChild(ov);
   _bkDepPickRender();
   try { if (typeof _navSync === "function") _navSync(); } catch(e) {}
@@ -12830,7 +13284,7 @@ function bkDepRowTap(did, rid) {
   const sh = document.createElement("div");
   sh.id = "bkDepEditSheet";
   sh.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9750;display:flex;align-items:flex-end;justify-content:center;font-family:'IBM Plex Sans Thai',sans-serif;";
-  sh.onclick = (e) => { if (e.target === sh) sh.remove(); };
+  sh.onclick = (e) => { if (e.target === sh && !_dirtyBlock(sh)) sh.remove(); };
   const retCount = Object.keys(d.returns||{}).length;
   sh.innerHTML = `
     <div style="background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:400px;padding:16px 0 24px;">
@@ -12924,6 +13378,10 @@ function bkLoadLocal() {
     _cacheGenericSaveDebounced(CACHE_KEY_BASKET, () => d, 2000);
     // ไม่ re-render ถ้าเราเป็นคนบันทึกเอง (แค่อัปเดต balance in-place)
     window._bkFromServer = true;                                  // V5.40: เห็นของจริงจากเซิร์ฟเวอร์แล้ว
+    // V5.74: มีรายชื่อคนตัดแล้วค่อยโหลดกล่องรับ — ก่อนหน้านี้โหลดมาก็ยังจับคู่ชื่อไม่ได้
+    try { _bkInboxBoot(); } catch(e) {}
+    // V5.77: ฟังรายชื่อลูกน้อง เพื่อให้การ์ดในเมนูบอกได้ว่ามีคำขอรออยู่กี่คน
+    try { _bkAclWatch(); } catch(e) {}
     if (typeof _lzArrived === "function") _lzArrived("basket");
     if (activeTab === "basket" && !bkSaving) bkRender();
     // V5.40: ตอนเข้าแท็บ ถ้าตารางยังไม่ถูกวาด การเลื่อนไปวันนี้จะไม่เกิดขึ้น
@@ -12942,7 +13400,7 @@ function bkLoadLocal() {
       if (_bm && _bm.style.display === "flex" && typeof _billRefreshDeducts === "function") _billRefreshDeducts();
     } catch(e) {}
     bkSaving = false;
-  }) };
+  }, function (e) { try { if (window._denySee) window._denySee(e); else window.__denyQ = e; } catch (x) {} }) };
 }
 
 // ── Person options popup ────────────────────────────────────────
@@ -12956,7 +13414,7 @@ function bkPersonOptions(type, id, idx) {
   const overlay = document.createElement("div");
   overlay.id = "bkPersonOptModal";
   overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9000;display:flex;align-items:flex-end;justify-content:center;";
-  overlay.onclick = (e) => { if(e.target===overlay) overlay.remove(); };
+  overlay.onclick = (e) => { if (e.target === overlay && !_dirtyBlock(overlay)) overlay.remove(); };
   overlay.innerHTML = `
     <div style="background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:400px;padding:16px 0 24px;animation:calPop .2s ease;">
       <div style="padding:0 18px 12px;border-bottom:1px solid #F5F5F4;text-align:center;">
@@ -12964,33 +13422,50 @@ function bkPersonOptions(type, id, idx) {
         <div style="font-size:11px;color:#A8A29E;margin-top:2px;">${type==="cutter"?"คนตัด":"ลูกค้า"}</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:0;">
+        ${type==="cutter" ? `<div class="bk-staff-row" onclick="bkToggleStaff('${type}','${id}',this)"
+          style="padding:13px 20px;border-bottom:1px solid #F5F5F4;display:flex;align-items:center;gap:10px;cursor:pointer;box-sizing:border-box;">
+          <span style="flex:1;min-width:0;font-size:15px;color:#1C1917;">ลูกน้องลงตะกร้า
+            <span class="bk-staff-sub" style="display:block;font-size:11.5px;color:#A8A29E;font-weight:400;line-height:1.35;margin-top:1px;">${p.staff ? 'ลูกน้องกรอกให้คนนี้ได้' : 'ลูกน้องจะไม่เห็นชื่อนี้'}</span>
+          </span>
+          <span class="bk-sw${p.staff ? ' on' : ''}"><i></i></span>
+        </div>` : ``}
         <button onclick="bkEditPersonInline('${type}','${id}');document.getElementById('bkPersonOptModal').remove();"
-          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;display:inline-flex;align-items:center;gap:8px;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;color:#007AFF;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M11 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-6"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
           แก้ไขชื่อ
         </button>
         <button onclick="bkToggleLock('${type}','${id}');document.getElementById('bkPersonOptModal').remove();"
-          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;display:inline-flex;align-items:center;gap:8px;${p.locked?'color:#B45309;font-weight:600;background:rgba(245,158,11,0.05);':''}">
-          ${p.locked ? '🔒 ปลดล็อกตำแหน่ง' : '🔓 ล็อกตำแหน่ง'}
+          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;${p.locked?'color:#B45309;font-weight:600;background:rgba(245,158,11,0.05);':'color:#007AFF;'}">
+          ${p.locked ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="4.5" y="11" width="15" height="9.5" rx="2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg>' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="4.5" y="11" width="15" height="9.5" rx="2"/><path d="M8 11V7.5a4 4 0 0 1 7.5-1.9"/></svg>'}
+          <span style="min-width:0;">${p.locked ? 'ปลดล็อกตำแหน่ง' : 'ล็อกตำแหน่ง'}
+            ${p.locked ? '' : '<span style="display:block;font-size:11.5px;color:#A8A29E;font-weight:400;line-height:1.35;margin-top:1px;">ล็อกก่อน เพื่อย้ายคนนี้ขึ้น/ลง</span>'}
+          </span>
         </button>
         ${p.locked ? `<button onclick="bkMovePerson('${type}','${id}',-1);document.getElementById('bkPersonOptModal').remove();"
-          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;${(function(){const lst=type==='cutter'?bkCutters:bkCustomers;const realIdx=lst.findIndex(x=>x.id===id);return realIdx===0?'opacity:.3;pointer-events:none;':'';})()}">
-          ↑ ขึ้นไป
+          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;color:#007AFF;${(function(){const lst=type==='cutter'?bkCutters:bkCustomers;const realIdx=lst.findIndex(x=>x.id===id);return realIdx===0?'opacity:.3;pointer-events:none;':'';})()}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg>ขึ้นไป
         </button>
         <button onclick="bkMovePerson('${type}','${id}',1);document.getElementById('bkPersonOptModal').remove();"
-          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;${(function(){const lst=type==='cutter'?bkCutters:bkCustomers;const realIdx=lst.findIndex(x=>x.id===id);return realIdx>=lst.length-1?'opacity:.3;pointer-events:none;':'';})()}">
-          ↓ ลงไป
-        </button>` : `<div style="padding:10px 20px;font-size:11.5px;color:#A8A29E;text-align:center;background:#FAFAF9;border-bottom:1px solid #F5F5F4;line-height:1.5;">🔒 ล็อกตำแหน่งก่อน<br>เพื่อย้ายคนนี้ขึ้น/ลง</div>`}
-        <button onclick="document.getElementById('bkPersonOptModal').remove();bkDepOpen('${type}','${id}',${JSON.stringify(p.name)});"
-          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;display:inline-flex;align-items:center;gap:8px;color:#007AFF;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7.5h15l-1.3 12a1 1 0 0 1-1 .9H6.8a1 1 0 0 1-1-.9Z"/><path d="M6.6 12h10.8M6.9 16h10.2"/><path d="M10 7.5l-.5 12.9M14 7.5l.5 12.9"/></svg>
-          มัดจำตะกร้า
+          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;color:#007AFF;${(function(){const lst=type==='cutter'?bkCutters:bkCustomers;const realIdx=lst.findIndex(x=>x.id===id);return realIdx>=lst.length-1?'opacity:.3;pointer-events:none;':'';})()}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg>ลงไป
+        </button>` : ``}
+        ${type==="cutter" ? `<button onclick="document.getElementById('bkPersonOptModal').remove();bkCvOpen('${type}','${id}','${_jsAttrEsc(p.name)}');"
+          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;color:#007AFF;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10 13.5a4 4 0 0 0 5.7.2l3-3a4 4 0 0 0-5.7-5.7l-1.6 1.6"/><path d="M14 10.5a4 4 0 0 0-5.7-.2l-3 3a4 4 0 0 0 5.7 5.7l1.6-1.6"/></svg>
+          <span style="min-width:0;">ลิงก์ดูยอด
+            <span style="display:block;font-size:11.5px;color:#A8A29E;font-weight:400;line-height:1.35;margin-top:1px;">${p.view ? 'ออกลิงก์ไว้แล้ว · แตะเพื่อคัดลอก' : 'ส่งให้เขาดูยอดของตัวเอง'}</span>
+          </span>
+        </button>` : ``}
+        <button onclick="document.getElementById('bkPersonOptModal').remove();bkDepOpen('${type}','${id}','${_jsAttrEsc(p.name)}');"
+          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;color:#007AFF;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M2.8 7.5h18.4l-2 12.1a1 1 0 0 1-1 .9H5.8a1 1 0 0 1-1-.9Z"/><path d="M5.5 13.2h13"/><path d="M9.7 7.5l-.4 13M14.3 7.5l.4 13"/></svg>
+          <span>มัดจำตะกร้า</span>
           ${(function(){ const sm=_bkDepSummary(type,id);
              return sm.held>0 ? `<span style="margin-left:auto;background:#EEF2F0;color:#2F4A44;font-size:12px;font-weight:700;border-radius:99px;padding:2px 9px;font-variant-numeric:tabular-nums;">${sm.held} ใบ</span>` : ''; })()}
         </button>
         <button onclick="bkDeletePersonConfirm('${type}','${id}');document.getElementById('bkPersonOptModal').remove();"
-          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;color:#DC2626;font-weight:600;">
-          🗑️ ลบรายชื่อ
+          style="padding:14px 20px;border:none;background:transparent;text-align:left;font-size:15px;cursor:pointer;font-family:inherit;border-bottom:1px solid #F5F5F4;display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;border-bottom:none;color:#DC2626;font-weight:600;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/></svg>ลบรายชื่อ
         </button>
       </div>
     </div>`;
@@ -13005,6 +13480,1398 @@ function bkEditPersonInline(type, id) {
     p.name = name.trim();
     bkSaveLocal(); bkRender();
   });
+}
+
+
+
+
+
+// ═══════════════════════════════════════════════════════════════
+// V5.78: เข้าใช้งานด้วยบัญชีจริง (เตรียมไว้สำหรับการเปลี่ยนกฎฐานข้อมูล)
+// ═══════════════════════════════════════════════════════════════
+// ตอนนี้ยังไม่บังคับ ข้ามได้ แอปทำงานเหมือนเดิมทุกอย่าง
+// พอเปลี่ยนกฎแล้ว เครื่องที่ยังไม่ได้เข้าด้วยบัญชีจริงจะใช้ไม่ได้ จึงต้องทำไว้ก่อน
+
+function _ownUser() { try { return firebase.auth().currentUser; } catch (e) { return null; } }
+function _ownIsReal() { var u = _ownUser(); return !!(u && !u.isAnonymous); }
+function _ownUid() { var u = _ownUser(); return u ? u.uid : ""; }
+
+// เตือนวันละครั้งพอ ไม่ใช่ทุกครั้งที่เปิดแอป
+function _ownDue() {
+  try {
+    var t = +(localStorage.getItem("ownNoteAt") || 0);
+    return !t || (Date.now() - t) > 20 * 3600 * 1000;
+  } catch (e) { return true; }
+}
+
+// เรียกตอนเปิดแอป
+// ═══ สำคัญ: ห้ามเด้งหน้าต่างขึ้นมาเอง ═══
+//   รุ่นแรกเด้งหน้าเข้าใช้งานขึ้นมาหลังเปิดแอป 4 วินาที ซึ่งไปบังของที่กำลังทำอยู่
+//   และ "กินนิ้ว" ที่กำลังจะแตะช่องกรอกพอดี — ชุดทดสอบจับได้ว่าปุ่มอื่นกดไม่ติดไปทั้งหน้า
+//   เปลี่ยนเป็นแถบข้อความที่หายไปเอง ไม่บังอะไร ไม่ขวางการกด
+//   ใครจะตั้งค่าก็ไปที่ จัดการข้อมูล → บัญชีของเครื่องนี้ ซึ่งมีให้ตลอดเวลา
+var _ownTries = 0;
+function _ownStart() {
+  if (_ownIsReal()) return;
+  try {
+    var ls = document.getElementById("loginScreen");
+    if (ls && ls.style.display !== "none" && (++_ownTries < 40)) { setTimeout(_ownStart, 1500); return; }
+  } catch (e) {}
+  if (!_ownDue()) return;
+  try { localStorage.setItem("ownNoteAt", String(Date.now())); } catch (e) {}
+  if (typeof showToast === "function")
+    showToast("เครื่องนี้ยังเข้าแบบไม่ระบุตัวตน · ตั้งบัญชีจริงได้ที่ จัดการข้อมูล → บัญชีของเครื่องนี้", "warn", 6000);
+}
+
+function _ownErr(e) {
+  var c = (e && e.code) || "";
+  if (c === "auth/operation-not-allowed")
+    return '<b>ยังไม่ได้เปิดระบบบัญชีในฐานข้อมูล</b><br>' +
+           'Firebase Console → Authentication → Sign-in method → เปิด <code>Email/Password</code>';
+  if (c === "auth/invalid-email")     return "รูปแบบอีเมลไม่ถูกต้อง";
+  if (c === "auth/user-disabled")     return "<b>บัญชีนี้ถูกปิดไว้</b>";
+  if (c === "auth/too-many-requests") return "<b>ลองผิดหลายครั้งเกินไป</b><br>รอสัก 2–3 นาทีแล้วลองใหม่";
+  if (c === "auth/network-request-failed") return "<b>ต่อเน็ตไม่ได้</b><br>เช็กสัญญาณแล้วลองใหม่";
+  if (c === "auth/invalid-credential" || c === "auth/wrong-password" ||
+      c === "auth/user-not-found" || c === "auth/invalid-login-credentials")
+    return "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
+  return "เข้าไม่สำเร็จ <code>" + _htmlEsc(c || "ไม่ทราบสาเหตุ") + "</code>";
+}
+
+function bkOwnOpen(auto) {
+  if (document.getElementById("bkOwnModal")) return;
+  if (_ownIsReal()) { bkOwnDone(); return; }
+  var ov = document.createElement("div");
+  ov.id = "bkOwnModal";
+  ov.className = "bkow-ovl";
+  ov.onclick = function (e) { if (e.target === ov && !_dirtyBlock(ov)&& !auto) ov.remove(); };
+  ov.innerHTML =
+    '<div class="bkow-sh">' +
+      '<div class="lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></div>' +
+      "<h2>เข้าใช้งานเครื่องนี้</h2>" +
+      '<p class="t2">ทำครั้งเดียว เครื่องนี้จำให้ตลอด<br>ยังไม่บังคับ ปิดไปก่อนได้ แอปทำงานเหมือนเดิม</p>' +
+      '<div class="err" id="bkOwnErr" style="display:none"></div>' +
+      '<input id="bkOwnEm" type="email" inputmode="email" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="อีเมล">' +
+      '<input id="bkOwnPw" type="password" autocomplete="current-password" placeholder="รหัสผ่าน">' +
+      '<button class="bkow-go" id="bkOwnGo" onclick="bkOwnGo()">เข้าใช้งาน</button>' +
+      '<button class="bkow-skip" onclick="document.getElementById(\'bkOwnModal\').remove()">ปิด</button>' +
+      '<p class="bkow-hint">ยังไม่มีบัญชี? สร้างได้ที่ จัดการข้อมูล → บัญชีลูกน้อง → เพิ่มคน<br>' +
+      'แล้วลบชื่อออกจากรายชื่อลูกน้อง (บัญชียังอยู่)</p>' +
+    "</div>";
+  document.body.appendChild(ov);
+  setTimeout(function () { try { document.getElementById("bkOwnEm").focus(); } catch (e) {} }, 220);
+}
+
+function bkOwnGo() {
+  var em = (document.getElementById("bkOwnEm").value || "").trim();
+  var pw = document.getElementById("bkOwnPw").value || "";
+  var box = document.getElementById("bkOwnErr");
+  box.style.display = "none";
+  if (!em || !pw) { box.innerHTML = "ใส่อีเมลกับรหัสผ่านให้ครบก่อน"; box.style.display = "block"; return; }
+  var go = document.getElementById("bkOwnGo");
+  go.disabled = true; go.textContent = "กำลังเข้า…";
+  firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+    .catch(function () {})            // โหมดส่วนตัวของซาฟารีอาจไม่ให้จำ — เข้าได้อยู่ แค่ต้องใส่ใหม่รอบหน้า
+    .then(function () { return firebase.auth().signInWithEmailAndPassword(em, pw); })
+    .then(function () {
+      try { localStorage.removeItem("ownNoteAt"); } catch (e) {}
+      // V5.79: ถ้าจอเตือนค้างอยู่ แปลว่าเพิ่งแก้ปัญหาเข้าไม่ได้ — โหลดใหม่ให้ listener ทุกตัวต่อติด
+      if (window._denyUp) { location.reload(); return; }
+      bkOwnDone();
+      _ownSyncCard();
+      _ownOwnCheck(function () { try { _ownSyncCard(); } catch (e) {} });
+      if (typeof showToast === "function") showToast("เข้าใช้งานเครื่องนี้แล้ว", "success", 2400);
+    })
+    .catch(function (e) {
+      box.innerHTML = _ownErr(e); box.style.display = "block";
+      go.disabled = false; go.textContent = "เข้าใช้งาน";
+    });
+}
+
+// หน้าจอหลังเข้าสำเร็จ — โชว์รหัสบัญชีให้ก๊อปไปใส่รายชื่อเจ้าของได้เลย
+function bkOwnDone() {
+  var m = document.getElementById("bkOwnModal");
+  var uid = _ownUid(), em = (_ownUser() || {}).email || "";
+  var html =
+    '<div class="bkow-sh bkow-ok">' +
+      '<div class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5"/></svg></div>' +
+      "<h2>เรียบร้อย</h2>" +
+      '<p class="t2">' + _htmlEsc(em) + "<br>เครื่องนี้จำให้แล้ว ไม่ต้องใส่อีก</p>" +
+      '<div class="bkow-uid"><span class="k">รหัสบัญชี</span>' +
+        '<span class="v" id="bkOwnUidV">' + _htmlEsc(uid) + "</span>" +
+        '<button class="c" onclick="bkOwnCopy()">คัดลอก</button></div>' +
+      '<p class="bkow-hint">กดปุ่มในหน้า จัดการข้อมูล → บัญชีของเครื่องนี้<br>เพื่อตั้งบัญชีนี้เป็นเจ้าของ</p>' +
+      '<button class="bkow-go" style="margin-top:14px" onclick="document.getElementById(\'bkOwnModal\').remove()">ปิด</button>' +
+    "</div>";
+  if (m) { m.innerHTML = html; m.onclick = function (e) { if (e.target === m && !_dirtyBlock(m)) m.remove(); }; }
+}
+
+function bkOwnCopy() {
+  var uid = _ownUid();
+  if (!uid) return;
+  var done = function () { if (typeof showToast === "function") showToast("คัดลอกรหัสบัญชีแล้ว", "success", 1800); };
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText)
+      navigator.clipboard.writeText(uid).then(done).catch(function () { prompt("รหัสบัญชีนี้", uid); });
+    else prompt("รหัสบัญชีนี้", uid);
+  } catch (e) { prompt("รหัสบัญชีนี้", uid); }
+}
+
+// การ์ดในหน้าจัดการข้อมูล
+function _ownSyncCard() {
+  var st = document.getElementById("dmOwnState");
+  if (!st) return;
+  var row = document.getElementById("dmOwnUidRow");
+  var btn = document.getElementById("dmOwnBtn");
+  var u = _ownUser(), uid = _ownUid();
+  if (_ownIsReal()) {
+    st.innerHTML = "เข้าด้วยบัญชีจริงแล้ว · <b style=\"color:#15803D\">" + _htmlEsc(u.email || "") + "</b>";
+    if (btn) { btn.textContent = "ออกจากบัญชีนี้"; btn.setAttribute("onclick", "bkOwnOut()"); }
+  } else {
+    st.innerHTML = "ยังเข้าแบบ<b style=\"color:#B45309\">ไม่ระบุตัวตน</b>อยู่ · " +
+      "ตอนนี้ยังใช้งานได้ปกติ แต่พอเปลี่ยนกฎฐานข้อมูลแล้วจะใช้ไม่ได้";
+    if (btn) { btn.textContent = "เข้าใช้งานด้วยบัญชีจริง"; btn.setAttribute("onclick", "bkOwnOpen(false)"); }
+  }
+  if (row) {
+    row.innerHTML = uid
+      ? ('<div class="bkow-uid" style="margin-top:0"><span class="k">รหัสบัญชี</span>' +
+         '<span class="v">' + _htmlEsc(uid) + "</span>" +
+         '<button class="c" onclick="bkOwnCopy()">คัดลอก</button></div>')
+      : "";
+  }
+  // V5.79: แถวรายชื่อเจ้าของ
+  var orow = document.getElementById("dmOwnOwnRow");
+  if (orow) {
+    if (!uid || !_ownIsReal()) orow.innerHTML = "";
+    else if (_ownOwnState === "yes")
+      orow.innerHTML = '<div class="bkow-own ok">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5"/></svg>' +
+        'บัญชีนี้อยู่ในรายชื่อเจ้าของแล้ว</div>';
+    else if (_ownOwnState === "lock")
+      orow.innerHTML = '<div class="bkow-own lock">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>' +
+        'รายชื่อเจ้าของล็อกแล้ว · เพิ่มได้จาก Firebase Console ที่เดียว</div>';
+    else
+      orow.innerHTML = '<button id="dmOwnOwnBtn" class="bkow-ownbtn" onclick="bkOwnSetOwner()">ตั้งบัญชีนี้เป็นเจ้าของ</button>';
+  }
+}
+
+function bkOwnOut() {
+  if (!confirm("ออกจากบัญชีนี้?\n\nเครื่องนี้จะกลับไปเป็นแบบไม่ระบุตัวตน\nต้องใส่อีเมลกับรหัสใหม่ถ้าจะเข้าอีก")) return;
+  firebase.auth().signOut().then(function () {
+    _ownSyncCard();
+    if (typeof showToast === "function") showToast("ออกจากบัญชีแล้ว", "info", 2200);
+  });
+}
+
+try {
+  firebase.auth().onAuthStateChanged(function () {
+    _ownOwnState = "?";
+    try { _ownSyncCard(); } catch (e) {}
+    try { _ownOwnCheck(function () { try { _ownSyncCard(); } catch (e) {} }); } catch (e) {}
+  });
+} catch (e) {}
+setTimeout(_ownStart, 4000);
+
+// ═══════════════════════════════════════════════════════════════
+// V5.79: รายชื่อเจ้าของ + จอเตือนตอนฐานข้อมูลไม่ให้เข้า
+// ═══════════════════════════════════════════════════════════════
+// ── ส่วนที่ 1 · รายชื่อเจ้าของ ──────────────────────────────
+// ขั้นวางกฎต้องเอารหัสบัญชี (uid) ไปใส่ใน owners ด้วยมือผ่าน Firebase Console
+// ซึ่งคือการพิมพ์ตัวอักษรสลับเล็กใหญ่ 28 ตัว สองรอบ พิมพ์ผิดตัวเดียว
+// = เจ้าของเข้าแอปตัวเองไม่ได้ และหาไม่เจอว่าผิดตรงไหน
+// ปุ่มนี้ให้แอปเขียนให้เอง ทำได้เฉพาะตอนกฎยังเปิดอยู่
+// พอวางกฎใหม่แล้ว owners จะเป็น .write:false ถาวร ปุ่มจะใช้ไม่ได้อีก — ซึ่งถูกต้อง
+
+var _ownOwnState = "?";   // "?" ยังไม่รู้ · "yes" เป็นเจ้าของ · "no" ยังไม่เป็น · "lock" กฎล็อกแล้ว
+
+function _ownOwnCheck(done) {
+  var uid = _ownUid();
+  if (!uid || !_ownIsReal() || typeof db === "undefined") {
+    _ownOwnState = "?";
+    if (done) done();
+    return;
+  }
+  db.ref("owners/" + uid).once("value").then(function (snap) {
+    var v = snap.val();
+    _ownOwnState = (v === true || v === "true") ? "yes" : "no";
+    if (done) done();
+  }).catch(function (e) {
+    // อ่าน owners ไม่ได้ = กฎใหม่วางแล้ว และบัญชีนี้ไม่ได้อยู่ในรายชื่อ
+    _ownOwnState = ((e && e.code) === "PERMISSION_DENIED") ? "lock" : "?";
+    if (done) done();
+  });
+}
+
+function bkOwnSetOwner() {
+  var uid = _ownUid();
+  if (!uid || !_ownIsReal()) {
+    if (typeof showToast === "function")
+      showToast("ต้องเข้าใช้งานด้วยบัญชีจริงก่อน", "warn", 3000);
+    return;
+  }
+  var b = document.getElementById("dmOwnOwnBtn");
+  if (b) { b.disabled = true; b.textContent = "กำลังตั้ง…"; }
+  db.ref("owners/" + uid).set(true).then(function () {
+    _ownOwnState = "yes";
+    _ownSyncCard();
+    if (typeof showToast === "function")
+      showToast("ตั้งบัญชีนี้เป็นเจ้าของแล้ว", "success", 3000);
+  }).catch(function (e) {
+    var c = (e && e.code) || "";
+    if (c === "PERMISSION_DENIED") {
+      _ownOwnState = "lock";
+      _ownSyncCard();
+      alert("ตั้งจากในแอปไม่ได้แล้ว\n\n" +
+            "กฎฐานข้อมูลถูกวางไปแล้ว รายชื่อเจ้าของจึงล็อกถาวร\n" +
+            "เพิ่มได้จาก Firebase Console ที่เดียว\n\n" +
+            "Realtime Database → แท็บ Data → owners\n" +
+            "ใส่รหัสบัญชีนี้ ค่า true\n\n" + uid);
+    } else {
+      _ownOwnState = "?";
+      _ownSyncCard();
+      if (typeof showToast === "function")
+        showToast("ตั้งไม่สำเร็จ · " + (c || "เน็ตอาจหลุด") + " ลองใหม่อีกที", "error", 3500);
+    }
+  });
+}
+
+// ── ส่วนที่ 2 · จอเตือนตอนฐานข้อมูลไม่ให้เข้า ────────────────
+// ของเดิม listener หลักไม่มี error callback เลยสักตัว
+// พอเปลี่ยนกฎแล้วเครื่องที่ตกหล่นจะเปิดมาแล้ว "เงียบ" — ตัวเลขไม่ขึ้น ไม่มีอะไรบอก
+//
+// ═══ กันบวกปลอม ═══
+//   ตอนเปิดแอปใหม่ๆ โทเค็นล็อกอินอาจยังมาไม่ถึง แล้วเซิร์ฟเวอร์ตอบปฏิเสธชั่วคราว
+//   จึงไม่โชว์ทันทีที่เจอครั้งแรก — รอ 2.5 วิให้สถานะล็อกอินนิ่ง
+//   แล้วยิงอ่านของจริงซ้ำอีกที ถ้ารอบสองยังถูกปฏิเสธถึงจะโชว์
+//   เน็ตหลุดไม่เข้าเงื่อนไขนี้ (คนละ error กัน และของเดิมมีแถบโหมดออฟไลน์อยู่แล้ว)
+
+window._denyUp = false;
+var _denyPend = null;
+
+function _denyIsPerm(e) {
+  var t = String(((e && e.code) || "") + " " + ((e && e.message) || "") +
+                 " " + (typeof e === "string" ? e : ""));
+  return /permission[_ ]?denied/i.test(t);
+}
+
+function _denySee(e) {
+  if (!_denyIsPerm(e)) return;
+  if (window._denyUp || _denyPend) return;
+  _denyPend = setTimeout(_denyVerify, 2500);
+}
+window._denySee = _denySee;
+
+function _denyVerify() {
+  _denyPend = null;
+  if (window._denyUp || typeof db === "undefined") return;
+  // config/dbtDue เป็นก้อนจิ๋วที่อยู่ใต้กฎเดียวกับข้อมูลหลัก ใช้ทดสอบได้ถูกและเร็ว
+  db.ref("config/dbtDue").once("value").then(function () {
+    // อ่านได้ = เมื่อกี้เป็นบวกปลอม ปล่อยผ่าน
+  }).catch(function (e) {
+    if (_denyIsPerm(e)) _denyShow();
+  });
+}
+
+function _denyIcLock() {
+  return '<div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/><path d="M12 14.5v2.5"/></svg></div>';
+}
+function _denyIcWarn() {
+  return '<div class="ic bad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5 2.8 20h18.4z"/><path d="M12 10v4"/><path d="M12 17h.01"/></svg></div>';
+}
+
+function _denyShow() {
+  if (window._denyUp || document.getElementById("bkDenyOvl")) return;
+  window._denyUp = true;
+  var real = _ownIsReal(), uid = _ownUid(), em = (_ownUser() || {}).email || "";
+  var html;
+  if (!real) {
+    // กรณี 1 · เครื่องนี้ยังเข้าแบบไม่ระบุตัวตน — แก้ได้ในจอนี้เลย
+    html =
+      _denyIcLock() +
+      "<h2>เครื่องนี้ยังไม่ได้เข้าบัญชี</h2>" +
+      '<p class="t2">ฐานข้อมูลไม่ให้เครื่องนี้ดูข้อมูล<br>เพราะยังเข้าแบบไม่ระบุตัวตนอยู่</p>' +
+      '<div class="hint"><b>ทำยังไงต่อ</b><br>' +
+        'แตะปุ่มข้างล่าง แล้วใส่อีเมลกับรหัสผ่านของคุณ<br>' +
+        'ทำครั้งเดียว เครื่องนี้จำให้ตลอด</div>' +
+      '<div id="bkDenyErr"></div>' +
+      '<button class="go" onclick="_denyLogin()">เข้าใช้งานด้วยบัญชีจริง</button>' +
+      '<button class="sub" id="bkDenyRetry" onclick="_denyRetry()">ลองอีกที</button>';
+  } else {
+    // กรณี 2 · เข้าบัญชีจริงแล้ว แต่ยังไม่อยู่ในรายชื่อเจ้าของ
+    html =
+      _denyIcWarn() +
+      "<h2>บัญชีนี้ไม่ได้อยู่ในรายชื่อเจ้าของ</h2>" +
+      '<p class="t2">เข้าด้วย <b>' + _htmlEsc(em) + "</b> แล้ว<br>แต่ฐานข้อมูลยังไม่รู้จักบัญชีนี้</p>" +
+      '<div class="hint"><b>ทำยังไงต่อ</b><br>' +
+        'เอารหัสบัญชีนี้ไปใส่ใน Firebase Console<br>' +
+        'Realtime Database → แท็บ Data → <b>owners</b> → ค่า true' +
+        '<div class="bkdn-uid"><span class="v">' + _htmlEsc(uid) + "</span>" +
+        '<button class="c" onclick="bkOwnCopy()">คัดลอก</button></div></div>' +
+      '<div id="bkDenyErr"></div>' +
+      '<button class="go" id="bkDenyRetry" onclick="_denyRetry()">ใส่แล้ว · ลองอีกที</button>' +
+      '<button class="sub" onclick="_denyOther()">เข้าด้วยบัญชีอื่น</button>';
+  }
+  var ov = document.createElement("div");
+  ov.id = "bkDenyOvl";
+  ov.className = "bkdn-ovl";
+  ov.innerHTML = '<div class="bkdn-sh">' + html + "</div>";
+  document.body.appendChild(ov);
+}
+window._denyShow = _denyShow;
+
+function _denyErr(msg) {
+  var b = document.getElementById("bkDenyErr");
+  if (b) b.innerHTML = msg ? '<div class="bkdn-err">' + msg + "</div>" : "";
+}
+
+// หน้าเข้าใช้งาน (z 9560) ต้องลอยเหนือจอเตือน (z 10040) ไม่งั้นกดอะไรไม่ได้เลย
+function _denyLogin() {
+  try {
+    bkOwnOpen(false);
+    var m = document.getElementById("bkOwnModal");
+    if (m) m.style.zIndex = "10060";
+  } catch (e) {}
+}
+
+function _denyRetry() {
+  var b = document.getElementById("bkDenyRetry");
+  var t0 = b ? b.textContent : "";
+  if (b) { b.disabled = true; b.textContent = "กำลังลอง…"; }
+  _denyErr("");
+  if (typeof db === "undefined") { if (b) { b.disabled = false; b.textContent = t0; } return; }
+  db.ref("config/dbtDue").once("value").then(function () {
+    location.reload();
+  }).catch(function (e) {
+    if (b) { b.disabled = false; b.textContent = t0; }
+    _denyErr(_denyIsPerm(e)
+      ? "ยังเข้าไม่ได้ · เช็กว่ารหัสบัญชีที่ใส่ตรงกับที่โชว์ข้างบนทุกตัวอักษร และค่าเป็น true"
+      : "ต่อเน็ตไม่ได้ · เช็กสัญญาณแล้วลองใหม่");
+  });
+}
+
+function _denyOther() {
+  try { firebase.auth().signOut(); } catch (e) {}
+  setTimeout(_denyLogin, 500);
+}
+
+// ถ้ามี error มาถึงก่อนโค้ดก้อนนี้ถูกอ่าน — เก็บไว้ใน window.__denyQ แล้วมารับตรงนี้
+try {
+  if (window.__denyQ) { var _q = window.__denyQ; window.__denyQ = null; _denySee(_q); }
+} catch (e) {}
+
+
+// ═══════════════════════════════════════════════════════════════
+// V5.77: หน้าจัดการบัญชีลูกน้อง
+// ═══════════════════════════════════════════════════════════════
+// รายชื่อผู้มีสิทธิ์อยู่ที่ staffAcl/{uid} = { email, name, active, by, at, last }
+//   by = "owner" เจ้าของเพิ่มเอง · "self" ลูกน้องล็อกอินเข้ามาแล้วฝากคำขอไว้
+//   active = สวิตช์จริง · ปิดเมื่อไหร่หมดสิทธิ์ทันทีเพราะกฎฐานข้อมูลตรวจค่านี้ทุกครั้ง
+
+var bkAcl = {};
+var _bkAclRef = null;
+
+function _bkAclWatch() {
+  if (_bkAclRef) return;
+  var ref = db.ref("staffAcl");
+  var h = ref.on("value", function (snap) {
+    bkAcl = snap.val() || {};
+    try { if (document.getElementById("bkAcModal")) _bkAcRender(); } catch (e) {}
+    try { _bkAcSyncCard(); } catch (e) {}
+  }, function () { bkAcl = bkAcl || {}; });
+  _bkAclRef = { ref: ref, h: h };
+}
+
+function _bkAcList() {
+  return Object.keys(bkAcl || {}).map(function (uid) {
+    var a = bkAcl[uid] || {};
+    return { uid: uid, email: a.email || "", name: a.name || "",
+             active: a.active === true, by: a.by || "owner",
+             at: +a.at || 0, last: +a.last || 0, off: +a.off || 0 };
+  }).sort(function (x, y) { return (y.last || y.at) - (x.last || x.at); });
+}
+
+function _bkAcSyncCard() {
+  var el = document.getElementById("dmAcCnt");
+  if (!el) return;
+  var ask = _bkAcList().filter(function (a) { return !a.active && a.by === "self"; }).length;
+  el.textContent = ask ? "  ·  มีคำขอ " + ask : "";
+}
+
+function _bkAcWhen(ms) {
+  if (!ms) return "";
+  var d = new Date(+ms), now = new Date();
+  var same = d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  var MN = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+  if (same) return String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0") + " น.";
+  return d.getDate() + " " + MN[d.getMonth()];
+}
+
+function _bkAcLink() {
+  var base = location.href.split("?")[0].split("#")[0];
+  return base.replace(/[^\/]*$/, "") + "staff.html";
+}
+
+// ── หน้าจอ ─────────────────────────────────────────────────
+function bkAcOpen() {
+  if (document.getElementById("bkAcModal")) return;
+  _bkAclWatch();
+  var ov = document.createElement("div");
+  ov.id = "bkAcModal";
+  ov.className = "bkac-ovl";
+  ov.onclick = function (e) { if (e.target === ov && !_dirtyBlock(ov)) bkAcClose(); };
+  ov.innerHTML =
+    '<div class="bkac-box">' +
+      '<div class="bkac-h"><button class="bkac-x" onclick="bkAcClose()">ปิด</button>' +
+        "<b>บัญชีลูกน้อง</b><span>คนที่กรอกตะกร้าแทนคุณได้</span></div>" +
+      '<div class="bkac-body" id="bkAcBody"></div>' +
+    "</div>";
+  document.body.appendChild(ov);
+  _bkAcRender();
+}
+function bkAcClose() {
+  var m = document.getElementById("bkAcModal");
+  if (m) m.remove();
+}
+
+function _bkAcCard(a) {
+  var nm = a.name || a.email || a.uid.slice(0, 8);
+  var h = '<div class="bkac-c' + (a.active ? "" : (a.by === "self" ? " ask" : " off")) + '">' +
+    '<div class="bkac-l1"><b>' + _htmlEsc(nm) + "</b>" +
+      '<span class="bkac-tag ' + (a.active ? "on" : (a.by === "self" ? "ask" : "no")) + '">' +
+        (a.active ? "เปิด" : (a.by === "self" ? "ขอสิทธิ์" : "ปิดอยู่")) + "</span>" +
+      '<span class="bkac-when">' +
+        (a.active ? (a.last ? "เข้าล่าสุด " + _bkAcWhen(a.last) : "ยังไม่เคยเข้า")
+                  : (a.by === "self" ? _bkAcWhen(a.at) : (a.off ? "ปิดเมื่อ " + _bkAcWhen(a.off) : ""))) +
+      "</span></div>" +
+    '<div class="bkac-em">' + _htmlEsc(a.email || "(ไม่มีอีเมล)") + "</div>";
+
+  if (a.active) {
+    h += '<div class="bkac-btns">' +
+      '<button onclick="bkAcCopy()">คัดลอกลิงก์</button>' +
+      '<button onclick="bkAcReset(\'' + _jsAttrEsc(a.uid) + '\')">ตั้งรหัสใหม่</button>' +
+      '<button class="red" onclick="bkAcToggle(\'' + _jsAttrEsc(a.uid) + '\',false)">ปิดสิทธิ์</button>' +
+    "</div>";
+  } else if (a.by === "self") {
+    h += '<div class="bkac-btns">' +
+      '<button class="green" onclick="bkAcApprove(\'' + _jsAttrEsc(a.uid) + '\')">อนุมัติ · ตั้งชื่อให้</button>' +
+      '<button class="red" onclick="bkAcDrop(\'' + _jsAttrEsc(a.uid) + '\')">ปฏิเสธ</button>' +
+    "</div>";
+  } else {
+    h += '<div class="bkac-btns">' +
+      '<button class="green" onclick="bkAcToggle(\'' + _jsAttrEsc(a.uid) + '\',true)">เปิดสิทธิ์คืน</button>' +
+      '<button class="red" onclick="bkAcDrop(\'' + _jsAttrEsc(a.uid) + '\')">ลบชื่อออก</button>' +
+    "</div>";
+  }
+  return h + "</div>";
+}
+
+function _bkAcRender() {
+  var host = document.getElementById("bkAcBody");
+  if (!host) return;
+  var all = _bkAcList();
+  var ask = all.filter(function (a) { return !a.active && a.by === "self"; });
+  var on  = all.filter(function (a) { return a.active; });
+  var off = all.filter(function (a) { return !a.active && a.by !== "self"; });
+  var h = "";
+
+  if (ask.length) {
+    h += '<div class="bkac-grp">ขอสิทธิ์เข้ามา · ' + ask.length + " คน</div>";
+    ask.forEach(function (a) { h += _bkAcCard(a); });
+  }
+  h += '<div class="bkac-grp">เปิดอยู่' + (on.length ? " · " + on.length + " คน" : "") + "</div>";
+  if (on.length) on.forEach(function (a) { h += _bkAcCard(a); });
+  else h += '<div class="bkac-empty">ยังไม่มีใครเลย<br>กด “เพิ่มคน” ข้างล่างเพื่อสร้างบัญชีให้ลูกน้อง</div>';
+
+  if (off.length) {
+    h += '<div class="bkac-grp">ปิดอยู่ · ' + off.length + " คน</div>";
+    off.forEach(function (a) { h += _bkAcCard(a); });
+  }
+
+  h += '<button class="bkac-add" onclick="bkAcAddOpen()">＋ เพิ่มคน</button>';
+
+  var staff = (typeof bkStaffList === "function") ? bkStaffList() : [];
+  h += '<div class="bkac-sum"><b>ลูกน้องลงตะกร้าได้ ' + staff.length + " คน</b><br>" +
+    (staff.length ? '<span>' + staff.map(function (p) { return _htmlEsc(p.name); }).join(" · ") + "</span>"
+                  : '<span>ยังไม่ได้เปิดสวิตช์ให้ใครเลย — เปิดได้ในชีตของคนตัดแต่ละคน</span>') + "</div>";
+
+  h += '<div class="bkac-note">ปิดสิทธิ์แล้ว<b>มีผลทันที</b> ไม่ต้องรอ และไม่ต้องเข้า Firebase Console<br>' +
+    'ฝั่งแอปเปลี่ยนรหัสผ่านของคนอื่นให้เองไม่ได้ (ข้อจำกัดของ Firebase) · ' +
+    '“ตั้งรหัสใหม่” คือส่งลิงก์ไปที่อีเมลเขา ถ้าอีเมลนั้นเปิดไม่ได้จริง ' +
+    'ให้ปิดสิทธิ์อันเก่าแล้วเพิ่มคนใหม่แทน เร็วกว่า</div>';
+
+  host.innerHTML = h;
+  _bkAcSyncCard();
+}
+
+// ── การกระทำ ───────────────────────────────────────────────
+function bkAcCopy() {
+  var url = _bkAcLink();
+  var done = function () { if (typeof showToast === "function") showToast("คัดลอกลิงก์แล้ว", "success", 1800); };
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText)
+      navigator.clipboard.writeText(url).then(done).catch(function () { prompt("คัดลอกลิงก์นี้", url); });
+    else prompt("คัดลอกลิงก์นี้", url);
+  } catch (e) { prompt("คัดลอกลิงก์นี้", url); }
+}
+
+function bkAcToggle(uid, on) {
+  var a = bkAcl[uid] || {};
+  var nm = a.name || a.email || uid.slice(0, 8);
+  if (!on && !confirm("ปิดสิทธิ์ของ " + nm + "?\n\nเขาจะกรอกตะกร้าไม่ได้ทันที\nของที่ส่งมาแล้วยังอยู่ครบ เปิดคืนได้ตลอด")) return;
+  var patch = { active: !!on };
+  if (!on) patch.off = Date.now();
+  db.ref("staffAcl/" + uid).update(patch).then(function () {
+    if (typeof showToast === "function")
+      showToast(on ? ("เปิดสิทธิ์ " + nm + " แล้ว") : ("ปิดสิทธิ์ " + nm + " แล้ว · มีผลทันที"), "success", 2400);
+  }).catch(function (e) { _bkAcErrToast(e); });
+}
+
+function bkAcApprove(uid) {
+  var a = bkAcl[uid] || {};
+  iosPrompt({ title: "อนุมัติ " + (a.email || ""), subtitle: "ตั้งชื่อเรียกให้คนนี้",
+              placeholder: "เช่น อ้อน", initialValue: a.name || "" }).then(function (nm) {
+    if (nm === null) return;
+    nm = String(nm || "").trim();
+    if (!nm) { if (typeof showToast === "function") showToast("ต้องใส่ชื่อก่อน", "warn", 2000); return; }
+    db.ref("staffAcl/" + uid).update({ name: nm, active: true, by: "owner" }).then(function () {
+      if (typeof showToast === "function") showToast("อนุมัติ " + nm + " แล้ว เขาเข้าได้เลย", "success", 2600);
+    }).catch(function (e) { _bkAcErrToast(e); });
+  });
+}
+
+function bkAcDrop(uid) {
+  var a = bkAcl[uid] || {};
+  var nm = a.name || a.email || uid.slice(0, 8);
+  if (!confirm("ลบ " + nm + " ออกจากรายการ?\n\nเขาจะเข้าไม่ได้อีก\n" +
+               "บัญชีจะยังอยู่ใน Firebase แต่ไม่มีสิทธิ์อะไรเลย\n" +
+               "ของที่เขาเคยส่งมาแล้วยังอยู่ครบ")) return;
+  db.ref("staffAcl/" + uid).remove().then(function () {
+    if (typeof showToast === "function") showToast("ลบ " + nm + " ออกแล้ว", "success", 2200);
+  }).catch(function (e) { _bkAcErrToast(e); });
+}
+
+function bkAcReset(uid) {
+  var a = bkAcl[uid] || {};
+  if (!a.email) { if (typeof showToast === "function") showToast("บัญชีนี้ไม่มีอีเมล ส่งลิงก์ไม่ได้", "warn", 2600); return; }
+  if (!confirm("ส่งลิงก์ตั้งรหัสใหม่ไปที่\n" + a.email + " ?\n\n" +
+               "เขาต้องเปิดอีเมลนั้นได้จริงถึงจะตั้งรหัสใหม่ได้\n" +
+               "ถ้าเปิดไม่ได้ ให้ปิดสิทธิ์อันนี้แล้วเพิ่มคนใหม่แทน")) return;
+  firebase.auth().sendPasswordResetEmail(a.email).then(function () {
+    if (typeof showToast === "function") showToast("ส่งลิงก์ไปที่ " + a.email + " แล้ว", "success", 3000);
+  }).catch(function (e) {
+    if (typeof showToast === "function")
+      showToast("ส่งไม่สำเร็จ — " + ((e && e.code) || "ไม่ทราบสาเหตุ") + " · ลองปิดสิทธิ์แล้วเพิ่มคนใหม่แทน", "error", 4000);
+  });
+}
+
+function _bkAcErrToast(e) {
+  var m = (e && e.code === "PERMISSION_DENIED")
+    ? "ฐานข้อมูลไม่ให้สิทธิ์เขียน — ถ่ายจอส่งให้คนทำแอป"
+    : "ทำไม่สำเร็จ เน็ตอาจหลุด ลองใหม่อีกที";
+  if (typeof showToast === "function") showToast(m, "error", 3000);
+}
+
+// ── เพิ่มคนใหม่ ────────────────────────────────────────────
+// สร้างผ่าน "แอปตัวที่สอง" เพื่อไม่ให้เจ้าของหลุดออกจากบัญชีตัวเอง
+function _bkAcSecondary() {
+  try { return firebase.app("mkStaff"); }
+  catch (e) { return firebase.initializeApp(window.__FB_CFG__ || {}, "mkStaff"); }
+}
+
+function bkAcAddOpen() {
+  if (document.getElementById("bkAcForm")) return;
+  var ov = document.createElement("div");
+  ov.id = "bkAcForm";
+  ov.className = "bkac-f";
+  ov.onclick = function (e) { if (e.target === ov && !_dirtyBlock(ov)) ov.remove(); };
+  ov.innerHTML =
+    '<div class="in"><h2>เพิ่มคนกรอกตะกร้า</h2>' +
+    '<p class="t2">สร้างบัญชีให้เขาเลย แล้วบอกอีเมลกับรหัสที่ตั้งให้</p>' +
+    '<div class="err" id="bkAcErr" style="display:none"></div>' +
+    '<input id="bkAcNm" type="text" placeholder="ชื่อเรียก เช่น อ้อน" autocomplete="off">' +
+    '<input id="bkAcEm" type="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="อีเมล">' +
+    '<input id="bkAcPw" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="รหัสผ่าน อย่างน้อย 6 ตัว">' +
+    '<div class="row"><button class="no" onclick="document.getElementById(\'bkAcForm\').remove()">ยกเลิก</button>' +
+    '<button class="ok" id="bkAcGo" onclick="bkAcCreate()">สร้างบัญชี</button></div>' +
+    '<p class="hint">รหัสโชว์ให้เห็นตั้งแต่แรก จะได้จดไปบอกเขาถูก<br>' +
+    'ตั้งเสร็จแล้วเปลี่ยนทีหลังยาก ให้ตั้งอะไรที่เขาจำได้</p></div>';
+  document.body.appendChild(ov);
+  setTimeout(function () { try { document.getElementById("bkAcNm").focus(); } catch (e) {} }, 220);
+}
+
+function _bkAcFormErr(html) {
+  var b = document.getElementById("bkAcErr");
+  if (!b) return;
+  b.innerHTML = html; b.style.display = html ? "block" : "none";
+}
+
+function bkAcCreate() {
+  var nm = (document.getElementById("bkAcNm").value || "").trim();
+  var em = (document.getElementById("bkAcEm").value || "").trim().toLowerCase();
+  var pw = document.getElementById("bkAcPw").value || "";
+  _bkAcFormErr("");
+  if (!nm) { _bkAcFormErr("ใส่ชื่อเรียกก่อน"); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { _bkAcFormErr("รูปแบบอีเมลไม่ถูกต้อง"); return; }
+  if (pw.length < 6) { _bkAcFormErr("รหัสผ่านต้องยาวอย่างน้อย 6 ตัว"); return; }
+
+  var go = document.getElementById("bkAcGo");
+  go.disabled = true; go.textContent = "กำลังสร้าง…";
+  var sec;
+  try { sec = _bkAcSecondary(); }
+  catch (e) { _bkAcFormErr("เปิดตัวสร้างบัญชีไม่ได้"); go.disabled = false; go.textContent = "สร้างบัญชี"; return; }
+
+  sec.auth().createUserWithEmailAndPassword(em, pw).then(function (cred) {
+    var uid = (cred && cred.user && cred.user.uid) || "";
+    if (!uid) throw { code: "no-uid" };
+    return db.ref("staffAcl/" + uid).set({
+      email: em, name: nm, active: true, by: "owner", at: Date.now()
+    }).then(function () {
+      try { sec.auth().signOut(); } catch (e) {}
+      var f = document.getElementById("bkAcForm"); if (f) f.remove();
+      if (typeof showToast === "function")
+        showToast("สร้างบัญชีให้ " + nm + " แล้ว · ส่งลิงก์กับรหัสให้เขาได้เลย", "success", 3400);
+    });
+  }).catch(function (e) {
+    try { sec.auth().signOut(); } catch (x) {}
+    go.disabled = false; go.textContent = "สร้างบัญชี";
+    _bkAcFormErr(_bkAcCreateErr(e));
+  });
+}
+
+function _bkAcCreateErr(e) {
+  var c = (e && e.code) || "";
+  if (c === "auth/operation-not-allowed")
+    return "<b>ยังไม่ได้เปิดระบบบัญชีในฐานข้อมูล</b><br>" +
+           "เข้า Firebase Console → Authentication → Sign-in method → เปิด <code>Email/Password</code> แล้วลองใหม่ (ทำครั้งเดียวจบ)";
+  if (c === "auth/email-already-in-use") return "<b>อีเมลนี้มีบัญชีอยู่แล้ว</b><br>ใช้อีเมลอื่น หรือถ้าเป็นคนเดิม ให้เขาล็อกอินเข้ามาแล้วกดอนุมัติในหน้านี้";
+  if (c === "auth/invalid-email")  return "รูปแบบอีเมลไม่ถูกต้อง";
+  if (c === "auth/weak-password")  return "รหัสผ่านสั้นหรือง่ายเกินไป ลองยาวกว่านี้";
+  if (c === "auth/network-request-failed") return "<b>ต่อเน็ตไม่ได้</b><br>เช็กสัญญาณแล้วลองใหม่";
+  if (c === "PERMISSION_DENIED") return "<b>สร้างบัญชีได้ แต่เขียนรายชื่อไม่ได้</b><br>ฐานข้อมูลไม่ให้สิทธิ์เขียน · ถ่ายจอนี้ส่งให้คนทำแอป";
+  return "สร้างไม่สำเร็จ <code>" + _htmlEsc(c || "ไม่ทราบสาเหตุ") + "</code><br>ถ่ายจอนี้ส่งให้คนทำแอป";
+}
+
+// ═══════════════════════════════════════════════════════════════
+// V5.76: ลิงก์ให้คนตัดดูยอดของตัวเอง
+// ═══════════════════════════════════════════════════════════════
+// แอปหลักสรุปยอดของคนตัดคนหนึ่งไปวางไว้ที่ cutterView/{รหัส}
+// หน้าของคนตัดอ่านแค่ก้อนนั้นก้อนเดียว จึงไม่มีทางเห็นของคนอื่น
+// ในสำเนาไม่มีตัวเลขเงินสักช่อง มีแต่จำนวนใบ
+
+function _cvToken() {
+  // รหัสสุ่ม 20 ตัว — เดาไม่ได้ในทางปฏิบัติ และสั้นพอที่จะส่งทางไลน์ได้ไม่เกะกะ
+  var a = "abcdefghijkmnopqrstuvwxyz23456789", out = "";
+  try {
+    var b = new Uint8Array(20); crypto.getRandomValues(b);
+    for (var i = 0; i < 20; i++) out += a[b[i] % a.length];
+  } catch (e) {
+    for (var j = 0; j < 20; j++) out += a[Math.floor(Math.random() * a.length)];
+  }
+  return out;
+}
+
+// เดือนทั้งหมดที่คนนี้มีข้อมูล (รวมเดือนที่มีแต่มัดจำ) เรียงใหม่ไปเก่า
+function _cvMonths(id) {
+  var set = {};
+  Object.keys(bkData || {}).forEach(function (mk) {
+    var c = bkData[mk] && bkData[mk].cutter && bkData[mk].cutter[id];
+    if (c && Object.keys(c).length) set[mk] = 1;
+  });
+  (_bkDepMonths("cutter", id) || []).forEach(function (mk) { if (mk && mk !== "00") set[mk] = 1; });
+  return Object.keys(set).sort().reverse();
+}
+
+// ประวัติมัดจำแบบ "ใบอย่างเดียว" — ยึดไปกี่ใบ คืนมากี่ใบ เหลือเท่าไหร่
+function _cvDepLedger(id) {
+  var byDep = (bkDeposits || {})[_bkDepKey("cutter", id)] || {};
+  var ev = [];
+  Object.keys(byDep).forEach(function (did) {
+    var d = byDep[did]; if (!d) return;
+    ev.push({ t: +d.at || 0, k: "วางมัดจำ", q: +d.qty || 0, s: _bkDepSrcText(d) });
+    Object.keys(d.returns || {}).forEach(function (rid) {
+      var r = d.returns[rid] || {};
+      ev.push({ t: +r.at || 0, k: "คืนตะกร้า", q: -(+r.qty || 0), s: "" });
+    });
+  });
+  ev.sort(function (a, b) { return a.t - b.t; });
+  var run = 0;
+  ev.forEach(function (e) { run = Math.max(0, run + e.q); e.b = run; });
+  return ev.reverse();                    // ใหม่สุดอยู่บน
+}
+
+// สร้างสำเนาของคนตัดคนหนึ่ง — เล็กที่สุดเท่าที่หน้าคนตัดต้องใช้
+function _cvBuild(id) {
+  var p = (bkCutters || []).find(function (x) { return x.id === id; });
+  if (!p) return null;
+  var months = _cvMonths(id), out = [];
+  months.forEach(function (mk) {
+    var y = +mk.slice(0, 4), m = +mk.slice(5, 7);
+    var info = _bkGetMonthSummary("cutter", id, y, m);
+    if (!info.hasData && !info.carryDep) return;
+    out.push({
+      k: mk, o: info.totalOut, i: info.totalIn, e: info.endBal,
+      c: info.carry, cd: info.carryDep,
+      // [วัน, ออก, เก็บ, ค้าง, ถูกยึดมัดจำกี่ใบ]
+      r: info.rows.map(function (x) { return [x.d, x.out, x.inn, x.bal, x.dep || 0]; })
+    });
+  });
+  var sm = _bkDepSummary("cutter", id);
+  return {
+    n: p.name,
+    at: Date.now(),
+    bal: (out[0] ? out[0].e : bkCalcCarryOver("cutter", id)),
+    dep: sm.held,
+    m: out,
+    d: sm.count ? _cvDepLedger(id) : []
+  };
+}
+
+function _cvPublish(id) {
+  var p = (bkCutters || []).find(function (x) { return x.id === id; });
+  if (!p || !p.view) return Promise.resolve(false);
+  var snap = _cvBuild(id);
+  if (!snap) return Promise.resolve(false);
+  return db.ref("cutterView/" + p.view).set(snap).then(function () { return true; })
+    .catch(function (e) { console.error("[cutterView] เขียนไม่สำเร็จ", e); return false; });
+}
+
+// ── ลบสำเนาทิ้งให้ได้จริง แม้เน็ตหลุดตอนนั้น ──────────────
+// ลบคนตัด/ออกลิงก์ใหม่ แล้วเน็ตหลุดพอดี = สำเนาเก่าค้างอยู่บนฐานข้อมูลตลอดไป
+// คนที่ถือลิงก์เดิมก็เปิดดูยอดเก่าได้เรื่อยๆ จึงจดรหัสที่ต้องลบไว้ แล้วลองใหม่ทุกครั้งที่บันทึก
+function _cvDeadList() {
+  try { return JSON.parse(localStorage.getItem("cvDead") || "[]") || []; } catch (e) { return []; }
+}
+function _cvDeadSave(a) { try { localStorage.setItem("cvDead", JSON.stringify(a.slice(-50))); } catch (e) {} }
+function _cvKill(tok) {
+  if (!tok) return;
+  var a = _cvDeadList();
+  if (a.indexOf(tok) < 0) { a.push(tok); _cvDeadSave(a); }
+  _cvSweep();
+}
+function _cvSweep() {
+  var a = _cvDeadList();
+  if (!a.length) return;
+  a.slice().forEach(function (tok) {
+    db.ref("cutterView/" + tok).remove().then(function () {
+      var b = _cvDeadList(); var i = b.indexOf(tok);
+      if (i >= 0) { b.splice(i, 1); _cvDeadSave(b); }
+    }).catch(function () { /* ไว้ลองใหม่รอบหน้า */ });
+  });
+}
+
+// เขียนสำเนาใหม่ให้ทุกคนที่ออกลิงก์ไว้ — หน่วงไว้ กันการเขียนรัวตอนพิมพ์เลขติดกัน
+var _cvTimer = null;
+function _cvPublishAllSoon() {
+  if (_cvTimer) clearTimeout(_cvTimer);
+  _cvTimer = setTimeout(function () {
+    _cvTimer = null;
+    if (!window._bkFromServer) return;
+    (bkCutters || []).forEach(function (p) { if (p && p.view) _cvPublish(p.id); });
+    _cvSweep();
+  }, 2500);
+}
+
+function _cvLink(tok) {
+  // ลิงก์หน้าคนตัดวางไว้ข้างๆ แอปหลัก ชื่อไฟล์ cutter.html
+  var base = location.href.split("?")[0].split("#")[0];
+  base = base.replace(/[^\/]*$/, "");
+  return base + "cutter.html?v=" + tok;
+}
+
+// ── แผ่นลิงก์ ──────────────────────────────────────────────
+function bkCvOpen(type, id, name) {
+  if (type !== "cutter") return;
+  var p = (bkCutters || []).find(function (x) { return x.id === id; });
+  if (!p) return;
+  var fresh = false;
+  if (!p.view) { p.view = _cvToken(); fresh = true; bkSaveLocal(); }
+  _cvPublish(id);
+  var url = _cvLink(p.view);
+
+  var ov = document.createElement("div");
+  ov.id = "bkCvModal";
+  ov.className = "bkcv-ovl";
+  ov.onclick = function (e) { if (e.target === ov && !_dirtyBlock(ov)) ov.remove(); };
+  ov.innerHTML =
+    '<div class="bkcv-sh"><h2>ลิงก์ดูยอดของ ' + _htmlEsc(name || p.name) + "</h2>" +
+    '<p class="t2">ส่งให้เขาทางไลน์ได้เลย · เปิดแล้วเห็นแต่ของตัวเอง แก้อะไรไม่ได้</p>' +
+    '<div class="bkcv-url" id="bkCvUrl">' + _htmlEsc(url) + "</div>" +
+    '<div class="bkcv-row">' +
+      '<button class="bkcv-b1" onclick="bkCvCopy()">คัดลอกลิงก์</button>' +
+      '<button class="bkcv-b2" onclick="document.getElementById(\'bkCvModal\').remove()">ปิด</button>' +
+    "</div>" +
+    '<div class="bkcv-row" style="margin-top:9px">' +
+      '<button class="bkcv-b3" onclick="bkCvReset(\'' + _jsAttrEsc(id) + '\')">ออกลิงก์ใหม่ · ลิงก์เก่าใช้ไม่ได้ทันที</button>' +
+    "</div>" +
+    '<p class="bkcv-note">' + (fresh ? "ออกลิงก์ให้ใหม่แล้ว · " : "") +
+      'ในลิงก์นี้<b>ไม่มีตัวเลขเงินสักช่อง</b> มีแต่จำนวนใบ<br>' +
+      'ยอดอัปเดตให้เองทุกครั้งที่คุณบันทึกในแอป</p>' +
+    "</div>";
+  document.body.appendChild(ov);
+}
+
+function bkCvCopy() {
+  var el = document.getElementById("bkCvUrl");
+  if (!el) return;
+  var txt = el.textContent;
+  var done = function () {
+    if (typeof showToast === "function") showToast("คัดลอกลิงก์แล้ว", "success", 1800);
+  };
+  // ซาฟารีบนไอโฟนบล็อก clipboard ถ้าไม่ได้มาจากการแตะโดยตรง จึงมีทางสำรองไว้
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).then(done).catch(function () { _cvCopyFallback(el, done); });
+    } else { _cvCopyFallback(el, done); }
+  } catch (e) { _cvCopyFallback(el, done); }
+}
+function _cvCopyFallback(el, done) {
+  try {
+    var r = document.createRange(); r.selectNodeContents(el);
+    var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    document.execCommand("copy"); sel.removeAllRanges(); done();
+  } catch (e) {
+    if (typeof showToast === "function") showToast("คัดลอกไม่ได้ — แตะค้างที่ลิงก์แล้วเลือกคัดลอก", "warn", 3200);
+  }
+}
+
+function bkCvReset(id) {
+  var p = (bkCutters || []).find(function (x) { return x.id === id; });
+  if (!p) return;
+  if (!confirm("ออกลิงก์ใหม่ให้ " + p.name + "?\n\nลิงก์เก่าที่เคยส่งไปจะเปิดไม่ได้ทันที\nต้องส่งลิงก์ใหม่ให้เขาอีกครั้ง")) return;
+  var old = p.view;
+  p.view = _cvToken();
+  bkSaveLocal();
+  var fin = function () {
+    _cvPublish(id).then(function () {
+      var m = document.getElementById("bkCvModal");
+      if (m) m.remove();
+      bkCvOpen("cutter", id, p.name);
+      if (typeof showToast === "function") showToast("ออกลิงก์ใหม่แล้ว ลิงก์เก่าใช้ไม่ได้แล้ว", "success", 2600);
+    });
+  };
+  if (old) _cvKill(old);
+  fin();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// V5.74: ยอดจากลูกน้อง — กล่องรับ, หน้ารายงาน, การลงยอด
+// ═══════════════════════════════════════════════════════════════
+// ลูกน้องเขียนลง basketInbox/{YYYY-MM}/{DD}/{คีย์สุ่ม}
+//   { c:คนตัด, q:จำนวน, u:ยูสเซอร์, n:ชื่อ, t:เวลา, b:รหัสรอบที่ส่ง }
+// พอเจ้าของกดลง จะเติมคีย์ a เข้าไปในรายการนั้น
+//   a = { t:เวลาที่ลง, g:รหัสครั้งที่ลง, mode:"add"|"replace", from:เลขเดิม, to:เลขใหม่ }
+// รายการที่มี a แล้ว จะไม่ถูกเสนอให้ลงอีก — นี่คือกลไกกันนับซ้ำทั้งหมด
+// เขียนแยกโหนดจาก basket เพราะ bkSaveLocal เขียนทับ basket ทั้งก้อนด้วย set()
+
+var bkInbox = {};              // bkInbox[mk] = { dd: { คีย์: รายการ } }
+var _bkInboxRef = {};          // ตัวฟังสดของเดือนปัจจุบัน
+var _bkInboxLoading = {};
+var BKRP_DAYS = 30;            // ย้อนหลังสูงสุด 30 วัน ตามที่ตกลงไว้
+
+function _bkPad2(n) { return String(n).padStart(2, "0"); }
+function _bkRealMk() { const n = new Date(); return n.getFullYear() + "-" + _bkPad2(n.getMonth() + 1); }
+
+// โหลดกล่องรับของเดือนหนึ่ง
+//   เดือนปัจจุบันจริง = ตัวฟังสด (ลูกน้องส่งปุ๊บ จุดส้มขึ้นปั๊บ ก้อนเล็กมาก เดือนละไม่กี่สิบ kB)
+//   เดือนอื่น = อ่านครั้งเดียวแล้วจำไว้ ไม่ต้องฟัง เพราะย้อนหลังไม่มีอะไรเปลี่ยน
+function _bkInboxEnsure(mk) {
+  if (!mk) return;
+  if (mk === _bkRealMk()) {
+    if (_bkInboxRef[mk]) return;
+    const ref = db.ref("basketInbox/" + mk);
+    const h = ref.on("value", snap => {
+      bkInbox[mk] = snap.val() || {};
+      _bkInboxAfterChange();
+    }, () => { bkInbox[mk] = bkInbox[mk] || {}; });
+    _bkInboxRef[mk] = { ref: ref, h: h };
+    return;
+  }
+  if (bkInbox[mk] !== undefined || _bkInboxLoading[mk]) return;
+  _bkInboxLoading[mk] = true;
+  db.ref("basketInbox/" + mk).once("value").then(snap => {
+    bkInbox[mk] = snap.val() || {};
+    _bkInboxLoading[mk] = false;
+    _bkInboxAfterChange();
+  }).catch(() => { bkInbox[mk] = {}; _bkInboxLoading[mk] = false; });
+}
+
+function _bkInboxAfterChange() {
+  try { _bkInboxPaintDots(); } catch(e) {}
+  try { _bkRepSyncBtn(); } catch(e) {}
+  try { if (document.getElementById("bkRepModal")) _bkRepRender(); } catch(e) {}
+}
+
+// เริ่มต้น: โหลดเดือนที่ช่วง 30 วันที่ผ่านมาแตะถึง (อย่างมาก 2 เดือน)
+function _bkInboxBoot() {
+  const seen = {};
+  _bkRepDayList().forEach(d => { if (!seen[d.mk]) { seen[d.mk] = 1; _bkInboxEnsure(d.mk); } });
+}
+
+function _bkInboxDay(mk, dd) { return (bkInbox[mk] && bkInbox[mk][dd]) || {}; }
+
+// รายการในวันหนึ่ง · id = เฉพาะคนตัดคนนั้น (ว่าง = ทุกคน) · onlyPending = เอาเฉพาะที่ยังไม่ได้ลง
+function _bkInboxRows(mk, dd, id, onlyPending) {
+  const day = _bkInboxDay(mk, dd), out = [];
+  Object.keys(day).forEach(k => {
+    const r = day[k];
+    if (!r || !(+r.q > 0)) return;
+    if (id && r.c !== id) return;
+    if (onlyPending && r.a) return;
+    out.push({ k: k, c: r.c, q: +r.q, t: +r.t || 0, n: r.n || "", b: r.b || k, a: r.a || null });
+  });
+  out.sort((x, y) => x.t - y.t);
+  return out;
+}
+function _bkInboxPending(mk, dd, id) {
+  return _bkInboxRows(mk, dd, id, true).reduce((s, x) => s + x.q, 0);
+}
+function _bkInboxAppliedSum(mk, dd, id) {
+  return _bkInboxRows(mk, dd, id, false).filter(x => x.a).reduce((s, x) => s + x.q, 0);
+}
+
+// จุดส้ม — อัปเดตเฉพาะจุด ไม่วาดตารางใหม่ทั้งใบ (ตารางใหญ่ วาดใหม่สะดุด)
+function _bkInboxPaintDots() {
+  const cells = document.querySelectorAll("td[data-inb]");
+  for (let i = 0; i < cells.length; i++) {
+    const td = cells[i], p = (td.getAttribute("data-inb") || "").split("|");
+    if (p.length !== 4 || p[0] !== "cutter") continue;
+    const want = _bkInboxPending(p[2], p[3], p[1]) > 0;
+    const cur = td.querySelector(".bk-inbox-dot");
+    if (want && !cur) {
+      const sp = document.createElement("span");
+      sp.className = "bk-inbox-dot";
+      td.insertBefore(sp, td.firstChild);
+    } else if (!want && cur) { cur.remove(); }
+  }
+}
+
+// ── อ่าน/เขียนช่อง "เก็บมา" ของเดือนใดก็ได้ ──────────────────
+// bkSetData ใช้เดือนที่กำลังดูอยู่เท่านั้น แต่การลงยอดอาจเป็นวันของเดือนก่อน
+function _bkGetInAt(mk, id, dd) {
+  const e = bkData[mk] && bkData[mk].cutter && bkData[mk].cutter[id] && bkData[mk].cutter[id][dd];
+  return (e && +e.in) || 0;
+}
+function _bkSetInAt(mk, id, dd, val) {
+  if (!bkData[mk]) bkData[mk] = {};
+  if (!bkData[mk].cutter) bkData[mk].cutter = {};
+  if (!bkData[mk].cutter[id]) bkData[mk].cutter[id] = {};
+  if (!bkData[mk].cutter[id][dd]) bkData[mk].cutter[id][dd] = { out: 0, in: 0 };
+  bkData[mk].cutter[id][dd].in = Math.max(0, parseFloat(val) || 0);
+}
+
+// ── รายการวันที่หน้ารายงานสนใจ ───────────────────────────────
+const _BKRP_WD = ["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
+const _BKRP_MN = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+function _bkRepDayList() {
+  const out = [], d = new Date();
+  d.setHours(12, 0, 0, 0);                    // เที่ยงวัน กันเขตเวลาทำให้ข้ามวัน
+  for (let i = 0; i < BKRP_DAYS; i++) {
+    out.push({
+      off: i, mk: d.getFullYear() + "-" + _bkPad2(d.getMonth() + 1), dd: _bkPad2(d.getDate()),
+      label: d.getDate() + " " + _BKRP_MN[d.getMonth()], wd: _BKRP_WD[d.getDay()],
+      title: i === 0 ? "วันนี้" : (i === 1 ? "เมื่อวาน" : "")
+    });
+    d.setDate(d.getDate() - 1);
+  }
+  return out;
+}
+function _bkRepPendingDays() {
+  return _bkRepDayList().filter(d => Object.keys(_bkRepPlan(d.mk, d.dd)).length > 0);
+}
+
+// แผนการลงของวันหนึ่ง — รวมรายการที่ยังไม่ได้ลง แยกตามคนตัด
+//   cur     = เลขในช่องตอนนี้
+//   applied = ส่วนที่มาจากการลงครั้งก่อนๆ
+//   own     = ส่วนที่เจ้าของพิมพ์เอง (cur − applied)
+//   need    = ต้องถามไหม · ถามเฉพาะตอนเจ้าของพิมพ์เองไว้ ไม่ใช่ทุกครั้งที่ช่องมีเลข
+function _bkRepPlanRaw(mk, dd) {
+  const rows = _bkInboxRows(mk, dd, null, true);
+  if (!rows.length) return [];
+  const byId = {};
+  rows.forEach(r => {
+    if (!byId[r.c]) byId[r.c] = { id: r.c, q: 0, keys: [] };
+    byId[r.c].q += r.q; byId[r.c].keys.push(r.k);
+  });
+  return Object.keys(byId).map(id => {
+    const p = (bkCutters || []).find(x => x.id === id);
+    const cur = _bkGetInAt(mk, id, dd);
+    const applied = _bkInboxAppliedSum(mk, dd, id);
+    const own = Math.max(0, cur - applied);
+    // V5.75: วันที่ถูกยึดมัดจำไปแล้ว ลงยอดไม่ได้
+    //   ตะกร้าของวันนั้นถูกตัดออกจากยอดค้างไปแล้วตอนยึด ถ้าลงซ้ำยอดค้างจะหายไปสองรอบ
+    let lock = false;
+    try { lock = (typeof _bkDayLocked === "function") && _bkDayLocked("cutter", id, mk, dd); } catch(e) {}
+    return {
+      id: id, name: p ? p.name : "คนที่ถูกลบไปแล้ว", gone: !p, lock: !!lock,
+      q: byId[id].q, keys: byId[id].keys,
+      cur: cur, applied: applied, own: own, need: own > 0,
+      vAdd: cur + byId[id].q,              // ไม่ทับ = เก็บเลขเดิมไว้ บวกของลูกน้องเพิ่ม
+      vRep: applied + byId[id].q           // ทับ    = ใช้ของลูกน้องแทนเลขที่เจ้าของพิมพ์เอง
+    };
+  });
+}
+
+// แยกออกเป็นสองกอง: ลงได้ กับ ลงไม่ได้ (ถูกยึดมัดจำ หรือเจ้าของลบคนนั้นไปแล้ว)
+// ที่เหลือทั้งแอปเรียก _bkRepPlan ซึ่งคืนเฉพาะกองที่ลงได้ กองที่ลงไม่ได้ขึ้นเป็นหมายเหตุในรายงาน
+function _bkRepPlanAll(mk, dd) { return _bkRepPlanRaw(mk, dd); }
+function _bkRepPlan(mk, dd) { return _bkRepPlanRaw(mk, dd).filter(x => !x.lock && !x.gone); }
+function _bkRepBlocked(mk, dd) { return _bkRepPlanRaw(mk, dd).filter(x => x.lock || x.gone); }
+
+// รอบที่ส่งมาในวันนั้น (เอาไว้โชว์ว่า กี่รอบ กี่โมง ใครส่ง กี่ใบ)
+function _bkRepRounds(mk, dd) {
+  const all = _bkInboxRows(mk, dd, null, false), by = {};
+  all.forEach(r => {
+    if (!by[r.b]) by[r.b] = { t: r.t, q: 0, c: 0, n: r.n };
+    by[r.b].q += r.q; by[r.b].c += 1;
+    if (r.t && (!by[r.b].t || r.t < by[r.b].t)) by[r.b].t = r.t;
+  });
+  return Object.keys(by).map(k => by[k]).sort((a, b) => a.t - b.t);
+}
+function _bkRepHHMM(ms) { const d = new Date(+ms || 0); return _bkPad2(d.getHours()) + ":" + _bkPad2(d.getMinutes()); }
+
+// ── ปุ่มที่ท้ายตาราง ─────────────────────────────────────────
+const _BKRP_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5.5" width="16" height="13" rx="1.6"/><path d="M8 10h8M8 14h5"/></svg>';
+function _bkRepSyncBtn() {
+  const b = document.getElementById("bkRepBtn");
+  if (!b) return;
+  let cnt = 0;
+  try { cnt = _bkRepPendingDays().length; } catch(e) {}
+  b.classList.toggle("has", cnt > 0);
+  b.innerHTML = _BKRP_ICON + "ยอดลูกน้อง" + (cnt > 0 ? '<span class="bk-rep-cnt">' + cnt + "</span>" : "");
+}
+
+// ── หน้ารายงาน ───────────────────────────────────────────────
+// V5.75: อ่านกล่องรับทั้งก้อนครั้งเดียวตอนเปิดรายงาน
+//   เดิมโหลดมาแค่เดือนที่อยู่ในช่วง 30 วัน ของเก่ากว่านั้นจึงมองไม่เห็นเลย
+//   บรรทัดเตือน "เก่ากว่า 30 วัน ยังไม่ได้ลง" จึงไม่มีวันขึ้น ทั้งที่ออกแบบไว้แล้ว
+//   พลอยแก้อีกเรื่อง: เดือนก่อนๆ ที่อ่านค้างไว้ตั้งแต่เปิดแอป จะได้สดใหม่ด้วย
+//   จำกัดไม่เกินทุก 3 นาที กันการดึงก้อนใหญ่ซ้ำๆ ตอนเปิดปิดรายงานรัวๆ
+var _bkInboxAllAt = 0;
+function _bkInboxFull() {
+  const now = Date.now();
+  if (now - _bkInboxAllAt < 180000) return;
+  _bkInboxAllAt = now;
+  db.ref("basketInbox").once("value").then(snap => {
+    const all = snap.val() || {};
+    const live = _bkRealMk();
+    Object.keys(all).forEach(mk => {
+      if (mk === live) return;              // เดือนปัจจุบันมีตัวฟังสดดูแลอยู่ อย่าไปทับ
+      bkInbox[mk] = all[mk] || {};
+    });
+    _bkInboxAfterChange();
+  }).catch(() => { _bkInboxAllAt = 0; });   // อ่านไม่ได้ก็ให้ลองใหม่ครั้งหน้าได้เลย
+}
+
+function bkRepOpen() {
+  if (document.getElementById("bkRepModal")) return;
+  _bkInboxBoot();
+  _bkInboxFull();
+  const ov = document.createElement("div");
+  ov.id = "bkRepModal";
+  ov.className = "bkrp-ovl";
+  ov.onclick = (e) => { if (e.target === ov && !_dirtyBlock(ov)) bkRepClose(); };
+  ov.innerHTML =
+    '<div class="bkrp-box">' +
+      '<div class="bkrp-h"><button class="bkrp-x" onclick="bkRepClose()">ปิด</button>' +
+        '<b>ยอดจากลูกน้อง</b><span id="bkRepSub">ย้อนหลัง ' + BKRP_DAYS + ' วัน</span></div>' +
+      '<div class="bkrp-body" id="bkRepBody"></div>' +
+    '</div>';
+  document.body.appendChild(ov);
+  _bkRepRender();
+}
+function bkRepClose() {
+  const m = document.getElementById("bkRepModal");
+  if (m) m.remove();
+}
+
+function _bkRepRender() {
+  const host = document.getElementById("bkRepBody");
+  if (!host) return;
+  const days = _bkRepDayList();
+  let waiting = 0, html = "";
+
+  days.forEach(d => {
+    const plan = _bkRepPlan(d.mk, d.dd);
+    const rounds = _bkRepRounds(d.mk, d.dd);
+    if (!rounds.length) return;                       // วันที่ไม่มีใครส่ง ไม่ต้องขึ้นเลย
+    const wait = plan.length > 0;
+    if (wait) waiting++;
+
+    html += '<div class="bkrp-day' + (wait ? "" : " done") + '">' +
+      '<div class="bkrp-top"><b>' + (d.title ? d.title + " " : "") + _esc(d.label) + "</b>" +
+        '<span class="wd">' + d.wd + "</span>" +
+        '<span class="tg ' + (wait ? "wait" : "done") + '">' +
+          (wait ? "รอลง " + plan.length + " คน"
+                : (_bkInboxRows(d.mk, d.dd, null, false).some(r => r.a) ? "ลงแล้ว" : "ลงไม่ได้")) +
+        "</span></div>" +
+      '<div class="bkrp-rnd">' + rounds.length + " รอบ · " +
+        rounds.map(r => _bkRepHHMM(r.t) + " น. " + _esc(r.n || "ลูกน้อง") + " " + r.c + " คน " + r.q + " ใบ").join(" · ") +
+      "</div>";
+
+    if (wait) {
+      html += '<div class="bkrp-hd"><span>คนตัด</span><span>ลูกน้องส่ง</span><span>ช่องของคุณ</span><span>จะเป็น</span></div>';
+      plan.forEach(p => {
+        html += '<div class="bkrp-r"><span class="n' + (p.gone ? " gone" : "") + '">' + _esc(p.name) + "</span>" +
+          '<span class="s">' + p.q + "</span>" +
+          '<span class="o' + (p.own > 0 ? " has" : "") + '">' + (p.cur > 0 ? "มี " + p.cur : "ว่าง") + "</span>" +
+          '<span class="w ' + (p.need ? "q" : "new") + '">' + (p.need ? "ต้องเลือก" : String(p.vAdd)) + "</span></div>";
+      });
+      html += '<button class="bkrp-btn" onclick="bkRepApplyAsk(\'' + d.mk + "','" + d.dd + '\')">ลงยอดทั้งวัน</button>';
+    }
+    // V5.75: ของที่ลงไม่ได้ ต้องบอกว่าทำไมและต้องทำยังไงต่อ ไม่ใช่หายเงียบ
+    const blocked = _bkRepBlocked(d.mk, d.dd);
+    if (blocked.length) {
+      html += '<div class="bkrp-block">' + blocked.map(b =>
+        "<div><b>" + _esc(b.name) + " " + b.q + " ใบ</b> — " +
+        (b.lock ? "วันนี้ยึดมัดจำไว้แล้ว ลงไม่ได้ · ถ้าเขาเอาตะกร้ามาคืน ให้รับคืนในหน้ามัดจำ"
+                : "คนตัดคนนี้ถูกลบไปแล้ว ลงไม่ได้") + "</div>").join("") + "</div>";
+    }
+    if (!wait) {
+      const done = _bkInboxRows(d.mk, d.dd, null, false).filter(r => r.a);
+      const byId = {};
+      done.forEach(r => {
+        if (!byId[r.c]) byId[r.c] = { q: 0, t: r.a.t, mode: r.a.mode };
+        byId[r.c].q += r.q;
+        if (r.a.t > byId[r.c].t) { byId[r.c].t = r.a.t; byId[r.c].mode = r.a.mode; }
+      });
+      Object.keys(byId).forEach(id => {
+        const p = (bkCutters || []).find(x => x.id === id);
+        html += '<div class="bkrp-r"><span class="n' + (p ? "" : " gone") + '">' +
+          _esc(p ? p.name : "คนที่ถูกลบไปแล้ว") + "</span>" +
+          '<span class="s">' + byId[id].q + "</span>" +
+          '<span class="o">ลง ' + _bkRepHHMM(byId[id].t) + " น.</span>" +
+          '<span class="w sk">' + (byId[id].mode === "replace" ? "ทับ" : "บวกเพิ่ม") + "</span></div>";
+      });
+      if (done.length)
+        html += '<button class="bkrp-btn ghost" onclick="bkRepUndo(\'' + d.mk + "','" + d.dd + '\')">ย้อนการลงครั้งล่าสุดของวันนี้</button>';
+    }
+    html += "</div>";
+  });
+
+  if (!html) html = '<div class="bkrp-empty">ยังไม่มีใครส่งยอดมาใน ' + BKRP_DAYS + ' วันที่ผ่านมา<br>' +
+    'ถ้าลูกน้องกรอกแล้วแต่ไม่ขึ้นที่นี่ ให้เช็กว่าเปิดสวิตช์ “ลูกน้องลงตะกร้า” ให้คนตัดคนนั้นหรือยัง</div>';
+
+  // ของที่เก่ากว่า 30 วันและยังไม่ได้ลง ต้องไม่หายเงียบ
+  const old = _bkRepOlderPending();
+  if (old.total > 0)
+    html += '<div class="bkrp-old">เก่ากว่า ' + BKRP_DAYS + ' วัน ยังไม่ได้ลงอีก <b>' + old.total +
+      ' รายการ</b> รวม ' + old.q + ' ใบ<br>บอกผมได้ถ้าอยากให้เปิดดูย้อนหลังมากกว่านี้</div>';
+
+  host.innerHTML = html;
+  const sub = document.getElementById("bkRepSub");
+  if (sub) sub.textContent = "ย้อนหลัง " + BKRP_DAYS + " วัน" + (waiting ? " · รอลง " + waiting + " วัน" : " · ลงครบแล้ว");
+}
+
+// นับของค้างที่เลยช่วง 30 วันไปแล้ว จากเดือนที่โหลดไว้
+function _bkRepOlderPending() {
+  const inRange = {};
+  _bkRepDayList().forEach(d => { inRange[d.mk + "/" + d.dd] = 1; });
+  let total = 0, q = 0;
+  Object.keys(bkInbox).forEach(mk => {
+    const mon = bkInbox[mk] || {};
+    Object.keys(mon).forEach(dd => {
+      if (inRange[mk + "/" + dd]) return;
+      const rows = _bkInboxRows(mk, dd, null, true);
+      total += rows.length;
+      q += rows.reduce((s, x) => s + x.q, 0);
+    });
+  });
+  return { total: total, q: q };
+}
+
+// ── ถามก่อนลง ────────────────────────────────────────────────
+var _bkRepChoice = {};        // { คนตัด: "add" | "replace" }
+function bkRepApplyAsk(mk, dd) {
+  const plan = _bkRepPlan(mk, dd);
+  if (!plan.length) { if (typeof showToast === "function") showToast("ไม่มีรายการรอลงแล้ว", "info", 1800); return; }
+  const easy = plan.filter(p => !p.need), ask = plan.filter(p => p.need);
+  _bkRepChoice = {};
+  // ตั้งต้นเป็น "ไม่ทับ" (บวกเพิ่ม) ตามที่ตกลงกันว่าลูกน้องส่งเพิ่มได้เรื่อยๆ
+  // ยกเว้นกรณีเดียว: เลขที่ลูกน้องส่งเท่ากับเลขในช่องพอดี แปลว่าน่าจะนับของกองเดียวกัน
+  //   กรณีนั้นตั้งต้นเป็น "ทับ" ซึ่งทำให้เลขไม่ขยับ = ปลอดภัยกว่าการบวกเป็นสองเท่า
+  plan.forEach(p => { _bkRepChoice[p.id] = (p.need && p.vRep === p.cur) ? "replace" : "add"; });
+
+  let h = '<div class="in"><div class="hd"><b>ลงยอดวันที่ ' + _esc(_bkRepLabel(mk, dd)) + "</b><span>" +
+    (easy.length ? "ลงได้เลย " + easy.length + " คน" : "") +
+    (easy.length && ask.length ? " · " : "") +
+    (ask.length ? "ต้องเลือก " + ask.length + " คน" : "") + "</span></div><div class=\"sc\">";
+
+  if (easy.length) {
+    h += '<div class="bkrp-grp">ลงได้เลย</div>';
+    easy.forEach(p => {
+      h += '<div class="bkrp-ok"><span class="n">' + _esc(p.name) + "</span>" +
+        '<span class="v">' + (p.cur > 0 ? p.cur : "ว่าง") + " → <b>" + p.vAdd + "</b></span></div>";
+    });
+  }
+  if (ask.length) {
+    h += '<div class="bkrp-grp">ช่องที่คุณกรอกเองไว้ เลือกก่อน</div>';
+    ask.forEach(p => {
+      h += '<div class="bkrp-cq" data-cq="' + _esc(p.id) + '">' +
+        '<div class="l1"><span class="n">' + _esc(p.name) + "</span>" +
+        '<span class="d">ช่องคุณ ' + p.cur + " · ลูกน้องส่ง " + p.q + "</span></div>" +
+        '<div class="bkrp-ch">' +
+          '<button class="' + (_bkRepChoice[p.id] === "replace" ? "pick" : "") + '" onclick="_bkRepPick(\'' + _jsAttrEsc(p.id) + '\',\'replace\')">ทับ<i>' +
+            (p.vRep === p.cur ? "คง " + p.vRep + " · น่าจะซ้ำ" : "เป็น " + p.vRep) + "</i></button>" +
+          '<button class="' + (_bkRepChoice[p.id] === "add" ? "pick" : "") + '" onclick="_bkRepPick(\'' + _jsAttrEsc(p.id) + '\',\'add\')">ไม่ทับ<i>เป็น ' + p.vAdd + "</i></button>" +
+        "</div></div>";
+    });
+  }
+  h += "</div><div class=\"ft\"><button class=\"bkrp-btn\" onclick=\"_bkRepDoApply('" + mk + "','" + dd +
+    "')\">ยืนยัน · ลง " + plan.length + " คน</button></div></div>";
+
+  const ov = document.createElement("div");
+  ov.id = "bkRepApplySheet";
+  ov.className = "bkrp-sh";
+  ov.onclick = (e) => { if (e.target === ov && !_dirtyBlock(ov)) ov.remove(); };
+  ov.innerHTML = h;
+  document.body.appendChild(ov);
+}
+function _bkRepLabel(mk, dd) {
+  const d = _bkRepDayList().find(x => x.mk === mk && x.dd === dd);
+  return d ? ((d.title ? d.title + " " : "") + d.label) : (parseInt(dd, 10) + "/" + mk.slice(5));
+}
+function _bkRepPick(id, mode) {
+  _bkRepChoice[id] = mode;
+  const box = document.querySelector('#bkRepApplySheet [data-cq="' + id + '"] .bkrp-ch');
+  if (!box) return;
+  const btns = box.querySelectorAll("button");
+  btns[0].classList.toggle("pick", mode === "replace");
+  btns[1].classList.toggle("pick", mode === "add");
+}
+
+// ── ลงจริง ───────────────────────────────────────────────────
+function _bkRepDoApply(mk, dd) {
+  const sheet = document.getElementById("bkRepApplySheet");
+  if (sheet) sheet.remove();
+  if (!window._bkFromServer) {
+    if (typeof showToast === "function") showToast("ข้อมูลตะกร้ายังโหลดไม่เสร็จ — ยังลงไม่ได้ รอสักครู่แล้วลองใหม่", "warn", 3000);
+    return;
+  }
+  // อ่านกล่องรับสดอีกรอบก่อนลง — กันกรณีอีกเครื่อง (คุณกับแฟน) กดลงวันเดียวกันพร้อมกัน
+  db.ref("basketInbox/" + mk + "/" + dd).once("value").then(snap => {
+    const live = snap.val() || {};
+    const byId = {}, appliedById = {};
+    let skipped = 0;
+    Object.keys(live).forEach(k => {
+      const r = live[k];
+      if (!r || !(+r.q > 0)) return;
+      if (r.a) { appliedById[r.c] = (appliedById[r.c] || 0) + (+r.q); skipped++; return; }
+      if (!byId[r.c]) byId[r.c] = { q: 0, keys: [] };
+      byId[r.c].q += (+r.q); byId[r.c].keys.push(k);
+    });
+    const ids = Object.keys(byId);
+    if (!ids.length) {
+      _bkInboxEnsure(mk);
+      if (typeof showToast === "function") showToast("รายการทั้งหมดถูกลงไปแล้วจากอีกเครื่อง", "info", 2600);
+      return;
+    }
+    const at = Date.now();
+    const g = db.ref().push().key;
+    const patch = {}, apply = [];
+    ids.forEach(id => {
+      const cur = _bkGetInAt(mk, id, dd);
+      const applied = appliedById[id] || 0;
+      const mode = _bkRepChoice[id] === "replace" ? "replace" : "add";
+      const to = mode === "replace" ? (applied + byId[id].q) : (cur + byId[id].q);
+      apply.push({ id: id, to: to });
+      byId[id].keys.forEach(k => {
+        patch["basketInbox/" + mk + "/" + dd + "/" + k + "/a"] =
+          { t: at, g: g, mode: mode, from: cur, to: to };
+      });
+    });
+    // ทำเครื่องหมาย "ลงแล้ว" ให้สำเร็จก่อน แล้วค่อยเขียนตัวเลข
+    // ถ้าสลับลำดับ เน็ตหลุดกลางทางจะได้ตัวเลขที่ยังไม่ถูกทำเครื่องหมาย = กดอีกทีบวกซ้ำ
+    // แบบนี้ถ้าพัง คือไม่มีอะไรเปลี่ยนเลย
+    db.ref().update(patch).then(() => {
+      apply.forEach(x => { _bkSetInAt(mk, x.id, dd, x.to); });
+      bkSaveLocal();
+      bkRender();
+      _bkInboxEnsure(mk);
+      _bkInboxAfterChange();
+      if (typeof showToast === "function")
+        showToast("ลงแล้ว " + apply.length + " คน" + (skipped ? " · ข้าม " + skipped + " รายการที่อีกเครื่องลงไปแล้ว" : ""), "success", 2800);
+    }).catch(err => {
+      if (typeof showToast === "function")
+        showToast("ลงไม่สำเร็จ — เครือข่ายขาด ยังไม่มีอะไรเปลี่ยน ลองใหม่ได้", "error", 3200);
+      console.error("[bkRep] apply failed:", err);
+    });
+  }).catch(() => {
+    if (typeof showToast === "function") showToast("อ่านกล่องรับไม่ได้ — เช็กสัญญาณแล้วลองใหม่", "error", 2800);
+  });
+}
+
+// ── ย้อนการลง ────────────────────────────────────────────────
+function bkRepUndo(mk, dd) {
+  const done = _bkInboxRows(mk, dd, null, false).filter(r => r.a && r.a.g);
+  if (!done.length) return;
+  let last = null;
+  done.forEach(r => { if (!last || r.a.t > last.t) last = { g: r.a.g, t: r.a.t }; });
+  const grp = done.filter(r => r.a.g === last.g);
+  // V5.75: ถอยเฉพาะ "จำนวนที่เราลงไป" ไม่ใช่กระโดดกลับไปเลขเก่าดื้อๆ
+  //   ของเดิม: ลง 30 → เจ้าของแก้ช่องเป็น 45 เอง → กดย้อน → กลายเป็น 0 เลข 45 หายทั้งก้อน
+  //   ของใหม่: บวกเพิ่ม → ถอยจำนวนที่บวกไป (45−30=15)
+  //            ทับ      → คืนเลขเดิม แล้วบวกส่วนที่เจ้าของแก้เพิ่มหลังลงกลับเข้าไป
+  const sum = {}, info = {};
+  grp.forEach(r => {
+    sum[r.c] = (sum[r.c] || 0) + r.q;
+    info[r.c] = r.a;
+  });
+  const names = {}, back = {};
+  let touched = [];
+  Object.keys(sum).forEach(id => {
+    const p = (bkCutters || []).find(x => x.id === id);
+    names[id] = p ? p.name : id;
+    const a = info[id], now = _bkGetInAt(mk, id, dd);
+    back[id] = (a.mode === "replace")
+      ? Math.max(0, (+a.from || 0) + (now - (+a.to || 0)))
+      : Math.max(0, now - sum[id]);
+    if (now !== (+a.to || 0)) touched.push(names[id] + " (ตอนลงได้ " + a.to + " ตอนนี้ " + now + ")");
+  });
+  const who = Object.keys(names).map(k => names[k] + " " + sum[k] + " ใบ").join(" · ");
+  if (!confirm("ย้อนการลงเมื่อ " + _bkRepHHMM(last.t) + " น. ของวันที่ " + _bkRepLabel(mk, dd) + "?\n\n" +
+               who + "\n\nจะถอยเฉพาะจำนวนที่ลงไป และรายการกลับไปเป็น “รอลง”" +
+               (touched.length ? "\n\nหมายเหตุ: ช่องพวกนี้ถูกแก้หลังจากลงไปแล้ว\n" + touched.join("\n") : ""))) return;
+  const patch = {};
+  grp.forEach(r => {
+    patch["basketInbox/" + mk + "/" + dd + "/" + r.k + "/a"] = null;
+  });
+  db.ref().update(patch).then(() => {
+    Object.keys(back).forEach(id => { _bkSetInAt(mk, id, dd, back[id]); });
+    bkSaveLocal();
+    bkRender();
+    _bkInboxEnsure(mk);
+    _bkInboxAfterChange();
+    if (typeof showToast === "function") showToast("ย้อนเรียบร้อย · รายการกลับไปรอลงแล้ว", "success", 2400);
+  }).catch(() => {
+    if (typeof showToast === "function") showToast("ย้อนไม่สำเร็จ — เครือข่ายขาด ยังไม่มีอะไรเปลี่ยน", "error", 3000);
+  });
+}
+
+function _esc(x) { return (typeof _htmlEsc === "function") ? _htmlEsc(x) : String(x == null ? "" : x); }
+
+// ═══ V5.73: เปิด/ปิดสิทธิ์ให้ลูกน้องกรอกตะกร้าของคนตัดคนนี้ ═══
+// เก็บเป็นคีย์ staff ในตัวคนตัดเอง — ติดไปกับ JSON.stringify(bkCutters) ทั้งตอนเซฟและตอนโหลด
+// ค่าเริ่มต้นคือไม่มีคีย์ = ปิด · คนเก่าทุกคนจึงปิดอยู่ตั้งแต่แรกโดยไม่ต้องย้ายข้อมูล
+// ไม่ปิดชีตหลังกด เพราะอยากให้เห็นสวิตช์ขยับ และกดสลับไปมาได้โดยไม่ต้องเปิดใหม่
+// ไม่เรียก bkRender() เพราะตารางหลักไม่ได้แสดงค่านี้ — ตัวฟังของ Firebase จะวาดใหม่ให้เองอยู่แล้ว
+function bkToggleStaff(type, id, el) {
+  const list = type === "cutter" ? bkCutters : bkCustomers;
+  const p = list.find(x => x.id === id); if (!p) return;
+  p.staff = !p.staff;
+  try {
+    const sw = el.querySelector(".bk-sw");
+    if (sw) sw.classList.toggle("on", !!p.staff);
+    const sub = el.querySelector(".bk-staff-sub");
+    if (sub) sub.textContent = p.staff ? "ลูกน้องกรอกให้คนนี้ได้" : "ลูกน้องจะไม่เห็นชื่อนี้";
+  } catch (e) {}
+  bkSaveLocal();
+}
+
+// รายชื่อคนตัดที่เปิดให้ลูกน้องกรอกได้ — หน้ากรอกของลูกน้องจะเรียกตัวนี้
+// เรียงตามลำดับเดียวกับในแอปหลัก คนที่เห็นจะได้เรียงเหมือนที่คุณเห็น
+function bkStaffList() {
+  return (bkCutters || []).filter(p => !!p.staff);
 }
 
 // V3: Toggle lock state for auto-sort
@@ -13039,6 +14906,9 @@ function bkDeletePersonConfirm(type, id) {
       + `ยกเลิก = เก็บประวัติไว้ ลบแค่ชื่อออกจากรายชื่อ`);
   }
 
+  // V5.76: ลบคนตัดที่เคยออกลิงก์ดูยอด ต้องลบสำเนาทิ้งด้วย
+  //         ไม่งั้นเขาเปิดลิงก์เดิมดูยอดเก่าได้ตลอดไป ทั้งที่ไม่ได้ทำด้วยกันแล้ว
+  if (type === "cutter" && p.view) { _cvKill(p.view); }
   if(type==="cutter") bkCutters = bkCutters.filter(x=>x.id!==id);
   else bkCustomers = bkCustomers.filter(x=>x.id!==id);
   if (_wipe) _bkWipePersonHistory(type, id);
@@ -13315,8 +15185,9 @@ function bkRenderMatrix(type) {
             onchange="bkSetData('${type}','${person.id}','${dd}','out',this.value)"
             style="width:36px;border:none;background:transparent;text-align:center;font-family:inherit;font-size:11px;color:#1E3A8A;font-weight:${out?"600":"400"};">
         </td>
-        <td style="${bg}text-align:center;position:relative;">
-          <div class="bk-cell-in-wrap">
+        <td data-inb="${type}|${person.id}|${_mkRow}|${dd}" style="${bg}text-align:center;position:relative;">
+          ${type === "cutter" && _bkInboxPending(_mkRow, dd, person.id) > 0 ? '<span class="bk-inbox-dot"></span>' : ''}
+          <div class="bk-cell-in-wrap${warnHtml.indexOf("bk-warn-x") >= 0 ? " has-x" : ""}">
             <input type="text" inputmode="decimal" value="${inp||""}" placeholder="-"
               onchange="bkSetData('${type}','${person.id}','${dd}','in',this.value)"
               style="width:36px;border:none;background:transparent;text-align:center;font-family:inherit;font-size:11px;color:#16A34A;font-weight:${inp?"600":"400"};">
@@ -13366,12 +15237,24 @@ function bkRenderMatrix(type) {
     });
   }
 
-  // ปุ่มเพิ่มรายชื่อ
+  // ปุ่มท้ายตาราง — V5.74 แบ่งครึ่งแถวเดียวกัน (แบบ ข ที่เลือกไว้)
+  // ฝั่งซ้าย "ยอดลูกน้อง" ขึ้นเฉพาะตารางคนตัด เพราะลูกน้องกรอกได้แต่คนตัด
+  const _footRow = document.createElement("div");
+  _footRow.className = "bk-foot-row";
+  if (type === "cutter") {
+    const repBtn = document.createElement("button");
+    repBtn.className = "bk-rep-btn";
+    repBtn.id = "bkRepBtn";
+    repBtn.onclick = () => bkRepOpen();
+    _footRow.appendChild(repBtn);
+  }
   const addBtn = document.createElement("button");
   addBtn.className = "bk-add-btn";
   addBtn.textContent = `＋ เพิ่ม${type==="cutter"?"คนตัด":"ลูกค้า"}`;
   addBtn.onclick = () => bkAddPerson(type);
-  container.appendChild(addBtn);
+  _footRow.appendChild(addBtn);
+  container.appendChild(_footRow);
+  try { _bkRepSyncBtn(); } catch(e) {}
 
   // V5.63: ตารางเลื่อนในกรอบตัวเองแล้ว ที่ว่าง 80 จุดท้ายหน้า (เผื่อไว้ตอนหน้าเลื่อนทั้งหน้า)
   //        จะกลายเป็นช่องว่างค้างอยู่ถาวร → ตัดทิ้งเฉพาะตอนอยู่แท็บตาราง
@@ -14059,7 +15942,7 @@ function _bkRenderTraceBackModal() {
   overlay.id = "bkSummaryModal";
   overlay.dataset.mode = "trace-back";
   overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:9500;display:flex;align-items:center;justify-content:center;padding:16px;animation:bmFadeIn .2s ease;font-family:'IBM Plex Sans Thai',sans-serif;";
-  overlay.onclick = (e) => { if (e.target === overlay) { window._bkTraceBackCtx = null; overlay.remove(); } };
+  overlay.onclick = (e) => { if (e.target === overlay && !_dirtyBlock(overlay)) { window._bkTraceBackCtx = null; overlay.remove(); } };
 
   // Range label
   const firstM = months[0], lastM = months[months.length-1];
@@ -14329,7 +16212,7 @@ function bkShowSummary(type, id, name) {
   overlay.id = "bkSummaryModal";
   overlay.dataset.bkType = type; overlay.dataset.bkId = id; overlay.dataset.bkName = name;  // V4.90
   overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:9500;display:flex;align-items:center;justify-content:center;padding:16px;animation:bmFadeIn .2s ease;font-family:'IBM Plex Sans Thai',sans-serif;";
-  overlay.onclick = (e) => { if(e.target===overlay) overlay.remove(); };
+  overlay.onclick = (e) => { if (e.target === overlay && !_dirtyBlock(overlay)) overlay.remove(); };
 
   // V4.20: render row HTML — "วันที่   N" with right-aligned number column
   // V4.91: หน้านี้เป็นหน้าดูรวมเดือนเดียว → ใช้ดีไซน์เดียวกับรูปที่บันทึก
@@ -14627,7 +16510,7 @@ function _bkImgOpenReady() {
 
   const ov = document.createElement('div');
   ov.id = 'bkImgReadyOverlay';
-  ov.onclick = (e) => { if (e.target === ov) _bkImgCloseReady(); };
+  ov.onclick = (e) => { if (e.target === ov && !_dirtyBlock(ov)) _bkImgCloseReady(); };
   ov.innerHTML = `
     <div class="bkimg-card">
       <div class="bkimg-t">ทำรูปเสร็จแล้ว</div>
@@ -15013,7 +16896,7 @@ function bkClearOpenConfirm() {
   const overlay = document.createElement("div");
   overlay.id = "bkClearConfirmOverlay";
   overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:9600;display:flex;align-items:center;justify-content:center;padding:18px;font-family:'IBM Plex Sans Thai',sans-serif;animation:bkClearFade 0.18s ease;";
-  overlay.onclick = (e) => { if (e.target === overlay) bkClearCloseConfirm(); };
+  overlay.onclick = (e) => { if (e.target === overlay && !_dirtyBlock(overlay)) bkClearCloseConfirm(); };
 
   // snapshot ids ตอน open — กัน race condition (Case 15)
   window._bkClearSnapshot = { ids: stats.ids.slice(), count: stats.count, basket: stats.basket };
@@ -15978,7 +17861,7 @@ function bkOpenStatusPicker(id) {
   const overlay = document.createElement("div");
   overlay.id = "bkStatusPickerModal";
   overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9900;display:flex;align-items:flex-end;justify-content:center;";
-  overlay.onclick = (e) => { if(e.target===overlay) overlay.remove(); };
+  overlay.onclick = (e) => { if (e.target === overlay && !_dirtyBlock(overlay)) overlay.remove(); };
 
   const sheet = document.createElement("div");
   sheet.style.cssText = "background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:420px;padding:16px 16px 28px;";
@@ -19191,10 +21074,148 @@ function anKpi(label,val,sub,color,bg) {
 
 // ชั้น 1–4 · เรียงจากบนสุดลงล่าง
 // how: "exists" = สร้างสดแล้วลบทิ้ง · "flex" = เปิดด้วย style.display · "show" = เปิดด้วยคลาส
+// ═══════════════════════════════════════════════════════════════
+// V5.80: กันที่กรอกไว้ไม่ให้หาย
+// ═══════════════════════════════════════════════════════════════
+// เจ้าของเจอเองตอนกรอก "เพิ่มรายการ" แล้วนิ้วไปโดนพื้นหลัง — ที่พิมพ์ไว้หายหมด
+// ต้นเหตุจริงอยู่ที่ตอน "เปิดใหม่" ไม่ใช่ตอนปิด: openMultiAdd() ตั้งรายการเป็นศูนย์ทุกครั้ง
+// แต่แก้ตรงนั้นอย่างเดียวไม่พอ เพราะหน้าต่างอื่นอีกเกือบสามสิบจุดก็ปิดแบบเดียวกัน
+//
+// กติกา
+//   มีตัวอักษรค้างอยู่  → แตะพื้นหลังไม่ปิด · สั่นเตือน + ขึ้นแถบบอกว่าทำยังไงต่อ
+//   ว่างเปล่า           → ปิดได้เหมือนเดิมทุกอย่าง (ส่วนใหญ่ของแอปเข้าทางนี้)
+//   กดปุ่มปิด/ยกเลิก    → ปิดเลย ไม่ถามซ้ำ — กดปุ่มคือตั้งใจแล้ว
+//   ปัดกลับ             → กันครั้งแรก · ปัดซ้ำภายใน 4 วินาทีถือว่าตั้งใจ ปล่อยออก
+//
+// ═══ สำคัญ: ทุกอย่างในนี้ห่อ try/catch และคืน false เมื่อพัง ═══
+//   ถ้าตัวกันพัง อาการที่ยอมรับได้คือ "กลับไปปิดง่ายเหมือนเดิม"
+//   ไม่ใช่ "ปิดหน้าต่างไม่ได้เลย" ซึ่งจะทำให้ใช้แอปต่อไม่ได้
+
+// ช่องไหนนับว่า "กรอกไว้แล้ว"
+function _dirtyIn(root) {
+  try {
+    if (!root || !root.querySelectorAll) return false;
+    var els = root.querySelectorAll("input, textarea, [contenteditable='true']");
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (el.disabled || el.readOnly) continue;
+      if (el.hasAttribute("data-nodirty")) continue;
+      var t = (el.type || "").toLowerCase();
+      if (t === "button" || t === "submit" || t === "reset" || t === "file" ||
+          t === "hidden" || t === "range" || t === "color" || t === "search") continue;
+      // ซ่อนอยู่ไม่นับ — ฟอร์มที่พับเก็บไว้ (เช่น ช่องหักลบ) ไม่ควรกันการปิด
+      if (!el.getClientRects().length) continue;
+      if (t === "checkbox" || t === "radio") {
+        if (el.checked !== el.defaultChecked) return true;
+        continue;
+      }
+      if (el.isContentEditable) {
+        if (String(el.textContent || "").trim() !== "") return true;
+        continue;
+      }
+      // V5.81: เทียบกับ "ค่าตั้งต้นของช่อง" ไม่ใช่ "ว่างหรือไม่ว่าง"
+      //   ของเดิมนับว่ามีตัวอักษรคือกรอกไว้แล้ว ซึ่งผิดกับช่องที่แอปเติมค่ามาให้เอง
+      //   เช่นช่อง "ราคาต่อใบ" ในหน้าเลือกวันยึดมัดจำ มีเลขมาตั้งแต่เปิด
+      //   คนใช้ไม่ได้แตะอะไรเลย แต่ปัดกลับทีแรกกลับไม่ปิด ต้องปัดสองที
+      //   ชุดทดสอบเก่า t68c จับได้ตอนทำเรื่องระยะบนแท็บเล็ต
+      if (String(el.value || "") !== String(el.defaultValue || "")) return true;
+    }
+    return false;
+  } catch (e) { return false; }
+}
+
+var _dirtyPillT = null, _dirtyPillIv = null;
+
+// เก็บแถบเตือนทิ้ง — ใช้ตอนหน้าต่างปิดไปแล้วจริงๆ ไม่งั้นแถบจะค้างอยู่
+// แล้วอ่านว่า "ยังไม่ปิดให้" ทั้งที่ปิดไปแล้ว ซึ่งสับสนกว่าไม่มีเสียอีก
+function _dirtyClear() {
+  try {
+    clearTimeout(_dirtyPillT); clearInterval(_dirtyPillIv);
+    _dirtyPillT = null; _dirtyPillIv = null;
+    var e = document.getElementById("_dirtyPill");
+    if (e && e.parentNode) e.parentNode.removeChild(e);
+  } catch (x) {}
+}
+
+function _dirtyWarn(ov, mode) {
+  try {
+    // สั่นกล่องข้างใน ไม่ใช่ตัวพื้นหลัง — สั่นพื้นหลังจะเหมือนทั้งจอกระตุก
+    var sh = null;
+    for (var i = 0; i < ov.children.length; i++) {
+      var c = ov.children[i];
+      if (c.nodeType === 1 && c.id !== "_dirtyPill") { sh = c; break; }
+    }
+    if (sh) {
+      sh.classList.remove("_dshake");
+      void sh.offsetWidth;
+      sh.classList.add("_dshake");
+      setTimeout(function () { try { sh.classList.remove("_dshake"); } catch (e) {} }, 540);
+    }
+    var old = document.getElementById("_dirtyPill");
+    if (old && old.parentNode) old.parentNode.removeChild(old);
+    var p = document.createElement("div");
+    p.id = "_dirtyPill";
+    p.className = "_dpill";
+    p.innerHTML = "<b>ยังไม่ปิดให้</b> · ที่กรอกไว้ยังอยู่ครบ<br>" +
+      (mode === "back" ? "ถ้าจะทิ้งจริงๆ ปัดกลับอีกทีใน 4 วินาที"
+                       : "ถ้าจะทิ้งจริงๆ กดปุ่ม ปิด หรือ ยกเลิก");
+    // ต้องแปะที่ body ไม่ใช่ในตัวหน้าต่าง
+    //   หน้าต่างพวกนี้มี backdrop-filter = สร้างชั้นซ้อนของตัวเอง (z 600)
+    //   แถบที่อยู่ข้างในจึงจมอยู่ใต้ของที่ z สูงกว่า เช่น แถบโหมดออฟไลน์ (z 9999)
+    //   ตอนทดลองใช้จริงเจอว่าแถบขึ้นจริงแต่มองไม่เห็นเลย
+    document.body.appendChild(p);
+    void p.offsetWidth;
+    p.classList.add("on");
+    clearTimeout(_dirtyPillT);
+    _dirtyPillT = setTimeout(function () {
+      try {
+        p.classList.remove("on");
+        setTimeout(_dirtyClear, 260);
+      } catch (e) {}
+    }, 3600);
+    // ถ้าหน้าต่างถูกปิดด้วยปุ่มระหว่างที่แถบยังขึ้นอยู่ ให้เก็บแถบทันที
+    clearInterval(_dirtyPillIv);
+    _dirtyPillIv = setInterval(function () {
+      try { if (!ov.isConnected || !ov.getClientRects().length) _dirtyClear(); }
+      catch (x) { _dirtyClear(); }
+    }, 300);
+  } catch (e) {}
+}
+
+// คืน true = "อย่าเพิ่งปิด" · คืน false = ปิดได้ตามปกติ
+var _dirtyLastEl = null, _dirtyLastAt = 0;
+function _dirtyBlock(ov, mode) {
+  try {
+    if (!ov || !_dirtyIn(ov)) { _dirtyClear(); return false; }
+    if (mode === "back" && _dirtyLastEl === ov && (Date.now() - _dirtyLastAt) < 4000) {
+      _dirtyLastEl = null; _dirtyLastAt = 0;
+      _dirtyClear();
+      return false;                       // ปัดซ้ำติดกัน = ตั้งใจจะออกจริง
+    }
+    _dirtyLastEl = ov; _dirtyLastAt = Date.now();
+    _dirtyWarn(ov, mode);
+    return true;
+  } catch (e) { return false; }
+}
+window._dirtyIn = _dirtyIn;
+window._dirtyBlock = _dirtyBlock;
+
 const _LAYERS = [
   // ป๊อปอัปที่ลอยสูงสุด
   // V5.61: กล่อง "ทำรูปเสร็จแล้ว" (z-index 9600 สูงกว่าหน้าสรุปยอด 9500 จึงต้องปิดก่อน)
   ["bkImgReadyOverlay",    "exists", "_bkImgCloseReady"],
+  // V5.79: จอเตือนตอนฐานข้อมูลไม่ให้เข้า (z 10040) ไม่อยู่ในรายการนี้
+  //        เพราะปิดไม่ได้โดยตั้งใจ — อ่านข้อมูลไม่ได้ก็ใช้แอปไม่ได้อยู่ดี
+  // V5.78: หน้าเข้าใช้งานด้วยบัญชีจริง (z 9560) ลอยสูงสุดในกลุ่มนี้
+  ["bkOwnModal",           "exists", null],
+  // V5.77: ฟอร์มเพิ่มคน (z 9520) ลอยทับหน้าจัดการบัญชี (z 9500)
+  ["bkAcForm",             "exists", null],
+  ["bkAcModal",            "exists", "bkAcClose"],
+  // V5.76: แผ่นลิงก์ดูยอด (z 9460)
+  ["bkCvModal",            "exists", null],
+  // V5.74: แผ่นเลือก ทับ/ไม่ทับ (z 9450) ลอยทับหน้ารายงาน (z 9400) จึงต้องปิดก่อน
+  ["bkRepApplySheet",      "exists", null],
+  ["bkRepModal",           "exists", "bkRepClose"],
   // V5.68: หน้าเลือกวันยึดมัดจำ (z 9700) ต้องปิดก่อนหน้าต่างมัดจำ (z 9550)
   ["bkDepEditSheet",       "exists", null],
   ["bkDepPickModal",       "exists", "bkDepPickClose"],
@@ -19279,7 +21300,10 @@ function _closeTopLayer() {
   try {
     // ── ชั้น 1–4 ──
     for (const [id, how, fn] of _LAYERS) {
-      if (_lyOpen(id, how)) return _lyClose(id, how, fn);
+      if (!_lyOpen(id, how)) continue;
+      // V5.80: กรอกค้างอยู่ → กันครั้งแรก · ปัดซ้ำภายใน 4 วินาทีถึงจะออกให้
+      if (_dirtyBlock(document.getElementById(id), "back")) return true;
+      return _lyClose(id, how, fn);
     }
 
     // ── ชั้น 4ก · หน้าต่าง ＋รายการ — ถามก่อนถ้าพิมพ์ไว้แล้ว ──
@@ -19300,6 +21324,8 @@ function _closeTopLayer() {
       const s = window._billSelected, d = window._deductSelected;
       if (s && s.size && typeof billClearSelection === "function")   { billClearSelection();   return true; }
       if (d && d.size && typeof deductClearSelection === "function") { deductClearSelection(); return true; }
+      // V5.80: ช่องหักลบที่เปิดค้างและพิมพ์ไว้ — ฟอร์มที่พับเก็บอยู่ไม่นับ
+      if (_dirtyBlock(bill, "back")) return true;
       if (typeof closeBillModal === "function") closeBillModal();
       else bill.style.display = "none";
       return true;
@@ -20397,7 +22423,7 @@ function openBugAdmin() {
   const overlay = document.createElement("div");
   overlay.id = "bugAdminModal";
   overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:9700;display:flex;align-items:flex-end;justify-content:center;font-family:'IBM Plex Sans Thai',sans-serif;animation:bamFadeIn 0.2s ease;";
-  overlay.onclick = (e) => { if (e.target === overlay) closeBugAdmin(); };
+  overlay.onclick = (e) => { if (e.target === overlay && !_dirtyBlock(overlay)) closeBugAdmin(); };
 
   overlay.innerHTML = `
     <style>
@@ -20559,7 +22585,7 @@ function _bamShowDetail(key) {
   // เปิด detail modal
   const m = document.createElement("div");
   m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:9800;display:flex;align-items:center;justify-content:center;padding:18px;font-family:'IBM Plex Sans Thai',sans-serif;";
-  m.onclick = (e) => { if (e.target === m) m.remove(); };
+  m.onclick = (e) => { if (e.target === m && !_dirtyBlock(m)) m.remove(); };
   m.innerHTML = `
     <div style="background:#fff;border-radius:14px;max-width:500px;width:100%;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;">
       <div style="padding:12px 16px;border-bottom:0.5px solid rgba(60,60,67,0.15);display:flex;justify-content:space-between;align-items:center;">
@@ -20709,7 +22735,7 @@ function openBugReport() {
   const overlay = document.createElement("div");
   overlay.id = "bugReportModal";
   overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:9700;display:flex;align-items:center;justify-content:center;padding:18px;font-family:'IBM Plex Sans Thai',sans-serif;animation:brmFadeIn 0.2s ease;";
-  overlay.onclick = (e) => { if (e.target === overlay) closeBugReport(); };
+  overlay.onclick = (e) => { if (e.target === overlay && !_dirtyBlock(overlay)) closeBugReport(); };
 
   overlay.innerHTML = `
     <style>
@@ -21463,7 +23489,7 @@ function iosPrompt(opts) {
       else if (e.key === "Escape") { e.preventDefault(); cleanup(null); }
     };
     // คลิกนอก modal = cancel
-    modal.onclick = (e) => { if (e.target === modal) cleanup(null); };
+    modal.onclick = (e) => { if (e.target === modal && !_dirtyBlock(modal)) cleanup(null); };
   });
 }
 
@@ -21536,7 +23562,7 @@ function iosActionSheet(opts) {
     };
 
     overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) cleanup(null);
+      if (e.target === overlay && !_dirtyBlock(overlay)) cleanup(null);
     });
   });
 }
@@ -21846,7 +23872,7 @@ function _moveAskTypeSheet(ctx) {
   const overlay = document.createElement("div");
   overlay.id = "moveAskOverlay";
   overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:600;display:flex;align-items:flex-end;justify-content:center;padding:14px;font-family:'IBM Plex Sans Thai',sans-serif;animation:mvFade 0.18s ease;";
-  overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+  overlay.onclick = (e) => { if (e.target === overlay && !_dirtyBlock(overlay)) overlay.remove(); };
   overlay.innerHTML = `
     <style>
       @keyframes mvFade { from{opacity:0} to{opacity:1} }
@@ -22063,7 +24089,7 @@ function _moveOpenDatePicker(ctxs, mode) {
   const overlay = document.createElement("div");
   overlay.id = "moveDateOverlay";
   overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:700;display:flex;align-items:center;justify-content:center;padding:18px;font-family:'IBM Plex Sans Thai',sans-serif;animation:mvFade 0.2s ease;";
-  overlay.onclick = (e) => { if (e.target === overlay) _moveCloseDatePicker(); };
+  overlay.onclick = (e) => { if (e.target === overlay && !_dirtyBlock(overlay)) _moveCloseDatePicker(); };
   overlay.innerHTML = `
     <div style="background:rgba(255,255,255,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:16px;max-width:320px;width:100%;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.2);animation:mvSlideUp 0.25s cubic-bezier(.34,1.56,.64,1);">
       <div style="padding:14px 16px 8px;text-align:center;border-bottom:0.5px solid rgba(60,60,67,0.15);">
@@ -23369,7 +25395,7 @@ function _showOtherDayWarn(activeDayKey, todayKey) {
     overlay.querySelector("#odwBtnContinue").addEventListener("click", () => cleanup("continue"));
     // กดนอก modal = cancel
     overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) cleanup("cancel");
+      if (e.target === overlay && !_dirtyBlock(overlay)) cleanup("cancel");
     });
   });
 }
@@ -25328,7 +27354,7 @@ setTimeout(() => setBodyTabClass(activeTab || "board"), 50);
 </button>
 
 <!-- MULTI ADD MODAL (page-mode · MIDNIGHT CLEAN) -->
-<div id="multiAddModal" onclick="if(event.target===this)closeMultiAdd()">
+<div id="multiAddModal" onclick="if(event.target===this&&!_dirtyBlock(this))closeMultiAdd()">
   <div id="multiAddSheet">
     <div class="mas-head">
       <div class="mas-head-spacer"></div>
@@ -25363,7 +27389,7 @@ setTimeout(() => setBodyTabClass(activeTab || "board"), 50);
 </div>
 
 <!-- TRUCK MODAL -->
-<div id="truckModal" onclick="if(event.target===this)truckCloseModal()">
+<div id="truckModal" onclick="if(event.target===this&&!_dirtyBlock(this))truckCloseModal()">
   <div id="truckModalBox">
     <div class="tmhd">
       <div id="truckModalTitle" style="font-size:15px;font-weight:600;">＋ เพิ่มคิวรถ</div>
