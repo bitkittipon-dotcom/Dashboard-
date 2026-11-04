@@ -1421,6 +1421,13 @@ tr:last-child td { border-bottom: none; }
     width: calc(100vw - 28px) !important;
     margin-left: calc(50% - min(620px, 50vw - 14px)) !important;
   }
+  /* V5.83: เรียงเป็น เงินเชื่อ · หน้าร้าน · จัดส่ง · รถรั้ว
+     สลับด้วย order ของกริด ไม่แตะลำดับใน DOM
+     เพราะ BOARD_GROUP_ORDER เป็นลำดับเดียวที่ใช้ทั้งแนวตั้งและแนวนอน
+     ไปแตะตรงนั้นแนวตั้งจะเพี้ยนตาม ซึ่งเจ้าของบอกว่าของเดิมถูกแล้ว
+     อีกสองใบไม่ต้องสั่งอะไร ค่าเริ่มต้นเป็น 0 จึงมาก่อนตามลำดับเดิม */
+  .groups-grid .group-delivery { order: 3 !important; }
+  .groups-grid .group-fence    { order: 4 !important; }
 }
 
 /* ── CUSTOMER MODULE ── */
@@ -3977,6 +3984,106 @@ tr:last-child td { border-bottom: none; }
   color: #0369A1 !important; }
 /* กล่องผลค้นหา — กว้างตามช่องพิมพ์ ไม่บังคับความกว้างอื่น */
 .board-search-drop { min-width: 0 !important; max-width: none !important; }
+/* ═══ V5.84: ปุ่ม "ดึงจัดส่ง" (ลิงก์น้ำเงินสว่าง ไม่มีแสงเรือง) + แผ่นดึงจากแอปขาย ═══ */
+.bh-pull { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  background: #F2F8FF; border: 1.5px solid #2E8BFF; color: #0A6CF0; border-radius: 12px;
+  padding: 8px 14px; font-size: 13px; font-weight: 800; font-family: inherit; cursor: pointer; white-space: nowrap;
+  -webkit-tap-highlight-color: transparent; }
+.bh-pull:active { background: #E2EFFF; }
+.item-src { display: inline-flex; vertical-align: -1px; margin-left: 4px; color: #0A6CF0; text-decoration: none; }
+.sp-ov { position: fixed; inset: 0; z-index: 9300; background: rgba(0,0,0,.35); display: flex; align-items: center; justify-content: center;
+  padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom)); }
+.sp-ov2 { z-index: 9310; background: rgba(0,0,0,.25); }
+.sp-sh { background: #fff; color: #1C1917; border-radius: 18px; width: 100%; max-width: 440px; max-height: 100%; display: flex; flex-direction: column;
+  box-shadow: 0 16px 44px rgba(0,0,0,.25); overflow: hidden; font-family: inherit; }
+.sp-h { position: relative; text-align: center; padding: 12px 48px 10px; border-bottom: 1px solid #EFECE8; flex: none; }
+.sp-h b { display: block; font-size: 16px; }
+.sp-h small { color: #8A847E; font-size: 12.5px; }
+.sp-x { position: absolute; right: 10px; top: 10px; width: 32px; height: 32px; border-radius: 50%; border: 0; background: #EFEEEC; color: #0A64C9; font-size: 14px; font-weight: 700; cursor: pointer; }
+.sp-body { overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1 1 auto; min-height: 0; }
+.sp-f { display: flex; gap: 8px; padding: 10px 12px 12px; border-top: 1px solid #EFECE8; flex: none; }
+.sp-b { flex: 1; border: 0; border-radius: 12px; padding: 11px 8px; font: 700 14px inherit; font-family: inherit; cursor: pointer; }
+.sp-b.c { background: #EFEEEC; color: #44403C; }
+.sp-b.g { background: #C2410C; color: #fff; flex: 1.8; }
+.sp-b.k { background: #1C1917; color: #fff; flex: 1.6; }
+.sp-b:disabled { opacity: .45; }
+.sp-cnt { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; padding: 10px 12px; border-bottom: 1px solid #EFECE8; }
+.sp-pl { display: inline-block; font-size: 11px; font-weight: 700; border-radius: 6px; padding: 0 6px; flex: none; white-space: nowrap; }
+.sp-pl.eq { background: #DCFCE7; color: #166534; } .sp-pl.sim { background: #FFEDD5; color: #9A3412; } .sp-pl.nw { background: #DBEAFE; color: #1E40AF; }
+.sp-pl.mm { background: #EDE9FE; color: #5B21B6; } .sp-pl.up { background: #FEF3C7; color: #854D0E; } .sp-pl.got { background: #EEEDEB; color: #78716C; }
+.sp-gt { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px 6px; font-size: 12.5px; font-weight: 800; color: #57534E; background: #FAF9F7; border-bottom: 1px solid #F1EEEA; }
+.sp-gt small { font-weight: 600; color: #8A847E; font-size: 11.5px; }
+.sp-gt.w { background: #FFF7ED; color: #9A3412; }
+.sp-r { display: grid; grid-template-columns: 24px minmax(0,1fr) auto; column-gap: 10px; row-gap: 3px; align-items: center; padding: 9px 14px; border-bottom: 1px solid #F3F0EC; cursor: pointer; }
+.sp-r.off .sp-n1, .sp-r.off .sp-am { color: #A8A29E; }
+.sp-ck { grid-row: 1 / 3; width: 24px; height: 24px; border-radius: 7px; border: 2px solid #C9C3BC; background: #fff; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.sp-ck.on { background: #C2410C; border-color: #C2410C; }
+.sp-ck.on::after { content: ""; width: 6px; height: 11px; border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg) translate(-1px,-1px); }
+.sp-n1 { font-size: 15px; font-weight: 600; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sp-am { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+.sp-n2 { grid-column: 2 / 4; display: flex; align-items: center; gap: 6px; font-size: 12px; color: #8A847E; min-width: 0; }
+.sp-n2 em { font-style: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.sp-n2 s { color: #A8A29E; }
+.sp-sel { display: inline-flex; align-items: center; gap: 4px; border: 1.5px solid #F0B27A; background: #FFF7ED; color: #9A3412; border-radius: 8px; padding: 0 8px; font: 700 15px inherit; font-family: inherit; max-width: 100%; cursor: pointer; }
+.sp-sel::after { content: ""; width: 6px; height: 6px; border: solid currentColor; border-width: 0 2px 2px 0; transform: rotate(45deg) translateY(-2px); margin-left: 3px; flex: none; }
+.sp-skip { padding: 8px 14px 10px; font-size: 12.5px; color: #8A847E; display: flex; flex-direction: column; gap: 4px; }
+.sp-skip div { display: flex; gap: 6px; align-items: baseline; }
+.sp-skip em { font-style: normal; }
+.sp-msg { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 32px 18px; }
+.sp-msg.sm { padding: 14px; }
+.sp-msg b { font-size: 15px; } .sp-msg small { color: #78716C; font-size: 13px; line-height: 1.5; }
+.sp-msg.err b { color: #B91C1C; }
+.sp-msg code { font-size: 11px; color: #A8A29E; word-break: break-all; }
+.sp-spin { width: 26px; height: 26px; border-radius: 50%; border: 3px solid #DBEAFE; border-top-color: #0A6CF0; animation: spSpin .8s linear infinite; }
+@keyframes spSpin { to { transform: rotate(360deg); } }
+.sp-edb { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.sp-fl { display: grid; grid-template-columns: 52px minmax(0,1fr); gap: 8px; align-items: start; }
+.sp-fl > span { color: #78716C; font-weight: 700; font-size: 12.5px; padding-top: 9px; }
+.sp-opts { display: flex; flex-direction: column; border: 1px solid #EAE6E1; border-radius: 12px; overflow: hidden; min-width: 0; }
+.sp-op { display: grid; grid-template-columns: 20px minmax(0,1fr) auto; gap: 8px; align-items: center; padding: 9px 10px; border-bottom: 1px solid #F3F0EC; font-size: 14px; cursor: pointer; }
+.sp-op:last-of-type { border-bottom: 0; }
+.sp-op input[type=radio] { width: 18px; height: 18px; margin: 0; accent-color: #C2410C; }
+.sp-op small { color: #8A847E; font-size: 11.5px; white-space: nowrap; }
+.sp-op:has(input:checked) { background: #FFF7ED; }
+.sp-own { grid-template-columns: 20px minmax(0,1fr); }
+.sp-in { width: 100%; min-width: 0; border: 1.5px solid #E2DED9; border-radius: 10px; padding: 7px 10px; font: 16px inherit; font-family: inherit; color: #1C1917; background: #fff; box-sizing: border-box; }
+.sp-in:focus { outline: none; border-color: #C2410C; box-shadow: 0 0 0 3px rgba(194,65,12,.14); }
+.sp-sug:empty { display: none; }
+.sp-sug { display: flex; flex-direction: column; border-top: 1px solid #F3F0EC; }
+.sp-sug button { display: flex; justify-content: space-between; gap: 8px; border: 0; background: #FAF9F7; padding: 7px 12px; font: 14px inherit; font-family: inherit; text-align: left; cursor: pointer; }
+.sp-sug small { color: #8A847E; font-size: 11.5px; }
+.sp-amw { display: flex; align-items: center; gap: 8px; } .sp-amw small { color: #A8A29E; font-size: 12px; white-space: nowrap; }
+.sp-ro { padding-top: 8px; font-weight: 600; } .sp-ro small { color: #8A847E; font-weight: 400; }
+.sp-mem { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #57534E; cursor: pointer; }
+.sp-mem input { width: 18px; height: 18px; margin: 0; accent-color: #C2410C; flex: none; }
+/* ═══ V5.85: ดึงตะกร้าจากแอปขาย (ใช้แผ่นชุดเดียวกับดึงจัดส่ง) ═══ */
+.bk-foot-row .bk-pull-btn { display: flex; align-items: center; justify-content: center; gap: 5px;
+  padding: 11px 6px; border-radius: 11px; border: 1.5px solid #2E8BFF; background: #F2F8FF; color: #0A6CF0;
+  font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; -webkit-tap-highlight-color: transparent; white-space: nowrap; }
+.bk-pull-btn svg { width: 15px; height: 15px; flex: 0 0 auto; }
+.bk-pull-btn:active { background: #E2EFFF; }
+td.bk-so { box-shadow: inset 0 0 0 1.5px #8EC0FF; border-radius: 6px; background: #F2F8FF !important; }
+.bp-seg { display: flex; margin: 10px 12px 8px; background: #EFEEEC; border-radius: 10px; padding: 3px; }
+.bp-seg button { flex: 1; border: 0; background: none; border-radius: 8px; padding: 6px; font: 700 13px inherit; font-family: inherit; color: #78716C; cursor: pointer; }
+.bp-seg button.on { background: #fff; color: #1C1917; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.bp-days { display: flex; gap: 6px; overflow-x: auto; padding: 0 12px 10px; border-bottom: 1px solid #EFECE8; -webkit-overflow-scrolling: touch; }
+.bp-dy { flex: none; width: 60px; border: 1.5px solid #E7E3DE; border-radius: 12px; padding: 5px 0 4px; text-align: center; font-size: 11px; color: #8A847E; background: #fff; font-family: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
+.bp-dy b { font-size: 17px; color: #1C1917; line-height: 1.2; }
+.bp-dy.on { border-color: #2E8BFF; background: #F2F8FF; }
+.bp-dy em { font-style: normal; font-weight: 700; font-size: 10px; white-space: nowrap; }
+.bp-dy .n { color: #0A6CF0; } .bp-dy .ok { color: #15803D; } .bp-dy .ch { color: #C2410C; } .bp-dy .no { color: #B4AEA8; }
+.sp-ck.bp.on { background: #0A6CF0; border-color: #0A6CF0; }
+.sp-b.bpg { background: #0A6CF0; color: #fff; flex: 1.8; }
+.bp-u { font-size: 11px; color: #8A847E; font-weight: 600; }
+.bp-two { grid-column: 2 / 4; display: flex; gap: 6px; margin-top: 4px; }
+.bp-two button { flex: 1; border: 1.5px solid #E2DED9; background: #fff; border-radius: 9px; padding: 4px; font: 700 12.5px inherit; font-family: inherit; color: #57534E; cursor: pointer; }
+.bp-two button.on { border-color: #2E8BFF; background: #F2F8FF; color: #0A6CF0; }
+.bp-dr { display: grid; grid-template-columns: 24px minmax(0,1fr) auto; gap: 10px; align-items: center; padding: 9px 14px; border-bottom: 1px solid #F3F0EC; }
+.bp-dr.off .bp-dl { opacity: .5; }
+.bp-dl { border: 0; background: none; text-align: left; padding: 0; font-family: inherit; cursor: pointer; min-width: 0; }
+.bp-dl b { display: block; font-size: 15px; color: #1C1917; } .bp-dl small { display: block; font-size: 12px; color: #8A847E; }
+.sp-pl.lk { background: #FEE2E2; color: #991B1B; }
+
 </style>
 </head>
 <body>
@@ -5510,6 +5617,7 @@ input[name="cust-name-no-fill"]:-webkit-autofill {
         <button class="bh-rnd" onclick="boardNavToday()">กลับ</button>
         <button class="bh-rnd" onclick="avShow()" id="avOpenBtn">all</button>
         <button class="bh-add" onclick="openMultiAdd()" id="multiAddNavBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>รายการ</span></button>
+        <button class="bh-pull" onclick="spOpen()" id="spNavBtn" title="ดึงบิลจัดส่งที่ยังไม่จ่ายจากแอปขาย"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg><span>ดึงจัดส่ง</span></button>
       </div>
     </div></div>
     <!-- ปุ่มปิดยอด (ซ่อนอยู่ ใช้แทน progress wrap) -->
@@ -5766,8 +5874,8 @@ input[name="cust-name-no-fill"]:-webkit-autofill {
 <!-- Chart.js + html2canvas: lazy-loaded on demand (saves ~410 KB on first paint) -->
 <script>
 // ═══ V4.38 (B.4): APP_VERSION — single source of truth ═══
-window.APP_VERSION = "V5.82";
-window.APP_VERSION_STRING = "V5.82"; // alias for compatibility
+window.APP_VERSION = "V5.85";
+window.APP_VERSION_STRING = "V5.85"; // alias for compatibility
 
 // ═══════════════════════════════════════════════════════════════════
 // V5.49: ดักคำเตือน "ไม่มี index" ของ Firebase
@@ -8708,6 +8816,8 @@ function renderBoard() {
         nameEl2.style.textDecorationStyle = isFade ? "solid" : "dotted";
         nameEl2.style.textDecorationColor = isFade ? "#D1D5DB" : nameColor;
         nameEl2.textContent = item.name;
+        // V5.84: แถวที่ดึงมาจากแอปขาย — ไอคอนดาวน์โหลดสีน้ำเงินหลังชื่อ
+        if (item.src && !isFade) { const _sx = document.createElement("span"); _sx.className = "item-src"; _sx.title = "ดึงมาจากแอปขาย"; _sx.innerHTML = SP_DL; nameEl2.appendChild(_sx); }
         nameEl2.title = "กดเพื่อดูรวมบิล";
         nameEl2.addEventListener("click", () => openBillModal(item.name, g));
         // V5.56: ระหว่างอยู่ในโหมดเลือกย้าย ห้ามชื่อรับนิ้ว
@@ -15180,7 +15290,7 @@ function bkRenderMatrix(type) {
       }
       
       html += `
-        <td class="${divider}" style="${bg}text-align:center;">
+        <td class="${divider}${entry.so > 0 ? " bk-so" : ""}" style="${bg}text-align:center;"${entry.so > 0 ? ` title="ดึงจากแอปขาย ${entry.so} ใบ"` : ""}>
           <input type="text" inputmode="decimal" value="${out||""}" placeholder="-"
             onchange="bkSetData('${type}','${person.id}','${dd}','out',this.value)"
             style="width:36px;border:none;background:transparent;text-align:center;font-family:inherit;font-size:11px;color:#1E3A8A;font-weight:${out?"600":"400"};">
@@ -15247,6 +15357,13 @@ function bkRenderMatrix(type) {
     repBtn.id = "bkRepBtn";
     repBtn.onclick = () => bkRepOpen();
     _footRow.appendChild(repBtn);
+    // V5.85: ดึงจำนวนลังจากแอปขาย (ลูกค้าที่เปิดสวิตช์นับตะกร้า) → ช่อง ออกไป
+    const pullBtn = document.createElement("button");
+    pullBtn.className = "bk-pull-btn";
+    pullBtn.id = "bkPullBtn";
+    pullBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>ดึงจากแอปขาย';
+    pullBtn.onclick = () => bpOpen();
+    _footRow.appendChild(pullBtn);
   }
   const addBtn = document.createElement("button");
   addBtn.className = "bk-add-btn";
@@ -21201,6 +21318,11 @@ window._dirtyIn = _dirtyIn;
 window._dirtyBlock = _dirtyBlock;
 
 const _LAYERS = [
+  // V5.84: แผ่นดึงจัดส่งจากแอปขาย (แผ่นแก้แถวลอยทับแผ่นดึง)
+  ["bpEditSheet",          "exists", null],
+  ["bpModal",              "exists", "bpClose"],
+  ["spEditSheet",          "exists", null],
+  ["spModal",              "exists", "spClose"],
   // ป๊อปอัปที่ลอยสูงสุด
   // V5.61: กล่อง "ทำรูปเสร็จแล้ว" (z-index 9600 สูงกว่าหน้าสรุปยอด 9500 จึงต้องปิดก่อน)
   ["bkImgReadyOverlay",    "exists", "_bkImgCloseReady"],
@@ -26219,6 +26341,808 @@ async function masDoSave() {
     if(btn) btn.disabled = false;
   }
 }
+
+
+// ══════════════════════════════════════════════════════════════
+// V5.84: ดึงรายชื่อจัดส่งจากแอปขาย (appตารางขายของ · คลาวด์ sell-thodsapron)
+//   ปุ่ม "ดึงจัดส่ง" ต่อจาก ＋รายการ → อ่านบิลจัดส่งที่ยังไม่จ่ายของวันเดียวกันจากแอปขาย
+//   → จับคู่ชื่อกับชื่อที่เคยใช้ในตลาด (ตรงกัน / คล้ายกัน / ชื่อใหม่ / จับคู่ไว้) → ติ๊กเลือก → ลงหมวดจัดส่ง
+//   · ยอด = ยอดรวมทั้งบิล (ผลไม้ + ภาชนะ/มัดจำ) · บิลที่จ่ายแล้วในแอปขายไม่ดึง
+//   · แถวที่ดึงมาจำที่มา (src) ไว้ → ดึงซ้ำไม่ได้แถวซ้ำ · ยอดในแอปขายเปลี่ยน → เสนออัปเดตยอด
+//   · แอปขายอ่านอย่างเดียว ไม่เขียนอะไรกลับ
+// ══════════════════════════════════════════════════════════════
+const SP_CFG = {
+  apiKey: "AIzaSyANFwh9xpqfDC5vgaM7l47e9eRSUL2s0lk",
+  authDomain: "sell-thodsapron.firebaseapp.com",
+  projectId: "sell-thodsapron",
+  storageBucket: "sell-thodsapron.firebasestorage.app",
+  messagingSenderId: "163541729229",
+  appId: "1:163541729229:web:7988c884c184d3d4ca4e84"
+};
+const SP_STORE = "tossaporn";
+const SP_FS_SRC = "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js";
+const SP_MS = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+const SP_WD = ["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
+const SP_GL = { credit:"เงินเชื่อ", transfer:"หน้าร้าน", fence:"รถรั้ว", delivery:"จัดส่ง" };
+const SP_DL = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>';
+let _spApp = null, _spFsP = null, _sp = null;
+
+function _spEsc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]); }
+function _spFmt(n) { return Math.round(+n || 0).toLocaleString("en-US"); }
+function _spDayLbl(k) { const p = parseDayKey(k); return p ? `${p.day} ${SP_MS[p.month-1]}` : String(k || ""); }
+function _spSalesKey(day) {
+  const p = parseDayKey(day); if (!p) return null;
+  return String(p.year + 543) + String(p.month).padStart(2, "0") + String(p.day).padStart(2, "0");   // แอปขายใช้ พ.ศ. เช่น 25691104
+}
+
+// ── ต่อคลาวด์แอปขาย (แอปตัวที่สอง · ไม่ยุ่งกับบัญชีของแอปตลาด) ──
+function _spLoadFs() {
+  if (typeof firebase !== "undefined" && typeof firebase.firestore === "function") return Promise.resolve();
+  if (_spFsP) return _spFsP;
+  _spFsP = new Promise((res, rej) => {
+    const s = document.createElement("script");
+    s.src = SP_FS_SRC; s.async = true;
+    s.onload = () => res();
+    s.onerror = () => { _spFsP = null; const e = new Error("โหลดตัวอ่านคลาวด์แอปขายไม่ได้"); e.code = "sp/script"; rej(e); };
+    document.head.appendChild(s);
+  });
+  return _spFsP;
+}
+function _spGetApp() {
+  if (_spApp) return _spApp;
+  try { _spApp = firebase.app("sellApp"); } catch (e) { _spApp = firebase.initializeApp(SP_CFG, "sellApp"); }
+  return _spApp;
+}
+function _spTimeout(p, ms) {
+  return Promise.race([p, new Promise((_, rej) => setTimeout(() => { const e = new Error("timeout"); e.code = "sp/timeout"; rej(e); }, ms))]);
+}
+async function _spFetchDay(day) {
+  if (navigator.onLine === false) { const e = new Error("offline"); e.code = "sp/offline"; throw e; }
+  await _spTimeout(_spLoadFs(), 15000);
+  const app = _spGetApp();
+  const au = app.auth();
+  if (!au.currentUser) await _spTimeout(au.signInAnonymously(), 15000);
+  const k = _spSalesKey(day);
+  const doc = await _spTimeout(app.firestore().collection("stores").doc(SP_STORE).collection("days").doc(k).get({ source: "server" }), 15000);
+  if (!doc || !doc.exists) return { key: k, data: null };
+  let d = null;
+  try { d = JSON.parse((doc.data() || {}).data || "null"); } catch (e) { d = null; }
+  return { key: k, data: d };
+}
+function _spErrMsg(e) {
+  const c = String((e && e.code) || ""), m = String((e && e.message) || "");
+  const host = location.host || "ไฟล์ในเครื่อง";
+  if (c === "sp/offline" || c === "sp/script" || /network-request-failed|unavailable/i.test(c + m))
+    return { t: "ต่อเน็ตไม่ได้", d: "เช็กสัญญาณเน็ต แล้วกด ลองใหม่" };
+  if (c === "sp/timeout" || /deadline/i.test(c))
+    return { t: "คลาวด์แอปขายตอบช้า", d: "ลองใหม่อีกครั้ง ถ้ายังช้าให้รอสักครู่" };
+  if (/referer|api-key|unauthorized-domain|API_KEY|blocked/i.test(c + m))
+    return { t: "คลาวด์แอปขายไม่อนุญาตเว็บนี้", d: "ต้องเพิ่ม " + host + " ในรายชื่อเว็บที่ใช้คีย์ได้ — Google Cloud Console → APIs & Services → Credentials → API key ของ sell-thodsapron → Website restrictions" };
+  if (/operation-not-allowed|admin-restricted/i.test(c))
+    return { t: "แอปขายปิดการเข้าแบบไม่ระบุตัวตน", d: "เปิด Anonymous ใน Firebase Console ของ sell-thodsapron → Authentication → Sign-in method" };
+  if (/permission/i.test(c + m))
+    return { t: "คลาวด์แอปขายไม่ให้สิทธิ์อ่าน", d: "กฎ Firestore ของ sell-thodsapron ไม่ให้เว็บนี้อ่าน — ต้องให้ผู้ที่ล็อกอิน (แบบไม่ระบุตัวตน) อ่าน stores/tossaporn/days ได้" };
+  return { t: "ดึงจากแอปขายไม่สำเร็จ", d: "ลองใหม่อีกครั้ง" };
+}
+
+// ── บิลจัดส่งในแอปขาย ──
+function _spBillTotal(b) {
+  const a = (b.items || []).reduce((s, x) => s + (+(x && x.total) || 0), 0);
+  const c = (b.addons || []).reduce((s, x) => s + (+(x && x.total) || 0), 0);
+  return Math.round(a + c);
+}
+function _spBillPaid(b) {
+  const p = b.payment;
+  if (p === "cash" || p === "transfer") return true;
+  if (p === "pending-collect" && b.col && b.col.m) return true;   // ลูกน้องเก็บเงินแล้ว
+  return false;
+}
+
+// ── ชื่อในตลาด: กันเว้นวรรค · ตัดวรรณยุกต์ · ตัดคำนำหน้า · ระยะห่างตัวอักษร ──
+const SP_PFX = ["อาม่า","อาก๋ง","เสี่ย","น้อง","เฮีย","เจ๊","เจ้","ป้า","พี่","น้า","ลุง","ยาย","คุณ","แม่","ป๋า"].map(p => p.replace(/[็-์]/g, ""));
+function _spN(s) { return String(s || "").replace(/[\s​ ]+/g, "").toLowerCase(); }
+function _spT(s) { return _spN(s).replace(/[็-์]/g, ""); }
+function _spP(s) { let t = _spT(s); for (const p of SP_PFX) if (t.startsWith(p) && t.length - p.length >= 2) { t = t.slice(p.length); break; } return t; }
+function _spLev(a, b, cap) {
+  if (Math.abs(a.length - b.length) > cap) return cap + 1;
+  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i]; let mn = i;
+    for (let j = 1; j <= b.length; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j-1] + 1, prev[j-1] + (a[i-1] === b[j-1] ? 0 : 1));
+      if (cur[j] < mn) mn = cur[j];
+    }
+    if (mn > cap) return cap + 1;
+    prev = cur;
+  }
+  return prev[b.length];
+}
+// รายชื่อที่เคยใช้ในตลาด (บอร์ด + คลังปิดยอด + ทะเบียนลูกค้า) · ล่าสุดก่อน
+function _spKnown() {
+  const out = new Map();
+  const src = Object.assign({}, allClosed || {}, allDays || {});
+  const keys = _sortDayKeys(Object.keys(src)).reverse();
+  keys.forEach((day, ri) => {
+    const d = src[day] || {};
+    GROUPS.forEach(g => {
+      Object.values(d[g.key] || {}).forEach(it => {
+        const n = String((it && it.name) || "").trim(); if (!n) return;
+        if (!out.has(n)) out.set(n, { n, day, grp: g.key, rank: ri, color: it.nameColor || "" });
+      });
+    });
+  });
+  let rk = keys.length;
+  Object.values(cmCustomers || {}).forEach(c => {
+    const n = String((c && c.name) || "").trim(); if (!n) return;
+    const x = out.get(n);
+    if (!x) out.set(n, { n, day: null, grp: null, rank: rk++, color: c.nameColor || "" });
+    else if (c.nameColor) x.color = c.nameColor;
+  });
+  return [...out.values()];
+}
+// จับคู่ชื่อจากแอปขาย → {kind:'eq'|'sim'|'nw', name, cands}
+function _spMatch(sName, known) {
+  const n0 = _spN(sName);
+  const eq = known.filter(k => _spN(k.n) === n0).sort((a, b) => a.rank - b.rank);
+  if (eq.length) return { kind: "eq", name: eq[0].n, cands: [] };
+  if (/^\d+$/.test(n0)) return { kind: "nw", name: sName, cands: [] };   // ชื่อเป็นเลข ต้องตรงทุกหลัก
+  const t0 = _spT(sName), p0 = _spP(sName);
+  const cap = t0.length >= 6 ? 2 : (t0.length >= 3 ? 1 : 0);
+  const cands = [];
+  known.forEach(k => {
+    if (/^\d+$/.test(_spN(k.n))) return;
+    const t = _spT(k.n); let ty = 0;
+    if (t === t0) ty = 1;                                             // ต่างแค่เว้นวรรค/วรรณยุกต์
+    else if (_spP(k.n) === p0 && p0.length >= 2) ty = 2;              // ต่างที่คำนำหน้า (เจ๊ ป้า พี่ …)
+    else if (cap && _spLev(t, t0, cap) <= cap) ty = 3;                // สะกดต่าง 1–2 ตัว
+    else if (Math.min(t.length, t0.length) >= 2 && (t.includes(t0) || t0.includes(t))) ty = 4;   // ชื่อหนึ่งอยู่ในอีกชื่อ
+    if (ty) cands.push({ n: k.n, ty, rank: k.rank, day: k.day, grp: k.grp });
+  });
+  cands.sort((a, b) => (a.ty - b.ty) || (a.rank - b.rank));
+  const top = cands.slice(0, 3);
+  if (!top.length) return { kind: "nw", name: sName, cands: [] };
+  return { kind: "sim", name: top[0].ty === 4 ? sName : top[0].n, cands: top };   // แบบ "อยู่ในอีกชื่อ" มักเป็นคนละคน → ใช้ชื่อใหม่ไว้ก่อน
+}
+
+// ── เปิดแผ่นดึง ──
+async function spOpen() {
+  if (!activeDay || !allDays[activeDay]) { alert("ยังไม่ได้เปิดวัน — เลือกวันบนบอร์ดก่อน"); return; }
+  if (!isOwner() && !isToday(activeDay)) { alert("พนักงานดึงได้เฉพาะวันปัจจุบัน"); return; }
+  try { if (typeof _lzNeed === "function") _lzNeed("customers"); } catch (e) {}
+  _spClose(true);
+  _sp = { day: activeDay, rows: [], skip: [], paid: [], state: "load", err: null, map: {} };
+  const ov = document.createElement("div");
+  ov.id = "spModal"; ov.className = "sp-ov";
+  ov.addEventListener("click", e => { if (e.target === ov) spClose(); });
+  document.body.appendChild(ov);
+  _spRender();
+  await _spLoad();
+}
+async function _spLoad() {
+  if (!_sp) return;
+  const day = _sp.day;
+  _sp.state = "load"; _sp.err = null; _spRender();
+  try {
+    const [r, mp] = await Promise.all([
+      _spFetchDay(day),
+      db.ref("config/sellNameMap").once("value").then(s => s.val() || {}).catch(() => ({}))
+    ]);
+    if (!_sp || _sp.day !== day) return;
+    _sp.map = mp || {};
+    _sp.salesKey = r.key;
+    _spBuild(r.data);
+    _sp.state = r.data ? "ok" : "empty";
+  } catch (e) {
+    console.warn("[ดึงจัดส่ง]", e && (e.code || e.message), e);
+    if (!_sp || _sp.day !== day) return;
+    _sp.state = "err"; _sp.err = e;
+  }
+  _spRender();
+}
+function _spBuild(data) {
+  const day = _sp.day, dd = allDays[day] || {};
+  const list = (data && Array.isArray(data.delivery)) ? data.delivery : [];
+  const known = _spKnown();
+  const byName = {}; known.forEach(k => byName[k.n] = k);
+  // แถวในบอร์ดวันนี้ (ทุกหมวด)
+  const today = [];
+  GROUPS.forEach(g => Object.entries(dd[g.key] || {}).forEach(([key, it]) => { if (it) today.push({ grp: g.key, key, it }); }));
+  _sp.rows = []; _sp.skip = []; _sp.paid = [];
+  const usedSrc = {};
+  list.forEach((b, i) => {
+    if (!b || !String(b.name || "").trim()) return;
+    const sName = String(b.name).trim(), tot = _spBillTotal(b);
+    if (_spBillPaid(b)) { _sp.paid.push(sName); return; }
+    if (!(tot > 0)) return;
+    const src = "sell:" + _sp.salesKey + ":" + String(b._id || ("i" + i + "_" + sName));
+    if (usedSrc[src]) return; usedSrc[src] = 1;
+    const base = { src, sName, total: tot, amount: tot, on: true, remember: false, cands: [], ref: null, act: "add" };
+    // เคยดึงไปแล้ว
+    const got = today.find(x => x.it.src === src);
+    if (got) {
+      const same = (+got.it.srcAmt === tot);
+      if (same || got.it.status !== "รอชำระ") { _sp.skip.push({ name: got.it.name, amount: +got.it.amount || 0, why: same ? "ดึงแล้ว" : "ยอดเปลี่ยน · จ่ายแล้ว" }); return; }
+      _sp.rows.push(Object.assign(base, { kind: "up", name: got.it.name, old: +got.it.amount || 0, ref: { grp: got.grp, key: got.key }, act: "update" }));
+      return;
+    }
+    // ชื่อ: จับคู่ไว้ → ตรงกัน → คล้าย → ใหม่
+    let m;
+    const mk = _ppKey(sName), mapped = _sp.map[mk];
+    if (mapped) m = { kind: "mm", name: String(mapped), cands: [] };
+    else m = _spMatch(sName, known);
+    const row = Object.assign(base, { kind: m.kind, name: m.name, cands: m.cands, mapped: mapped || null });
+    _spConflict(row, today);
+    _sp.rows.push(row);
+  });
+  _sp.rows.forEach(r => { r.color = (byName[r.name] && byName[r.name].color) || "#1C1917"; });
+}
+// ชื่อเดียวกันมีในบอร์ดวันนี้แล้ว (พิมพ์เอง ไม่ได้ดึงมา)
+function _spConflict(row, today) {
+  row.ref = null; row.dup = null;
+  if (row.kind === "up") return;
+  const nn = _spN(row.name);
+  const hit = (today || _spToday()).find(x => !x.it.src && _spN(x.it.name) === nn);
+  if (!hit) { if (row.act === "link" || row.act === "replace") row.act = "add"; return; }
+  row.dup = { grp: hit.grp, key: hit.key, amount: +hit.it.amount || 0, paid: hit.it.status !== "รอชำระ" };
+  if (row.dup.amount === row.amount) { row.act = "link"; row.on = true; }
+  else { row.act = "add"; row.on = false; }
+}
+function _spToday() {
+  const dd = allDays[_sp.day] || {}, out = [];
+  GROUPS.forEach(g => Object.entries(dd[g.key] || {}).forEach(([key, it]) => { if (it) out.push({ grp: g.key, key, it }); }));
+  return out;
+}
+function _spNeeds(r) { return r.kind === "sim" || (r.dup && r.act !== "link"); }
+
+// ── วาด ──
+const SP_PL = { eq: ["eq","ตรงกัน"], mm: ["mm","จับคู่ไว้"], sim: ["sim","คล้ายกัน"], nw: ["nw","ชื่อใหม่"], up: ["up","อัปเดตยอด"], set: ["eq","เลือกแล้ว"] };
+function _spRowHtml(r, i) {
+  const pl = SP_PL[r.kind] || SP_PL.nw;
+  let note = "";
+  if (r.kind === "up") note = `ในบอร์ด <s>${_spFmt(r.old)}</s> → ${_spFmt(r.amount)}`;
+  else if (r.dup) note = r.act === "link" ? `ตรงกับแถวที่พิมพ์ไว้ใน${SP_GL[r.dup.grp]} · ผูกแถวเดิม ไม่เพิ่มแถว`
+    : r.act === "replace" ? `แทนยอดแถวเดิม ${_spFmt(r.dup.amount)} → ${_spFmt(r.amount)}`
+    : `มี "${_spEsc(r.name)}" ใน${SP_GL[r.dup.grp]}แล้ว ${_spFmt(r.dup.amount)} (พิมพ์เอง)`;
+  else if (r.kind === "sim") note = (r.name === r.sName ? `ลงเป็นชื่อใหม่ · ในตลาดมี "${_spEsc(r.cands[0] ? r.cands[0].n : "")}"` : `แอปขายเขียน "${_spEsc(r.sName)}"`) + (r.cands.length > 1 ? ` · มีอีก ${r.cands.length - 1} ชื่อ` : "");
+  else if (r.kind === "mm" || r.name !== r.sName) note = `แอปขายเขียน "${_spEsc(r.sName)}"`;
+  else if (r.kind === "eq") { const k = _spKnownCache && _spKnownCache[r.name]; note = k && k.day ? "ใช้ล่าสุด " + _spDayLbl(k.day) : "มีในทะเบียนลูกค้า"; }
+  else note = "ไม่เคยมีในตลาด";
+  if (r.amount !== r.total && r.kind !== "up") note += ` · แก้ยอดจาก ${_spFmt(r.total)}`;
+  const nm = _spNeeds(r) ? `<button type="button" class="sp-sel" data-spe="${i}">${_spEsc(r.name)}</button>` : `<span>${_spEsc(r.name)}</span>`;
+  return `<div class="sp-r${r.on ? "" : " off"}" data-spr="${i}">
+    <button type="button" class="sp-ck${r.on ? " on" : ""}" data-spk="${i}" aria-label="เลือก" aria-pressed="${r.on}"></button>
+    <div class="sp-n1">${nm}</div><div class="sp-am">${_spFmt(r.amount)}</div>
+    <div class="sp-n2"><span class="sp-pl ${pl[0]}">${r.act === "link" ? "ผูกแถวเดิม" : pl[1]}</span><em>${note}</em></div></div>`;
+}
+let _spKnownCache = null;
+function _spRender() {
+  const ov = document.getElementById("spModal"); if (!ov || !_sp) return;
+  const p = parseDayKey(_sp.day);
+  const dt = p ? `${SP_WD[new Date(p.year, p.month-1, p.day).getDay()]} ${p.day} ${SP_MS[p.month-1]} ${p.year + 543}` : _sp.day;
+  let body = "", foot = "";
+  if (_sp.state === "load") {
+    body = `<div class="sp-msg"><div class="sp-spin"></div><b>กำลังดึงจากแอปขาย…</b><small>บิลจัดส่งวันที่ ${_spEsc(dt)}</small></div>`;
+    foot = `<button type="button" class="sp-b c" onclick="spClose()">ปิด</button>`;
+  } else if (_sp.state === "err") {
+    const m = _spErrMsg(_sp.err);
+    body = `<div class="sp-msg err"><b>${_spEsc(m.t)}</b><small>${_spEsc(m.d)}</small><code>${_spEsc((_sp.err && (_sp.err.code || _sp.err.message)) || "")}</code></div>`;
+    foot = `<button type="button" class="sp-b c" onclick="spClose()">ปิด</button><button type="button" class="sp-b g" onclick="_spLoad()">ลองใหม่</button>`;
+  } else {
+    _spKnownCache = {}; _spKnown().forEach(k => _spKnownCache[k.n] = k);
+    const R = _sp.rows;
+    const need = R.map((r, i) => [r, i]).filter(([r]) => _spNeeds(r));
+    const ready = R.map((r, i) => [r, i]).filter(([r]) => !_spNeeds(r));
+    const cnt = {}; R.forEach(r => { const k = r.act === "link" ? "link" : r.kind; cnt[k] = (cnt[k] || 0) + 1; });
+    const chips = [["sim","คล้ายกัน"],["eq","ตรงกัน"],["set","เลือกแล้ว"],["mm","จับคู่ไว้"],["nw","ใหม่"],["link","ผูกแถวเดิม"],["up","อัปเดตยอด"]]
+      .filter(([k]) => cnt[k]).map(([k, l]) => `<span class="sp-pl ${(SP_PL[k] || ["eq"])[0]}">${l} ${cnt[k]}</span>`).join("");
+    if (!R.length && !_sp.skip.length && !_sp.paid.length)
+      body = `<div class="sp-msg"><b>${_sp.state === "empty" ? "แอปขายยังไม่มีข้อมูลวันนี้" : "ไม่มีบิลจัดส่งในแอปขาย"}</b><small>วันที่ ${_spEsc(dt)}</small></div>`;
+    else {
+      if (chips) body += `<div class="sp-cnt">${chips}</div>`;
+      if (need.length) body += `<div class="sp-gt w">ต้องเลือก<small>แตะชื่อเพื่อเปลี่ยน</small></div>` + need.map(([r, i]) => _spRowHtml(r, i)).join("");
+      if (ready.length) body += `<div class="sp-gt">พร้อมลง<small>${ready.length} บิล</small></div>` + ready.map(([r, i]) => _spRowHtml(r, i)).join("");
+      if (!R.length) body += `<div class="sp-msg sm"><b>ไม่มีบิลใหม่ให้ลง</b></div>`;
+      if (_sp.skip.length || _sp.paid.length) {
+        body += `<div class="sp-gt">ไม่ลง<small>${_sp.skip.length + _sp.paid.length} บิล</small></div><div class="sp-skip">`
+          + (_sp.skip.length ? `<div><span class="sp-pl got">ดึงแล้ว</span><em>${_sp.skip.map(s => _spEsc(s.name) + " · " + _spFmt(s.amount) + (s.why !== "ดึงแล้ว" ? " (" + s.why + ")" : "")).join(" · ")}</em></div>` : "")
+          + (_sp.paid.length ? `<div><span class="sp-pl got">จ่ายแล้ว</span><em>${_sp.paid.map(_spEsc).join(" · ")}</em></div>` : "") + `</div>`;
+      }
+    }
+    const on = R.filter(r => r.on), sum = on.reduce((s, r) => s + r.amount, 0);
+    foot = `<button type="button" class="sp-b c" onclick="spClose()">ปิด</button>`
+      + `<button type="button" class="sp-b g" id="spGo" onclick="spApply()"${on.length ? "" : " disabled"}>${on.length ? "ลง " + on.length + " บิล · " + _spFmt(sum) : "ยังไม่ได้เลือก"}</button>`;
+  }
+  ov.innerHTML = `<div class="sp-sh" role="dialog" aria-label="ดึงจัดส่งจากแอปขาย">
+    <div class="sp-h"><b>ดึงจัดส่งจากแอปขาย</b><small>${_spEsc(dt)}${_sp.state === "ok" ? " · ยังไม่จ่าย " + (_sp.rows.length + _sp.skip.length) + " บิล" : ""}</small>
+      <button type="button" class="sp-x" onclick="spClose()" aria-label="ปิด">✕</button></div>
+    <div class="sp-body">${body}</div><div class="sp-f">${foot}</div></div>`;
+  ov.querySelectorAll("[data-spk]").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); const r = _sp.rows[+b.dataset.spk]; if (r) { r.on = !r.on; _spRender(); } }));
+  ov.querySelectorAll("[data-spr]").forEach(el => el.addEventListener("click", e => { if (e.target.closest("[data-spk]")) return; spEdit(+el.dataset.spr); }));
+}
+function _spClose(silent) {
+  const a = document.getElementById("spEditSheet"); if (a) a.remove();
+  const b = document.getElementById("spModal"); if (b) b.remove();
+  if (!silent) _sp = null;
+}
+function spClose() { _spClose(false); }
+window.spOpen = spOpen; window.spClose = spClose; window._spLoad = _spLoad;
+
+// ── แก้แถว: เลือกชื่อ / พิมพ์เอง / แก้ยอด / จำคู่ชื่อ ──
+function spEdit(i) {
+  const r = _sp && _sp.rows[i]; if (!r) return;
+  const old = document.getElementById("spEditSheet"); if (old) old.remove();
+  const known = _spKnownCache || {};
+  const opts = [];
+  if (r.kind !== "up") {
+    const seen = {};
+    const add = (n, sub, tag) => { if (!n || seen[n]) return; seen[n] = 1; opts.push({ n, sub, tag }); };
+    if (r.mapped) add(String(r.mapped), "จับคู่ไว้", "mm");
+    if (r.kind === "eq") add(r.name, "ชื่อเดียวกันในตลาด", "eq");
+    r.cands.forEach(c => add(c.n, (c.grp ? SP_GL[c.grp] + " · " : "") + (c.day ? _spDayLbl(c.day) : "ทะเบียนลูกค้า"), "sim"));
+    if (r.name !== r.sName && !seen[r.name]) add(r.name, "ที่เลือกไว้", "set");
+    add(r.sName, "ใช้ชื่อตามแอปขาย" + (known[r.sName] ? "" : " (ชื่อใหม่)"), "own");
+  }
+  const cur = r.name;
+  const isOpt = opts.some(o => o.n === cur);
+  const ov = document.createElement("div");
+  ov.id = "spEditSheet"; ov.className = "sp-ov sp-ov2";
+  const dupHtml = (r.dup && r.act !== "link") || (r.dup && r.act === "link")
+    ? `<div class="sp-fl"><span>แถวเดิม</span><div class="sp-opts" data-spdup>
+        ${r.dup.amount === r.amount ? `<label class="sp-op"><input type="radio" data-nodirty name="spdup" value="link"${r.act === "link" ? " checked" : ""}><span>ผูกกับแถวที่พิมพ์ไว้ (ไม่เพิ่มแถว)</span><small></small></label>` : ""}
+        <label class="sp-op"><input type="radio" data-nodirty name="spdup" value="add"${r.act === "add" ? " checked" : ""}><span>เพิ่มเป็นอีกแถว</span><small>คนเดียว 2 บิล</small></label>
+        ${r.dup.paid ? "" : `<label class="sp-op"><input type="radio" data-nodirty name="spdup" value="replace"${r.act === "replace" ? " checked" : ""}><span>แทนยอดแถวเดิม</span><small>${_spFmt(r.dup.amount)} → ยอดนี้</small></label>`}
+      </div></div>` : "";
+  ov.innerHTML = `<div class="sp-sh sp-ed" role="dialog" aria-label="แก้แถว">
+    <div class="sp-h"><b>แก้แถว</b><small>แอปขาย: "${_spEsc(r.sName)}" · ${_spFmt(r.total)}</small><button type="button" class="sp-x" data-spx aria-label="ปิด">✕</button></div>
+    <div class="sp-body sp-edb">
+      ${r.kind === "up" ? `<div class="sp-fl"><span>ชื่อ</span><div class="sp-ro">${_spEsc(r.name)} <small>(แถวที่ดึงไว้แล้ว)</small></div></div>` : `
+      <div class="sp-fl"><span>ชื่อ</span><div class="sp-opts">
+        ${opts.map(o => `<label class="sp-op"><input type="radio" data-nodirty name="spnm" value="${_spEsc(o.n)}"${o.n === cur ? " checked" : ""}><span>${_spEsc(o.n)}</span><small>${_spEsc(o.sub)}</small></label>`).join("")}
+        <label class="sp-op sp-own"><input type="radio" data-nodirty name="spnm" value="__own"${isOpt ? "" : " checked"}><input type="text" class="sp-in" id="spOwn" placeholder="พิมพ์ชื่อเอง…" value="${isOpt ? "" : _spEsc(cur)}" autocomplete="off" data-nodirty></label>
+        <div class="sp-sug" id="spSug"></div>
+      </div></div>`}
+      <div class="sp-fl"><span>ยอด</span><div class="sp-amw"><input type="text" class="sp-in" id="spAmt" inputmode="numeric" value="${_spFmt(r.amount)}" autocomplete="off" data-nodirty><small>แอปขาย ${_spFmt(r.total)}</small></div></div>
+      ${dupHtml}
+      ${r.kind === "up" ? "" : `<label class="sp-mem" id="spMemW"><input type="checkbox" id="spMem" data-nodirty><span id="spMemT"></span></label>`}
+    </div>
+    <div class="sp-f"><button type="button" class="sp-b c" data-spx>ยกเลิก</button><button type="button" class="sp-b k" id="spEdOk">ใช้ค่านี้</button></div></div>`;
+  document.body.appendChild(ov);
+  const q = s => ov.querySelector(s);
+  const close = () => ov.remove();
+  ov.addEventListener("click", e => { if (e.target === ov) close(); });
+  ov.querySelectorAll("[data-spx]").forEach(b => b.addEventListener("click", close));
+  const own = q("#spOwn"), sug = q("#spSug");
+  const chosen = () => { const c = ov.querySelector('input[name="spnm"]:checked'); if (!c) return r.name; return c.value === "__own" ? String(own.value || "").trim() : c.value; };
+  const memSync = () => {
+    const w = q("#spMemW"); if (!w) return;
+    const n = chosen(), t = q("#spMemT"), cb = q("#spMem");
+    if (n && n !== r.sName) { w.style.display = ""; t.textContent = `จำไว้: ครั้งหน้า "${r.sName}" จากแอปขาย = "${n}" ในตลาด`; if (!w.dataset.touched) cb.checked = n !== r.mapped || !!r.remember || !r.mapped; }
+    else if (r.mapped) { w.style.display = ""; t.textContent = `ลบคู่ที่จำไว้ ("${r.sName}" = "${r.mapped}")`; if (!w.dataset.touched) cb.checked = true; }
+    else w.style.display = "none";
+  };
+  if (q("#spMem")) { q("#spMem").addEventListener("change", () => { q("#spMemW").dataset.touched = "1"; }); }
+  ov.querySelectorAll('input[name="spnm"]').forEach(x => x.addEventListener("change", () => { if (x.value === "__own") own.focus(); memSync(); }));
+  if (own) {
+    own.addEventListener("focus", () => { const o = ov.querySelector('input[name="spnm"][value="__own"]'); if (o) o.checked = true; memSync(); });
+    own.addEventListener("input", () => {
+      const v = _spN(own.value); memSync();
+      if (!v) { sug.innerHTML = ""; return; }
+      const L = Object.values(known).filter(k => _spN(k.n).includes(v)).sort((a, b) => ((_spN(a.n).startsWith(v) ? 0 : 1) - (_spN(b.n).startsWith(v) ? 0 : 1)) || (a.rank - b.rank)).slice(0, 5);
+      sug.innerHTML = L.map(k => `<button type="button" data-sps="${_spEsc(k.n)}"><b>${_spEsc(k.n)}</b><small>${k.grp ? SP_GL[k.grp] + " · " : ""}${k.day ? _spDayLbl(k.day) : "ทะเบียนลูกค้า"}</small></button>`).join("");
+      sug.querySelectorAll("[data-sps]").forEach(b => b.addEventListener("click", () => { own.value = b.dataset.sps; sug.innerHTML = ""; memSync(); }));
+    });
+  }
+  const amt = q("#spAmt");
+  amt.addEventListener("focus", () => { try { amt.select(); } catch (e) {} });
+  memSync();
+  q("#spEdOk").addEventListener("click", () => {
+    const a = _intAmt(String(amt.value || "").replace(/,/g, ""));
+    if (isNaN(a) || a <= 0) { alert("ยอดต้องเป็นตัวเลขมากกว่า 0"); amt.focus(); return; }
+    if (r.kind !== "up") {
+      const n = chosen();
+      if (!n) { alert("ใส่ชื่อก่อน"); own && own.focus(); return; }
+      if (n !== r.name) { r.name = n; r.kind = (r.mapped && n === r.mapped) ? "mm" : "set"; }
+      const cb = q("#spMem"); r.remember = !!(cb && q("#spMemW").style.display !== "none" && cb.checked);
+      r.color = (known[r.name] && known[r.name].color) || "#1C1917";
+    }
+    r.amount = a;
+    const dr = ov.querySelector('input[name="spdup"]:checked');
+    if (r.kind !== "up") { _spConflict(r); if (r.dup && dr && (dr.value !== "link" || r.dup.amount === r.amount)) r.act = dr.value; if (r.dup && r.act === "link" && r.dup.amount !== r.amount) r.act = "add"; }
+    r.on = true;
+    close(); _spRender();
+  });
+}
+window.spEdit = spEdit;
+
+// ── ลงบอร์ด ──
+async function spApply() {
+  if (!_sp) return;
+  const day = _sp.day;
+  if (!allDays[day]) { alert("วันนี้ถูกปิดยอด/ลบไปแล้ว — ลงไม่ได้"); return; }
+  if (!isOwner() && !isToday(day)) { alert("พนักงานดึงได้เฉพาะวันปัจจุบัน"); return; }
+  const rows = _sp.rows.filter(r => r.on);
+  if (!rows.length) return;
+  const btn = document.getElementById("spGo"); if (btn) btn.disabled = true;
+  const u = {}, mp = {}, batchId = "b_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6), addedAt = Date.now();
+  let nAdd = 0, nUp = 0, nLink = 0;
+  const dd = allDays[day] || {};
+  rows.forEach((r, i) => {
+    const sf = { src: r.src, srcAmt: r.total, srcName: r.sName };
+    if (r.act === "update" && r.ref) {
+      const it = (dd[r.ref.grp] || {})[r.ref.key]; if (!it) return;
+      const b = `days/${day}/${r.ref.grp}/${r.ref.key}`;
+      u[b + "/amount"] = r.amount; u[b + "/srcAmt"] = r.total; nUp++;
+    } else if ((r.act === "link" || r.act === "replace") && r.dup) {
+      const it = (dd[r.dup.grp] || {})[r.dup.key]; if (!it) return;
+      const b = `days/${day}/${r.dup.grp}/${r.dup.key}`;
+      u[b + "/src"] = sf.src; u[b + "/srcAmt"] = sf.srcAmt; u[b + "/srcName"] = sf.srcName;
+      if (r.act === "replace") { u[b + "/amount"] = r.amount; nUp++; } else nLink++;
+    } else {
+      const key = "itm" + Date.now() + "_" + i + "_" + Math.random().toString(36).slice(2, 6);
+      u[`days/${day}/delivery/${key}`] = Object.assign({ name: r.name, amount: r.amount, status: "รอชำระ", nameColor: r.color || "#1C1917", note: "", paidAt: null, batchId, addedAt }, sf);
+      nAdd++;
+    }
+    if (r.kind !== "up" && r.remember) {
+      const mk = _ppKey(r.sName);
+      mp["config/sellNameMap/" + mk] = (r.name === r.sName) ? null : r.name;
+    }
+  });
+  if (!Object.keys(u).length) { if (btn) btn.disabled = false; return; }
+  try {
+    await db.ref().update(u);
+    // คู่ชื่อที่จำไว้ เขียนแยกทีหลัง — ถ้าบัญชีนี้เขียน config ไม่ได้ แถวที่ลงไปแล้วก็ไม่ล้มตาม
+    if (Object.keys(mp).length) db.ref().update(mp).catch(e => console.warn("[ดึงจัดส่ง] จำคู่ชื่อไม่สำเร็จ", e && e.message));
+    spClose();
+    try { if (typeof playSoundSuccess === "function") playSoundSuccess(); } catch (e) {}
+    const parts = [];
+    if (nAdd) parts.push("ลงจัดส่ง " + nAdd + " บิล");
+    if (nUp) parts.push("อัปเดตยอด " + nUp + " บิล");
+    if (nLink) parts.push("ผูกแถวเดิม " + nLink + " บิล");
+    if (typeof showToast === "function") showToast(parts.join(" · "), "success", 2600);
+    if (typeof renderBoard === "function") renderBoard();
+  } catch (e) {
+    if (btn) btn.disabled = false;
+    alert("บันทึกไม่ได้: " + (e && e.message));
+  }
+}
+window.spApply = spApply;
+
+// ══════════════════════════════════════════════════════════════
+// V5.85: ดึงตะกร้าจากแอปขาย → หน้าตะกร้า ตารางคนตัด ช่อง "ออกไป"
+//   นับเฉพาะลูกค้าที่เปิดสวิตช์ "นับในหน้าตะกร้า แอปตลาด" ในโปรไฟล์ลูกค้าของแอปขาย
+//   (คีย์ tb|ชื่อ ในเอกสาร stores/tossaporn/meta/memory · ชื่อที่รวมไว้ al|ชื่อ นับเข้าชื่อหลัก)
+//   จำนวน = ลังทุกบิลของคนนั้นในวันนั้น ทุกตาราง ทุกผลไม้ · เศษโล (มีโลเกิน) นับเพิ่ม 1 ใบ
+//   ช่องที่ลงจากแอปขายจำส่วนที่ดึงมาไว้ (so) → ดึงซ้ำไม่บวกซ้ำ · แอปขายแก้บิลทีหลัง = อัปเดตเฉพาะส่วนที่ดึงมา
+// ══════════════════════════════════════════════════════════════
+let _bp = null;
+const BP_MS = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+const BP_WD = ["อา.","จ.","อ.","พ.","พฤ.","ศ.","ส."];
+function _bpParse(s) { try { return JSON.parse(s || "null"); } catch (e) { return null; } }
+function _bpCount(b) {
+  return (b.items || []).reduce((s, x) => s + Math.max(0, parseInt(x && x.basket, 10) || 0) + ((+(x && x.frac) || 0) > 0 ? 1 : 0), 0);
+}
+async function _bpFetch(y, m, dds) {
+  if (navigator.onLine === false) { const e = new Error("offline"); e.code = "sp/offline"; throw e; }
+  await _spTimeout(_spLoadFs(), 15000);
+  const app = _spGetApp(), au = app.auth();
+  if (!au.currentUser) await _spTimeout(au.signInAnonymously(), 15000);
+  const st = app.firestore().collection("stores").doc(SP_STORE);
+  const be = String(y + 543) + String(m).padStart(2, "0");
+  const memP = st.collection("meta").doc("memory").get({ source: "server" });
+  const dayP = dds.map(dd => st.collection("days").doc(be + dd).get({ source: "server" })
+    .then(doc => ({ dd, data: (doc && doc.exists) ? _bpParse((doc.data() || {}).data) : null })));
+  const all = await _spTimeout(Promise.all([memP].concat(dayP)), 25000);
+  const mem = all[0] && all[0].exists ? (_bpParse((all[0].data() || {}).data) || {}) : {};
+  return { mem, days: all.slice(1) };
+}
+function _bpMkLbl(dd) { const d = new Date(_bp.y, _bp.m - 1, +dd); return { wd: BP_WD[d.getDay()], d: +dd, txt: `${+dd} ${BP_MS[_bp.m - 1]}` }; }
+
+async function bpOpen() {
+  if (!window._bkFromServer) { if (typeof showToast === "function") showToast("ข้อมูลตะกร้ายังโหลดไม่เสร็จ — รอสักครู่แล้วลองใหม่", "warn", 3000); return; }
+  _bpClose(true);
+  const now = new Date(), isCur = bkYear === now.getFullYear() && bkMonth === now.getMonth() + 1;
+  const isPast = bkYear < now.getFullYear() || (bkYear === now.getFullYear() && bkMonth < now.getMonth() + 1);
+  const nd = bkGetDaysInMonth(bkYear, bkMonth), last = isCur ? now.getDate() : (isPast ? nd : 0);
+  const dds = []; for (let d = 1; d <= last; d++) dds.push(String(d).padStart(2, "0"));
+  _bp = { y: bkYear, m: bkMonth, mk: bkMonthKey(), nd, last, dds, mode: "day", sel: dds.length ? dds[dds.length - 1] : null, state: "load", err: null, pp: {}, dayCnt: {}, plans: {}, dayOn: {}, map: {} };
+  const ov = document.createElement("div");
+  ov.id = "bpModal"; ov.className = "sp-ov";
+  ov.addEventListener("click", e => { if (e.target === ov) bpClose(); });
+  document.body.appendChild(ov);
+  _bpRender();
+  await _bpLoad();
+}
+async function _bpLoad() {
+  if (!_bp) return;
+  const tok = _bp;
+  _bp.state = "load"; _bp.err = null; _bpRender();
+  try {
+    if (!_bp.dds.length) { _bp.state = "ok"; _bpBuild({ mem: {}, days: [] }); _bpRender(); return; }
+    const [r, mp] = await Promise.all([
+      _bpFetch(_bp.y, _bp.m, _bp.dds),
+      db.ref("config/sellBkMap").once("value").then(s => s.val() || {}).catch(() => ({}))
+    ]);
+    if (_bp !== tok) return;
+    _bp.map = mp || {};
+    _bpBuild(r);
+    _bp.state = "ok";
+    // วันเริ่มต้น = วันล่าสุดที่มีของต้องลง (ไม่มี → วันนี้/วันสุดท้าย)
+    const act = _bp.dds.filter(dd => _bpDayStat(dd).act > 0);
+    if (act.length) _bp.sel = act[act.length - 1];
+  } catch (e) {
+    console.warn("[ดึงตะกร้า]", e && (e.code || e.message), e);
+    if (_bp !== tok) return;
+    _bp.state = "err"; _bp.err = e;
+  }
+  _bpRender();
+}
+// ชื่อหลัก (ตามชื่อที่รวมไว้ในแอปขาย)
+function _bpRoot(M, n) { let r = n, k = 0; while (k++ < 10) { const a = M["al|" + r]; const v = a && a.v; if (!v || v === r) break; r = String(v); } return r; }
+function _bpBuild(r) {
+  const M = r.mem || {};
+  const flag = {};
+  Object.keys(M).forEach(k => { if (k.indexOf("tb|") === 0 && M[k] && M[k].v) flag[k.slice(3)] = 1; });
+  _bp.flags = Object.keys(flag);
+  _bp.dayCnt = {};
+  (r.days || []).forEach(({ dd, data }) => {
+    const cnt = {};
+    if (data) ["sales", "delivery", "cutter"].forEach(L => (Array.isArray(data[L]) ? data[L] : []).forEach(b => {
+      if (!b || !String(b.name || "").trim()) return;
+      const n = String(b.name).trim(), rt = flag[n] ? n : _bpRoot(M, n);
+      if (!flag[rt]) return;
+      cnt[rt] = (cnt[rt] || 0) + _bpCount(b);
+    }));
+    _bp.dayCnt[dd] = { has: !!data, cnt };
+  });
+  // จับคู่ชื่อกับรายชื่อคนตัดในหน้าตะกร้า (ทำครั้งเดียวต่อคน ใช้ทุกวัน)
+  const known = (bkCutters || []).map((c, i) => ({ n: c.name, rank: i, day: null, grp: null }));
+  const names = {};
+  Object.values(_bp.dayCnt).forEach(x => Object.keys(x.cnt).forEach(n => names[n] = 1));
+  _bp.flags.forEach(n => names[n] = 1);
+  _bp.pp = {};
+  Object.keys(names).forEach(n => {
+    const mapped = _bp.map[_ppKey(n)];
+    const mc = mapped ? (bkCutters || []).find(c => c.name === mapped) : null;
+    let p;
+    if (mc) p = { kind: "mm", id: mc.id, tgt: mc.name, cands: [], mapped };
+    else {
+      const m = _spMatch(n, known);
+      if (m.kind === "eq") { const c = bkCutters.find(c => c.name === m.name); p = { kind: "eq", id: c.id, tgt: c.name, cands: [] }; }
+      else if (m.kind === "sim" && m.name !== n) { const c = bkCutters.find(c => c.name === m.name); p = { kind: "sim", id: c.id, tgt: c.name, cands: m.cands }; }
+      else p = { kind: m.kind === "sim" ? "sim" : "nw", id: null, tgt: n, cands: m.cands || [], newName: n };
+    }
+    p.name = n; p.skip = false; p.remember = false;
+    _bp.pp[n] = p;
+  });
+  _bp.plans = {}; _bp.dayOn = {};
+}
+function _bpCell(id, dd) { return (id && bkData[_bp.mk] && bkData[_bp.mk].cutter && bkData[_bp.mk].cutter[id] && bkData[_bp.mk].cutter[id][dd]) || null; }
+// แผนของวันหนึ่ง (จำการเลือก ทับ/บวก/ติ๊ก ไว้ใน _bp.plans)
+function _bpPlan(dd) {
+  const dc = _bp.dayCnt[dd] || { has: false, cnt: {} }, old = _bp.plans[dd] || {}, rows = [];
+  const seen = {};
+  const push = (n, c) => {
+    const p = _bp.pp[n]; if (!p) return;
+    const key = p.id ? "id:" + p.id : "nw:" + p.tgt; if (seen[key]) { seen[key].c += c; return; }
+    const cell = _bpCell(p.id, dd), cur = cell ? (+cell.out || 0) : 0, so = (cell && cell.so != null) ? +cell.so : null;
+    let lock = false; try { lock = !!(p.id && _bkDayLocked("cutter", p.id, _bp.mk, dd)); } catch (e) {}
+    const r = { n, p, c, cur, so, lock };
+    seen[key] = r; rows.push(r);
+  };
+  Object.keys(dc.cnt).forEach(n => { if (dc.cnt[n] > 0) push(n, dc.cnt[n]); });
+  // คนที่เคยดึงไว้แต่วันนี้แอปขายไม่มีบิลแล้ว → เอาส่วนที่ดึงมาออก
+  Object.values(_bp.pp).forEach(p => { if (!p.id) return; const cell = _bpCell(p.id, dd); if (cell && +cell.so > 0 && !rows.some(r => r.p.id === p.id)) push(p.name, 0); });
+  rows.forEach(r => {
+    const o = old[r.p.id || r.p.tgt] || {};
+    if (r.p.skip) r.mode = "skip";
+    else if (r.lock) r.mode = "lock";
+    else if (r.so == null) r.mode = r.c === 0 ? "none" : (r.cur === 0 ? "new" : (r.cur === r.c ? "same" : "ask"));
+    else r.mode = (r.so === r.c) ? "done" : "up";
+    r.act = o.act || "replace";
+    r.on = o.on != null ? o.on : true;
+    r.to = r.mode === "ask" ? (r.act === "add" ? r.cur + r.c : r.c) : r.mode === "up" ? Math.max(0, r.cur - r.so) + r.c : r.mode === "same" ? r.cur : r.c;
+  });
+  return rows;
+}
+function _bpActRows(dd) { return _bpPlan(dd).filter(r => ["new", "same", "ask", "up"].includes(r.mode)); }
+function _bpDayStat(dd) {
+  const rows = _bpPlan(dd), act = rows.filter(r => ["new", "same", "ask", "up"].includes(r.mode));
+  const dc = _bp.dayCnt[dd] || { has: false, cnt: {} };
+  return { act: act.length, up: act.filter(r => r.mode === "up").length, ask: act.filter(r => r.mode === "ask" || r.p.kind === "sim").length,
+    done: rows.filter(r => r.mode === "done").length, any: Object.keys(dc.cnt).length > 0, bc: act.reduce((s, r) => s + r.c, 0) };
+}
+function _bpSetPlan(dd, k, patch) { _bp.plans[dd] = _bp.plans[dd] || {}; _bp.plans[dd][k] = Object.assign(_bp.plans[dd][k] || {}, patch); }
+
+// ── วาด ──
+const BP_PL = { eq: ["eq","ตรงกัน"], mm: ["mm","จับคู่ไว้"], sim: ["sim","คล้ายกัน"], nw: ["nw","คนตัดใหม่"], set: ["eq","เลือกแล้ว"] };
+function _bpRowHtml(r, dd) {
+  const p = r.p, k = p.id || p.tgt, pl = BP_PL[p.kind] || BP_PL.nw;
+  let note;
+  if (r.mode === "new") note = `ช่องว่าง → ${r.c}`;
+  else if (r.mode === "same") note = `ตรงกับที่พิมพ์ไว้ ${r.cur} · จำว่ามาจากแอปขาย`;
+  else if (r.mode === "ask") note = `พิมพ์เองไว้ ${r.cur}`;
+  else note = r.c === 0 ? `แอปขายไม่มีบิลแล้ว · <s>${r.so}</s> → เอาออก` : `เคยดึง <s>${r.so}</s> → ${r.c}`;
+  if (p.kind !== "eq" && p.name !== p.tgt) note = `แอปขาย "${_spEsc(p.name)}" · ` + note;
+  if (!p.id) note = `ยังไม่มีในตาราง → เพิ่มคนตัด "${_spEsc(p.tgt)}" · ` + note;
+  const pill = r.mode === "up" ? `<span class="sp-pl up">อัปเดต</span>` : r.mode === "ask" ? `<span class="sp-pl up">ช่องมีเลขแล้ว</span>` : `<span class="sp-pl ${pl[0]}">${pl[1]}</span>`;
+  const nm = (p.kind === "sim" || !p.id) ? `<button type="button" class="sp-sel" data-bpe="${_spEsc(p.name)}">${_spEsc(p.tgt)}</button>` : `<span>${_spEsc(p.tgt)}</span>`;
+  const two = r.mode === "ask" ? `<div class="bp-two"><button type="button" class="${r.act === "replace" ? "on" : ""}" data-bpa="replace" data-bpk="${_spEsc(k)}">ทับ → ${r.c}</button><button type="button" class="${r.act === "add" ? "on" : ""}" data-bpa="add" data-bpk="${_spEsc(k)}">บวกเพิ่ม → ${r.cur + r.c}</button></div>` : "";
+  return `<div class="sp-r${r.on ? "" : " off"}" data-bpr="${_spEsc(p.name)}">
+    <button type="button" class="sp-ck bp${r.on ? " on" : ""}" data-bpk2="${_spEsc(k)}" aria-label="เลือก" aria-pressed="${r.on}"></button>
+    <div class="sp-n1">${nm}</div><div class="sp-am">${r.mode === "up" && r.c === 0 ? "0" : r.c} <small class="bp-u">ใบ</small></div>
+    <div class="sp-n2">${pill}<em>${note}</em></div>${two}</div>`;
+}
+function _bpRender() {
+  const ov = document.getElementById("bpModal"); if (!ov || !_bp) return;
+  const mon = `${BP_MS[_bp.m - 1]} ${_bp.y + 543}`;
+  let body = "", foot = "";
+  if (_bp.state === "load") {
+    body = `<div class="sp-msg"><div class="sp-spin"></div><b>กำลังดึงจากแอปขาย…</b><small>บิล ${_spEsc(mon)}</small></div>`;
+    foot = `<button type="button" class="sp-b c" onclick="bpClose()">ปิด</button>`;
+  } else if (_bp.state === "err") {
+    const m = _spErrMsg(_bp.err);
+    body = `<div class="sp-msg err"><b>${_spEsc(m.t)}</b><small>${_spEsc(m.d)}</small><code>${_spEsc((_bp.err && (_bp.err.code || _bp.err.message)) || "")}</code></div>`;
+    foot = `<button type="button" class="sp-b c" onclick="bpClose()">ปิด</button><button type="button" class="sp-b bpg" onclick="_bpLoad()">ลองใหม่</button>`;
+  } else if (!_bp.dds.length) {
+    body = `<div class="sp-msg"><b>เดือนนี้ยังไม่ถึง</b><small>${_spEsc(mon)}</small></div>`;
+    foot = `<button type="button" class="sp-b c" onclick="bpClose()">ปิด</button>`;
+  } else if (!_bp.flags.length) {
+    body = `<div class="sp-msg"><b>ยังไม่มีลูกค้าที่เปิดสวิตช์นับตะกร้า</b><small>เปิดได้ที่แอปขาย → ตั้งค่า → ลูกค้า → เลือกชื่อ → ตะกร้า "นับในหน้าตะกร้า แอปตลาด"</small></div>`;
+    foot = `<button type="button" class="sp-b c" onclick="bpClose()">ปิด</button>`;
+  } else {
+    const seg = `<div class="bp-seg"><button type="button" class="${_bp.mode === "day" ? "on" : ""}" data-bpm="day">ทีละวัน</button><button type="button" class="${_bp.mode === "multi" ? "on" : ""}" data-bpm="multi">หลายวัน</button></div>`;
+    if (_bp.mode === "day") {
+      const chips = _bp.dds.map(dd => {
+        const s = _bpDayStat(dd), L = _bpMkLbl(dd);
+        const em = s.act ? (s.up === s.act ? `<em class="ch">เปลี่ยน ${s.up}</em>` : `<em class="n">ใหม่ ${s.act}</em>`) : s.done ? `<em class="ok">✓ ลงแล้ว</em>` : `<em class="no">${(_bp.dayCnt[dd] || {}).has ? "ไม่มีบิล" : "ไม่มีวัน"}</em>`;
+        return `<button type="button" class="bp-dy${dd === _bp.sel ? " on" : ""}" data-bpd="${dd}"><span>${L.wd}</span><b>${L.d}</b>${em}</button>`;
+      }).join("");
+      const dd = _bp.sel, rows = _bpPlan(dd);
+      const act = rows.filter(r => ["new", "same", "ask", "up"].includes(r.mode));
+      const need = act.filter(r => r.mode === "ask" || r.p.kind === "sim" || !r.p.id), ready = act.filter(r => !need.includes(r));
+      const skip = rows.filter(r => !act.includes(r));
+      body = seg + `<div class="bp-days" id="bpDays">${chips}</div>`;
+      if (!rows.length) body += `<div class="sp-msg sm"><b>${_bpMkLbl(dd).txt} ไม่มีบิลของลูกค้าที่นับตะกร้า</b><small>${_spEsc(_bp.flags.join(" · "))}</small></div>`;
+      if (need.length) body += `<div class="sp-gt w">ต้องเลือก<small>${need.length} คน</small></div>` + need.map(r => _bpRowHtml(r, dd)).join("");
+      if (ready.length) body += `<div class="sp-gt">พร้อมลง<small>${ready.length} คน · ${ready.reduce((s, r) => s + r.c, 0)} ใบ</small></div>` + ready.map(r => _bpRowHtml(r, dd)).join("");
+      if (skip.length) body += `<div class="sp-gt">ไม่ลง<small>${skip.length} คน</small></div><div class="sp-skip">`
+        + skip.map(r => `<div><span class="sp-pl ${r.mode === "lock" ? "lk" : "got"}">${r.mode === "done" ? "ลงแล้ว" : r.mode === "lock" ? "ยึดมัดจำแล้ว" : r.mode === "skip" ? "ข้าม" : "ไม่มีบิล"}</span><em>${_spEsc(r.p.tgt)}${r.mode === "done" ? " · " + r.c + " ใบ" : r.mode === "lock" ? " · วันนี้ลงไม่ได้" : ""}</em></div>`).join("") + `</div>`;
+      const on = act.filter(r => r.on);
+      foot = `<button type="button" class="sp-b c" onclick="bpClose()">ปิด</button><button type="button" class="sp-b bpg" id="bpGo" onclick="bpApply()"${on.length ? "" : " disabled"}>${on.length ? `ลง ${_bpMkLbl(dd).txt} · ${on.length} คน · ${on.reduce((s, r) => s + r.c, 0)} ใบ` : "ไม่มีให้ลง"}</button>`;
+    } else {
+      const ds = _bp.dds.filter(dd => _bpDayStat(dd).act > 0).reverse();
+      const rest = _bp.dds.filter(dd => !ds.includes(dd));
+      body = seg;
+      if (ds.length) body += `<div class="sp-gt">วันที่มีของต้องลง<small>แตะวัน = ดูรายคน</small></div>` + ds.map(dd => {
+        const s = _bpDayStat(dd), L = _bpMkLbl(dd), on = _bp.dayOn[dd] !== false;
+        const tag = s.ask ? `<span class="sp-pl sim">เลือก ${s.ask}</span>` : s.up === s.act ? `<span class="sp-pl up">อัปเดต</span>` : `<span class="sp-pl eq">พร้อม</span>`;
+        return `<div class="bp-dr${on ? "" : " off"}"><button type="button" class="sp-ck bp${on ? " on" : ""}" data-bpdk="${dd}" aria-pressed="${on}"></button><button type="button" class="bp-dl" data-bpgo="${dd}"><b>${L.wd} ${L.txt}</b><small>${s.act} คน · ${s.bc} ใบ${s.ask ? " · ต้องเลือก " + s.ask + " (ใช้ค่าที่แนะนำ)" : ""}</small></button>${tag}</div>`;
+      }).join("");
+      else body += `<div class="sp-msg sm"><b>ไม่มีวันไหนต้องลงแล้ว</b></div>`;
+      const dn = rest.filter(dd => _bpDayStat(dd).done > 0).map(dd => +dd), nb = rest.filter(dd => !_bpDayStat(dd).done).map(dd => +dd);
+      if (rest.length) body += `<div class="sp-gt">ไม่ต้องลง<small></small></div><div class="sp-skip">` + (dn.length ? `<div><span class="sp-pl got">ลงแล้ว</span><em>${dn.join(", ")} ${BP_MS[_bp.m - 1]}</em></div>` : "") + (nb.length ? `<div><span class="sp-pl got">ไม่มีบิล</span><em>${nb.join(", ")}</em></div>` : "") + `</div>`;
+      const pick = ds.filter(dd => _bp.dayOn[dd] !== false), bc = pick.reduce((s, dd) => s + _bpActRows(dd).filter(r => r.on).reduce((a, r) => a + r.c, 0), 0);
+      foot = `<button type="button" class="sp-b c" onclick="bpClose()">ปิด</button><button type="button" class="sp-b bpg" id="bpGo" onclick="bpApply()"${pick.length ? "" : " disabled"}>${pick.length ? `ลง ${pick.length} วัน · ${bc} ใบ` : "ยังไม่ได้เลือกวัน"}</button>`;
+    }
+  }
+  const scr = ov.querySelector(".sp-body") ? ov.querySelector(".sp-body").scrollTop : 0, dsx = document.getElementById("bpDays") ? document.getElementById("bpDays").scrollLeft : null;
+  ov.innerHTML = `<div class="sp-sh" role="dialog" aria-label="ดึงตะกร้าจากแอปขาย">
+    <div class="sp-h"><b>ดึงตะกร้าจากแอปขาย</b><small>ลงช่อง "ออกไป" · ${_spEsc(mon)}${_bp.flags && _bp.flags.length ? " · นับ " + _spEsc(_bp.flags.join(", ")) : ""}</small>
+      <button type="button" class="sp-x" onclick="bpClose()" aria-label="ปิด">✕</button></div>
+    <div class="sp-body">${body}</div><div class="sp-f">${foot}</div></div>`;
+  const b = ov.querySelector(".sp-body"); if (b) b.scrollTop = scr;
+  const dz = document.getElementById("bpDays");
+  if (dz) { if (dsx != null) dz.scrollLeft = dsx; else { const on = dz.querySelector(".on"); if (on) dz.scrollLeft = Math.max(0, on.offsetLeft - dz.clientWidth + on.offsetWidth + 12); } }
+  ov.querySelectorAll("[data-bpm]").forEach(x => x.addEventListener("click", () => { _bp.mode = x.dataset.bpm; _bpRender(); }));
+  ov.querySelectorAll("[data-bpd]").forEach(x => x.addEventListener("click", () => { _bp.sel = x.dataset.bpd; _bpRender(); }));
+  ov.querySelectorAll("[data-bpgo]").forEach(x => x.addEventListener("click", () => { _bp.sel = x.dataset.bpgo; _bp.mode = "day"; _bpRender(); }));
+  ov.querySelectorAll("[data-bpdk]").forEach(x => x.addEventListener("click", () => { const dd = x.dataset.bpdk; _bp.dayOn[dd] = _bp.dayOn[dd] === false; _bpRender(); }));
+  ov.querySelectorAll("[data-bpk2]").forEach(x => x.addEventListener("click", e => { e.stopPropagation(); const k = x.dataset.bpk2, r = _bpPlan(_bp.sel).find(r => (r.p.id || r.p.tgt) === k); if (r) { _bpSetPlan(_bp.sel, k, { on: !r.on }); _bpRender(); } }));
+  ov.querySelectorAll("[data-bpa]").forEach(x => x.addEventListener("click", e => { e.stopPropagation(); _bpSetPlan(_bp.sel, x.dataset.bpk, { act: x.dataset.bpa, on: true }); _bpRender(); }));
+  ov.querySelectorAll("[data-bpe]").forEach(x => x.addEventListener("click", e => { e.stopPropagation(); bpEdit(x.dataset.bpe); }));
+}
+function _bpClose(silent) {
+  const a = document.getElementById("bpEditSheet"); if (a) a.remove();
+  const b = document.getElementById("bpModal"); if (b) b.remove();
+  if (!silent) _bp = null;
+}
+function bpClose() { _bpClose(false); }
+
+// ── เลือกคนตัดของชื่อนี้ (ใช้ทุกวัน) ──
+function bpEdit(n) {
+  const p = _bp && _bp.pp[n]; if (!p) return;
+  const old = document.getElementById("bpEditSheet"); if (old) old.remove();
+  const opts = [], seen = {};
+  const add = (v, lb, sub) => { if (seen[v]) return; seen[v] = 1; opts.push({ v, lb, sub }); };
+  p.cands.forEach(c => { const cc = bkCutters.find(x => x.name === c.n); if (cc) add("id:" + cc.id, cc.name, "คนตัดในตาราง"); });
+  if (p.id && !seen["id:" + p.id]) add("id:" + p.id, p.tgt, "ที่เลือกไว้");
+  add("new", `เพิ่มคนตัดใหม่ "${n}"`, "");
+  add("skip", "ไม่ลงคนนี้", "");
+  const cur = p.skip ? "skip" : p.id ? "id:" + p.id : "new";
+  const ov = document.createElement("div");
+  ov.id = "bpEditSheet"; ov.className = "sp-ov sp-ov2";
+  ov.innerHTML = `<div class="sp-sh sp-ed" role="dialog" aria-label="เลือกคนตัด">
+    <div class="sp-h"><b>ลงในแถวคนตัดไหน</b><small>แอปขาย: "${_spEsc(n)}" · ใช้กับทุกวัน</small><button type="button" class="sp-x" data-spx aria-label="ปิด">✕</button></div>
+    <div class="sp-body sp-edb">
+      <div class="sp-opts">${opts.map(o => `<label class="sp-op"><input type="radio" data-nodirty name="bpnm" value="${_spEsc(o.v)}"${o.v === cur ? " checked" : ""}><span>${_spEsc(o.lb)}</span><small>${_spEsc(o.sub)}</small></label>`).join("")}
+        <label class="sp-op sp-own"><input type="radio" data-nodirty name="bpnm" value="__own"><input type="text" class="sp-in" id="bpOwn" placeholder="ค้นหาคนตัดในตาราง…" autocomplete="off" data-nodirty></label>
+        <div class="sp-sug" id="bpSug"></div></div>
+      <label class="sp-mem" id="bpMemW"><input type="checkbox" id="bpMem" data-nodirty checked><span id="bpMemT"></span></label>
+    </div>
+    <div class="sp-f"><button type="button" class="sp-b c" data-spx>ยกเลิก</button><button type="button" class="sp-b k" id="bpEdOk">ใช้ค่านี้</button></div></div>`;
+  document.body.appendChild(ov);
+  const q = s => ov.querySelector(s), close = () => ov.remove();
+  ov.addEventListener("click", e => { if (e.target === ov) close(); });
+  ov.querySelectorAll("[data-spx]").forEach(b => b.addEventListener("click", close));
+  let pickId = null;
+  const own = q("#bpOwn"), sug = q("#bpSug");
+  const chosen = () => { const c = ov.querySelector('input[name="bpnm"]:checked'); if (!c) return cur; if (c.value === "__own") return pickId ? "id:" + pickId : ""; return c.value; };
+  const memSync = () => { const v = chosen(), w = q("#bpMemW"); let nm = null; if (v.indexOf("id:") === 0) { const c = bkCutters.find(x => x.id === v.slice(3)); nm = c && c.name; }
+    if (nm && nm !== n) { w.style.display = ""; q("#bpMemT").textContent = `จำไว้: "${n}" จากแอปขาย = "${nm}"`; } else w.style.display = "none"; };
+  ov.querySelectorAll('input[name="bpnm"]').forEach(x => x.addEventListener("change", memSync));
+  own.addEventListener("focus", () => { const o = ov.querySelector('input[name="bpnm"][value="__own"]'); if (o) o.checked = true; });
+  own.addEventListener("input", () => { pickId = null; const v = _spN(own.value); if (!v) { sug.innerHTML = ""; return; }
+    const L = bkCutters.filter(c => _spN(c.name).includes(v)).slice(0, 6);
+    sug.innerHTML = L.map(c => `<button type="button" data-bps="${_spEsc(c.id)}"><b>${_spEsc(c.name)}</b><small>คนตัด</small></button>`).join("");
+    sug.querySelectorAll("[data-bps]").forEach(b => b.addEventListener("click", () => { pickId = b.dataset.bps; const c = bkCutters.find(x => x.id === pickId); own.value = c ? c.name : ""; sug.innerHTML = ""; memSync(); })); });
+  memSync();
+  q("#bpEdOk").addEventListener("click", () => {
+    const v = chosen();
+    if (!v) { alert("เลือกคนตัดจากรายการค้นหาก่อน"); own.focus(); return; }
+    p.skip = v === "skip";
+    if (v === "new") { p.id = null; p.tgt = n; p.newName = n; p.kind = "nw"; }
+    else if (v.indexOf("id:") === 0) { const c = bkCutters.find(x => x.id === v.slice(3)); if (c) { p.id = c.id; p.tgt = c.name; p.kind = (p.mapped && c.name === p.mapped) ? "mm" : (c.name === n ? "eq" : "set"); } }
+    p.remember = !!(q("#bpMemW").style.display !== "none" && q("#bpMem").checked);
+    _bp.plans = {};
+    close(); _bpRender();
+  });
+}
+
+// ── ลงตาราง ──
+function bpApply() {
+  if (!_bp) return;
+  if (!window._bkFromServer) { if (typeof showToast === "function") showToast("ข้อมูลตะกร้ายังโหลดไม่เสร็จ — ยังลงไม่ได้", "warn", 3000); return; }
+  if (bkMonthKey() !== _bp.mk) { alert("หน้าตะกร้าเปลี่ยนเดือนแล้ว — ปิดแล้วเปิดดึงใหม่"); return; }
+  const days = _bp.mode === "day" ? [_bp.sel] : _bp.dds.filter(dd => _bpDayStat(dd).act > 0 && _bp.dayOn[dd] !== false);
+  const created = {}; let nP = 0, nB = 0, nD = 0;
+  const ensureId = p => {
+    if (p.id) return p.id;
+    if (created[p.tgt]) return created[p.tgt];
+    const ex = bkCutters.find(c => c.name === p.tgt);
+    const id = ex ? ex.id : ("bk" + Date.now() + "_" + Object.keys(created).length);
+    if (!ex) bkCutters.push({ id, name: p.tgt });
+    created[p.tgt] = id; return id;
+  };
+  const mk = _bp.mk;
+  days.forEach(dd => {
+    const rows = _bpActRows(dd).filter(r => r.on); if (!rows.length) return;
+    nD++;
+    rows.forEach(r => {
+      const id = ensureId(r.p);
+      if (!bkData[mk]) bkData[mk] = {};
+      if (!bkData[mk].cutter) bkData[mk].cutter = {};
+      if (!bkData[mk].cutter[id]) bkData[mk].cutter[id] = {};
+      if (!bkData[mk].cutter[id][dd]) bkData[mk].cutter[id][dd] = { out: 0, in: 0 };
+      const cell = bkData[mk].cutter[id][dd];
+      cell.out = Math.max(0, r.to);
+      if (r.c > 0) cell.so = r.c; else delete cell.so;
+      nP++; nB += r.c;
+    });
+  });
+  // ชื่อใหม่ที่ถูกสร้างเป็นคนตัด → ผูกไว้กับ id ใหม่ (กันวันถัดไปในรอบเดียวกันสร้างซ้ำ)
+  Object.values(_bp.pp).forEach(p => { if (!p.id && created[p.tgt]) p.id = created[p.tgt]; });
+  if (!nP) return;
+  bkSaveLocal();
+  try { bkRender(); } catch (e) {}
+  const mp = {};
+  Object.values(_bp.pp).forEach(p => { if (p.remember && p.id) { const c = bkCutters.find(x => x.id === p.id); if (c) mp["config/sellBkMap/" + _ppKey(p.name)] = (c.name === p.name) ? null : c.name; } });
+  if (Object.keys(mp).length) db.ref().update(mp).catch(e => console.warn("[ดึงตะกร้า] จำคู่ชื่อไม่สำเร็จ", e && e.message));
+  const nc = Object.keys(created).length;
+  bpClose();
+  if (typeof showToast === "function") showToast(`ลงตะกร้า ${nD} วัน · ${nP} ช่อง${nc ? " · เพิ่มคนตัดใหม่ " + nc + " คน" : ""}`, "success", 2800);
+}
+window.bpOpen = bpOpen; window.bpClose = bpClose; window._bpLoad = _bpLoad; window.bpApply = bpApply; window.bpEdit = bpEdit;
+
 
 // ══════════════════════════════════════════════════════════════
 // BOARD SEARCH
