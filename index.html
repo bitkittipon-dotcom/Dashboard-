@@ -5253,8 +5253,9 @@ td.bk-so { box-shadow: inset 0 0 0 1.5px #8EC0FF; border-radius: 6px; background
   </div>
 </div>
 
-<div id="dataMgrModal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:600;display:none;align-items:center;justify-content:center;padding:16px;">
-  <div style="background:#fff;border-radius:22px;width:100%;max-width:400px;overflow:hidden;animation:popInSpring .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 24px 60px rgba(0,0,0,0.18);">
+<!-- V5.87: เลื่อนได้เมื่อสูงเกินจอ · จัดกลางด้วย margin:auto (align-items:center ตัดส่วนบนทิ้งตอนล้น) -->
+<div id="dataMgrModal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:600;display:none;align-items:flex-start;justify-content:center;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(24px + env(safe-area-inset-bottom,0px));overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;">
+  <div style="background:#fff;border-radius:22px;width:100%;max-width:400px;overflow:hidden;margin:auto 0;flex-shrink:0;animation:popInSpring .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 24px 60px rgba(0,0,0,0.18);">
     <div style="background:linear-gradient(135deg,#1C1917 0%,#27272A 100%);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;">
       <div style="color:#fff;font-weight:600;font-size:16px;letter-spacing:-0.015em;">จัดการข้อมูล</div>
       <button onclick="document.getElementById('dataMgrModal').style.display='none'" style="background:rgba(255,255,255,.18);border:none;border-radius:50%;width:32px;height:32px;color:#fff;cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1);-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.background='rgba(255,255,255,0.3)';this.style.transform='rotate(90deg)'" onmouseout="this.style.background='rgba(255,255,255,0.18)';this.style.transform=''"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
@@ -5874,8 +5875,8 @@ input[name="cust-name-no-fill"]:-webkit-autofill {
 <!-- Chart.js + html2canvas: lazy-loaded on demand (saves ~410 KB on first paint) -->
 <script>
 // ═══ V4.38 (B.4): APP_VERSION — single source of truth ═══
-window.APP_VERSION = "V5.85";
-window.APP_VERSION_STRING = "V5.85"; // alias for compatibility
+window.APP_VERSION = "V5.87";
+window.APP_VERSION_STRING = "V5.87"; // alias for compatibility
 
 // ═══════════════════════════════════════════════════════════════════
 // V5.49: ดักคำเตือน "ไม่มี index" ของ Firebase
@@ -8816,8 +8817,8 @@ function renderBoard() {
         nameEl2.style.textDecorationStyle = isFade ? "solid" : "dotted";
         nameEl2.style.textDecorationColor = isFade ? "#D1D5DB" : nameColor;
         nameEl2.textContent = item.name;
-        // V5.84: แถวที่ดึงมาจากแอปขาย — ไอคอนดาวน์โหลดสีน้ำเงินหลังชื่อ
-        if (item.src && !isFade) { const _sx = document.createElement("span"); _sx.className = "item-src"; _sx.title = "ดึงมาจากแอปขาย"; _sx.innerHTML = SP_DL; nameEl2.appendChild(_sx); }
+        // V5.86: เอาไอคอนดาวน์โหลดหลังชื่อออกตามที่เจ้าของสั่ง — แถวที่ดึงมาหน้าตาเหมือนแถวที่พิมพ์เอง
+        //        ข้อมูล src ยังเก็บไว้ในแถวเหมือนเดิม (ใช้กันดึงซ้ำ) แค่ไม่โชว์
         nameEl2.title = "กดเพื่อดูรวมบิล";
         nameEl2.addEventListener("click", () => openBillModal(item.name, g));
         // V5.56: ระหว่างอยู่ในโหมดเลือกย้าย ห้ามชื่อรับนิ้ว
@@ -26539,11 +26540,39 @@ async function _spLoad() {
   }
   _spRender();
 }
+// V5.86: หมวดล่าสุดของแต่ละชื่อ จากประวัติจริง (ใหม่ → เก่า)
+//   ข้ามแถวที่ดึงมาจากแอปขายแล้วยังอยู่ในหมวดที่ระบบวางไว้ — นั่นไม่ใช่คนจัด
+//   ถ้าเจ้าของย้ายไปหมวดอื่นเอง ถือเป็นประวัติจริง
+function _spPlacedGrp(it) { return (it && it.srcGrp) || "delivery"; }
+function _spHistMap() {
+  const out = {};
+  const src = Object.assign({}, allClosed || {}, allDays || {});
+  _sortDayKeys(Object.keys(src)).reverse().forEach(day => {
+    const d = src[day] || {};
+    GROUPS.forEach(g => {
+      Object.values(d[g.key] || {}).forEach(it => {
+        if (!it || typeof it !== "object") return;
+        const n = _spN(it.name || ""); if (!n || out[n]) return;
+        if (it.src && g.key === _spPlacedGrp(it)) return;
+        out[n] = g.key;
+      });
+    });
+  });
+  return out;
+}
+// หมวดที่แถวนี้จะลง · คืน { g, hist } — hist=false แปลว่าไม่มีประวัติ ใช้จัดส่ง
+function _spGrpOf(name) {
+  const h = (_sp && _sp.hist) || {};
+  const g = h[_spN(name || "")];
+  return g ? { g, hist: true } : { g: "delivery", hist: false };
+}
+
 function _spBuild(data) {
   const day = _sp.day, dd = allDays[day] || {};
   const list = (data && Array.isArray(data.delivery)) ? data.delivery : [];
   const known = _spKnown();
   const byName = {}; known.forEach(k => byName[k.n] = k);
+  _sp.hist = _spHistMap();
   // แถวในบอร์ดวันนี้ (ทุกหมวด)
   const today = [];
   GROUPS.forEach(g => Object.entries(dd[g.key] || {}).forEach(([key, it]) => { if (it) today.push({ grp: g.key, key, it }); }));
@@ -26561,8 +26590,12 @@ function _spBuild(data) {
     const got = today.find(x => x.it.src === src);
     if (got) {
       const same = (+got.it.srcAmt === tot);
-      if (same || got.it.status !== "รอชำระ") { _sp.skip.push({ name: got.it.name, amount: +got.it.amount || 0, why: same ? "ดึงแล้ว" : "ยอดเปลี่ยน · จ่ายแล้ว" }); return; }
-      _sp.rows.push(Object.assign(base, { kind: "up", name: got.it.name, old: +got.it.amount || 0, ref: { grp: got.grp, key: got.key }, act: "update" }));
+      const unpaid = got.it.status === "รอชำระ";
+      // V5.86: ยังอยู่ที่ที่ระบบวางไว้ และประวัติบอกหมวดอื่น → ย้าย (ถ้าเจ้าของย้ายเองแล้ว ไม่ยุ่ง)
+      const want = _spGrpOf(got.it.name);
+      const mv = unpaid && want.hist && got.grp === _spPlacedGrp(got.it) && want.g !== got.grp ? want.g : null;
+      if (!unpaid || (same && !mv)) { _sp.skip.push({ name: got.it.name, amount: +got.it.amount || 0, why: same ? "ดึงแล้ว" : "ยอดเปลี่ยน · จ่ายแล้ว" }); return; }
+      _sp.rows.push(Object.assign(base, { kind: same ? "mv" : "up", name: got.it.name, old: +got.it.amount || 0, ref: { grp: got.grp, key: got.key }, mv, act: "update" }));
       return;
     }
     // ชื่อ: จับคู่ไว้ → ตรงกัน → คล้าย → ใหม่
@@ -26595,11 +26628,12 @@ function _spToday() {
 function _spNeeds(r) { return r.kind === "sim" || (r.dup && r.act !== "link"); }
 
 // ── วาด ──
-const SP_PL = { eq: ["eq","ตรงกัน"], mm: ["mm","จับคู่ไว้"], sim: ["sim","คล้ายกัน"], nw: ["nw","ชื่อใหม่"], up: ["up","อัปเดตยอด"], set: ["eq","เลือกแล้ว"] };
+const SP_PL = { eq: ["eq","ตรงกัน"], mm: ["mm","จับคู่ไว้"], sim: ["sim","คล้ายกัน"], nw: ["nw","ชื่อใหม่"], up: ["up","อัปเดตยอด"], set: ["eq","เลือกแล้ว"], mv: ["up","ย้ายหมวด"] };
 function _spRowHtml(r, i) {
   const pl = SP_PL[r.kind] || SP_PL.nw;
   let note = "";
-  if (r.kind === "up") note = `ในบอร์ด <s>${_spFmt(r.old)}</s> → ${_spFmt(r.amount)}`;
+  if (r.kind === "mv") note = `ดึงไว้ใน${SP_GL[r.ref.grp]} → ย้ายไป${SP_GL[r.mv]} ตามประวัติ`;
+  else if (r.kind === "up") note = `ในบอร์ด <s>${_spFmt(r.old)}</s> → ${_spFmt(r.amount)}` + (r.mv ? ` · ย้ายไป${SP_GL[r.mv]}` : "");
   else if (r.dup) note = r.act === "link" ? `ตรงกับแถวที่พิมพ์ไว้ใน${SP_GL[r.dup.grp]} · ผูกแถวเดิม ไม่เพิ่มแถว`
     : r.act === "replace" ? `แทนยอดแถวเดิม ${_spFmt(r.dup.amount)} → ${_spFmt(r.amount)}`
     : `มี "${_spEsc(r.name)}" ใน${SP_GL[r.dup.grp]}แล้ว ${_spFmt(r.dup.amount)} (พิมพ์เอง)`;
@@ -26607,7 +26641,12 @@ function _spRowHtml(r, i) {
   else if (r.kind === "mm" || r.name !== r.sName) note = `แอปขายเขียน "${_spEsc(r.sName)}"`;
   else if (r.kind === "eq") { const k = _spKnownCache && _spKnownCache[r.name]; note = k && k.day ? "ใช้ล่าสุด " + _spDayLbl(k.day) : "มีในทะเบียนลูกค้า"; }
   else note = "ไม่เคยมีในตลาด";
-  if (r.amount !== r.total && r.kind !== "up") note += ` · แก้ยอดจาก ${_spFmt(r.total)}`;
+  // V5.86: แถวที่จะเพิ่มใหม่ บอกหมวดที่จะลง
+  if (r.kind !== "up" && r.kind !== "mv" && r.act === "add") {
+    const gq = _spGrpOf(r.name);
+    note = `ลง${SP_GL[gq.g]}${gq.hist ? "" : " (ไม่มีประวัติ)"} · ` + note;
+  }
+  if (r.amount !== r.total && r.kind !== "up" && r.kind !== "mv") note += ` · แก้ยอดจาก ${_spFmt(r.total)}`;
   const nm = _spNeeds(r) ? `<button type="button" class="sp-sel" data-spe="${i}">${_spEsc(r.name)}</button>` : `<span>${_spEsc(r.name)}</span>`;
   return `<div class="sp-r${r.on ? "" : " off"}" data-spr="${i}">
     <button type="button" class="sp-ck${r.on ? " on" : ""}" data-spk="${i}" aria-label="เลือก" aria-pressed="${r.on}"></button>
@@ -26633,7 +26672,7 @@ function _spRender() {
     const need = R.map((r, i) => [r, i]).filter(([r]) => _spNeeds(r));
     const ready = R.map((r, i) => [r, i]).filter(([r]) => !_spNeeds(r));
     const cnt = {}; R.forEach(r => { const k = r.act === "link" ? "link" : r.kind; cnt[k] = (cnt[k] || 0) + 1; });
-    const chips = [["sim","คล้ายกัน"],["eq","ตรงกัน"],["set","เลือกแล้ว"],["mm","จับคู่ไว้"],["nw","ใหม่"],["link","ผูกแถวเดิม"],["up","อัปเดตยอด"]]
+    const chips = [["sim","คล้ายกัน"],["eq","ตรงกัน"],["set","เลือกแล้ว"],["mm","จับคู่ไว้"],["nw","ใหม่"],["link","ผูกแถวเดิม"],["up","อัปเดตยอด"],["mv","ย้ายหมวด"]]
       .filter(([k]) => cnt[k]).map(([k, l]) => `<span class="sp-pl ${(SP_PL[k] || ["eq"])[0]}">${l} ${cnt[k]}</span>`).join("");
     if (!R.length && !_sp.skip.length && !_sp.paid.length)
       body = `<div class="sp-msg"><b>${_sp.state === "empty" ? "แอปขายยังไม่มีข้อมูลวันนี้" : "ไม่มีบิลจัดส่งในแอปขาย"}</b><small>วันที่ ${_spEsc(dt)}</small></div>`;
@@ -26764,14 +26803,19 @@ async function spApply() {
   if (!rows.length) return;
   const btn = document.getElementById("spGo"); if (btn) btn.disabled = true;
   const u = {}, mp = {}, batchId = "b_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6), addedAt = Date.now();
-  let nAdd = 0, nUp = 0, nLink = 0;
+  let nAdd = 0, nUp = 0, nLink = 0, nMv = 0; const gCnt = {};
   const dd = allDays[day] || {};
   rows.forEach((r, i) => {
     const sf = { src: r.src, srcAmt: r.total, srcName: r.sName };
     if (r.act === "update" && r.ref) {
       const it = (dd[r.ref.grp] || {})[r.ref.key]; if (!it) return;
       const b = `days/${day}/${r.ref.grp}/${r.ref.key}`;
-      u[b + "/amount"] = r.amount; u[b + "/srcAmt"] = r.total; nUp++;
+      if (r.mv) {
+        // V5.86: ย้ายทั้งแถวไปหมวดตามประวัติ (คีย์เดิม) แล้วลบที่เดิม
+        u[`days/${day}/${r.mv}/${r.ref.key}`] = Object.assign({}, it, { amount: r.amount, srcAmt: r.total, srcGrp: r.mv });
+        u[b] = null; nMv++; gCnt[r.mv] = (gCnt[r.mv] || 0) + 1;
+        if (r.kind === "up") nUp++;
+      } else { u[b + "/amount"] = r.amount; u[b + "/srcAmt"] = r.total; nUp++; }
     } else if ((r.act === "link" || r.act === "replace") && r.dup) {
       const it = (dd[r.dup.grp] || {})[r.dup.key]; if (!it) return;
       const b = `days/${day}/${r.dup.grp}/${r.dup.key}`;
@@ -26779,7 +26823,9 @@ async function spApply() {
       if (r.act === "replace") { u[b + "/amount"] = r.amount; nUp++; } else nLink++;
     } else {
       const key = "itm" + Date.now() + "_" + i + "_" + Math.random().toString(36).slice(2, 6);
-      u[`days/${day}/delivery/${key}`] = Object.assign({ name: r.name, amount: r.amount, status: "รอชำระ", nameColor: r.color || "#1C1917", note: "", paidAt: null, batchId, addedAt }, sf);
+      const gg = _spGrpOf(r.name).g;   // V5.86: หมวดตามประวัติ ไม่ใช่จัดส่งตายตัว
+      u[`days/${day}/${gg}/${key}`] = Object.assign({ name: r.name, amount: r.amount, status: "รอชำระ", nameColor: r.color || "#1C1917", note: "", paidAt: null, batchId, addedAt, srcGrp: gg }, sf);
+      gCnt[gg] = (gCnt[gg] || 0) + 1;
       nAdd++;
     }
     if (r.kind !== "up" && r.remember) {
@@ -26795,7 +26841,8 @@ async function spApply() {
     spClose();
     try { if (typeof playSoundSuccess === "function") playSoundSuccess(); } catch (e) {}
     const parts = [];
-    if (nAdd) parts.push("ลงจัดส่ง " + nAdd + " บิล");
+    if (nAdd || nMv) parts.push(["credit","transfer","fence","delivery"].filter(g => gCnt[g])
+      .map(g => SP_GL[g] + " " + gCnt[g]).join(" · ") + (nMv ? " (ย้าย " + nMv + ")" : ""));
     if (nUp) parts.push("อัปเดตยอด " + nUp + " บิล");
     if (nLink) parts.push("ผูกแถวเดิม " + nLink + " บิล");
     if (typeof showToast === "function") showToast(parts.join(" · "), "success", 2600);
