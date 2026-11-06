@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<!-- maximum-scale=1 กันซาฟารีซูมเข้าตอนแตะช่องกรอก · viewport-fit=cover ให้พื้นที่ขอบจอรอดเส้นล่าง -->
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="กรอกตะกร้า">
+<meta name="theme-color" content="#44504B">
+<meta name="robots" content="noindex,nofollow">
+<title>กรอกตะกร้า</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   ตลาด · หน้ากรอกตะกร้าของลูกน้อง V1
+   เปิดมาเจอหน้านี้หน้าเดียว ไปหน้าอื่นไม่ได้
+   กรอกได้เฉพาะ "เก็บมา" ของวันนี้ · ย้อนหลังดูได้ 2 วัน แตะไม่ได้
+   ═══════════════════════════════════════════════════════════ */
+:root{
+  --bg:#F2F2F7; --card:#FFFFFF; --line:#EFEFEF; --line2:#E3E3E3;
+  --ink:#1C1917; --mute:#8E8E93; --dim:#D6D3D1;
+  --blue:#2563EB; --green:#16A34A; --red:#DC2626; --amber:#F59E0B;
+  --slate:#44504B; --slate2:#2F4A44;
+  --f:-apple-system,BlinkMacSystemFont,"SF Pro Text","Noto Sans Thai","Helvetica Neue",sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--f);
+  font-size:15px; line-height:1.5;
+  -webkit-text-size-adjust:100%;
+  /* กันลากหน้าทั้งหน้าแล้วเด้ง ซึ่งบนไอโฟนทำให้รู้สึกเหมือนหลุดออกจากแอป */
+  overscroll-behavior-y:none;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+[hidden]{display:none!important}
+.wrap{max-width:460px;margin:0 auto;padding:0 10px 110px}
+
+/* ── แถบหัว ─────────────────────────────────────────────── */
+.top{
+  position:sticky; top:0; z-index:20; background:rgba(255,255,255,.94);
+  -webkit-backdrop-filter:saturate(180%) blur(14px); backdrop-filter:saturate(180%) blur(14px);
+  border-bottom:1px solid var(--line2); text-align:center;
+  padding:calc(10px + env(safe-area-inset-top)) 14px 9px;
+}
+.top b{display:block;font-size:17px;font-weight:700;line-height:1.25}
+.top span{font-size:12px;color:var(--mute)}
+.top .rf{
+  position:absolute; right:10px; bottom:7px; font-size:11.5px; color:var(--mute);
+  display:flex; align-items:center; gap:4px; padding:4px 6px; border-radius:7px;
+}
+.top .rf svg{width:13px;height:13px}
+.top .rf.busy svg{animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── การ์ดวัน ───────────────────────────────────────────── */
+.day{background:var(--card);border-radius:14px;overflow:hidden;margin-top:12px;
+  box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.dh{display:flex;align-items:baseline;gap:8px;padding:11px 14px;background:#FAFAF9;
+  border-bottom:1px solid var(--line)}
+.dh b{font-size:16px;font-weight:700}
+.dh span{font-size:12px;color:var(--mute)}
+.dh .tag{margin-left:auto;font-size:11px;font-weight:700;border-radius:99px;padding:2px 9px}
+.dh .tag.now{background:#FEF3C7;color:#92400E}
+.dh .tag.old{background:#EEF2F0;color:#6B7670}
+.day.past .dh{background:#F6F7F6}
+
+.hd{display:grid;gap:8px;padding:6px 14px;font-size:11px;color:var(--mute);
+  border-bottom:1px solid #F0F0F0}
+.hd span:not(:first-child){text-align:center}
+.row{display:grid;gap:8px;padding:8px 14px;align-items:center;
+  border-bottom:1px solid var(--line);font-size:14px}
+.row:last-child{border-bottom:0}
+.hd.c3,.row.c3{grid-template-columns:1fr 54px 66px}       /* วันนี้: ชื่อ · ออกไป · เก็บมา   */
+.hd.c4,.row.c4{grid-template-columns:1fr 46px 46px 64px}  /* ย้อนหลัง: ชื่อ · ออก · เก็บ · ผล */
+.nm{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nm i{display:block;font-style:normal;font-size:11px;font-weight:400;color:var(--green);margin-top:1px}
+
+/* ตัวเลขที่แก้ไม่ได้ — ดึงมาจากที่เจ้าของกรอกในแอปหลัก */
+.ro{text-align:center;font-weight:700;color:var(--blue);font-variant-numeric:tabular-nums}
+.ro.z{color:var(--dim);font-weight:400;font-size:12px}
+.ri{text-align:center;font-weight:700;color:var(--green);font-variant-numeric:tabular-nums}
+.ri.z{color:var(--dim);font-weight:400;font-size:12px}
+
+/* ช่องกรอกช่องเดียวในแอปนี้ */
+input.f{
+  width:100%; border:1.5px solid var(--line2); border-radius:9px; background:#fff;
+  text-align:center; padding:8px 2px; font-family:inherit; font-size:16px; font-weight:700;
+  color:var(--green); font-variant-numeric:tabular-nums; outline:none; appearance:none;
+}
+input.f::placeholder{color:var(--dim);font-weight:400;font-size:13px}
+input.f:focus{border-color:var(--slate)}
+input.f.has{border-color:var(--amber)}
+
+/* ผลของวันย้อนหลัง */
+.pin{text-align:center;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.pin.short{color:var(--red)} .pin.over{color:var(--green)} .pin.even{color:#A8A29E;font-weight:500}
+
+/* บรรทัดบอกว่าวันนั้นส่งไปแล้วกี่รอบ */
+.log{padding:9px 14px;background:#FAFAF9;border-top:1px solid var(--line);font-size:11.5px;color:var(--mute)}
+.log b{color:var(--slate2);font-weight:600}
+.log div+div{margin-top:3px}
+
+/* ── ปุ่มส่ง ตรึงล่าง ───────────────────────────────────── */
+.bar{
+  position:fixed; left:0; right:0; bottom:0; z-index:30;
+  padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+  background:rgba(255,255,255,.95);
+  -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+  border-top:1px solid var(--line2);
+}
+.bar .in{max-width:460px;margin:0 auto}
+.btn{display:block;width:100%;border:0;border-radius:13px;padding:14px 0;
+  font-family:inherit;font-size:16px;font-weight:700;color:#fff;background:var(--slate)}
+.btn[disabled]{background:#E3E3E7;color:#A8A29E}
+.btn.send{background:var(--green)}
+
+/* ── หน้าเข้าใช้งาน ─────────────────────────────────────── */
+.mid{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:24px 18px}
+.box{width:100%;max-width:360px;background:var(--card);border-radius:18px;padding:26px 20px 22px;
+  text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.logo{width:50px;height:50px;border-radius:14px;background:var(--slate);color:#fff;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 13px}
+.logo svg{width:26px;height:26px}
+.box h1{font-size:19px;font-weight:700;margin:0 0 3px}
+.box .t{font-size:12.5px;color:var(--mute);margin:0 0 18px}
+.fld{width:100%;border:1.5px solid var(--line2);border-radius:11px;background:#fff;
+  padding:13px 14px;font-family:inherit;font-size:16px;color:var(--ink);outline:none;
+  margin-bottom:10px;appearance:none}
+.fld:focus{border-color:var(--slate)}
+.msg{font-size:13px;line-height:1.55;border-radius:11px;padding:11px 13px;margin:0 0 12px;text-align:left}
+.msg.err{background:#FEF2F2;color:#9F1239}
+.msg.info{background:#EEF2F0;color:#2F4A44}
+.msg b{font-weight:700}
+.msg code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;
+  background:rgba(0,0,0,.05);border-radius:4px;padding:1px 4px}
+.small{font-size:11.5px;color:var(--mute);line-height:1.55;margin-top:12px}
+.who{font-size:12px;color:var(--mute);margin-top:14px;word-break:break-all}
+.lnk{display:inline-block;margin-top:9px;color:var(--blue);font-size:13px;font-weight:600;
+  background:none;border:0;font-family:inherit;padding:6px}
+
+/* ── แผ่นยืนยันก่อนส่ง ──────────────────────────────────── */
+.ovl{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.4);
+  display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:460px;background:#fff;border-radius:18px 18px 0 0;
+  padding:18px 18px calc(20px + env(safe-area-inset-bottom));animation:up .22s ease}
+@keyframes up{from{transform:translateY(16px);opacity:.4}to{transform:none;opacity:1}}
+.sheet h2{font-size:17px;font-weight:700;margin:0 0 3px;text-align:center}
+.sheet .t2{font-size:12.5px;color:var(--mute);text-align:center;margin:0 0 14px}
+.cf{display:flex;justify-content:space-between;align-items:center;padding:9px 0;
+  border-bottom:1px solid var(--line);font-size:15px}
+.cf:last-of-type{border-bottom:0}
+.cf b{font-weight:700;color:var(--green);font-variant-numeric:tabular-nums}
+.sheet .btns{display:flex;gap:9px;margin-top:16px}
+.sheet .btns .btn{flex:1}
+.btn.ghost{background:#F2F2F7;color:#1C1917}
+
+/* ── แถบแจ้งเตือนลอย ────────────────────────────────────── */
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));z-index:70;
+  transform:translateX(-50%);max-width:88vw;background:rgba(28,25,23,.94);color:#fff;
+  font-size:13.5px;line-height:1.45;border-radius:12px;padding:11px 15px;text-align:center;
+  opacity:0;transition:opacity .2s ease;pointer-events:none}
+.toast.on{opacity:1}
+.toast.bad{background:rgba(159,18,57,.96)}
+
+.tick{width:46px;height:46px;border-radius:50%;background:#DCFCE7;color:#15803D;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.tick svg{width:24px;height:24px}
+.empty{text-align:center;padding:30px 20px;color:var(--mute);font-size:13.5px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<!-- ── กำลังเปิด ─────────────────────────────────────────── -->
+<div id="vBoot" class="mid"><div class="box">
+  <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.8 7.5h18.4l-2 12.1a1 1 0 0 1-1 .9H5.8a1 1 0 0 1-1-.9Z"/><path d="M5.5 13.2h13"/><path d="M9.7 7.5l-.4 13M14.3 7.5l.4 13"/></svg></div>
+  <h1>กรอกตะกร้า</h1><p class="t" id="bootMsg">กำลังเปิด…</p>
+</div></div>
+
+<!-- ── เข้าใช้งาน ────────────────────────────────────────── -->
+<div id="vLogin" class="mid" hidden><div class="box">
+  <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.8 7.5h18.4l-2 12.1a1 1 0 0 1-1 .9H5.8a1 1 0 0 1-1-.9Z"/><path d="M5.5 13.2h13"/><path d="M9.7 7.5l-.4 13M14.3 7.5l.4 13"/></svg></div>
+  <h1>กรอกตะกร้า</h1><p class="t">ทศพร ผลไม้</p>
+  <div id="loginMsg" class="msg err" hidden></div>
+  <input id="em" class="fld" type="email" inputmode="email" autocomplete="username"
+         autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="อีเมล">
+  <input id="pw" class="fld" type="password" autocomplete="current-password" placeholder="รหัสผ่าน">
+  <button id="btnIn" class="btn">เข้าใช้งาน</button>
+  <p class="small">ใส่ครั้งเดียว เครื่องนี้จำให้ตลอด ไม่ต้องใส่อีก</p>
+</div></div>
+
+<!-- ── ยังไม่ได้รับสิทธิ์ / ถูกปิด ────────────────────────── -->
+<div id="vWait" class="mid" hidden><div class="box">
+  <div class="logo" id="waitIcon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="11" width="15" height="9.5" rx="2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg></div>
+  <h1 id="waitTitle">ยังเข้าไม่ได้</h1>
+  <div id="waitMsg" class="msg info" style="margin-top:14px"></div>
+  <p class="who" id="waitWho"></p>
+  <button class="lnk" id="btnRetry">ลองใหม่</button>
+  <button class="lnk" id="btnOut2">ออกจากบัญชีนี้</button>
+</div></div>
+
+<!-- ── หน้ากรอก ─────────────────────────────────────────── -->
+<div id="vApp" hidden>
+  <div class="top">
+    <b>กรอกตะกร้า</b><span id="meName">—</span>
+    <button class="rf" id="btnRefresh" aria-label="รีเฟรช">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12a8.5 8.5 0 1 1-2.6-6.1"/><path d="M20.5 4.5V10h-5.5"/></svg>
+      <span id="rfTime">—</span>
+    </button>
+  </div>
+  <div class="wrap" id="days"></div>
+  <div class="bar"><div class="in">
+    <button id="btnSend" class="btn" disabled>ยังไม่ได้กรอก</button>
+  </div></div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════
+   ที่มาของตัวเลขแต่ละช่อง
+     ออกไป  = basket/data → bkData[เดือน].cutter[id][วัน].out   ← เจ้าของกรอกในแอปหลัก อ่านอย่างเดียว
+     เก็บมา  = basket/data … .in  (ของเจ้าของ)  +  ผลรวมที่ลูกน้องส่งเข้ามาในกล่องรับ
+   สิ่งที่หน้านี้เขียน มีที่เดียว คือกล่องรับ
+     basketInbox/{YYYY-MM}/{DD}/{คีย์สุ่ม} = { c:คนตัด, q:จำนวน, u:ยูสเซอร์, n:ชื่อ, t:เวลา }
+   เขียนแยกโหนดเพราะ bkSaveLocal ของแอปหลักเขียนทับ basket ทั้งก้อนด้วย set()
+   ถ้าเขียนลงไปตรงๆ เจ้าของกดบันทึกทีเดียวของลูกน้องหายทันที
+   และการเก็บเป็นรายการแยก ทำให้ "ส่งแล้วลบไม่ได้" และเห็นได้ว่าส่งมากี่รอบ รอบละเท่าไหร่ กี่โมง
+   ═══════════════════════════════════════════════════════════ */
+
+if (typeof firebase === "undefined") {
+  document.body.innerHTML =
+    '<div class="mid"><div class="box"><h1>เปิดไม่ได้</h1>' +
+    '<p class="t">โหลดตัวเชื่อมฐานข้อมูลไม่สำเร็จ</p>' +
+    '<div class="msg err">เปิดลิงก์นี้ในเบราว์เซอร์ (Safari หรือ Chrome) และต้องต่อเน็ตอยู่</div></div></div>';
+  throw new Error("firebase sdk missing");
+}
+
+firebase.initializeApp({
+  apiKey: "AIzaSyAB1dpXsxrG1aJkAivXiaT5JqhTnPype4g",
+  authDomain: "tossaporn-9781a.firebaseapp.com",
+  databaseURL: "https://tossaporn-9781a-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "tossaporn-9781a",
+  storageBucket: "tossaporn-9781a.firebasestorage.app",
+  messagingSenderId: "504275614843",
+  appId: "1:504275614843:web:000cc1421fbf2646daf6de"
+});
+var AUTH = firebase.auth();
+var DB   = firebase.database();
+
+var APP_VERSION = "ลูกน้อง V3";
+var BACK_DAYS   = 2;          // ดูย้อนหลังได้กี่วัน (แตะไม่ได้)
+
+/* ── ตัวช่วยเล็กๆ ─────────────────────────────────────── */
+var $ = function (id) { return document.getElementById(id); };
+var TH_DAY = ["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
+var TH_MON = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+function pad2(n) { return String(n).padStart(2, "0"); }
+function esc(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+function hhmm(ms) { var d = new Date(ms); return pad2(d.getHours()) + ":" + pad2(d.getMinutes()); }
+function show(v) {
+  ["vBoot","vLogin","vWait","vApp"].forEach(function (k) { $(k).hidden = (k !== v); });
+}
+var _toastT = null;
+function toast(txt, bad) {
+  var t = $("toast");
+  t.textContent = txt;
+  t.className = "toast on" + (bad ? " bad" : "");
+  if (_toastT) clearTimeout(_toastT);
+  _toastT = setTimeout(function () { t.className = "toast"; }, bad ? 4200 : 2300);
+}
+
+/* ── กันออกจากหน้านี้ ───────────────────────────────────
+   ลูกน้องต้องอยู่หน้านี้หน้าเดียว ปัดกลับแล้วต้องไม่หลุดไปไหน
+   ใส่หน้าหลอกไว้หนึ่งชั้น พอปัดกลับก็ใส่คืนทันที ปุ่มย้อนกลับจึงไม่พาไปไหน
+   (ปิดแท็บยังทำได้ตามปกติ อันนั้นไม่ได้ห้าม)                              */
+try {
+  history.pushState({ lock: 1 }, "");
+  window.addEventListener("popstate", function () {
+    history.pushState({ lock: 1 }, "");
+  });
+} catch (e) {}
+
+/* ── วันที่ที่หน้านี้สนใจ ─────────────────────────────── */
+function dayInfo(offset) {
+  var d = new Date();
+  d.setHours(12, 0, 0, 0);                 // เที่ยงวัน กันเวลาออมแสง/เขตเวลาทำให้ข้ามวัน
+  d.setDate(d.getDate() - offset);
+  var y = d.getFullYear(), m = d.getMonth() + 1, dd = d.getDate();
+  return {
+    off: offset,
+    mk: y + "-" + pad2(m),
+    dd: pad2(dd),
+    label: dd + " " + TH_MON[m - 1],
+    wd: TH_DAY[d.getDay()],
+    title: offset === 0 ? "วันนี้" : (offset === 1 ? "เมื่อวาน" : "")
+  };
+}
+function buildDays() {
+  var a = [];
+  for (var i = 0; i <= BACK_DAYS; i++) a.push(dayInfo(i));
+  return a;
+}
+
+/* ── สถานะของหน้า ────────────────────────────────────── */
+var ME       = null;    // ผู้ใช้ที่ล็อกอินอยู่
+var ACL      = null;    // สิทธิ์ของผู้ใช้คนนี้
+var CUTTERS  = [];      // คนตัดที่เจ้าของเปิดสวิตช์ให้ลงได้
+var BKDATA   = {};      // ข้อมูลตะกร้าของเจ้าของ
+var INBOX    = {};      // กล่องรับ · INBOX[mk+"/"+dd] = { คีย์: รายการ }
+var DAYS     = buildDays();
+var _inboxRefs = [];
+var _sending = false;
+
+/* ═══ 1. เข้าใช้งาน ═════════════════════════════════════ */
+function authMessage(err) {
+  var c = (err && err.code) || "";
+  if (c === "auth/operation-not-allowed")
+    return '<b>ฐานข้อมูลยังไม่ได้เปิดระบบบัญชี</b><br>' +
+           'บอกเจ้าของให้เปิด <code>Email/Password</code> ใน Firebase Console ' +
+           'ที่หน้า Authentication → Sign-in method แล้วค่อยลองใหม่';
+  if (c === "auth/invalid-email")      return "รูปแบบอีเมลไม่ถูกต้อง";
+  if (c === "auth/user-disabled")      return "<b>บัญชีนี้ถูกปิดไว้</b><br>ติดต่อเจ้าของ";
+  if (c === "auth/too-many-requests")  return "<b>ลองผิดหลายครั้งเกินไป</b><br>รอสัก 2–3 นาทีแล้วลองใหม่";
+  if (c === "auth/network-request-failed") return "<b>ต่อเน็ตไม่ได้</b><br>เช็กสัญญาณแล้วลองใหม่";
+  if (c === "auth/invalid-credential" || c === "auth/wrong-password" ||
+      c === "auth/user-not-found" || c === "auth/invalid-login-credentials")
+    return "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
+  return "เข้าไม่สำเร็จ <code>" + esc(c || "ไม่ทราบสาเหตุ") + "</code><br>ถ่ายจอนี้ส่งให้เจ้าของดู";
+}
+
+function doLogin() {
+  var em = ($("em").value || "").trim();
+  var pw = $("pw").value || "";
+  var box = $("loginMsg");
+  box.hidden = true;
+  if (!em || !pw) { box.innerHTML = "ใส่อีเมลกับรหัสผ่านให้ครบก่อน"; box.hidden = false; return; }
+  $("btnIn").disabled = true;
+  $("btnIn").textContent = "กำลังเข้า…";
+  AUTH.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+    .catch(function () {})                    // โหมดส่วนตัวของซาฟารีอาจไม่ให้จำ — เข้าได้อยู่ แค่ต้องใส่ใหม่
+    .then(function () { return AUTH.signInWithEmailAndPassword(em, pw); })
+    .catch(function (err) {
+      box.innerHTML = authMessage(err);
+      box.hidden = false;
+      $("btnIn").disabled = false;
+      $("btnIn").textContent = "เข้าใช้งาน";
+    });
+}
+
+/* ═══ 2. ตรวจสิทธิ์ ═════════════════════════════════════
+   รายชื่อผู้มีสิทธิ์อยู่ที่ staffAcl/{uid}
+   ยังไม่มีชื่อ → ฝากคำขอไว้ให้เจ้าของเห็น แล้วบอกให้ไปตามเจ้าของ
+   มีชื่อแต่ปิดอยู่ → บอกตรงๆ ว่าถูกปิด ไม่ใช่ปล่อยให้งงกับจอว่าง         */
+function gateMessage(kind, extra) {
+  if (kind === "pending")
+    return '<b>ส่งคำขอให้เจ้าของแล้ว</b><br>' +
+           'บอกเจ้าของให้เปิดสิทธิ์ให้ในแอปหลัก · เปิดแล้วกด “ลองใหม่” ข้างล่างได้เลย';
+  if (kind === "off")
+    return '<b>สิทธิ์ของบัญชีนี้ถูกปิดอยู่</b><br>ติดต่อเจ้าของให้เปิดให้ก่อน';
+  if (kind === "removed")
+    return '<b>บัญชีนี้ถูกเอาออกจากรายชื่อแล้ว</b><br>ถ้าคิดว่าผิดพลาด ติดต่อเจ้าของ';
+  if (kind === "denied")
+    return '<b>ฐานข้อมูลไม่ให้สิทธิ์อ่าน</b><br>' +
+           'ถ่ายจอนี้ส่งให้เจ้าของ แล้วให้เช็กกฎฐานข้อมูล' +
+           (extra ? '<br><code>' + esc(extra) + '</code>' : '');
+  return '<b>มีบางอย่างผิดพลาด</b><br>' + esc(extra || "");
+}
+function showGate(kind, extra) {
+  $("waitTitle").textContent = kind === "pending" ? "รอเจ้าของเปิดสิทธิ์" : "ยังเข้าไม่ได้";
+  // ถูกเตะออกกลางคัน ต้องเก็บหน้ากรอกให้มิด ไม่ให้กดส่งอะไรได้อีก
+  try { $("vApp").hidden = true; } catch (e) {}
+  $("waitMsg").innerHTML = gateMessage(kind, extra);
+  $("waitWho").textContent = ME ? ME.email || ME.uid : "";
+  show("vWait");
+}
+
+// V3: ฟังสิทธิ์ของตัวเองแบบสด ไม่ใช่เช็กครั้งเดียวตอนเปิด
+//   เจ้าของกดปิดสิทธิ์ตอนไหน หน้านี้ต้องเด้งออกตอนนั้น ไม่ใช่รอปิดแอปเปิดใหม่
+//   ("ปิดแล้วมีผลทันที" ต้องจริงทั้งฝั่งกฎฐานข้อมูลและฝั่งหน้าจอ)
+var _aclFirst = true;
+var _aclRef = null;
+function checkAcl() {
+  if (_aclRef) { try { _aclRef.ref.off("value", _aclRef.cb); } catch (e) {} _aclRef = null; }
+  _aclFirst = true;
+  var ref = DB.ref("staffAcl/" + ME.uid);
+  var cb = ref.on("value", function (snap) {
+    var v = snap.val();
+    var first = _aclFirst; _aclFirst = false;
+
+    if (!v) {
+      if (first) {
+        // ยังไม่มีชื่อในรายชื่อ — ฝากคำขอไว้ ให้เจ้าของกดอนุมัติในแอปหลักได้เลย
+        // ตั้ง active:false มาตั้งแต่ต้น เข้าอะไรไม่ได้จนกว่าเจ้าของจะเปลี่ยนเอง
+        DB.ref("staffAcl/" + ME.uid).set({
+          email: ME.email || "", name: "", active: false, by: "self", at: Date.now()
+        }).then(function () { showGate("pending"); })
+          .catch(function (e) { showGate("denied", e && e.message); });
+      } else {
+        // ถูกลบออกจากรายชื่อระหว่างที่เปิดค้างอยู่ — ห้ามเขียนคำขอใหม่เองเด็ดขาด
+        // ไม่งั้นชื่อจะเด้งกลับเข้าไปในรายการของเจ้าของเองโดยที่เขาไม่ได้สั่ง
+        showGate("removed");
+      }
+      return;
+    }
+
+    ACL = v;
+    if (v.active !== true) {
+      // by = "self" แปลว่าเป็นคำขอที่ตัวเองฝากไว้ ยังไม่เคยถูกอนุมัติ → "รอเจ้าของ"
+      // by = "owner" แปลว่าเจ้าของเคยรับรองแล้วแต่มากดปิดทีหลัง → "ถูกปิด"
+      showGate(v.by === "self" ? "pending" : "off");
+      return;
+    }
+
+    $("meName").textContent = v.name || ME.email || "";
+    if (first) {
+      // จดเวลาเข้าไว้ให้เจ้าของเห็น (ล้มเหลวก็ไม่เป็นไร ไม่ใช่เรื่องคอขาดบาดตาย)
+      DB.ref("staffAcl/" + ME.uid + "/last").set(Date.now()).catch(function () {});
+      startApp();
+    } else if ($("vApp").hidden) {
+      // เพิ่งถูกเปิดสิทธิ์คืน ขณะเปิดหน้าค้างอยู่ — เข้าได้เลยไม่ต้องกดอะไร
+      startApp();
+    }
+  }, function (e) {
+    showGate("denied", e && e.message);
+  });
+  _aclRef = { ref: ref, cb: cb };
+}
+
+/* ═══ 3. โหลดข้อมูล ═════════════════════════════════════
+   basket เป็นก้อน JSON ก้อนเดียว อ่านทีละครั้ง ไม่ใช้ตัวฟังแบบสด
+   เพราะทุกครั้งที่เจ้าของกดบันทึก ตัวฟังจะดึงทั้งก้อนลงมาใหม่ เปลืองโควตาเปล่าๆ
+   แทนที่ด้วย: โหลดตอนเปิด + ตอนกลับมาที่หน้าจอ + ปุ่มรีเฟรชที่หัว
+   ส่วนกล่องรับของวันนี้ใช้ตัวฟังสด เพราะก้อนเล็กและต้องเห็นทันทีที่ส่ง      */
+function startApp() {
+  show("vApp");
+  render();
+  loadBasket(true);
+  DAYS.forEach(function (d) { watchInbox(d); });
+
+  // กลับมาที่หน้าจอเมื่อไหร่ ดึงของใหม่ให้อัตโนมัติ — ลูกน้องจะได้ไม่เห็นเลขเก่าค้าง
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) {
+      // ข้ามวันตอนแอปค้างอยู่เบื้องหลัง ต้องสร้างวันใหม่ ไม่งั้นจะกรอกลงวันเมื่อวาน
+      var nowKey = dayInfo(0).mk + dayInfo(0).dd;
+      if (nowKey !== DAYS[0].mk + DAYS[0].dd) { rebuildDays(); return; }
+      loadBasket(false);
+    }
+  });
+  $("btnRefresh").addEventListener("click", function () { loadBasket(false); });
+}
+
+function rebuildDays() {
+  _inboxRefs.forEach(function (r) { try { r.ref.off("value", r.cb); } catch (e) {} });
+  _inboxRefs = [];
+  INBOX = {};
+  DAYS = buildDays();
+  DAYS.forEach(function (d) { watchInbox(d); });
+  loadBasket(true);
+  toast("ขึ้นวันใหม่แล้ว");
+}
+
+var _loading = false;
+function loadBasket(first) {
+  if (_loading) return;
+  _loading = true;
+  $("btnRefresh").classList.add("busy");
+  Promise.all([ DB.ref("basket/cutters").once("value"),
+                DB.ref("basket/data").once("value") ])
+  .then(function (r) {
+    var all = [];
+    try { all = JSON.parse(r[0].val() || "[]") || []; } catch (e) { all = []; }
+    try { BKDATA = JSON.parse(r[1].val() || "{}") || {}; } catch (e) { BKDATA = {}; }
+    // เฉพาะคนที่เจ้าของเปิดสวิตช์ "ลูกน้องลงตะกร้า" ให้ · เรียงตามลำดับเดิมในแอปหลัก
+    CUTTERS = all.filter(function (p) { return p && p.staff === true && p.id; });
+    $("rfTime").textContent = hhmm(Date.now());
+    render();
+  })
+  .catch(function (e) {
+    if (first) { showGate("denied", e && e.message); }
+    else { toast("ดึงข้อมูลใหม่ไม่สำเร็จ — ตัวเลขที่เห็นเป็นของเดิม", true); }
+  })
+  .then(function () {
+    _loading = false;
+    $("btnRefresh").classList.remove("busy");
+  });
+}
+
+function watchInbox(d) {
+  var path = "basketInbox/" + d.mk + "/" + d.dd;
+  var ref = DB.ref(path);
+  var cb = ref.on("value", function (snap) {
+    INBOX[d.mk + "/" + d.dd] = snap.val() || {};
+    render();
+  }, function () { /* อ่านกล่องรับไม่ได้ก็ยังกรอกต่อได้ ไม่ต้องเด้งอะไร */ });
+  _inboxRefs.push({ ref: ref, cb: cb });
+}
+
+/* ── อ่านตัวเลขของวันหนึ่ง ───────────────────────────── */
+function ownerEntry(d, id) {
+  var e = BKDATA && BKDATA[d.mk] && BKDATA[d.mk].cutter &&
+          BKDATA[d.mk].cutter[id] && BKDATA[d.mk].cutter[id][d.dd];
+  return { out: (e && +e.out) || 0, in: (e && +e.in) || 0 };
+}
+// รายการที่ลูกน้อง (ทุกคน) ส่งเข้ามาในวันนั้น ของคนตัดคนนั้น เรียงตามเวลา
+// onlyPending = เอาเฉพาะที่เจ้าของยังไม่ได้กดลงในแอปหลัก
+//   รายการที่เจ้าของลงแล้วจะมีคีย์ a ติดมา และตัวเลขนั้นถูกบวกเข้าช่องของเจ้าของเรียบร้อยแล้ว
+//   ถ้ายังเอามานับซ้ำ หน้าย้อนหลังจะโชว์เลขเป็นสองเท่า
+function inboxOf(d, id, onlyPending) {
+  var box = INBOX[d.mk + "/" + d.dd] || {};
+  var out = [];
+  Object.keys(box).forEach(function (k) {
+    var r = box[k];
+    if (!r || r.c !== id || !(+r.q > 0)) return;
+    if (onlyPending && r.a) return;
+    out.push({ k: k, q: +r.q, t: +r.t || 0, n: r.n || "" });
+  });
+  out.sort(function (a, b) { return a.t - b.t; });
+  return out;
+}
+function inboxSum(d, id, onlyPending) {
+  return inboxOf(d, id, onlyPending).reduce(function (s, x) { return s + x.q; }, 0);
+}
+
+/* ═══ 4. วาดหน้าจอ ══════════════════════════════════════ */
+function render() {
+  var host = $("days");
+  if (!CUTTERS.length) {
+    host.innerHTML =
+      '<div class="day"><div class="empty">' +
+      'ยังไม่มีคนตัดที่เจ้าของเปิดให้ลง<br>' +
+      'บอกเจ้าของให้เปิดสวิตช์ “ลูกน้องลงตะกร้า” ในแอปหลักก่อน' +
+      '</div></div>';
+      syncSendBtn();
+    return;
+  }
+  // จำสิ่งที่พิมพ์ค้างไว้ ไม่ให้หายตอนวาดใหม่ (ตัวฟังกล่องรับวาดใหม่ได้ตลอดเวลา)
+  var typed = {};
+  Array.prototype.forEach.call(document.querySelectorAll("input.f"), function (i) {
+    if (i.value !== "") typed[i.dataset.id] = i.value;
+  });
+  var focusId = document.activeElement && document.activeElement.classList &&
+                document.activeElement.classList.contains("f")
+                ? document.activeElement.dataset.id : null;
+
+  var html = "";
+  DAYS.forEach(function (d, idx) {
+    html += idx === 0 ? todayCard(d, typed) : pastCard(d);
+  });
+  host.innerHTML = html;
+  bindInputs();
+  if (focusId) {
+    var back = document.querySelector('input.f[data-id="' + focusId + '"]');
+    if (back) { try { back.focus(); var v = back.value; back.value = ""; back.value = v; } catch (e) {} }
+  }
+  syncSendBtn();
+}
+
+function todayCard(d, typed) {
+  var h =
+    '<div class="day"><div class="dh"><b>' + d.title + " " + d.label + '</b>' +
+    '<span>' + d.wd + '</span><span class="tag now">กรอกได้</span></div>' +
+    '<div class="hd c3"><span>คนตัด</span><span>ออกไป</span><span>เก็บมา</span></div>';
+  CUTTERS.forEach(function (p) {
+    var e = ownerEntry(d, p.id);
+    var sent = inboxSum(d, p.id);
+    var val = typed[p.id] != null ? typed[p.id] : "";
+    h += '<div class="row c3">' +
+         '<span class="nm">' + esc(p.name) +
+           (sent > 0 ? '<i>ส่งแล้ว ' + sent + ' ใบ</i>' : '') + '</span>' +
+         '<span class="ro' + (e.out ? '' : ' z') + '">' + (e.out || "–") + '</span>' +
+         '<span><input class="f' + (val ? ' has' : '') + '" type="text" inputmode="numeric" ' +
+           'pattern="[0-9]*" maxlength="4" placeholder="–" data-id="' + esc(p.id) + '" ' +
+           'value="' + esc(val) + '"></span>' +
+         '</div>';
+  });
+  var log = sentLog(d);
+  if (log) h += '<div class="log">' + log + "</div>";
+  return h + "</div>";
+}
+
+function sentLog(d) {
+  var box = INBOX[d.mk + "/" + d.dd] || {};
+  var byRound = {};
+  Object.keys(box).forEach(function (k) {
+    var r = box[k]; if (!r || !(+r.q > 0)) return;
+    var key = String(r.b || k);            // b = รหัสรอบที่ส่ง · ของเก่าที่ไม่มีให้นับเป็นรอบของตัวเอง
+    if (!byRound[key]) byRound[key] = { t: +r.t || 0, q: 0, c: 0, n: r.n || "" };
+    byRound[key].q += +r.q; byRound[key].c += 1;
+    byRound[key].t = Math.min(byRound[key].t || +r.t, +r.t || 0);
+  });
+  var rounds = Object.keys(byRound).map(function (k) { return byRound[k]; })
+                     .sort(function (a, b) { return a.t - b.t; });
+  if (!rounds.length) return "";
+  return '<div><b>ส่งไปแล้ว ' + rounds.length + ' รอบ</b></div>' +
+    rounds.map(function (r, i) {
+      return '<div>รอบ ' + (i + 1) + ' · ' + hhmm(r.t) + ' น. · ' +
+             r.c + ' คน · ' + r.q + ' ใบ' + (r.n ? ' · ' + esc(r.n) : '') + '</div>';
+    }).join("");
+}
+
+function pastCard(d) {
+  var h =
+    '<div class="day past"><div class="dh"><b>' + (d.title ? d.title + " " : "") + d.label + '</b>' +
+    '<span>' + d.wd + '</span><span class="tag old">ดูอย่างเดียว</span></div>' +
+    '<div class="hd c4"><span>คนตัด</span><span>ออก</span><span>เก็บ</span><span>ผล</span></div>';
+  CUTTERS.forEach(function (p) {
+    var e = ownerEntry(d, p.id);
+    var got = e.in + inboxSum(d, p.id, true);   // เฉพาะที่ยังไม่ได้ลง ของที่ลงแล้วอยู่ใน e.in แล้ว
+    var diff = got - e.out;
+    var cls = diff === 0 ? "even" : (diff > 0 ? "over" : "short");
+    var txt = (e.out === 0 && got === 0) ? "–"
+            : (diff === 0 ? "เท่ากัน" : (diff > 0 ? "เกิน " + diff : "ขาด " + (-diff)));
+    h += '<div class="row c4">' +
+         '<span class="nm">' + esc(p.name) + '</span>' +
+         '<span class="ro' + (e.out ? '' : ' z') + '">' + (e.out || "–") + '</span>' +
+         '<span class="ri' + (got ? '' : ' z') + '">' + (got || "–") + '</span>' +
+         '<span class="pin ' + cls + '">' + txt + '</span>' +
+         '</div>';
+  });
+  return h + "</div>";
+}
+
+/* ── ช่องกรอก ────────────────────────────────────────── */
+function bindInputs() {
+  Array.prototype.forEach.call(document.querySelectorAll("input.f"), function (i) {
+    i.addEventListener("input", function () {
+      // รับเฉพาะตัวเลข ไม่เอาจุด ไม่เอาลบ — ตะกร้าเป็นใบ ไม่มีเศษ
+      var v = i.value.replace(/[^0-9]/g, "").replace(/^0+(?=\d)/, "");
+      if (v !== i.value) i.value = v;
+      i.classList.toggle("has", v !== "");
+      syncSendBtn();
+    });
+  });
+}
+
+function pending() {
+  var out = [];
+  Array.prototype.forEach.call(document.querySelectorAll("input.f"), function (i) {
+    var q = parseInt(i.value, 10);
+    if (q > 0) {
+      var p = CUTTERS.find(function (x) { return x.id === i.dataset.id; });
+      out.push({ id: i.dataset.id, name: p ? p.name : i.dataset.id, q: q });
+    }
+  });
+  return out;
+}
+
+function syncSendBtn() {
+  var b = $("btnSend"), list = pending();
+  if (_sending) { b.disabled = true; b.className = "btn"; b.textContent = "กำลังส่ง…"; return; }
+  b.disabled = list.length === 0;
+  b.className = "btn" + (list.length ? " send" : "");
+  b.textContent = list.length ? ("ส่ง " + list.length + " คน") : "ยังไม่ได้กรอก";
+}
+
+/* ═══ 5. ส่ง ════════════════════════════════════════════
+   ถามยืนยันก่อนทุกครั้ง เพราะส่งแล้วแก้ไม่ได้และลบไม่ได้
+   เขียนทีเดียวจบด้วย update() หลายเส้นทาง — เน็ตหลุดกลางทางจะไม่เข้าแค่บางคน  */
+function askSend() {
+  var list = pending();
+  if (!list.length || _sending) return;
+  var total = list.reduce(function (s, x) { return s + x.q; }, 0);
+  var ov = document.createElement("div");
+  ov.className = "ovl"; ov.id = "cfOvl";
+  ov.innerHTML =
+    '<div class="sheet"><h2>ส่ง ' + list.length + ' คน · ' + total + ' ใบ</h2>' +
+    '<p class="t2">ส่งแล้วแก้ไม่ได้และลบไม่ได้ · ถ้ากรอกตกไป ส่งเพิ่มทีหลังได้</p>' +
+    list.map(function (x) {
+      return '<div class="cf"><span>' + esc(x.name) + '</span><b>' + x.q + ' ใบ</b></div>';
+    }).join("") +
+    '<div class="btns"><button class="btn ghost" id="cfNo">ย้อนกลับ</button>' +
+    '<button class="btn send" id="cfYes">ยืนยันส่ง</button></div></div>';
+  document.body.appendChild(ov);
+  ov.addEventListener("click", function (e) { if (e.target === ov) ov.remove(); });
+  $("cfNo").addEventListener("click", function () { ov.remove(); });
+  $("cfYes").addEventListener("click", function () { ov.remove(); doSend(list); });
+}
+
+function doSend(list) {
+  _sending = true; syncSendBtn();
+  var d = DAYS[0];
+  // วันเปลี่ยนระหว่างที่เปิดค้างไว้หรือเปล่า — ถ้าใช่ ต้องไม่ลงวันเก่า
+  var now = dayInfo(0);
+  if (now.mk !== d.mk || now.dd !== d.dd) {
+    _sending = false; rebuildDays();
+    toast("ข้ามไปวันใหม่แล้ว กรอกใหม่อีกครั้ง", true);
+    return;
+  }
+  var base  = "basketInbox/" + d.mk + "/" + d.dd + "/";
+  var round = DB.ref().push().key;          // รหัสรอบ ใช้จับกลุ่มว่ารายการไหนส่งพร้อมกัน
+  var t     = Date.now();
+  var who   = (ACL && ACL.name) || (ME && ME.email) || "";
+  var patch = {};
+  list.forEach(function (x) {
+    patch[base + DB.ref().push().key] =
+      { c: x.id, q: x.q, u: ME.uid, n: who, t: t, b: round };
+  });
+  DB.ref().update(patch).then(function () {
+    Array.prototype.forEach.call(document.querySelectorAll("input.f"), function (i) {
+      i.value = ""; i.classList.remove("has");
+    });
+    _sending = false; syncSendBtn();
+    try { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } catch (e) {}
+    toast("ส่งแล้ว " + list.length + " คน · " + hhmm(t) + " น.");
+  }).catch(function (e) {
+    _sending = false; syncSendBtn();
+    var m = (e && e.code === "PERMISSION_DENIED")
+      ? "ฐานข้อมูลไม่ให้สิทธิ์เขียน — ถ่ายจอส่งให้เจ้าของ"
+      : "ส่งไม่สำเร็จ เน็ตอาจหลุด — ตัวเลขยังอยู่ กดส่งใหม่ได้เลย";
+    toast(m, true);
+  });
+}
+
+/* ═══ 6. ต่อสายทั้งหมด ══════════════════════════════════ */
+$("btnIn").addEventListener("click", doLogin);
+$("pw").addEventListener("keydown", function (e) { if (e.key === "Enter") doLogin(); });
+$("em").addEventListener("keydown", function (e) { if (e.key === "Enter") $("pw").focus(); });
+$("btnSend").addEventListener("click", askSend);
+$("btnRetry").addEventListener("click", function () {
+  if (ME) { $("waitMsg").innerHTML = "กำลังตรวจอีกครั้ง…"; checkAcl(); }
+});
+$("btnOut2").addEventListener("click", function () {
+  AUTH.signOut().then(function () { location.reload(); });
+});
+
+AUTH.onAuthStateChanged(function (u) {
+  ME = u;
+  if (!u) {
+    $("btnIn").disabled = false;
+    $("btnIn").textContent = "เข้าใช้งาน";
+    $("pw").value = "";
+    show("vLogin");
+    return;
+  }
+  $("bootMsg").textContent = "กำลังตรวจสิทธิ์…";
+  show("vBoot");
+  checkAcl();
+});
+
+// เปิดไม่ขึ้นภายใน 12 วินาที = ติดอะไรสักอย่าง อย่าปล่อยให้จ้องจอ "กำลังเปิด" ไปเรื่อยๆ
+setTimeout(function () {
+  if (!$("vBoot").hidden) {
+    $("bootMsg").innerHTML = "ต่อฐานข้อมูลไม่ได้<br>เช็กสัญญาณเน็ตแล้วปิดเปิดหน้านี้ใหม่";
+  }
+}, 12000);
+</script>
+</body>
+</html>

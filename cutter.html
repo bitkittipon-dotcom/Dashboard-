@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ตะกร้า">
+<meta name="theme-color" content="#44504B">
+<meta name="robots" content="noindex,nofollow">
+<title>ตะกร้าของฉัน</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   ตลาด · หน้าให้คนตัดดูยอดของตัวเอง V1
+   ดูอย่างเดียว ไม่มีช่องกรอกสักช่อง ไม่มีตัวเลขเงินสักตัว
+   อ่านจาก cutterView/{รหัสในลิงก์} ซึ่งเป็นสำเนาเฉพาะคนคนนั้น
+   ═══════════════════════════════════════════════════════════ */
+:root{
+  --bg:#F2F2F7; --card:#FFFFFF; --line:#EFEFEF; --line2:#E3E3E3;
+  --ink:#1C1917; --mute:#8E8E93; --dim:#D6D3D1;
+  --blue:#2563EB; --green:#16A34A; --red:#DC2626; --slate:#44504B; --slate2:#2F4A44;
+  --f:-apple-system,BlinkMacSystemFont,"SF Pro Text","Noto Sans Thai","Helvetica Neue",sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--f);font-size:15px;line-height:1.5;
+  -webkit-text-size-adjust:100%;overscroll-behavior-y:none;
+  padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+[hidden]{display:none!important}
+.wrap{max-width:460px;margin:0 auto;padding:0 10px}
+
+.mid{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:24px 18px}
+.box{width:100%;max-width:340px;background:var(--card);border-radius:18px;padding:26px 20px 22px;
+  text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.logo{width:50px;height:50px;border-radius:14px;background:var(--slate);color:#fff;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 13px}
+.logo svg{width:26px;height:26px}
+.box h1{font-size:18px;font-weight:700;margin:0 0 4px}
+.box p{font-size:13px;color:var(--mute);margin:0;line-height:1.6}
+
+/* หัว */
+.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.95);
+  -webkit-backdrop-filter:saturate(180%) blur(14px);backdrop-filter:saturate(180%) blur(14px);
+  border-bottom:1px solid var(--line2);text-align:center;
+  padding:calc(12px + env(safe-area-inset-top)) 14px 10px}
+.top b{display:block;font-size:19px;font-weight:700;line-height:1.25}
+.top span{font-size:12px;color:var(--mute)}
+
+.big{background:var(--card);border-radius:0 0 14px 14px;text-align:center;padding:16px 10px 14px;
+  box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.big .k{font-size:12.5px;color:var(--mute)}
+.big .v{font-size:42px;font-weight:800;color:var(--red);line-height:1.05;font-variant-numeric:tabular-nums}
+.big .v.zero{color:#A8A29E}
+.big .u{font-size:14px;font-weight:500;color:var(--mute)}
+
+/* แถบมัดจำ */
+.depbar{display:flex;align-items:center;gap:8px;background:#EEF2F0;color:var(--slate2);
+  border-radius:12px;margin-top:10px;padding:11px 13px;font-size:13px;font-weight:600;
+  border:0;width:100%;font-family:inherit;text-align:left}
+.depbar svg{width:15px;height:15px;flex:0 0 auto}
+.depbar .go{margin-left:auto;color:#007AFF;font-weight:600;font-size:12.5px;white-space:nowrap}
+.depbar b{font-weight:700}
+
+/* เดือน */
+.mon{background:var(--card);border-radius:14px;margin-top:10px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.mon-h{display:flex;align-items:baseline;gap:8px;padding:11px 14px;background:#FAFAF9;
+  border-bottom:1px solid var(--line)}
+.mon-h b{font-size:15px;font-weight:700}
+.mon-h span{margin-left:auto;font-size:11.5px;color:var(--mute);font-variant-numeric:tabular-nums}
+.hd,.r{display:grid;grid-template-columns:1fr 50px 50px 56px;gap:6px;padding:7px 14px;
+  font-variant-numeric:tabular-nums}
+.hd{font-size:11px;color:var(--mute);border-bottom:1px solid #F0F0F0}
+.hd span:not(:first-child){text-align:right}
+.r{font-size:14px;border-bottom:1px solid var(--line)}
+.r:last-child{border-bottom:0}
+.r span:not(:first-child){text-align:right}
+.r .o{color:var(--blue);font-weight:700}
+.r .i{color:var(--green);font-weight:700}
+.r .b{color:var(--red);font-weight:700}
+.r .z{color:var(--dim);font-weight:400;font-size:12px}
+.r.dep{background:#F6F7F6}
+.r.dep span{color:#6B7670;font-weight:400}
+.tag{display:inline-flex;align-items:center;background:var(--slate);color:#fff;border-radius:5px;
+  font-size:10px;font-weight:700;padding:1px 6px;margin-left:5px;vertical-align:1px}
+.carry{padding:8px 14px;background:#FAFAF9;border-bottom:1px solid var(--line);
+  font-size:11.5px;color:var(--mute);font-variant-numeric:tabular-nums}
+.foot{text-align:center;font-size:11.5px;color:var(--mute);padding:16px 14px 4px;line-height:1.6}
+
+/* ประวัติมัดจำ */
+.back{display:flex;align-items:center;gap:5px;color:#007AFF;font-size:14px;font-weight:600;
+  background:none;border:0;font-family:inherit;padding:4px 6px;position:absolute;left:8px;
+  top:calc(12px + env(safe-area-inset-top))}
+.back svg{width:16px;height:16px}
+.dled{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+.dled th{font-size:10.5px;font-weight:400;color:var(--mute);padding:7px 12px;text-align:right;
+  border-bottom:1px solid #F0F0F0;background:#FAFAF9}
+.dled th:nth-child(-n+2),.dled td:nth-child(-n+2){text-align:left}
+.dled td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line)}
+.dled .in{color:var(--slate2);font-weight:700}
+.dled .ret{color:#0F6B5F;font-weight:700}
+.dled .src{display:block;font-size:11px;color:var(--mute);font-weight:400;margin-top:1px}
+.empty{text-align:center;padding:30px 20px;color:var(--mute);font-size:13.5px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<div id="vBoot" class="mid"><div class="box">
+  <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.8 7.5h18.4l-2 12.1a1 1 0 0 1-1 .9H5.8a1 1 0 0 1-1-.9Z"/><path d="M5.5 13.2h13"/><path d="M9.7 7.5l-.4 13M14.3 7.5l.4 13"/></svg></div>
+  <h1>ตะกร้าของฉัน</h1><p id="bootMsg">กำลังเปิด…</p>
+</div></div>
+
+<div id="vErr" class="mid" hidden><div class="box">
+  <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5"/><circle cx="12" cy="16.5" r=".8" fill="currentColor"/><circle cx="12" cy="12" r="9"/></svg></div>
+  <h1 id="errTitle">เปิดไม่ได้</h1><p id="errMsg"></p>
+</div></div>
+
+<div id="vApp" hidden>
+  <div class="top" style="position:relative">
+    <button class="back" id="btnBack" hidden onclick="showMain()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 19l-7-7 7-7"/></svg>กลับ
+    </button>
+    <b id="meName">—</b><span id="meSub">ตะกร้า · ทศพร ผลไม้</span>
+  </div>
+  <div class="wrap">
+    <div id="paneMain"></div>
+    <div id="paneDep" hidden></div>
+    <p class="foot" id="foot"></p>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+"use strict";
+/* หน้านี้อ่านอย่างเดียว ไม่เขียนอะไรลงฐานข้อมูลเลยสักที่
+   และอ่านได้แค่ก้อนเดียวคือ cutterView/{รหัสในลิงก์} ซึ่งเป็นสำเนาของคนคนเดียว
+   ในสำเนาไม่มีช่องเงิน จึงไม่มีทางหลุดเรื่องเงินออกไปแม้แต่ช่องเดียว */
+
+if (typeof firebase === "undefined") {
+  document.body.innerHTML =
+    '<div class="mid"><div class="box"><h1>เปิดไม่ได้</h1>' +
+    '<p>ต้องเปิดในเบราว์เซอร์และต่อเน็ตอยู่</p></div></div>';
+  throw new Error("firebase sdk missing");
+}
+
+firebase.initializeApp({
+  apiKey: "AIzaSyAB1dpXsxrG1aJkAivXiaT5JqhTnPype4g",
+  authDomain: "tossaporn-9781a.firebaseapp.com",
+  databaseURL: "https://tossaporn-9781a-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "tossaporn-9781a",
+  storageBucket: "tossaporn-9781a.firebasestorage.app",
+  messagingSenderId: "504275614843",
+  appId: "1:504275614843:web:000cc1421fbf2646daf6de"
+});
+var AUTH = firebase.auth();
+var DB   = firebase.database();
+var APP_VERSION = "คนตัด V1";
+
+var $ = function (id) { return document.getElementById(id); };
+var TH_MON = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน",
+              "กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+function pad2(n) { return String(n).padStart(2, "0"); }
+function esc(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+function hhmm(ms) { var d = new Date(+ms || 0); return pad2(d.getHours()) + ":" + pad2(d.getMinutes()); }
+function dmy(ms) { var d = new Date(+ms || 0); return d.getDate() + " " + TH_MON[d.getMonth()].slice(0,3) + "."; }
+function show(v) { ["vBoot","vErr","vApp"].forEach(function (k) { $(k).hidden = (k !== v); }); }
+function fail(title, msg) { $("errTitle").textContent = title; $("errMsg").innerHTML = msg; show("vErr"); }
+
+// กันปัดกลับแล้วหลุดออกไป — หน้านี้มีหน้าเดียวกับหน้าประวัติมัดจำ
+try {
+  history.pushState({ lock: 1 }, "");
+  window.addEventListener("popstate", function () {
+    history.pushState({ lock: 1 }, "");
+    if (!$("paneDep").hidden) showMain();     // ปัดกลับตอนดูประวัติ = กลับหน้าหลัก
+  });
+} catch (e) {}
+
+var TOK = (function () {
+  try {
+    var m = location.search.match(/[?&]v=([A-Za-z0-9_-]{6,64})/);
+    return m ? m[1] : "";
+  } catch (e) { return ""; }
+})();
+
+var SNAP = null;
+
+function boot() {
+  if (!TOK) {
+    fail("ลิงก์ไม่ถูกต้อง", "ลิงก์ที่เปิดมาไม่มีรหัสประจำตัว<br>ขอลิงก์ใหม่จากเจ้าของร้าน");
+    return;
+  }
+  $("bootMsg").textContent = "กำลังโหลดยอด…";
+  AUTH.signInAnonymously().catch(function () { /* ถ้ากฎฐานข้อมูลเปิดให้อ่านได้โดยไม่ล็อกอิน ก็ไม่เป็นไร */ })
+    .then(load).catch(load);
+}
+
+function load() {
+  DB.ref("cutterView/" + TOK).on("value", function (snap) {
+    var v = snap.val();
+    if (!v) {
+      fail("ลิงก์นี้ใช้ไม่ได้แล้ว",
+        "เจ้าของร้านอาจออกลิงก์ใหม่ให้แล้ว<br>ขอลิงก์ล่าสุดจากเจ้าของร้านอีกครั้ง");
+      return;
+    }
+    SNAP = v;
+    render();
+    show("vApp");
+  }, function (e) {
+    fail("เปิดไม่ได้", "ฐานข้อมูลไม่ให้สิทธิ์อ่าน<br>ถ่ายจอนี้ส่งให้เจ้าของร้าน<br><br>" + esc((e && e.message) || ""));
+  });
+}
+
+function render() {
+  $("meName").textContent = SNAP.n || "—";
+  var bal = +SNAP.bal || 0;
+  var held = +SNAP.dep || 0;
+  var html =
+    '<div class="big"><div class="k">ค้างตอนนี้</div>' +
+    '<div class="v' + (bal ? "" : " zero") + '">' + (bal || 0) + '</div><div class="u">ใบ</div></div>';
+
+  if (held > 0) {
+    html += '<button class="depbar" onclick="showDep()">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="11" width="15" height="9.5" rx="2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg>' +
+      'มัดจำไว้ <b>' + held + ' ใบ</b> · ไม่ต้องตามคืน' +
+      '<span class="go">ดูประวัติ ›</span></button>';
+  }
+
+  var months = SNAP.m || [];
+  if (!months.length) {
+    html += '<div class="mon"><div class="empty">ยังไม่มียอดตะกร้า</div></div>';
+  }
+  months.forEach(function (m) {
+    var y = +String(m.k).slice(0, 4), mo = +String(m.k).slice(5, 7);
+    html += '<div class="mon"><div class="mon-h"><b>' + TH_MON[mo - 1] + " " + (y + 543) + "</b>" +
+      '<span>ออก ' + (m.o || 0) + " · เก็บ " + (m.i || 0) + "</span></div>";
+    if (+m.c > 0 || +m.cd > 0) {
+      html += '<div class="carry">ยกมาจากเดือนก่อน ' + (+m.c || 0) + " ใบ" +
+        (+m.cd > 0 ? " · ในนั้นเป็นมัดจำ " + m.cd + " ใบ" : "") + "</div>";
+    }
+    html += '<div class="hd"><span>วัน</span><span>ออก</span><span>เก็บ</span><span>ค้าง</span></div>';
+    var rows = (m.r || []).slice().reverse();          // วันใหม่อยู่บน
+    rows.forEach(function (r) {
+      var d = r[0], o = r[1] || 0, i = r[2] || 0, b = r[3] || 0, dp = r[4] || 0;
+      html += '<div class="r' + (dp ? " dep" : "") + '">' +
+        "<span>" + d + "/" + mo + (dp ? '<span class="tag">มัดจำ ' + dp + "</span>" : "") + "</span>" +
+        '<span class="' + (o ? "o" : "z") + '">' + (o || "–") + "</span>" +
+        '<span class="' + (i ? "i" : "z") + '">' + (i || "–") + "</span>" +
+        '<span class="' + (b ? "b" : "z") + '">' + (b || "–") + "</span></div>";
+    });
+    html += "</div>";
+  });
+
+  $("paneMain").innerHTML = html;
+  $("foot").innerHTML = "อัปเดตล่าสุด " + dmy(SNAP.at) + " " + hhmm(SNAP.at) + " น.<br>" +
+    "หน้านี้ดูอย่างเดียว · มีอะไรไม่ตรงบอกเจ้าของร้านได้เลย";
+  renderDep();
+}
+
+function renderDep() {
+  var ev = SNAP.d || [];
+  var held = +SNAP.dep || 0;
+  var html =
+    '<div class="big" style="border-radius:0 0 14px 14px"><div class="k">มัดจำที่ยังถืออยู่</div>' +
+    '<div class="v' + (held ? "" : " zero") + '" style="color:#44504B">' + held + '</div><div class="u">ใบ</div></div>';
+  if (!ev.length) {
+    html += '<div class="mon"><div class="empty">ยังไม่มีประวัติมัดจำ</div></div>';
+  } else {
+    html += '<div class="mon"><table class="dled"><thead><tr>' +
+      "<th>วันที่</th><th>รายการ</th><th>ใบ</th><th>เหลือ</th></tr></thead><tbody>";
+    ev.forEach(function (e) {
+      var plus = e.q > 0;
+      html += "<tr><td>" + dmy(e.t) + "</td>" +
+        "<td>" + (plus ? "วางมัดจำ" : "คืนตะกร้า") +
+          (e.s ? '<span class="src">' + esc(e.s) + "</span>" : "") + "</td>" +
+        '<td class="' + (plus ? "in" : "ret") + '">' + (plus ? "+" : "−") + Math.abs(e.q) + "</td>" +
+        "<td>" + e.b + "</td></tr>";
+    });
+    html += "</tbody></table></div>";
+  }
+  $("paneDep").innerHTML = html;
+}
+
+function showDep() {
+  $("paneMain").hidden = true;
+  $("paneDep").hidden = false;
+  $("btnBack").hidden = false;
+  $("meSub").textContent = "มัดจำตะกร้า";
+  window.scrollTo(0, 0);
+}
+function showMain() {
+  $("paneDep").hidden = true;
+  $("paneMain").hidden = false;
+  $("btnBack").hidden = true;
+  $("meSub").textContent = "ตะกร้า · ทศพร ผลไม้";
+  window.scrollTo(0, 0);
+}
+
+boot();
+
+setTimeout(function () {
+  if (!$("vBoot").hidden) {
+    $("bootMsg").innerHTML = "ต่อฐานข้อมูลไม่ได้<br>เช็กสัญญาณเน็ตแล้วเปิดใหม่อีกครั้ง";
+  }
+}, 12000);
+</script>
+</body>
+</html>
