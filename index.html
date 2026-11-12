@@ -3994,6 +3994,105 @@ tr:last-child td { border-bottom: none; }
 .sp-ov { position: fixed; inset: 0; z-index: 9300; background: rgba(0,0,0,.35); display: flex; align-items: center; justify-content: center;
   padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom)); }
 .sp-ov2 { z-index: 9310; background: rgba(0,0,0,.25); }
+/* V5.90: รายชื่อลูกค้า */
+.cm-seg { display: flex; background: #EFEDEA; border-radius: 10px; padding: 2px; gap: 2px; margin-bottom: 10px; }
+.cm-seg button { flex: 1; border: 0; background: none; border-radius: 8px; padding: 6px 0; font: 600 12px inherit; font-family: inherit; color: #57534E; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.cm-seg button.on { background: #44504B; color: #fff; }
+.cm-hint { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #FEF6E7; border: 1px solid #F6DDB0; border-radius: 11px; padding: 9px 12px; margin-bottom: 10px; font-size: 12.5px; color: #92400E; cursor: pointer; }
+.cm-hint b { color: #1C1917; font-weight: 700; white-space: nowrap; }
+.cm-gp { display: inline-block; font-size: 10px; font-weight: 600; color: #075985; background: #E8F1F7; border-radius: 5px; padding: 1px 6px; }
+.cm-gp.sl { color: #57534E; background: #EFEDEA; }
+.cm-new { display: inline-block; font-size: 10px; font-weight: 700; color: #fff; background: #15803D; border-radius: 5px; padding: 1px 6px; margin-left: 6px; vertical-align: 2px; }
+.cm-sec { font-size: 11.5px; color: #A8A29E; padding: 12px 2px 8px; }
+.cm-more { display: block; width: 100%; border: 0; background: none; color: #78716C; font: 500 12.5px inherit; font-family: inherit; padding: 12px 0 4px; cursor: pointer; text-align: center; }
+.cm-pair { background: #fff; border: 1px solid #EFECE8; border-radius: 13px; padding: 10px 12px; margin: 10px 12px; }
+.cm-pair .why { font-size: 11.5px; color: #78716C; margin-bottom: 6px; }
+.cm-pair .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 9px; }
+.cm-pair .two div { font-size: 11.5px; color: #78716C; min-width: 0; overflow-wrap: anywhere; }
+.cm-pair .two b { display: block; font-size: 14.5px; color: #1C1917; }
+.cm-pair .acts { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.cm-pair .acts button { border: 1px solid #D6D3D1; background: #fff; color: #1C1917; border-radius: 10px; padding: 8px 4px; font: 600 12px inherit; font-family: inherit; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cm-pair .acts button.p { background: #44504B; border-color: #44504B; color: #fff; }
+.cm-pair .acts button:disabled { opacity: .45; }
+.cm-xrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 0; border-top: 1px solid #F2F0ED; font-size: 13px; }
+.cm-xrow span { color: #78716C; }
+.cm-xrow button { border: 0; background: none; color: #0A64C9; font: 600 13px inherit; font-family: inherit; cursor: pointer; padding: 2px 0; white-space: nowrap; }
+.cm-xrow button.red { color: #B91C1C; }
+/* V5.91: ช่วงเวลา + สินค้า */
+.cd-seg { display: flex; background: #EFEDEA; border-radius: 10px; padding: 2px; gap: 2px; }
+.cd-seg button { flex: 1; border: 0; background: none; border-radius: 8px; padding: 6px 0; font: 600 11.5px inherit; font-family: inherit; color: #57534E; cursor: pointer; white-space: nowrap; }
+.cd-seg button.on { background: #44504B; color: #fff; }
+.cd-per { text-align: center; font-size: 11.5px; color: #78716C; margin: 6px 0 10px; }
+.cd-st3 { display: grid; grid-template-columns: repeat(3, 1fr); background: #FAFAF9; border-radius: 12px; margin-bottom: 4px; }
+.cd-st3 div { padding: 9px 4px; text-align: center; }
+.cd-st3 div + div { border-left: 1px solid #EFECE8; }
+.cd-st3 span { display: block; font-size: 10.5px; color: #A8A29E; }
+.cd-st3 b { font-size: 16px; font-variant-numeric: tabular-nums; }
+.cd-h { font-size: 11px; font-weight: 700; color: #A8A29E; letter-spacing: .5px; margin: 14px 0 6px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.cd-h button { border: 0; background: none; color: #0A64C9; font: 600 11.5px inherit; font-family: inherit; cursor: pointer; padding: 0; letter-spacing: 0; }
+.cd-mb { display: grid; grid-template-columns: 38px 1fr 64px; gap: 8px; align-items: center; padding: 3px 0; font-size: 12px; font-variant-numeric: tabular-nums; cursor: pointer; }
+.cd-mb i { display: block; height: 8px; border-radius: 4px; background: #A8B5AF; }
+.cd-mb .tr { height: 8px; border-radius: 4px; background: #F0EFED; overflow: hidden; }
+.cd-mb span:last-child { text-align: right; color: #57534E; }
+.cd-mb.on { font-weight: 700; }
+.cd-mb.on i { background: #44504B; }
+.cd-mb.on span:last-child { color: #1C1917; }
+.cd-pt { border: 1px solid #EFECE8; border-radius: 12px; overflow: hidden; }
+.cd-pr { display: grid; grid-template-columns: 1fr 40px 44px 52px; gap: 6px; padding: 8px 10px; border-bottom: 1px solid #F2F0ED; font-size: 13px; font-variant-numeric: tabular-nums; align-items: center; }
+.cd-pr:last-child { border-bottom: 0; }
+.cd-pr span:not(:first-child) { text-align: right; }
+.cd-pr.h { font-size: 10.5px; color: #A8A29E; padding: 6px 10px; background: #FAFAF9; }
+.cd-pr .f { display: flex; align-items: center; gap: 6px; min-width: 0; font-weight: 600; }
+.cd-pr .f i { font-style: normal; font-weight: 500; color: #78716C; }
+.cd-bl { border: 1px solid #EFECE8; border-radius: 12px; padding: 8px 10px; margin-bottom: 6px; font-variant-numeric: tabular-nums; }
+.cd-bl .h { display: flex; align-items: baseline; gap: 6px; font-size: 13px; font-weight: 600; }
+.cd-bl .h .a { margin-left: auto; }
+.cd-bl .s { font-size: 10.5px; font-weight: 600; border-radius: 4px; padding: 0 5px; }
+.cd-bl .s.due { color: #B91C1C; background: #FBE4E4; }
+.cd-bl .s.ok { color: #15803D; background: #E3F2E8; }
+.cd-bl .s.sl { color: #57534E; background: #EFEDEA; }
+.cd-bl .l { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: #57534E; padding-top: 2px; }
+.cd-bl .l.e { color: #A8A29E; }
+#cmDetailBody > * { flex-shrink: 0; }
+.cd-top { display: block; }
+.cd-note { font-size: 11.5px; color: #A8A29E; text-align: center; padding: 6px 0; }
+.cm-per { border: 0; background: none; font: 600 11px inherit; font-family: inherit; color: #1C1917; padding: 0; -webkit-appearance: none; appearance: none; cursor: pointer; text-align: right; }
+/* V5.89: ชนิดผลไม้ */
+.fr-note { margin: 10px 12px 0; padding: 9px 12px; border-radius: 11px; font-size: 12.5px; display: flex; align-items: center; gap: 8px; }
+.fr-note.warn { background: #FEF6E7; border: 1px solid #F6DDB0; color: #92400E; }
+.fr-note.mute { background: #F5F5F4; color: #78716C; }
+.fr-note span { flex: 1; min-width: 0; }
+.fr-note button { border: 0; background: none; color: #1C1917; font: 700 12.5px inherit; font-family: inherit; cursor: pointer; padding: 2px 0; white-space: nowrap; }
+.fr-list { margin: 10px 12px; background: #fff; border: 1px solid #EFECE8; border-radius: 13px; overflow: hidden; }
+.fr-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px 10px 4px; border-bottom: 1px solid #F2F0ED; background: #fff; position: relative; }
+.fr-row:last-child { border-bottom: 0; }
+.fr-row.off { opacity: .5; }
+.fr-row.drag { z-index: 2; box-shadow: 0 6px 18px rgba(0,0,0,.15); border-radius: 10px; }
+.fr-hd { width: 30px; height: 36px; display: flex; align-items: center; justify-content: center; color: #A8A29E; touch-action: none; cursor: grab; flex: none; }
+.fr-hd svg { width: 16px; height: 16px; }
+.fr-m { flex: 1; min-width: 0; cursor: pointer; }
+.fr-m b { display: block; font-size: 14.5px; }
+.fr-m small { display: block; font-size: 11.5px; color: #78716C; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fr-go { color: #A8A29E; font-size: 18px; padding: 0 2px; cursor: pointer; }
+.fr-cap { font-size: 11.5px; color: #A8A29E; text-align: center; padding: 0 16px 12px; }
+.fr-fld { margin: 10px 12px; background: #fff; border: 1px solid #EFECE8; border-radius: 13px; padding: 10px 12px; }
+.fr-lb { font-size: 11.5px; color: #8A847E; margin-bottom: 6px; display: block; }
+.fr-in { width: 100%; box-sizing: border-box; border: 1px solid #E7E5E4; border-radius: 10px; padding: 9px 11px; font: 600 15px inherit; font-family: inherit; color: #1C1917; background: #fff; }
+.fr-ics { display: flex; flex-wrap: wrap; gap: 8px; }
+.fr-ics label { width: 40px; height: 40px; border-radius: 10px; border: 1px solid #E7E5E4; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
+.fr-ics input { position: absolute; opacity: 0; pointer-events: none; }
+.fr-ics label:has(input:checked) { border: 2px solid #44504B; }
+.fr-ck { display: flex; align-items: center; gap: 10px; padding: 7px 0; font-size: 14px; cursor: pointer; }
+.fr-ck input { width: 18px; height: 18px; accent-color: #44504B; margin: 0; flex: none; }
+.fr-ck small { margin-left: auto; font-size: 11.5px; color: #A8A29E; }
+.fr-ck.dis { color: #A8A29E; cursor: default; }
+.fr-sw { display: flex; align-items: center; justify-content: space-between; font-size: 14px; }
+.fr-sw input { width: 20px; height: 20px; accent-color: #44504B; margin: 0; }
+.fr-del { display: block; margin: 4px auto 12px; border: 0; background: none; color: #B91C1C; font: 600 13px inherit; font-family: inherit; cursor: pointer; padding: 6px 10px; }
+.fr-un { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-bottom: 1px solid #F2F0ED; }
+.fr-un:last-child { border-bottom: 0; }
+.fr-un b { flex: 1; min-width: 0; font-size: 14px; }
+.fr-un select { max-width: 52%; border: 1px solid #E7E5E4; border-radius: 9px; padding: 7px 8px; font: 500 13px inherit; font-family: inherit; background: #fff; color: #1C1917; }
 .sp-sh { background: #fff; color: #1C1917; border-radius: 18px; width: 100%; max-width: 440px; max-height: 100%; display: flex; flex-direction: column;
   box-shadow: 0 16px 44px rgba(0,0,0,.25); overflow: hidden; font-family: inherit; }
 .sp-h { position: relative; text-align: center; padding: 12px 48px 10px; border-bottom: 1px solid #EFECE8; flex: none; }
@@ -4162,6 +4261,10 @@ td.bk-so { box-shadow: inset 0 0 0 1.5px #8EC0FF; border-radius: 6px; background
       <button class="nav-secondary-btn" data-tab="cust" onclick="navSheetSwitch('cust')">
         <span class="nsb-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
         <span class="nsb-label">ลูกค้า</span>
+      </button>
+      <button class="nav-secondary-btn" id="navFruitBtn" onclick="closeNavSheet(); setTimeout(frOpen, 200);">
+        <span class="nsb-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="7"/><path d="M12 7c0-2 1-3.5 3-4"/><path d="M12 7c-1.5-1.6-3.5-2-5-1.2"/></svg></span>
+        <span class="nsb-label">ชนิดผลไม้</span>
       </button>
       <button class="nav-secondary-btn" data-tab="truck" onclick="navSheetSwitch('truck')">
         <span class="nsb-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg></span>
@@ -5270,6 +5373,14 @@ td.bk-so { box-shadow: inset 0 0 0 1.5px #8EC0FF; border-radius: 6px; background
         <div id="dmBackupStat" style="font-size:11px;font-weight:700;margin-bottom:10px;"></div>
         <button id="dmBackupBtn" onclick="dataMgrBackup()" style="width:100%;padding:11px;border-radius:11px;border:none;background:#166534;color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:all .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 12px rgba(22,101,52,0.25);-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;gap:8px;" onmouseover="this.style.background='#14532D';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#166534';this.style.transform=''">สำรองข้อมูลตอนนี้</button>
       </div>
+      <!-- V5.88: วันปิดยอดที่จำไว้ในเครื่อง -->
+      <div style="background:#FAFAF9;border-radius:14px;padding:12px 16px;border:1px solid #E7E5E4;display:flex;align-items:center;gap:12px;">
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:600;font-size:13.5px;color:#1C1917;">วันปิดยอดในเครื่องนี้</div>
+          <div id="dmClsStat" style="font-size:11.5px;color:#78716C;margin-top:2px;">—</div>
+        </div>
+        <button id="dmClsBtn" onclick="clsRefetchAll()" style="flex-shrink:0;padding:8px 12px;border-radius:10px;border:1px solid #D6D3D1;background:#fff;color:#1C1917;font-weight:600;font-size:12.5px;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;">ดึงใหม่ทั้งหมด</button>
+      </div>
       <div id="dmMigCard" style="display:none;"></div>
       <div id="dmBlkCard" style="display:none;"></div>
       <!-- V5.78: บัญชีของเครื่องนี้ -->
@@ -5787,6 +5898,10 @@ input[name="cust-name-no-fill"]:-webkit-autofill {
       </div>
       <button onclick="cmOpenAddForm()" style="padding:11px 18px;border-radius:11px;border:none;background:#F59E0B;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 12px rgba(245,158,11,0.3);-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;gap:6px;" onmouseover="this.style.background='#D97706';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#F59E0B';this.style.transform=''"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>เพิ่ม</button>
     </div>
+    <div class="cm-seg" id="cmGrpSeg" role="tablist" aria-label="หมวด">
+      <button class="on" data-g="">ทั้งหมด</button><button data-g="credit">เชื่อ</button><button data-g="transfer">หน้าร้าน</button><button data-g="fence">รถรั้ว</button><button data-g="delivery">จัดส่ง</button>
+    </div>
+    <div id="cmMergeHint"></div>
     <div class="cust-filter-bar" id="cmFruitFilter">
       <div class="cust-filter-chip active" data-fruit="">ทั้งหมด</div>
       <div class="cust-filter-chip" data-fruit="อิดอ">อิดอ</div>
@@ -5795,7 +5910,8 @@ input[name="cust-name-no-fill"]:-webkit-autofill {
       <div class="cust-filter-chip" data-fruit="ลิ้นจี่">ลิ้นจี่</div>
       <div class="cust-filter-chip" data-fruit="ลองกอง">ลองกอง</div>
     </div>
-    <div style="font-size:11px;color:#A8A29E;padding:0 2px 8px;" id="cmSortLabel"></div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:11px;color:#A8A29E;padding:0 2px 8px;"><span id="cmSortLabel"></span>
+      <label style="white-space:nowrap;">ยอดของ <select id="cmPeriodSel" class="cm-per" onchange="cmSetListPeriod(this.value)" data-nodirty="1"><option value="all">ทั้งหมด ▾</option><option value="m0">เดือนนี้ ▾</option><option value="m1">เดือนก่อน ▾</option><option value="y0">ปีนี้ ▾</option><option value="y1">ปีที่แล้ว ▾</option></select></label></div>
     <div id="cmCustList"></div>
     <div class="cust-empty" id="cmEmptyMsg">
       <div style="display:inline-flex;width:56px;height:56px;border-radius:16px;background:var(--bg-subtle);align-items:center;justify-content:center;color:var(--text-quaternary);margin-bottom:12px;">
@@ -5875,8 +5991,8 @@ input[name="cust-name-no-fill"]:-webkit-autofill {
 <!-- Chart.js + html2canvas: lazy-loaded on demand (saves ~410 KB on first paint) -->
 <script>
 // ═══ V4.38 (B.4): APP_VERSION — single source of truth ═══
-window.APP_VERSION = "V5.87";
-window.APP_VERSION_STRING = "V5.87"; // alias for compatibility
+window.APP_VERSION = "V5.91";
+window.APP_VERSION_STRING = "V5.91"; // alias for compatibility
 
 // ═══════════════════════════════════════════════════════════════════
 // V5.49: ดักคำเตือน "ไม่มี index" ของ Firebase
@@ -5991,6 +6107,63 @@ firebase.initializeApp({
   appId: "1:504275614843:web:000cc1421fbf2646daf6de"
 });
 const db = firebase.database();
+// ═══ V5.88: ประทับเวลาวันปิดยอดที่ถูกแก้ ═══
+//   เขียนอะไรลง closed/{วัน}/... สำเร็จเมื่อไหร่ → closedIndex/{วัน} = เวลานั้น
+//   เครื่องอื่นเห็นเวลาเปลี่ยน → ดึงเฉพาะวันนั้นมาใหม่ (ดู _clsSync)
+//   ไม่ประทับ: ลบทั้งวันออกจากคลัง (เปิดวันกลับมา/ล้างคลัง) และ update ที่เขียน closedIndex/{วัน} เองอยู่แล้ว
+(function _clsHook() {
+  try {
+    const NS = firebase.database;
+    const R = NS && NS.Reference && NS.Reference.prototype;
+    if (!R || R.__clsHooked) return;
+    R.__clsHooked = true;
+    const oSet = R.set, oUpd = R.update, oRem = R.remove;
+    let rootUrl = null;
+    function rel(ref) {
+      try {
+        if (rootUrl === null) rootUrl = String(ref.root.toString()).replace(/\/+$/, "");
+        let u = String(ref.toString());
+        if (u.indexOf(rootUrl) !== 0) return null;
+        return u.slice(rootUrl.length).split("/").filter(Boolean).map(decodeURIComponent).join("/");
+      } catch (e) { return null; }
+    }
+    function scan(base, entries) {
+      const touch = {}, skip = {};
+      entries.forEach(function (kv) {
+        const p = [base, String(kv[0])].join("/").split("/").filter(Boolean);
+        if (p[0] === "closed" && p[1]) {
+          if (p.length === 2 && kv[1] == null) skip[p[1]] = 1; else touch[p[1]] = 1;
+        }
+        if (p[0] === "closedIndex" && p.length === 2) skip[p[1]] = 1;
+      });
+      return Object.keys(touch).filter(function (d) { return !skip[d]; });
+    }
+    function stamp(days) {
+      const u = {}, t = Date.now();
+      days.forEach(function (d) { u["closedIndex/" + d] = t; });
+      oUpd.call(db.ref(), u).catch(function (e) { console.warn("[คลัง] ประทับเวลาไม่สำเร็จ:", e && e.message); });
+    }
+    function wrap(fn, entriesOf) {
+      return function () {
+        const p = fn.apply(this, arguments);
+        try {
+          const b = rel(this);
+          if (b !== null && p && typeof p.then === "function") {
+            const ds = scan(b, entriesOf(arguments));
+            if (ds.length) p.then(function () { stamp(ds); }, function () {});
+          }
+        } catch (e) {}
+        return p;
+      };
+    }
+    R.set    = wrap(oSet, function (a) { return [["", a[0]]]; });
+    R.remove = wrap(oRem, function () { return [["", null]]; });
+    R.update = wrap(oUpd, function (a) {
+      const o = a[0] || {};
+      return Object.keys(o).map(function (k) { return [k, o[k]]; });
+    });
+  } catch (e) { console.warn("[คลัง] ติดตั้งตัวประทับเวลาไม่สำเร็จ:", e && e.message); }
+})();
 
 // ═══ V4.38 (B.4): Version Check System ═══
 // V4.75: เดิมเทียบด้วย === เฉยๆ → ต้องไปแก้ /config/version ใน Firebase เองทุกครั้งที่ deploy
@@ -6450,6 +6623,7 @@ function _lzBindCustomers() {
     if (typeof _lzArrived === "function") _lzArrived("customers");
     if (typeof cmInvalidateIndex === "function") cmInvalidateIndex();
     if (activeTab==="cust") { cmRenderList(); cmRenderQuiet(); }
+    try { if (document.getElementById("frModal")) _frRender(); } catch (e) {}   // V5.89
   }, err => _lzFailed("customers", err && err.message));
   window._lzRefs.customers = { ref:_ref, cb:_cb };
 }
@@ -6679,6 +6853,8 @@ try {
     window._cacheClosedRestored = true;
   }
 } catch(e) {}
+// V5.88: ของในเครื่องชุดใหม่อยู่ใน IndexedDB (ครบทุกวัน) · รอให้สคริปต์โหลดครบก่อนค่อยอ่าน
+setTimeout(() => { try { _clsLoadLocal(); } catch (e) {} }, 0);
 
 // Basket restore ถูก defer ไปทำหลัง bk* declarations (~line 7631)
 // เก็บ payload ไว้ใน window._pendingBasketRestore เพื่อ hydrate ทีหลัง
@@ -6744,7 +6920,7 @@ function _lzNeed(k) {
   }
   window._lzForceRebind = false;
   try {
-    if (k === "closed")    { _bindClosedListener(CLOSED_WINDOW_DAYS); _backfillClosedDayTs(); }
+    if (k === "closed")    { _clsStart(); _backfillClosedDayTs(); }   // V5.88
     if (k === "customers") _lzBindCustomers();
     if (k === "basket")    bkLoadLocal();
     if (k === "trucks")    _lzBindTrucks();
@@ -6944,6 +7120,8 @@ function _closedCutoffTs(days) {
 let allClosedIdx = {};
 db.ref("closedIndex").on("value", snap => {
   allClosedIdx = snap.val() || {};
+  window._clsIdxReady = true;                     // V5.88
+  try { _clsOnIndex(); } catch (e) {}
 }, err => { try { if (window._denySee) window._denySee(err); else window.__denyQ = err; } catch (x) {} console.warn("[closedIndex]", err && err.message); });
 
 // วันนี้อยู่ในคลังไหม — ครอบคลุมทั้งที่โหลดมาแล้วและที่ยังไม่โหลด
@@ -7005,7 +7183,7 @@ function _handleClosedSnap(snap) {
     const _dm = document.getElementById("dataMgrModal");
     if (_dm && _dm.style.display === "flex" && typeof _dataMgrFill === "function") _dataMgrFill();
   } catch(e) {}
-  _cacheGenericSaveDebounced(CACHE_KEY_CLOSED, () => allClosed, 2000);
+  // V5.88: ของในเครื่องย้ายไป IndexedDB (ดู _clsSync) · localStorage มีเพดาน 2 MB ต่อก้อน คลังเต็มเมื่อไหร่จะเก็บไม่ได้เงียบๆ
   // V5.36 (B24): ลบโค้ดอัปเดตป้าย "ปิดยอด (n)" ทิ้ง — ปุ่ม #tabClosedBtn ถูกลบออกจาก HTML ไปแล้ว
   //              ฟีเจอร์นี้จึงไม่เคยทำงานเลย เหลือไว้แค่ทำให้สับสนตอนไล่แก้
   if (activeTab==="closed") renderClosed();
@@ -7036,6 +7214,191 @@ function _bindClosedListener(days) {
     _closedQuery.on("value", _handleClosedSnap, function (e) { try { if (window._denySee) window._denySee(e); else window.__denyQ = e; } catch (x) {} });
   });
 }
+
+// ═══════════════════════════════════════════════════════════════
+// V5.88: วันปิดยอด — จำไว้ในเครื่อง ดึงเฉพาะวันที่เปลี่ยน
+//   closedIndex/{วัน} = เวลาที่แก้ล่าสุด (วันเก่าที่ยังเป็น true นับเป็นรุ่น "1")
+//   IndexedDB: {วัน: {d: ข้อมูลวันนั้น, v: รุ่นที่จำไว้}}
+//   ครั้งแรก / ไม่มีของในเครื่อง / ครบ 7 วัน / กดดึงใหม่ → ดึงทั้งคลังครั้งเดียว
+//   ครั้งต่อไป → ดึงเฉพาะวันที่รุ่นไม่ตรง และทิ้งวันที่หายจากดัชนี (ถูกเปิดกลับ/ล้าง)
+//   ตัวจริงอยู่บนคลาวด์เสมอ ของในเครื่องหายเมื่อไหร่ก็แค่ดึงใหม่
+// ═══════════════════════════════════════════════════════════════
+var _cls = { mem: null, local: null, sync: null, again: null, noIdb: false, at: 0, n: 0, err: null };
+const CLS_FULL_EVERY = 7 * 24 * 3600 * 1000;
+const CLS_FULL_KEY = "cls:full";
+let _clsDbP = null;
+function _clsVer(v) { return v === true ? "1" : String(v); }
+function _clsIdb() {
+  if (_clsDbP) return _clsDbP;
+  _clsDbP = new Promise((res, rej) => {
+    try {
+      if (!window.indexedDB) return rej(new Error("เครื่องนี้ไม่มี IndexedDB"));
+      const r = indexedDB.open("talad_closed", 1);
+      r.onupgradeneeded = () => { try { r.result.createObjectStore("d"); } catch (e) {} };
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error || new Error("เปิด IndexedDB ไม่ได้"));
+      r.onblocked = () => rej(new Error("IndexedDB ถูกล็อก"));
+    } catch (e) { rej(e); }
+  });
+  _clsDbP.catch(() => { _clsDbP = null; });
+  return _clsDbP;
+}
+async function _clsIdbAll() {
+  const idb = await _clsIdb();
+  return new Promise((res, rej) => {
+    const out = {};
+    const tx = idb.transaction("d", "readonly"), st = tx.objectStore("d");
+    const rq = st.openCursor();
+    rq.onsuccess = () => { const c = rq.result; if (c) { out[c.key] = c.value; c.continue(); } };
+    tx.oncomplete = () => res(out);
+    tx.onerror = tx.onabort = () => rej(tx.error || new Error("อ่าน IndexedDB ไม่ได้"));
+  });
+}
+async function _clsIdbWrite(puts, dels, clear) {
+  const idb = await _clsIdb();
+  return new Promise((res, rej) => {
+    const tx = idb.transaction("d", "readwrite"), st = tx.objectStore("d");
+    if (clear) st.clear();
+    Object.keys(puts).forEach(k => st.put(puts[k], k));
+    dels.forEach(k => st.delete(k));
+    tx.oncomplete = () => res();
+    tx.onerror = tx.onabort = () => rej(tx.error || new Error("เขียน IndexedDB ไม่ได้"));
+  });
+}
+function _clsObj() {
+  const o = {};
+  Object.keys(_cls.mem || {}).forEach(k => { const x = _cls.mem[k]; if (x && x.d != null) o[k] = x.d; });
+  return o;
+}
+// อ่านของในเครื่อง (ไม่ใช้เน็ต) — เรียกได้หลายครั้ง ทำจริงครั้งเดียว
+function _clsLoadLocal() {
+  if (_cls.local) return _cls.local;
+  _cls.local = (async () => {
+    try {
+      const all = await _clsIdbAll();
+      if (!_cls.mem) _cls.mem = all;
+      const n = Object.keys(all).length;
+      if (n && !(window._lz && window._lz.closed === 2)) {
+        // มีของในเครื่อง → ใช้แสดงไปก่อน ระหว่างรอซิงก์
+        allClosed = _normalizeAmounts(Object.assign({}, _closedExtra, _clsObj()));
+        window._dataVersion = (window._dataVersion || 0) + 1;
+        window._cacheClosedRestored = true;
+        try { _lzRefresh("closed"); } catch (e) {}
+      }
+      if (n) { try { localStorage.removeItem(CACHE_KEY_CLOSED); } catch (e) {} }   // ของชุดเก่า ไม่ใช้แล้ว
+    } catch (e) {
+      console.warn("[คลัง] ใช้ที่เก็บในเครื่องไม่ได้ — จะดึงจากคลาวด์ทุกครั้ง:", e && e.message);
+      _cls.noIdb = true;
+      if (!_cls.mem) _cls.mem = {};
+    }
+  })();
+  return _cls.local;
+}
+function _clsWaitIdx(ms) {
+  if (window._clsIdxReady) return Promise.resolve(true);
+  return new Promise(res => {
+    const t0 = Date.now();
+    const iv = setInterval(() => {
+      if (window._clsIdxReady || Date.now() - t0 > ms) { clearInterval(iv); res(!!window._clsIdxReady); }
+    }, 50);
+  });
+}
+async function _clsFetchDays(keys) {
+  const got = {};
+  for (let i = 0; i < keys.length; i += 8) {
+    const part = keys.slice(i, i + 8);
+    const res = await Promise.all(part.map(k => db.ref("closed/" + k).once("value").then(sn => [k, sn.val()])));
+    res.forEach(([k, v]) => { got[k] = v; });
+  }
+  return got;
+}
+// mode: "full" = ดึงทั้งคลัง · อื่นๆ = ดึงเฉพาะวันที่เปลี่ยน (ระบบตัดสินเองว่าต้องดึงทั้งคลังไหม)
+async function _clsSync(mode) {
+  if (_cls.sync) { if (mode === "full" || !_cls.again) _cls.again = mode || "inc"; return _cls.sync; }
+  _cls.sync = (async () => {
+    await _clsLoadLocal();
+    const idxOk = await _clsWaitIdx(5000);
+    const mem = _cls.mem || {};
+    const idx = allClosedIdx || {};
+    let last = 0; try { last = +localStorage.getItem(CLS_FULL_KEY) || 0; } catch (e) {}
+    const full = mode === "full" || _cls.noIdb || !idxOk || !Object.keys(mem).length || (Date.now() - last > CLS_FULL_EVERY);
+    let puts = {}, dels = [], nGot = 0;
+    if (full) {
+      const sn = await db.ref("closed").once("value");
+      const all = sn.val() || {};
+      const nm = {};
+      Object.keys(all).forEach(k => { nm[k] = { d: all[k], v: (k in idx) ? _clsVer(idx[k]) : "noidx" }; });
+      _cls.mem = nm; puts = nm; nGot = Object.keys(nm).length;
+      try { localStorage.setItem(CLS_FULL_KEY, String(Date.now())); } catch (e) {}
+    } else {
+      const need = Object.keys(idx).filter(k => !mem[k] || mem[k].v !== _clsVer(idx[k]));
+      Object.keys(mem).forEach(k => { if (!(k in idx) && mem[k].v !== "noidx") dels.push(k); });
+      const got = need.length ? await _clsFetchDays(need) : {};
+      // ดัชนีอาจเปลี่ยนระหว่างรอ — จำรุ่นที่ใช้ตอนเริ่มดึง ถ้าใหม่กว่า รอบถัดไปจะดึงอีกที
+      need.forEach(k => { mem[k] = { d: got[k] == null ? null : got[k], v: _clsVer(idx[k]) }; puts[k] = mem[k]; });
+      dels.forEach(k => { delete mem[k]; });
+      nGot = need.length;
+    }
+    if (!_cls.noIdb) {
+      try { await _clsIdbWrite(puts, dels, full); }
+      catch (e) { console.warn("[คลัง] จำลงเครื่องไม่สำเร็จ:", e && e.message); }
+    }
+    _cls.at = Date.now(); _cls.err = null; _cls.n = nGot;
+    _closedWindowDays = CLOSED_MAX_DAYS;           // ครบทุกวันแล้ว — ปุ่ม "ดูย้อนหลังเพิ่ม" ไม่ต้องใช้
+    _handleClosedSnap({ val: () => _clsObj() });   // วาดใหม่ทุกหน้าที่ใช้คลัง ด้วยทางเดิม
+    try { _clsRenderStat(); } catch (e) {}
+    return { full, n: nGot, del: dels.length };
+  })();
+  try { return await _cls.sync; }
+  catch (e) { _cls.err = e; throw e; }
+  finally {
+    _cls.sync = null;
+    const a = _cls.again; _cls.again = null;
+    if (a) _clsSync(a).catch(() => {});
+  }
+}
+function _clsStart() {
+  _clsSync().catch(e => {
+    console.warn("[คลัง] ซิงก์ไม่สำเร็จ:", e && e.message);
+    _lzFailed("closed", e && e.message);
+  });
+}
+// ดัชนีเปลี่ยน (เครื่องนี้หรือเครื่องอื่นแก้วันปิดยอด) → ดึงเฉพาะวันนั้น
+//   ทำเฉพาะเมื่อเคยเข้าหน้าที่ใช้คลังแล้ว ไม่งั้นรอไว้ก่อน ไม่เปลืองเน็ต
+let _clsIdxTimer = null;
+function _clsOnIndex() {
+  if (!_cls || !(window._lzBound && window._lzBound.closed)) return;
+  clearTimeout(_clsIdxTimer);
+  _clsIdxTimer = setTimeout(() => { _clsSync().catch(e => console.warn("[คลัง]", e && e.message)); }, 400);
+}
+function _clsRenderStat() {
+  const el = document.getElementById("dmClsStat");
+  if (!el) return;
+  const n = Object.keys(allClosed || {}).length;
+  if (_cls.sync) { el.textContent = "กำลังดึง…"; return; }
+  if (!_cls.at) { el.textContent = n ? ("ในเครื่องมี " + n + " วัน · ยังไม่ได้เช็กกับคลาวด์รอบนี้") : "ยังไม่ได้ดึง"; return; }
+  const t = new Date(_cls.at);
+  el.textContent = "ในเครื่องมี " + n + " วัน · เช็กกับคลาวด์ล่าสุด " +
+    String(t.getHours()).padStart(2, "0") + ":" + String(t.getMinutes()).padStart(2, "0") + " น." +
+    (_cls.noIdb ? " · เครื่องนี้จำไม่ได้ ดึงใหม่ทุกครั้ง" : "");
+}
+async function clsRefetchAll() {
+  const btn = document.getElementById("dmClsBtn");
+  if (btn) { btn.disabled = true; btn.textContent = "กำลังดึง…"; }
+  if (window._lz) window._lz.closed = Math.max(window._lz.closed || 0, 1);
+  window._lzBound = window._lzBound || {}; window._lzBound.closed = true;
+  try {
+    const r = await _clsSync("full");
+    if (window._lz) window._lz.closed = 2;
+    if (typeof showToast === "function") showToast("ดึงวันปิดยอดใหม่ทั้งหมดแล้ว · " + Object.keys(allClosed || {}).length + " วัน", "success", 2600);
+  } catch (e) {
+    if (typeof showToast === "function") showToast("ดึงไม่สำเร็จ — เช็กเน็ตแล้วลองใหม่ (" + ((e && e.message) || "ไม่ทราบสาเหตุ") + ")", "warn", 4000);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = "ดึงใหม่ทั้งหมด"; }
+    try { _clsRenderStat(); } catch (e) {}
+  }
+}
+window.clsRefetchAll = clsRefetchAll;
 
 // V4.76: เติม dayTs ให้วันเก่าในคลังที่ยังไม่มี (ทำครั้งเดียว จำสถานะไว้ใน Firebase)
 // ทำตอนนี้ถูกจังหวะ เพราะคลังยังเล็กมาก ถ้าปล่อยไว้จะต้องเติมเป็นพันวัน
@@ -12295,7 +12658,7 @@ async function closeYod() {
         try {
           await db.ref().update({
             ["closed/"+d]:      closedData,
-            ["closedIndex/"+d]: true,
+            ["closedIndex/"+d]: Date.now(),   // V5.88: เวลาที่แก้ล่าสุด (เดิม true)
             ["days/"+d]:        null,
           });
         } catch (moveErr) {
@@ -18157,10 +18520,396 @@ const FRUIT_IMGS = {
 };
 function fruitImg(name, size) {
   size = size || 20;
-  const src = FRUIT_IMGS[name];
-  if (!src) return name;
-  return '<img src="'+src+'" style="width:'+size+'px;height:'+size+'px;object-fit:contain;vertical-align:middle;" alt="'+name+'">';
+  // V5.89: รูปตามที่ตั้งในหน้าชนิดผลไม้ · ยังไม่มีรูป = ตัวอักษรแรกของชื่อ (เดิมคืนชื่อซ้ำออกมา)
+  let key = name;
+  try { const r = frByName(name); if (r) key = r.ic; } catch (e) {}
+  const src = key ? FRUIT_IMGS[key] : null;
+  if (src) return '<img src="'+src+'" style="width:'+size+'px;height:'+size+'px;object-fit:contain;vertical-align:middle;" alt="">';
+  const ch = String(name || "?").trim().replace(/^[เแโใไ]/, "").charAt(0) || "?";
+  const esc = ch.replace(/[&<>"']/g, "");
+  return '<span style="display:inline-flex;width:'+size+'px;height:'+size+'px;border-radius:'+Math.round(size*0.28)+'px;background:#E7E5E4;color:#57534E;font-size:'+Math.max(9, Math.round(size*0.5))+'px;font-weight:700;align-items:center;justify-content:center;vertical-align:middle;line-height:1;flex:none;">'+esc+'</span>';
 }
+
+// ═══════════════════════════════════════════════════════════════
+// V5.89: ชนิดผลไม้ — รายการเดียวที่ทั้งแอปใช้
+// ═══════════════════════════════════════════════════════════════
+const FR_SELL_DEFAULT = ["ลำไย อีดอ","ลำไย พวงทอง","ลิ้นจี่ จักรพรรดิ","ลิ้นจี่ ฮงฮวย","ลิ้นจี่ ค่อม","ลิ้นจี่ สำเภาแก้ว","มะยงชิด","ลองกอง"];
+const FR_DEFAULT = {
+  idor:      { n:"อิดอ",    ic:"อิดอ",    s:["ลำไย อีดอ"],   h:false, o:0 },
+  puangtong: { n:"พวงทอง",  ic:"พวงทอง",  s:["ลำไย พวงทอง"], h:false, o:1 },
+  mayong:    { n:"มะยงชิด", ic:"มะยงชิด", s:["มะยงชิด"],     h:false, o:2 },
+  lychee:    { n:"ลิ้นจี่",   ic:"ลิ้นจี่",   s:["ลิ้นจี่ จักรพรรดิ","ลิ้นจี่ ฮงฮวย","ลิ้นจี่ ค่อม","ลิ้นจี่ สำเภาแก้ว"], h:false, o:3 },
+  longkong:  { n:"ลองกอง",  ic:"ลองกอง",  s:["ลองกอง"],      h:false, o:4 },
+};
+var frData = null;          // null = ยังไม่เคยบันทึก → ใช้ FR_DEFAULT
+function _frSrc() { return frData || FR_DEFAULT; }
+function frList(withHidden) {
+  const src = _frSrc();
+  return Object.keys(src).map(id => {
+    const r = src[id] || {};
+    return { id, n: String(r.n || "").trim(), ic: r.ic || "", s: Array.isArray(r.s) ? r.s.filter(Boolean) : [], h: !!r.h, o: +r.o || 0 };
+  }).filter(r => r.n && (withHidden || !r.h)).sort((a, b) => (a.o - b.o) || a.n.localeCompare(b.n, "th"));
+}
+function frNames() { return frList(false).map(r => r.n); }
+function frByName(n) { n = String(n || "").trim(); return frList(true).find(r => r.n === n) || null; }
+// ผลไม้ในแอปขาย → ชนิดในตลาด (ใช้ตอนเก็บสินค้าที่ลูกค้าซื้อ V5.91)
+function frOfSell(sellName) { return frList(true).find(r => r.s.indexOf(sellName) >= 0) || null; }
+window.frList = frList; window.frNames = frNames; window.frOfSell = frOfSell;
+
+db.ref("config/fruits").on("value", snap => {
+  const v = snap.val();
+  frData = (v && typeof v === "object" && Object.keys(v).length) ? v : null;
+  try { _frApply(); } catch (e) {}
+}, e => { try { if (window._denySee) window._denySee(e); else window.__denyQ = e; } catch (x) {} });
+
+// ทุกหน้าที่ใช้รายชื่อผลไม้ วาดใหม่เมื่อรายการเปลี่ยน
+function _frApply() {
+  try { if (activeTab === "cust") cmRenderList(); } catch (e) {}
+  try { if (activeTab === "analytics" && typeof renderAnalytics === "function") renderAnalytics(); } catch (e) {}
+  try { if (document.getElementById("frModal")) _frRender(); } catch (e) {}
+}
+// ช่องติ๊กในฟอร์มลูกค้า: ชนิดที่แสดงอยู่ + ชนิดที่ลูกค้าคนนี้เคยติ๊กไว้ (แม้จะถูกซ่อนแล้ว)
+function _frRenderFormChecks(sel) {
+  const g = document.getElementById("cmFruits"); if (!g) return;
+  const names = frNames();
+  (sel || []).forEach(n => { if (names.indexOf(n) < 0) names.push(n); });
+  const esc = t => String(t).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
+  g.innerHTML = names.map(n => '<div class="check-item" data-val="' + esc(n) + '">' + esc(n) + '</div>').join("");
+  g._bound = false;
+}
+// ปุ่มกรองผลไม้หน้าลูกค้า
+function _frRenderFilter() {
+  const ff = document.getElementById("cmFruitFilter"); if (!ff) return;
+  const names = frNames();
+  if (cmFruitSelected && names.indexOf(cmFruitSelected) < 0) cmFruitSelected = "";
+  const sig = names.join("|") + "#" + cmFruitSelected;
+  if (ff._sig === sig) return;
+  ff._sig = sig;
+  const esc = t => String(t).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
+  ff.innerHTML = '<div class="cust-filter-chip' + (cmFruitSelected ? "" : " active") + '" data-fruit="">ทั้งหมด</div>' +
+    names.map(n => '<div class="cust-filter-chip' + (cmFruitSelected === n ? " active" : "") + '" data-fruit="' + esc(n) + '">' + esc(n) + '</div>').join("");
+}
+
+// ── รายชื่อผลไม้ในแอปขาย (อ่านอย่างเดียว · 2 เอกสาร) ──
+const FR_SELL_CACHE = "fr:sell";
+let _frSell = null;   // {list:[], at, err}
+function _frSellCached() { try { const x = JSON.parse(localStorage.getItem(FR_SELL_CACHE) || "null"); return x && Array.isArray(x.list) ? x : null; } catch (e) { return null; } }
+async function _frLoadSell() {
+  if (navigator.onLine === false) { const e = new Error("ไม่มีอินเทอร์เน็ต"); e.code = "sp/offline"; throw e; }
+  await _spTimeout(_spLoadFs(), 15000);
+  const app = _spGetApp(), au = app.auth();
+  if (!au.currentUser) await _spTimeout(au.signInAnonymously(), 15000);
+  const st = app.firestore().collection("stores").doc(SP_STORE);
+  const [a, b] = await _spTimeout(Promise.all([
+    st.collection("meta").doc("intake").get({ source: "server" }),
+    st.collection("meta").doc("memory").get({ source: "server" }),
+  ]), 20000);
+  const out = [];
+  const add = n => { n = String(n || "").trim(); if (n && out.indexOf(n) < 0) out.push(n); };
+  FR_SELL_DEFAULT.forEach(add);
+  try { const sh = JSON.parse((a && a.exists && (a.data() || {}).shared) || "{}"); Object.keys(sh || {}).forEach(add); } catch (e) {}
+  try {
+    const M = JSON.parse((b && b.exists && (b.data() || {}).data) || "{}");
+    Object.keys(M || {}).forEach(k => { if (k.indexOf("cf|") === 0 && M[k] && M[k].v) add(k.slice(3)); });
+  } catch (e) {}
+  const r = { list: out, at: Date.now() };
+  try { localStorage.setItem(FR_SELL_CACHE, JSON.stringify(r)); } catch (e) {}
+  return r;
+}
+function _frSellList() {
+  const base = (_frSell && _frSell.list) || ((_frSellCached() || {}).list) || FR_SELL_DEFAULT.slice();
+  const out = base.slice();
+  frList(true).forEach(r => r.s.forEach(n => { if (out.indexOf(n) < 0) out.push(n); }));
+  return out;
+}
+function _frUnlinked() {
+  const linked = {}; frList(true).forEach(r => r.s.forEach(n => { linked[n] = r; }));
+  return _frSellList().filter(n => !linked[n]);
+}
+function _frCustCount(name) {
+  let n = 0;
+  Object.values(cmCustomers || {}).forEach(c => { if ((c && c.fruits || []).indexOf(name) >= 0) n++; });
+  return n;
+}
+function _frEsc(t) { return String(t == null ? "" : t).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]); }
+
+// ── หน้ารายการ ──
+function frOpen() {
+  if (!isOwner()) {
+    if (typeof showToast === "function") showToast("หน้าชนิดผลไม้แก้ได้เฉพาะเจ้าของ — ให้เจ้าของเข้าจากเครื่องของตัวเอง", "warn", 3200);
+    return;
+  }
+  try { _lzNeed("customers"); } catch (e) {}
+  frClose(true);
+  const ov = document.createElement("div");
+  ov.id = "frModal"; ov.className = "sp-ov";
+  ov.addEventListener("click", e => { if (e.target === ov) frClose(); });
+  document.body.appendChild(ov);
+  _frSell = _frSell && (Date.now() - _frSell.at < 10 * 60000) ? _frSell : null;
+  _frRender();
+  if (!_frSell) {
+    _frSellState = "load"; _frRender();
+    _frLoadSell().then(r => { _frSell = r; _frSellState = "ok"; _frRender(); })
+      .catch(e => { console.warn("[ชนิดผลไม้] อ่านแอปขายไม่ได้:", e && (e.code || e.message)); _frSellState = "err"; _frRender(); });
+  }
+}
+let _frSellState = "ok";
+function frClose(silent) {
+  ["frUnSheet", "frEditSheet", "frModal"].forEach(id => { const x = document.getElementById(id); if (x) x.remove(); });
+}
+window.frOpen = frOpen; window.frClose = frClose;
+const FR_GRIP = '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg>';
+function _frRender() {
+  const ov = document.getElementById("frModal"); if (!ov) return;
+  const list = frList(true);
+  const un = _frUnlinked();
+  const custOk = !!window._custFromServer || (cmCustomers && Object.keys(cmCustomers).length);
+  let note = "";
+  if (_frSellState === "load") note = '<div class="fr-note mute"><span>กำลังเช็กรายชื่อผลไม้ในแอปขาย…</span></div>';
+  else if (un.length) note = '<div class="fr-note warn"><span>แอปขายมีผลไม้ที่ยังไม่ผูก ' + un.length + ' ชนิด</span><button onclick="frOpenUnlinked()">ดู ›</button></div>';
+  else if (_frSellState === "err") note = '<div class="fr-note mute"><span>เช็กกับแอปขายไม่ได้ตอนนี้ — ใช้รายชื่อล่าสุดที่จำไว้</span><button onclick="frRecheck()">ลองใหม่</button></div>';
+  const rows = list.map(r => {
+    const sub = (r.s.length ? r.s.join(", ") : "ยังไม่ผูกกับแอปขาย") + (custOk ? " · ลูกค้า " + _frCustCount(r.n) + " คน" : "") + (r.h ? " · ซ่อนอยู่" : "");
+    return '<div class="fr-row' + (r.h ? " off" : "") + '" data-id="' + _frEsc(r.id) + '">' +
+      '<span class="fr-hd" aria-label="ลากเพื่อเรียง">' + FR_GRIP + '</span>' +
+      fruitImg(r.n, 24) +
+      '<div class="fr-m" onclick="frOpenEdit(\'' + _frEsc(r.id) + '\')"><b>' + _frEsc(r.n) + '</b><small>' + _frEsc(sub) + '</small></div>' +
+      '<span class="fr-go" onclick="frOpenEdit(\'' + _frEsc(r.id) + '\')">›</span></div>';
+  }).join("");
+  ov.innerHTML = '<div class="sp-sh" role="dialog" aria-label="ชนิดผลไม้">' +
+    '<div class="sp-h"><b>ชนิดผลไม้</b><small>ทุกที่ในแอปใช้รายการนี้</small><button class="sp-x" onclick="frClose()" aria-label="ปิด">✕</button></div>' +
+    '<div class="sp-body">' + note + '<div class="fr-list" id="frList">' + rows + '</div>' +
+    '<div class="fr-cap">ลากที่ ⋮⋮ เพื่อเรียงลำดับ · ลำดับนี้ใช้ทุกที่ในแอป</div></div>' +
+    '<div class="sp-f"><button class="sp-b k" onclick="frOpenEdit(null)">+ เพิ่มชนิดผลไม้</button></div></div>';
+  _frBindDrag(ov.querySelector("#frList"));
+}
+function frRecheck() {
+  _frSell = null; _frSellState = "load"; _frRender();
+  _frLoadSell().then(r => { _frSell = r; _frSellState = "ok"; _frRender(); })
+    .catch(() => { _frSellState = "err"; _frRender(); });
+}
+window.frRecheck = frRecheck;
+
+// ── ลากเรียงลำดับ (นิ้วหรือเมาส์ ที่ปุ่ม ⋮⋮) ──
+function _frBindDrag(box) {
+  if (!box) return;
+  box.querySelectorAll(".fr-hd").forEach(h => {
+    h.addEventListener("pointerdown", ev => {
+      const row = h.closest(".fr-row"); if (!row) return;
+      ev.preventDefault();
+      try { h.setPointerCapture(ev.pointerId); } catch (e) {}
+      const rows = [...box.querySelectorAll(".fr-row")];
+      const from = rows.indexOf(row);
+      const rect = rows.map(r => r.getBoundingClientRect());
+      const y0 = ev.clientY;
+      let to = from;
+      row.classList.add("drag");
+      const move = e => {
+        const dy = e.clientY - y0;
+        row.style.transform = "translateY(" + dy + "px)";
+        const mid = rect[from].top + rect[from].height / 2 + dy;
+        to = from;
+        for (let i = 0; i < rect.length; i++) {
+          if (i < from && mid < rect[i].top + rect[i].height / 2) { to = i; break; }
+          if (i > from && mid > rect[i].top + rect[i].height / 2) to = i;
+        }
+        rows.forEach((r, i) => {
+          if (r === row) return;
+          let sh = 0;
+          if (from < to && i > from && i <= to) sh = -rect[from].height;
+          if (from > to && i >= to && i < from) sh = rect[from].height;
+          r.style.transform = sh ? "translateY(" + sh + "px)" : "";
+          r.style.transition = "transform .15s";
+        });
+      };
+      const up = () => {
+        h.removeEventListener("pointermove", move);
+        h.removeEventListener("pointerup", up);
+        h.removeEventListener("pointercancel", up);
+        rows.forEach(r => { r.style.transform = ""; r.style.transition = ""; });
+        row.classList.remove("drag");
+        if (to !== from) {
+          const ids = rows.map(r => r.dataset.id);
+          const [m] = ids.splice(from, 1); ids.splice(to, 0, m);
+          _frSaveOrder(ids);
+        }
+      };
+      h.addEventListener("pointermove", move);
+      h.addEventListener("pointerup", up);
+      h.addEventListener("pointercancel", up);
+    });
+  });
+}
+// เขียนทั้งชุด (ครั้งแรกที่ยังเป็นค่าเริ่มต้น ต้องเขียนทุกชนิดลงไปด้วย)
+function _frWriteAll(src) {
+  const clean = {};
+  Object.keys(src).forEach(id => {
+    const r = src[id]; if (!r) return;
+    clean[id] = { n: String(r.n || "").trim(), ic: r.ic || "", s: (r.s || []).filter(Boolean), h: !!r.h, o: +r.o || 0 };
+    if (!clean[id].s.length) delete clean[id].s;
+  });
+  return db.ref("config/fruits").set(clean);
+}
+function _frSaveOrder(ids) {
+  const src = JSON.parse(JSON.stringify(_frSrc()));
+  ids.forEach((id, i) => { if (src[id]) src[id].o = i; });
+  frData = src; _frRender();
+  _frWriteAll(src).catch(e => { if (typeof showToast === "function") showToast("บันทึกลำดับไม่สำเร็จ: " + (e && e.message), "warn", 3500); });
+}
+
+// ── แผ่นแก้ไข / เพิ่ม ──
+function frOpenEdit(id) {
+  const old = document.getElementById("frEditSheet"); if (old) old.remove();
+  const src = _frSrc();
+  const r = id && src[id] ? frList(true).find(x => x.id === id) : { id: null, n: "", ic: "", s: [], h: false };
+  const owners = {}; frList(true).forEach(x => x.s.forEach(n => { owners[n] = x; }));
+  const used = r.id ? _frCustCount(r.n) : 0;
+  const ics = Object.keys(FRUIT_IMGS).concat([""]);
+  const icHtml = ics.map((k, i) => {
+    const on = (r.ic || "") === k || (!r.id && i === ics.length - 1 && !r.ic);
+    const face = k ? '<img src="' + FRUIT_IMGS[k] + '" style="width:26px;height:26px;object-fit:contain" alt="">'
+                   : '<span style="font-weight:700;color:#57534E;font-size:13px">ก</span>';
+    return '<label title="' + _frEsc(k || "ตัวอักษร") + '"><input type="radio" name="frIc" value="' + _frEsc(k) + '"' + (on ? " checked" : "") + '>' + face + '</label>';
+  }).join("");
+  const sell = _frSellList();
+  const sellHtml = sell.map(n => {
+    const o = owners[n];
+    const mine = r.id && o && o.id === r.id;
+    if (o && !mine) return '<label class="fr-ck dis"><input type="checkbox" disabled>' + _frEsc(n) + '<small>ผูกกับ ' + _frEsc(o.n) + '</small></label>';
+    return '<label class="fr-ck"><input type="checkbox" name="frS" value="' + _frEsc(n) + '"' + (mine ? " checked" : "") + '>' + _frEsc(n) + (mine ? "" : '<small>ยังไม่ผูก</small>') + '</label>';
+  }).join("");
+  const sh = document.createElement("div");
+  sh.id = "frEditSheet"; sh.className = "sp-ov sp-ov2";
+  sh.addEventListener("click", e => { if (e.target === sh && !_dirtyBlock(sh)) sh.remove(); });
+  sh.innerHTML = '<div class="sp-sh" role="dialog">' +
+    '<div class="sp-h"><b>' + (r.id ? _frEsc(r.n) : "เพิ่มชนิดผลไม้") + '</b><button class="sp-x" onclick="frEditCancel()" aria-label="ปิด">✕</button></div>' +
+    '<div class="sp-body">' +
+      '<div class="fr-fld"><label class="fr-lb" for="frName">ชื่อที่แสดง</label><input id="frName" class="fr-in" maxlength="30" value="' + _frEsc(r.n) + '" placeholder="เช่น เงาะ" autocomplete="off"></div>' +
+      '<div class="fr-fld"><span class="fr-lb">ไอคอน</span><div class="fr-ics">' + icHtml + '</div></div>' +
+      '<div class="fr-fld"><span class="fr-lb">ผลไม้ในแอปขายที่นับเป็นชนิดนี้</span>' + (sellHtml || '<div style="font-size:13px;color:#A8A29E">ยังไม่มีรายชื่อจากแอปขาย</div>') + '</div>' +
+      '<div class="fr-fld"><label class="fr-sw">แสดงในฟอร์มลูกค้าและตัวกรอง<input type="checkbox" id="frShow"' + (r.h ? "" : " checked") + '></label></div>' +
+      (r.id ? (used ? '<div class="fr-cap">ใช้อยู่กับลูกค้า ' + used + ' คน · ซ่อนได้ แต่ลบได้เฉพาะชนิดที่ไม่มีลูกค้าใช้</div>'
+                    : '<button class="fr-del" onclick="frDelete(\'' + _frEsc(r.id) + '\')">ลบชนิดนี้</button>') : '') +
+    '</div>' +
+    '<div class="sp-f"><button class="sp-b c" onclick="frEditCancel()">ยกเลิก</button><button class="sp-b k" id="frSaveBtn" onclick="frSaveEdit(' + (r.id ? "'" + _frEsc(r.id) + "'" : "null") + ')">บันทึก</button></div></div>';
+  document.body.appendChild(sh);
+  if (!r.id) setTimeout(() => { const i = document.getElementById("frName"); if (i) i.focus(); }, 80);
+}
+function frEditCancel() { const sh = document.getElementById("frEditSheet"); if (sh && !_dirtyBlock(sh)) sh.remove(); }
+window.frOpenEdit = frOpenEdit; window.frEditCancel = frEditCancel;
+
+async function frSaveEdit(id) {
+  const sh = document.getElementById("frEditSheet"); if (!sh) return;
+  const name = String((document.getElementById("frName") || {}).value || "").trim().replace(/\s+/g, " ");
+  if (!name) { if (typeof showToast === "function") showToast("ใส่ชื่อผลไม้ก่อน", "warn", 2200); return; }
+  const dup = frList(true).find(x => x.n === name && x.id !== id);
+  if (dup) { if (typeof showToast === "function") showToast("มีชนิด \"" + name + "\" อยู่แล้ว — ใช้ชื่ออื่น หรือแก้ชนิดเดิมแทน", "warn", 3200); return; }
+  const icEl = sh.querySelector('input[name="frIc"]:checked');
+  const ic = icEl ? icEl.value : "";
+  const sel = [...sh.querySelectorAll('input[name="frS"]:checked')].map(x => x.value);
+  const hidden = !(document.getElementById("frShow") || {}).checked;
+  const src = JSON.parse(JSON.stringify(_frSrc()));
+  const oldName = id && src[id] ? String(src[id].n || "").trim() : null;
+  const nid = id || db.ref().push().key;
+  const maxO = Math.max(-1, ...Object.values(src).map(x => +x.o || 0));
+  src[nid] = { n: name, ic, s: sel, h: hidden, o: id && src[id] ? (+src[id].o || 0) : maxO + 1 };
+  // ผลไม้ในแอปขายผูกได้ชนิดเดียว — ถ้าเลือกที่นี่ เอาออกจากชนิดอื่น
+  Object.keys(src).forEach(k => { if (k !== nid && Array.isArray(src[k].s)) src[k].s = src[k].s.filter(n => sel.indexOf(n) < 0); });
+  const btn = document.getElementById("frSaveBtn"); if (btn) btn.disabled = true;
+  try {
+    // เปลี่ยนชื่อ → แก้ชื่อในโปรไฟล์ลูกค้าที่ติ๊กไว้ด้วย (ต้องมีรายชื่อลูกค้าครบก่อน)
+    let nCust = 0;
+    if (oldName && oldName !== name) {
+      if (!window._custFromServer) {
+        try { _lzNeed("customers"); } catch (e) {}
+        const t0 = Date.now();
+        while (!window._custFromServer && Date.now() - t0 < 8000) await new Promise(r => setTimeout(r, 150));
+        if (!window._custFromServer) throw new Error("รายชื่อลูกค้ายังโหลดไม่เสร็จ — เปลี่ยนชื่อไม่ได้ตอนนี้ ลองใหม่อีกครั้ง");
+      }
+      const u = {};
+      Object.entries(cmCustomers || {}).forEach(([cid, c]) => {
+        const fr = (c && c.fruits) || [];
+        if (fr.indexOf(oldName) >= 0) { u["customers/" + cid + "/fruits"] = fr.map(f => f === oldName ? name : f).filter((f, i, a) => a.indexOf(f) === i); nCust++; }
+      });
+      if (Object.keys(u).length) await db.ref().update(u);
+      if (cmFruitSelected === oldName) cmFruitSelected = name;
+    }
+    await _frWriteAll(src);
+    frData = src;
+    sh.remove();
+    _frRender();
+    if (typeof showToast === "function") showToast("บันทึก " + name + " แล้ว" + (nCust ? " · แก้ชื่อในลูกค้า " + nCust + " คน" : ""), "success", 2400);
+  } catch (e) {
+    if (btn) btn.disabled = false;
+    if (typeof showToast === "function") showToast("บันทึกไม่ได้: " + ((e && e.message) || "ไม่ทราบสาเหตุ"), "warn", 4000);
+  }
+}
+window.frSaveEdit = frSaveEdit;
+
+async function frDelete(id) {
+  const src = JSON.parse(JSON.stringify(_frSrc()));
+  if (!src[id]) return;
+  const n = String(src[id].n || "");
+  if (_frCustCount(n)) { if (typeof showToast === "function") showToast("ยังมีลูกค้าติ๊ก " + n + " ไว้ — ลบไม่ได้ ใช้ซ่อนแทน", "warn", 3200); return; }
+  if (!window._custFromServer) { if (typeof showToast === "function") showToast("รายชื่อลูกค้ายังโหลดไม่เสร็จ — รอสักครู่แล้วลองใหม่", "warn", 3000); return; }
+  if (!confirm("ลบชนิด \"" + n + "\"?")) return;
+  delete src[id];
+  try {
+    await _frWriteAll(src);
+    frData = src;
+    const sh = document.getElementById("frEditSheet"); if (sh) sh.remove();
+    _frRender();
+    if (typeof showToast === "function") showToast("ลบ " + n + " แล้ว", "success", 2000);
+  } catch (e) { if (typeof showToast === "function") showToast("ลบไม่ได้: " + (e && e.message), "warn", 3500); }
+}
+window.frDelete = frDelete;
+
+// ── ผลไม้ในแอปขายที่ยังไม่ผูก ──
+function frOpenUnlinked() {
+  const old = document.getElementById("frUnSheet"); if (old) old.remove();
+  const un = _frUnlinked();
+  const opts = frList(true).map(r => '<option value="' + _frEsc(r.id) + '">นับรวมกับ ' + _frEsc(r.n) + '</option>').join("");
+  const sh = document.createElement("div");
+  sh.id = "frUnSheet"; sh.className = "sp-ov sp-ov2";
+  sh.addEventListener("click", e => { if (e.target === sh && !_dirtyBlock(sh)) sh.remove(); });
+  sh.innerHTML = '<div class="sp-sh" role="dialog">' +
+    '<div class="sp-h"><b>ผลไม้ที่ยังไม่ผูก</b><small>เลือกว่าจะนับเป็นชนิดไหนในตลาด</small><button class="sp-x" onclick="frUnCancel()" aria-label="ปิด">✕</button></div>' +
+    '<div class="sp-body"><div class="fr-list">' + (un.length ? un.map(n =>
+      '<div class="fr-un"><b>' + _frEsc(n) + '</b><select data-sell="' + _frEsc(n) + '"><option value="">ยังไม่ทำอะไร</option><option value="__new">เพิ่มเป็นชนิดใหม่</option>' + opts + '</select></div>'
+    ).join("") : '<div class="fr-un"><b style="color:#A8A29E;font-weight:500">ผูกครบทุกชนิดแล้ว</b></div>') + '</div></div>' +
+    '<div class="sp-f"><button class="sp-b c" onclick="frUnCancel()">ยกเลิก</button><button class="sp-b k" id="frUnBtn" onclick="frUnSave()">บันทึก</button></div></div>';
+  document.body.appendChild(sh);
+}
+function frUnCancel() { const sh = document.getElementById("frUnSheet"); if (sh && !_dirtyBlock(sh)) sh.remove(); }
+async function frUnSave() {
+  const sh = document.getElementById("frUnSheet"); if (!sh) return;
+  const src = JSON.parse(JSON.stringify(_frSrc()));
+  let maxO = Math.max(-1, ...Object.values(src).map(x => +x.o || 0));
+  let n = 0;
+  sh.querySelectorAll("select[data-sell]").forEach(s => {
+    const sell = s.dataset.sell, v = s.value;
+    if (!v) return;
+    if (v === "__new") {
+      let name = sell.replace(/^ลำไย\s+/, "").trim() || sell;
+      if (Object.values(src).some(x => String(x.n || "").trim() === name)) name = sell;
+      src[db.ref().push().key] = { n: name, ic: "", s: [sell], h: false, o: ++maxO };
+    } else if (src[v]) {
+      src[v].s = (src[v].s || []).concat([sell]);
+    }
+    n++;
+  });
+  if (!n) { sh.remove(); return; }
+  const btn = document.getElementById("frUnBtn"); if (btn) btn.disabled = true;
+  try {
+    await _frWriteAll(src);
+    frData = src; sh.remove(); _frRender();
+    if (typeof showToast === "function") showToast("ผูกแล้ว " + n + " ชนิด", "success", 2200);
+  } catch (e) {
+    if (btn) btn.disabled = false;
+    if (typeof showToast === "function") showToast("บันทึกไม่ได้: " + (e && e.message), "warn", 3500);
+  }
+}
+window.frOpenUnlinked = frOpenUnlinked; window.frUnCancel = frUnCancel; window.frUnSave = frUnSave;
 
 // ================================================================
 // CUSTOMER MODULE
@@ -18195,14 +18944,14 @@ function _cmBuildIndex() {
         if (!n) return;
         let arr = map.get(n);
         if (!arr) { arr = []; map.set(n, arr); }
-        arr.push({ day, amount: item.amount||0, note: item.note||"", status: item.status });
+        arr.push({ day, amount: item.amount||0, note: item.note||"", status: item.status, g });   // V5.90: + หมวด
       });
     });
   });
   return map;
 }
 
-function cmInvalidateIndex() { _cmIndex = null; _cmIndexVer = -1; }
+function cmInvalidateIndex() { _cmIndex = null; _cmIndexVer = -1; _cmDirCache = null; }   // V5.90: + รายชื่อ
 
 function cmGetPurchases(name) {
   const _target = (name||"").trim();
@@ -18243,77 +18992,281 @@ function cmSearchInputChanged() {
   _cmSearchTimer = setTimeout(() => { _cmSearchTimer = null; cmRenderList(); }, 200);
 }
 
+// ═══════════════════════════════════════════════════════════════
+// V5.90: รายชื่อลูกค้า — ขึ้นเองจากบิล · รวมตามชื่อหลัก
+// ═══════════════════════════════════════════════════════════════
+var custCfg = { a: {}, ns: {}, h: {} };
+db.ref("config/cust").on("value", snap => {
+  const v = snap.val() || {};
+  custCfg = { a: v.a || {}, ns: v.ns || {}, h: v.h || {} };
+  _cmDirCache = null;
+  try { if (activeTab === "cust") { cmRenderList(); cmRenderQuiet(); } } catch (e) {}
+  try { if (document.getElementById("cmMergeSheet")) cmMergeRender(); } catch (e) {}
+}, e => { try { if (window._denySee) window._denySee(e); else window.__denyQ = e; } catch (x) {} });
+const CM_GL = { credit: "เงินเชื่อ", transfer: "หน้าร้าน", fence: "รถรั้ว", delivery: "จัดส่ง" };
+const CM_SELL_GL = { cutter: "credit", sales: "transfer", delivery: "delivery" };
+let cmGrpSel = "";
+
+// ── ทะเบียนลูกค้าของแอปขาย (อ่านอย่างเดียว · 2 เอกสาร · ทุก 15 นาที) ──
+const CS_CACHE = "cs:sell";
+var _cs = null;
+(function () { try { const x = JSON.parse(localStorage.getItem(CS_CACHE) || "null"); if (x && x.reg) _cs = x; } catch (e) {} })();
+let _csBusy = false;
+async function _csLoad(force) {
+  if (_csBusy) return;
+  if (!force && _cs && Date.now() - (_cs.at || 0) < 15 * 60000) return;
+  if (navigator.onLine === false) return;
+  _csBusy = true;
+  try {
+    await _spTimeout(_spLoadFs(), 15000);
+    const app = _spGetApp(), au = app.auth();
+    if (!au.currentUser) await _spTimeout(au.signInAnonymously(), 15000);
+    const st = app.firestore().collection("stores").doc(SP_STORE);
+    const [rg, mm, map] = await _spTimeout(Promise.all([
+      st.collection("meta").doc("customers").get({ source: "server" }),
+      st.collection("meta").doc("memory").get({ source: "server" }),
+      db.ref("config/sellNameMap").once("value").then(x => x.val() || {}).catch(() => ({})),
+    ]), 20000);
+    let reg = {}, M = {};
+    try { reg = JSON.parse((rg && rg.exists && (rg.data() || {}).data) || "{}") || {}; } catch (e) {}
+    try { M = JSON.parse((mm && mm.exists && (mm.data() || {}).data) || "{}") || {}; } catch (e) {}
+    // เก็บเฉพาะที่ใช้: ชื่อที่รวมไว้ (al|) และเบอร์โทร/หมายเหตุ (ct|)
+    const mem = {};
+    Object.keys(M).forEach(k => { if ((k.indexOf("al|") === 0 || k.indexOf("ct|") === 0) && M[k] && M[k].v) mem[k] = M[k].v; });
+    const r2 = {};
+    Object.keys(reg).forEach(n => { const x = reg[n]; if (x && !x.x) r2[n] = { c: x.c || "", f: x.f || "", l: x.l || "", n: +x.n || 0 }; });
+    _cs = { reg: r2, mem, map, at: Date.now() };
+    _cmDirCache = null;
+    try { localStorage.setItem(CS_CACHE, JSON.stringify(_cs)); } catch (e) {}
+    try { if (activeTab === "cust") { cmRenderList(); cmRenderQuiet(); } } catch (e) {}
+  } catch (e) {
+    console.warn("[ลูกค้า] อ่านทะเบียนแอปขายไม่ได้:", e && (e.code || e.message));
+  } finally { _csBusy = false; }
+}
+function _csSellRoot(n) {
+  const mem = (_cs && _cs.mem) || {};
+  let r = n, k = 0;
+  while (k++ < 8) { const v = mem["al|" + r]; if (!v || v === r) break; r = String(v); }
+  return r;
+}
+// ชื่อหลักของชื่อหนึ่ง: ที่รวมไว้ในตลาดก่อน แล้วค่อยที่รวมไว้ในแอปขาย
+function custRoot(n) {
+  let r = String(n || "").trim(), k = 0;
+  while (k++ < 8) {
+    const v = custCfg.a[_ppKey(r)];
+    if (v && v !== r) { r = String(v); continue; }
+    const sr = _csSellRoot(r);
+    if (sr !== r) { r = sr; continue; }
+    break;
+  }
+  return r;
+}
+window.custRoot = custRoot;
+
+function _cmFmtD(day) {
+  const d = cmParseDay(day || ""); if (!d) return "";
+  return d.getDate() + " " + CM_MONTHS[d.getMonth()];
+}
+function _cmBEday(k) {   // แอปขาย 25691112 → วัน
+  const m = String(k || "").match(/^(\d{4})(\d{2})(\d{2})$/); if (!m) return null;
+  return new Date(+m[1] - 543, +m[2] - 1, +m[3]);
+}
+// สร้างรายชื่อทั้งหมด (คำนวณใหม่เมื่อข้อมูลเปลี่ยน)
+var _cmDirCache = null, _cmDirSig = "";
+function cmDir() {
+  const sig = [window._dataVersion || 0, Object.keys(cmCustomers || {}).length, JSON.stringify(custCfg).length, (_cs && _cs.at) || 0, window._cmProfVer || 0].join("|");
+  if (_cmDirCache && sig === _cmDirSig) return _cmDirCache;
+  if (!_cmIndex || _cmIndexVer !== (window._dataVersion || 0)) { _cmIndex = _cmBuildIndex(); _cmIndexVer = window._dataVersion || 0; }
+  const map = new Map();
+  const get = main => { let g = map.get(main); if (!g) { g = { main, names: [], pur: [], prof: null, sell: null, phone: "" }; map.set(main, g); } return g; };
+  _cmIndex.forEach((arr, name) => {
+    const g = get(custRoot(name));
+    if (g.names.indexOf(name) < 0) g.names.push(name);
+    arr.forEach(x => g.pur.push(Object.assign({ n: name }, x)));
+  });
+  Object.entries(cmCustomers || {}).forEach(([id, c]) => {
+    const n = String((c && c.name) || "").trim(); if (!n) return;
+    const g = get(custRoot(n));
+    if (g.names.indexOf(n) < 0) g.names.push(n);
+    if (!g.prof || n === g.main) g.prof = { id, c };
+  });
+  // ชื่อจากทะเบียนแอปขาย: ตรงกับชื่อในตลาด → เติมเบอร์ · ไม่ตรง → กลุ่ม "มีแค่ในแอปขาย"
+  const sellOnly = new Map();
+  if (_cs && _cs.reg) {
+    const norm = {}; map.forEach((g, m) => g.names.forEach(n => { norm[_spN(n)] = m; }));
+    Object.keys(_cs.reg).forEach(sn => {
+      const sr = _csSellRoot(sn);
+      const mapped = (_cs.map || {})[_ppKey(sr)] || (_cs.map || {})[_ppKey(sn)];
+      let main = mapped ? custRoot(mapped) : null;
+      if (!main && norm[_spN(sr)]) main = norm[_spN(sr)];
+      if (!main && norm[_spN(sn)]) main = norm[_spN(sn)];
+      const ct = (_cs.mem || {})["ct|" + sr] || (_cs.mem || {})["ct|" + sn];
+      if (main && map.has(main)) { const g = map.get(main); if (!g.phone && ct && ct.p) g.phone = String(ct.p); return; }
+      const r = custRoot(sr);
+      if (map.has(r)) { const g = map.get(r); if (!g.phone && ct && ct.p) g.phone = String(ct.p); return; }
+      const x = _cs.reg[sn];
+      let o = sellOnly.get(r);
+      if (!o) { o = { main: r, names: [], sell: { c: x.c, f: x.f, l: x.l, n: 0 }, phone: "" }; sellOnly.set(r, o); }
+      if (o.names.indexOf(sn) < 0) o.names.push(sn);
+      o.sell.n += x.n || 0;
+      if (String(x.l || "") > String(o.sell.l || "")) { o.sell.l = x.l; o.sell.c = x.c; }
+      if (!o.sell.f || (x.f && String(x.f) < String(o.sell.f))) o.sell.f = x.f;
+      if (!o.phone && ct && ct.p) o.phone = String(ct.p);
+    });
+  }
+  map.forEach(g => {
+    g.pur.sort((a, b) => { const pa = cmParseDay(a.day), pb = cmParseDay(b.day); return (pa && pb) ? pa - pb : 0; });
+    g.last = g.pur.length ? g.pur[g.pur.length - 1] : null;
+    g.first = g.pur.length ? g.pur[0] : null;
+    g.tot = g.pur.reduce((t, x) => t + (+x.amount || 0), 0);
+    g.grp = g.last ? g.last.g : null;
+    g.hidden = !!custCfg.h[_ppKey(g.main)];
+    if (!g.phone && g.prof && g.prof.c.phone) g.phone = g.prof.c.phone;
+    if (g.prof && g.prof.c.phone) g.phone = g.prof.c.phone;
+  });
+  sellOnly.forEach(o => { o.hidden = !!custCfg.h[_ppKey(o.main)]; });
+  _cmDirCache = { map, sellOnly }; _cmDirSig = sig;
+  return _cmDirCache;
+}
+function _cmIsNew(day) { const d = cmParseDay(day || ""); return !!d && (Date.now() - d.getTime()) < 7 * 86400000; }
+
 function cmRenderList() {
   // V5.40
   if (typeof _lzPaint === "function" && _lzPaint("cmCustList", "customers", 5)) {
     const _e = document.getElementById("cmEmptyMsg"); if (_e) _e.style.display = "none";
     return;
   }
+  try { _frRenderFilter(); } catch (e) {}   // V5.89
+  try { _csLoad(false); } catch (e) {}
+  try { _cbLoadLocal(); _cbMaybeSync(); } catch (e) {}   // V5.91
   const listEl  = document.getElementById("cmCustList");
   const emptyEl = document.getElementById("cmEmptyMsg");
   const sortLbl = document.getElementById("cmSortLabel");
   if (!listEl) return;
-  listEl.innerHTML = "";
-  // V3: escape HTML helper for safety
   const _esc = s => String(s||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
-  const q = ((document.getElementById("cmSearchInput")||{}).value||"").trim();
-  let custs = Object.entries(cmCustomers);
-  if (q) {
-    const qLower = q.toLowerCase();
-    custs = custs.filter(([,c]) => (c.name||"").trim().toLowerCase().includes(qLower));
+  // แถบหมวด
+  const seg = document.getElementById("cmGrpSeg");
+  if (seg) seg.querySelectorAll("button").forEach(b => {
+    b.classList.toggle("on", (b.dataset.g || "") === cmGrpSel);
+    b.onclick = () => { cmGrpSel = b.dataset.g || ""; cmRenderList(); };
+  });
+  const D = cmDir();
+  // แถบชื่อที่อาจซ้ำ (เจ้าของเท่านั้น)
+  const hint = document.getElementById("cmMergeHint");
+  if (hint) {
+    // หาคู่ทีหลัง ให้รายชื่อขึ้นก่อน (หาครั้งเดียวจนกว่าข้อมูลจะเปลี่ยน)
+    if (!isOwner()) hint.innerHTML = "";
+    else setTimeout(() => {
+      const np = cmPairs().length;
+      hint.innerHTML = np ? '<div class="cm-hint" onclick="cmMergeOpen()"><span>ชื่อที่อาจเป็นคนเดียวกัน ' + np + ' คู่</span><b>ตรวจดู ›</b></div>' : "";
+    }, 0);
   }
-  if (cmFruitSelected) custs = custs.filter(([,c]) => (c.fruits||[]).includes(cmFruitSelected));
-  if (!custs.length) { emptyEl.style.display="block"; if(sortLbl) sortLbl.textContent=""; return; }
-  emptyEl.style.display = "none";
-  const custData = custs.map(([id,c]) => {
-    const pur = cmGetPurchases(c.name||"");
-    const lastDay = pur.length ? pur[pur.length-1].day : null;
-    const lastDate = lastDay ? cmParseDay(lastDay) : null;
-    const tot = pur.reduce((s,x)=>s+x.amount,0);
-    const st  = lastDay ? cmGetStatus(lastDay) : {label:"ไม่มีข้อมูล",color:"#D6D3D1",key:"none"};
-    return {id, c, pur, lastDay, lastDate, tot, st};
+  const q = ((document.getElementById("cmSearchInput")||{}).value||"").trim().toLowerCase();
+  const hitQ = names => !q || names.some(n => n.toLowerCase().includes(q));
+  let rows = [];
+  D.map.forEach(g => {
+    if (g.hidden) return;
+    if (!hitQ(g.names)) return;
+    if (cmGrpSel && g.grp !== cmGrpSel) return;
+    const fr = ((g.prof && g.prof.c.fruits) || []).concat(cbTopFruits(g.main));   // V5.91: + ที่ซื้อจริง
+    if (cmFruitSelected && fr.indexOf(cmFruitSelected) < 0) return;
+    rows.push(g);
   });
-  custData.sort((a,b) => {
-    if (!a.lastDate && !b.lastDate) return 0;
-    if (!a.lastDate) return 1;
-    if (!b.lastDate) return -1;
-    return b.lastDate - a.lastDate;
+  rows.sort((a, b) => {
+    const la = a.last ? cmParseDay(a.last.day) : null, lb = b.last ? cmParseDay(b.last.day) : null;
+    if (!la && !lb) return a.main.localeCompare(b.main, "th");
+    if (!la) return 1; if (!lb) return -1;
+    return lb - la;
   });
-  if(sortLbl) sortLbl.textContent = custData.length+" คน"+(cmFruitSelected?" · "+cmFruitSelected:"")+" — เรียงตามวันซื้อล่าสุด";
-  custData.forEach(({id,c,pur,lastDay,tot,st}) => {
+  let so = [];
+  if (!cmFruitSelected) D.sellOnly.forEach(o => {
+    if (o.hidden || !hitQ(o.names.concat([o.main]))) return;
+    if (cmGrpSel && CM_SELL_GL[o.sell.c] !== cmGrpSel) return;
+    so.push(o);
+  });
+  so.sort((a, b) => String(b.sell.l || "").localeCompare(String(a.sell.l || "")));
+  listEl.innerHTML = "";
+  if (!rows.length && !so.length) { emptyEl.style.display = "block"; if (sortLbl) sortLbl.textContent = ""; }
+  else emptyEl.style.display = "none";
+  if (sortLbl) sortLbl.textContent = rows.length ? rows.length + " คน" + (cmFruitSelected ? " · " + cmFruitSelected : "") + (cmGrpSel ? " · " + CM_GL[cmGrpSel] : "") + " — เรียงตามวันซื้อล่าสุด" : "";
+  const frag = document.createDocumentFragment();
+  const PL = cmPeriod(cmListPer);   // V5.91
+  const ps = document.getElementById("cmPeriodSel"); if (ps && ps.value !== cmListPer) ps.value = cmListPer;
+  rows.forEach(g => {
+    const c = (g.prof && g.prof.c) || {};
+    const pp = cmListPer === "all" ? g.pur : g.pur.filter(x => _cmIn(_cmPurT(x), PL));
+    const ptot = pp.reduce((t, x) => t + (+x.amount || 0), 0);
+    const fShow = cbTopFruits(g.main, 3); ((c.fruits || [])).forEach(f => { if (fShow.indexOf(f) < 0) fShow.push(f); });
+    const lastDay = g.last ? g.last.day : null;
+    const st = lastDay ? cmGetStatus(lastDay) : { label: "ยังไม่มีบิล", color: "#D6D3D1", key: "none" };
     const div = document.createElement("div");
     div.className = "cust-card";
-    // V3: avatar = first 2 thai chars
-    const avatarText = (c.name||"-").trim().slice(0,2);
-    const safeName = _esc(c.name||"-");
-    const safePhone = _esc(c.phone||"");
-    const safeLineId = _esc(c.lineId||"");
-    const safeCustType = _esc(c.custType||"");
-    const safeLastDay = _esc(lastDay||"");
+    const others = g.names.filter(n => n !== g.main);
+    const isNew = g.first && _cmIsNew(g.first.day);
     div.innerHTML = `
-      <div class="cust-avatar" style="background:linear-gradient(135deg,${st.color}22,${st.color}44);color:${st.color};">${_esc(avatarText)}</div>
+      <div class="cust-avatar" style="background:linear-gradient(135deg,${st.color}22,${st.color}44);color:${st.color};">${_esc(g.main.slice(0,2))}</div>
       <div style="flex:1;min-width:0;">
-        <div style="font-weight:600;font-size:14.5px;letter-spacing:-0.01em;">${safeName}</div>
+        <div style="font-weight:600;font-size:14.5px;letter-spacing:-0.01em;">${_esc(g.main)}${isNew ? '<span class="cm-new">ใหม่</span>' : ""}</div>
         <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
-          ${safePhone}${safeLineId?` · ${safeLineId}`:""}
-          ${safeLastDay?`<span style="background:var(--bg-subtle);padding:1px 7px;border-radius:99px;font-size:10px;font-weight:500;color:var(--text-tertiary);font-variant-numeric:tabular-nums;">${safeLastDay}</span>`:""}
+          ${g.grp ? `<span class="cm-gp">${CM_GL[g.grp]}</span>` : ""}
+          ${_esc(g.phone || "")}${c.lineId ? ` · ${_esc(c.lineId)}` : ""}
+          ${lastDay ? `<span style="background:var(--bg-subtle);padding:1px 7px;border-radius:99px;font-size:10px;font-weight:500;color:var(--text-tertiary);font-variant-numeric:tabular-nums;">${_esc(lastDay)}</span>` : ""}
+          ${others.length ? `<span>รวม ${others.map(n => '"' + _esc(n) + '"').join(", ")}</span>` : ""}
         </div>
         <div style="margin-top:5px;display:flex;flex-wrap:wrap;gap:3px;">
-          ${safeCustType?`<span class="cust-chip" style="background:rgba(3,105,161,0.1);color:#075985;">${safeCustType}</span>`:""}
-          ${(c.fruits||[]).map(f=>`<span class="cust-chip" style="background:${cmFruitSelected===f?"rgba(245,158,11,0.15)":"var(--bg-subtle)"};color:${cmFruitSelected===f?"#92400E":"var(--text-tertiary)"};display:inline-flex;align-items:center;gap:3px;">${fruitImg(f,13)}${_esc(f)}</span>`).join("")}
+          ${c.custType ? `<span class="cust-chip" style="background:rgba(3,105,161,0.1);color:#075985;">${_esc(c.custType)}</span>` : ""}
+          ${fShow.map(f=>`<span class="cust-chip" style="background:${cmFruitSelected===f?"rgba(245,158,11,0.15)":"var(--bg-subtle)"};color:${cmFruitSelected===f?"#92400E":"var(--text-tertiary)"};display:inline-flex;align-items:center;gap:3px;">${fruitImg(f,13)}${_esc(f)}</span>`).join("")}
           ${(c.complain||[]).includes("ไม่ขาย")?`<span class="cust-chip" style="background:rgba(220,38,38,0.1);color:#991B1B;">ไม่ขาย</span>`:""}
           ${(c.complain||[]).includes("เรื่องมาก")?`<span class="cust-chip" style="background:rgba(245,158,11,0.15);color:#92400E;">เรื่องมาก</span>`:""}
         </div>
       </div>
       <div style="text-align:right;flex-shrink:0;">
-        <div style="font-weight:600;font-size:15px;letter-spacing:-0.02em;font-variant-numeric:tabular-nums;">${cmFmt(tot)}</div>
+        <div style="font-weight:600;font-size:15px;letter-spacing:-0.02em;font-variant-numeric:tabular-nums;">${cmFmt(ptot)}</div>
         <div style="font-size:10.5px;font-weight:500;color:${st.color};margin-top:2px;">${st.label}</div>
-        <div style="font-size:10.5px;color:var(--text-quaternary);font-variant-numeric:tabular-nums;">${pur.length} ครั้ง</div>
+        <div style="font-size:10.5px;color:var(--text-quaternary);font-variant-numeric:tabular-nums;">${pp.length} ครั้ง</div>
       </div>`;
-    div.addEventListener("click", () => cmOpenDetail(id));
-    listEl.appendChild(div);
+    div.addEventListener("click", () => cmOpenDetail("g:" + g.main));
+    frag.appendChild(div);
   });
-  // bind fruit filter chips
+  if (so.length) {
+    const h = document.createElement("div"); h.className = "cm-sec";
+    h.textContent = "มีแค่ในแอปขาย · " + so.length + " คน";
+    frag.appendChild(h);
+    so.forEach(o => {
+      const ld = _cmBEday(o.sell.l), fd = _cmBEday(o.sell.f);
+      const days = ld ? Math.floor((Date.now() - ld.getTime()) / 86400000) : 9999;
+      const st = days <= 10 ? { label: "ยังซื้ออยู่", color: "#16A34A" } : days <= 15 ? { label: "เงียบ " + days + " วัน", color: "#92400E" } : { label: "หาย " + days + " วัน", color: "#DC2626" };
+      const isNew = fd && (Date.now() - fd.getTime()) < 7 * 86400000;
+      const g = CM_SELL_GL[o.sell.c];
+      const div = document.createElement("div");
+      div.className = "cust-card";
+      div.innerHTML = `
+        <div class="cust-avatar" style="background:linear-gradient(135deg,${st.color}22,${st.color}44);color:${st.color};">${_esc(o.main.slice(0,2))}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:600;font-size:14.5px;letter-spacing:-0.01em;">${_esc(o.main)}${isNew ? '<span class="cm-new">ใหม่</span>' : ""}</div>
+          <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+            <span class="cm-gp sl">แอปขาย${g ? " · " + CM_GL[g] : ""}</span>${_esc(o.phone || "")}
+            ${ld ? `<span>ล่าสุด ${ld.getDate()} ${CM_MONTHS[ld.getMonth()]}</span>` : ""}
+          </div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          ${(() => { const sb = (cbIndex().get(o.main) || []).filter(b => _cmIn(b.d, PL)); return sb.length ? `<div style="font-weight:600;font-size:15px;letter-spacing:-0.02em;font-variant-numeric:tabular-nums;">${cmFmt(sb.reduce((t, b) => t + b.t, 0))}</div>` : ""; })()}
+          <div style="font-size:10.5px;font-weight:500;color:${st.color};">${st.label}</div>
+          <div style="font-size:10.5px;color:var(--text-quaternary);font-variant-numeric:tabular-nums;">${o.sell.n} วันที่ซื้อ</div>
+        </div>`;
+      div.addEventListener("click", () => cmOpenDetail("s:" + o.main));
+      frag.appendChild(div);
+    });
+  }
+  // ชื่อที่ซ่อนไว้
+  const nh = [...D.map.values(), ...D.sellOnly.values()].filter(x => x.hidden).length;
+  if (nh && isOwner()) {
+    const b = document.createElement("button"); b.className = "cm-more";
+    b.textContent = "ชื่อที่ซ่อนไว้ " + nh + " ชื่อ ›"; b.onclick = cmHiddenOpen;
+    frag.appendChild(b);
+  }
+  listEl.appendChild(frag);
+  // ปุ่มกรองผลไม้
   const ff = document.getElementById("cmFruitFilter");
   if (ff) ff.querySelectorAll(".cust-filter-chip").forEach(chip => {
     chip.onclick = () => {
@@ -18331,29 +19284,25 @@ function cmRenderQuiet() {
   const badge  = document.getElementById("cmQuietCount");
   if (!sec) return;
   const ql = [];
-  Object.entries(cmCustomers).forEach(([id,c]) => {
-    const pur = cmGetPurchases(c.name||"");
-    if (!pur.length) return;
-    const last = pur[pur.length-1];
-    const st = cmGetStatus(last.day);
-    if (st.key==="quiet"||st.key==="gone")
-      ql.push({id, c, last, days:cmDaysSince(last.day), st});
+  cmDir().map.forEach(g => {
+    if (g.hidden || !g.last) return;
+    const st = cmGetStatus(g.last.day);
+    if (st.key === "quiet" || st.key === "gone") ql.push({ g, last: g.last, days: cmDaysSince(g.last.day), st });
   });
   ql.sort((a,b)=>b.days-a.days);
   if (!ql.length) { sec.style.display="none"; return; }
   sec.style.display = "block";
   if(badge) badge.textContent = ql.length+" คน";
   listEl.innerHTML = "";
-  // V3: escape HTML
   const _qEsc = s => String(s||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
-  ql.forEach(({id,c,last,days,st}) => {
+  ql.forEach(({g,last,days,st}) => {
     const row = document.createElement("div");
     row.className = "quiet-row";
     row.innerHTML = `
       <div style="display:flex;align-items:center;gap:10px;">
         <div style="width:10px;height:10px;border-radius:50%;background:${st.color};flex-shrink:0;"></div>
         <div>
-          <div style="font-weight:700;font-size:13px;">${_qEsc(c.name)}</div>
+          <div style="font-weight:700;font-size:13px;">${_qEsc(g.main)}</div>
           <div style="font-size:11px;color:#A8A29E;">ล่าสุด: ${_qEsc(last.note||"-")}</div>
         </div>
       </div>
@@ -18361,9 +19310,351 @@ function cmRenderQuiet() {
         <div style="font-size:14px;font-weight:600;color:${st.color};">${days} วัน</div>
         <div style="font-size:10px;color:#A8A29E;">${_qEsc(last.day)}</div>
       </div>`;
-    row.addEventListener("click", () => cmOpenDetail(id));
+    row.addEventListener("click", () => cmOpenDetail("g:" + g.main));
     listEl.appendChild(row);
   });
+}
+
+// ── คู่ชื่อที่อาจเป็นคนเดียวกัน ──
+var _cmPairsCache = null, _cmPairsSig = "";
+function cmPairs() {
+  const D = cmDir();
+  const psig = _cmDirSig + "#" + JSON.stringify(custCfg.ns).length + "#" + Object.keys(custCfg.ns).length;
+  if (_cmPairsCache && _cmPairsSig === psig && _cmDirCache === D) return _cmPairsCache;
+  _cmPairsSig = psig;
+  return (_cmPairsCache = _cmPairsCalc(D));
+}
+// คู่ที่ "ชื่อคล้ายกัน" ขึ้นกับรายชื่ออย่างเดียว — จำไว้จนกว่าจะมีชื่อเพิ่ม/หาย (จำนวนบิลอัปเดตทุกครั้ง)
+var _cmPairBase = null, _cmPairBaseSig = "";
+function _cmPairsCalc(D) {
+  const items = new Map();
+  D.map.forEach(g => { if (!g.hidden) items.set(g.main, { main: g.main, n: g.pur.length, last: g.last ? g.last.day : "", grp: g.grp, src: "t" }); });
+  D.sellOnly.forEach(o => { if (!o.hidden && !items.has(o.main)) items.set(o.main, { main: o.main, n: o.sell.n, last: "", grp: CM_SELL_GL[o.sell.c] || null, src: "s" }); });
+  const keys = [...items.keys()].sort();
+  const sig = keys.join("\u0001");
+  if (sig !== _cmPairBaseSig) {
+    const pre = keys.map(k => ({ k, t: _spT(k), p: _spP(k), num: /^\d+$/.test(_spN(k)) })).filter(x => !x.num);   // ชื่อตัวเลขต้องตรงทุกหลัก
+    const base = [];
+    for (let i = 0; i < pre.length; i++) for (let j = i + 1; j < pre.length; j++) {
+      const A = pre[i], B = pre[j];
+      let why = "";
+      if (A.t === B.t) why = "ต่างแค่วรรณยุกต์หรือเว้นวรรค";
+      else if (A.p === B.p && A.p.length >= 2) why = "ต่างแค่คำนำหน้า";
+      else {
+        const m = Math.min(A.t.length, B.t.length);
+        const cap = m >= 6 ? 2 : (m >= 3 ? 1 : 0);
+        if (cap && Math.abs(A.t.length - B.t.length) <= cap) { const d = _spLev(A.t, B.t, cap); if (d <= cap) why = "สะกดต่าง " + d + " ตัว"; }
+        if (!why && m >= 2 && (A.t.indexOf(B.t) === 0 || B.t.indexOf(A.t) === 0)) why = "ชื่อหนึ่งมีคำต่อท้าย";
+      }
+      if (why) base.push({ a: A.k, b: B.k, why, pk: [A.k, B.k].sort().map(_ppKey).join("|") });
+    }
+    _cmPairBase = base; _cmPairBaseSig = sig;
+  }
+  const out = [];
+  _cmPairBase.forEach(p => { if (!custCfg.ns[p.pk]) out.push({ a: items.get(p.a), b: items.get(p.b), why: p.why, pk: p.pk }); });
+  // ชัดก่อน: วรรณยุกต์/เว้นวรรค → คำนำหน้า → สะกดต่าง → คำต่อท้าย (มักเป็นคนละสาขา/คนละคน)
+  const rk = w => /วรรณยุกต์/.test(w) ? 0 : /คำนำหน้า/.test(w) ? 1 : /สะกดต่าง/.test(w) ? 2 : 3;
+  out.sort((p, q) => (rk(p.why) - rk(q.why)) || ((q.a.n + q.b.n) - (p.a.n + p.b.n)));
+  return out;
+}
+function cmMergeOpen() {
+  if (!isOwner()) { if (typeof showToast === "function") showToast("รวมชื่อได้เฉพาะเจ้าของ", "warn", 2600); return; }
+  const old = document.getElementById("cmMergeSheet"); if (old) old.remove();
+  const ov = document.createElement("div");
+  ov.id = "cmMergeSheet"; ov.className = "sp-ov";
+  ov.addEventListener("click", e => { if (e.target === ov) ov.remove(); });
+  document.body.appendChild(ov);
+  cmMergeRender();
+}
+function cmMergeRender() {
+  const ov = document.getElementById("cmMergeSheet"); if (!ov) return;
+  const P = cmPairs().slice(0, 60);
+  const e = _frEsc;
+  const card = (p, i) => {
+    const rec = p.a.n >= p.b.n ? "a" : "b";
+    const side = x => '<div><b>' + e(x.main) + '</b>' + (x.src === "s" ? x.n + " วันในแอปขาย" : x.n + " บิล") + (x.grp ? " · " + CM_GL[x.grp] : "") + '</div>';
+    return '<div class="cm-pair"><div class="why">' + e(p.why) + '</div><div class="two">' + side(p.a) + side(p.b) + '</div>' +
+      '<div class="acts"><button class="' + (rec === "a" ? "p" : "") + '" onclick="cmMergeDo(' + i + ',\'a\')">ใช้ "' + e(p.a.main) + '"</button>' +
+      '<button class="' + (rec === "b" ? "p" : "") + '" onclick="cmMergeDo(' + i + ',\'b\')">ใช้ "' + e(p.b.main) + '"</button>' +
+      '<button onclick="cmMergeDo(' + i + ',\'x\')">คนละคน</button></div></div>';
+  };
+  ov._pairs = P;
+  ov.innerHTML = '<div class="sp-sh" role="dialog" aria-label="ชื่อที่อาจซ้ำ">' +
+    '<div class="sp-h"><b>ชื่อที่อาจซ้ำ</b><small>บิลเก่าไม่ถูกแก้ · ยกเลิกรวมได้ในหน้าลูกค้าคนนั้น</small><button class="sp-x" onclick="document.getElementById(\'cmMergeSheet\').remove()" aria-label="ปิด">✕</button></div>' +
+    '<div class="sp-body">' + (P.length ? P.map(card).join("") : '<div style="text-align:center;color:#A8A29E;padding:28px 16px;font-size:13.5px">ไม่มีชื่อที่น่าจะซ้ำแล้ว</div>') + '<div style="height:6px"></div></div></div>';
+}
+async function cmMergeDo(i, act) {
+  const ov = document.getElementById("cmMergeSheet"); if (!ov || !ov._pairs) return;
+  const p = ov._pairs[i]; if (!p) return;
+  ov.querySelectorAll(".cm-pair button").forEach(b => b.disabled = true);
+  try {
+    if (act === "x") await db.ref("config/cust/ns/" + p.pk).set(Date.now());
+    else {
+      const main = act === "a" ? p.a.main : p.b.main, sec = act === "a" ? p.b.main : p.a.main;
+      const u = { ["config/cust/a/" + _ppKey(sec)]: main };
+      Object.keys(custCfg.a).forEach(k => { if (custCfg.a[k] === sec) u["config/cust/a/" + k] = main; });   // ชื่อที่เคยรวมเข้าชื่อรอง ย้ายตามไปด้วย
+      await db.ref().update(u);
+      if (typeof showToast === "function") showToast('รวม "' + sec + '" เข้ากับ "' + main + '" แล้ว', "success", 2200);
+    }
+  } catch (e) {
+    if (typeof showToast === "function") showToast("บันทึกไม่ได้: " + (e && e.message), "warn", 3500);
+    ov.querySelectorAll(".cm-pair button").forEach(b => b.disabled = false);
+  }
+}
+window.cmMergeOpen = cmMergeOpen; window.cmMergeDo = cmMergeDo; window.cmMergeRender = cmMergeRender;
+
+// ── ซ่อน / เลิกซ่อน / ยกเลิกรวม ──
+async function cmUnmerge(name) {
+  if (!isOwner()) return;
+  try {
+    await db.ref("config/cust/a/" + _ppKey(name)).remove();
+    if (typeof showToast === "function") showToast('แยก "' + name + '" ออกแล้ว', "success", 2000);
+    const id = cmDetailId; if (id) setTimeout(() => cmOpenDetail(id), 150);
+  } catch (e) { if (typeof showToast === "function") showToast("บันทึกไม่ได้: " + (e && e.message), "warn", 3500); }
+}
+async function cmSetHidden(name, on) {
+  if (!isOwner()) return;
+  try {
+    await db.ref("config/cust/h/" + _ppKey(name)).set(on ? Date.now() : null);
+    if (on) { cmCloseDetail(); if (typeof showToast === "function") showToast('ซ่อน "' + name + '" แล้ว · ดูได้ที่ "ชื่อที่ซ่อนไว้" ท้ายรายชื่อ', "success", 2800); }
+  } catch (e) { if (typeof showToast === "function") showToast("บันทึกไม่ได้: " + (e && e.message), "warn", 3500); }
+}
+function cmHiddenOpen() {
+  const D = cmDir();
+  const hs = [...D.map.values(), ...D.sellOnly.values()].filter(x => x.hidden).map(x => x.main).sort((a, b) => a.localeCompare(b, "th"));
+  const old = document.getElementById("cmHiddenSheet"); if (old) old.remove();
+  const ov = document.createElement("div");
+  ov.id = "cmHiddenSheet"; ov.className = "sp-ov";
+  ov.addEventListener("click", e => { if (e.target === ov) ov.remove(); });
+  ov.innerHTML = '<div class="sp-sh" role="dialog"><div class="sp-h"><b>ชื่อที่ซ่อนไว้</b><small>ซ่อนแค่ในรายชื่อลูกค้า บิลยังอยู่ครบ</small><button class="sp-x" onclick="document.getElementById(\'cmHiddenSheet\').remove()" aria-label="ปิด">✕</button></div>' +
+    '<div class="sp-body"><div class="fr-list">' + hs.map(n => '<div class="fr-un"><b>' + _frEsc(n) + '</b><button class="sp-b c" style="flex:none;padding:7px 12px;font-size:12.5px" onclick="cmSetHidden(' + JSON.stringify(n).replace(/"/g, "&quot;") + ',false);this.closest(\'.fr-un\').remove()">เลิกซ่อน</button></div>').join("") + '</div></div></div>';
+  document.body.appendChild(ov);
+}
+window.cmUnmerge = cmUnmerge; window.cmSetHidden = cmSetHidden; window.cmHiddenOpen = cmHiddenOpen;
+
+// ═══════════════════════════════════════════════════════════════
+// V5.91: บิลจากแอปขาย — จำไว้ในเครื่อง ดึงเฉพาะวันที่เปลี่ยน
+// ═══════════════════════════════════════════════════════════════
+var _cb = { days: null, local: null, sync: null, at: 0, err: null, noIdb: false };
+const CB_LAST = "cb:last", CB_FULL = "cb:full", CB_EVERY = 15 * 60000, CB_FULL_EVERY = 7 * 864e5;
+let _cbDbP = null;
+function _cbIdb() {
+  if (_cbDbP) return _cbDbP;
+  _cbDbP = new Promise((res, rej) => {
+    try {
+      if (!window.indexedDB) return rej(new Error("เครื่องนี้ไม่มี IndexedDB"));
+      const r = indexedDB.open("talad_buy", 1);
+      r.onupgradeneeded = () => { try { r.result.createObjectStore("d"); } catch (e) {} };
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error || new Error("เปิด IndexedDB ไม่ได้"));
+      r.onblocked = () => rej(new Error("IndexedDB ถูกล็อก"));
+    } catch (e) { rej(e); }
+  });
+  _cbDbP.catch(() => { _cbDbP = null; });
+  return _cbDbP;
+}
+function _cbLoadLocal() {
+  if (_cb.local) return _cb.local;
+  _cb.local = (async () => {
+    try {
+      const idb = await _cbIdb();
+      const out = await new Promise((res, rej) => {
+        const o = {}, tx = idb.transaction("d", "readonly"), rq = tx.objectStore("d").openCursor();
+        rq.onsuccess = () => { const c = rq.result; if (c) { o[c.key] = c.value; c.continue(); } };
+        tx.oncomplete = () => res(o); tx.onerror = tx.onabort = () => rej(tx.error);
+      });
+      if (!_cb.days) _cb.days = out;
+    } catch (e) { _cb.noIdb = true; if (!_cb.days) _cb.days = {}; }
+    _cbIdx = null;                                   // ของในเครื่องมาแล้ว → นับใหม่ แล้ววาดใหม่ครั้งเดียว
+    if (Object.keys(_cb.days || {}).length) setTimeout(_cmRedrawBuy, 0);
+  })();
+  return _cb.local;
+}
+async function _cbIdbWrite(puts, clear) {
+  const idb = await _cbIdb();
+  return new Promise((res, rej) => {
+    const tx = idb.transaction("d", "readwrite"), st = tx.objectStore("d");
+    if (clear) st.clear();
+    Object.keys(puts).forEach(k => { if (puts[k] == null) st.delete(k); else st.put(puts[k], k); });
+    tx.oncomplete = () => res(); tx.onerror = tx.onabort = () => rej(tx.error);
+  });
+}
+// ย่อบิลหนึ่งวันของแอปขาย เหลือเฉพาะที่ใช้
+function _cbCompact(raw) {
+  let d = null; try { d = JSON.parse(raw || "null"); } catch (e) {}
+  if (!d || typeof d !== "object") return [];
+  const out = [];
+  ["sales", "delivery", "cutter"].forEach(L => {
+    (Array.isArray(d[L]) ? d[L] : []).forEach((b, i) => {
+      if (!b || !String(b.name || "").trim()) return;
+      const it = (b.items || []).filter(x => x && x.fruit).map(x => [String(x.fruit), String(x.grade || ""), +x.basket || 0, +x.frac || 0, +x.price || 0, +x.total || 0]);
+      const ad = (b.addons || []).reduce((t, x) => t + (+(x && x.total) || 0), 0);
+      out.push({ n: String(b.name).trim(), id: String(b._id || ("i" + i)), l: L, p: b.payment || "", t: Math.round(it.reduce((t, x) => t + x[5], 0) + ad), it });
+    });
+  });
+  return out;
+}
+async function _cbSync(full) {
+  if (_cb.sync) return _cb.sync;
+  _cb.sync = (async () => {
+    await _cbLoadLocal();
+    if (navigator.onLine === false) { const e = new Error("ไม่มีอินเทอร์เน็ต"); e.code = "sp/offline"; throw e; }
+    await _spTimeout(_spLoadFs(), 15000);
+    const app = _spGetApp(), au = app.auth();
+    if (!au.currentUser) await _spTimeout(au.signInAnonymously(), 15000);
+    const col = app.firestore().collection("stores").doc(SP_STORE).collection("days");
+    let last = 0, lastFull = 0;
+    try { last = +localStorage.getItem(CB_LAST) || 0; lastFull = +localStorage.getItem(CB_FULL) || 0; } catch (e) {}
+    const doFull = full || _cb.noIdb || !Object.keys(_cb.days || {}).length || !last || (Date.now() - lastFull > CB_FULL_EVERY);
+    let snap;
+    try {
+      snap = await _spTimeout((doFull ? col : col.where("_at", ">", last)).get({ source: "server" }), 45000);
+    } catch (qe) {
+      // กฎของแอปขายอาจให้อ่านทีละวันได้ แต่ไม่ให้ค้นทั้งชุด → อ่านทีละวันแทน (ครั้งแรก 400 วัน · ปกติ 3 วันล่าสุด)
+      if (!/permission|PERMISSION/.test(String((qe && (qe.code || qe.message)) || ""))) throw qe;
+      console.warn("[สินค้า] ค้นทั้งชุดไม่ได้ อ่านทีละวันแทน");
+      const n = doFull ? 400 : 3, ids = [];
+      for (let i = 0; i < n; i++) { const d = new Date(); d.setDate(d.getDate() - i); ids.push(String(d.getFullYear() + 543) + String(d.getMonth() + 1).padStart(2, "0") + String(d.getDate()).padStart(2, "0")); }
+      const docs = [];
+      for (let i = 0; i < ids.length; i += 10) {
+        const part = await _spTimeout(Promise.all(ids.slice(i, i + 10).map(id => col.doc(id).get({ source: "server" }).then(d => d && d.exists ? { id, data: () => d.data() } : null))), 30000);
+        part.forEach(x => { if (x) docs.push(x); });
+      }
+      snap = { forEach: f => docs.forEach(f) };
+    }
+    const puts = {}, seen = {};
+    let maxAt = doFull ? 0 : last;
+    snap.forEach(doc => {
+      const v = doc.data() || {};
+      const at = +v._at || 0;
+      if (at > maxAt) maxAt = at;
+      seen[doc.id] = 1;
+      puts[doc.id] = { at, b: _cbCompact(v.data) };
+    });
+    if (doFull) {
+      _cb.days = {};
+      Object.keys(puts).forEach(k => { _cb.days[k] = puts[k]; });
+      try { localStorage.setItem(CB_FULL, String(Date.now())); } catch (e) {}
+    } else Object.keys(puts).forEach(k => { _cb.days[k] = puts[k]; });
+    if (!_cb.noIdb) { try { await _cbIdbWrite(puts, doFull); } catch (e) { console.warn("[สินค้า] จำลงเครื่องไม่สำเร็จ:", e && e.message); } }
+    try { localStorage.setItem(CB_LAST, String(maxAt || Date.now())); } catch (e) {}
+    _cb.at = Date.now(); _cb.err = null;
+    _cbIdx = null;
+    return { full: doFull, n: Object.keys(puts).length };
+  })();
+  try { return await _cb.sync; }
+  catch (e) { _cb.err = e; throw e; }
+  finally { _cb.sync = null; }
+}
+let _cbAuto = 0;
+function _cbMaybeSync() {
+  if (_cb.sync || Date.now() - _cbAuto < CB_EVERY) return;
+  _cbAuto = Date.now();
+  _cbSync(false).then(() => { _cmRedrawBuy(); }).catch(e => { console.warn("[สินค้า] ดึงจากแอปขายไม่ได้:", e && (e.code || e.message)); _cmRedrawBuy(); });
+}
+function _cmRedrawBuy() {
+  try { if (activeTab === "cust") cmRenderList(); } catch (e) {}
+  try { if (document.getElementById("cmDetailModal").classList.contains("show") && cmDetailId) cmOpenDetail(cmDetailId, true); } catch (e) {}
+}
+async function cbRefetch() {
+  _cbAuto = Date.now();
+  if (typeof showToast === "function") showToast("กำลังดึงบิลจากแอปขาย…", "info", 1500);
+  try {
+    const r = await _cbSync(true);
+    if (typeof showToast === "function") showToast("ดึงบิลจากแอปขายแล้ว " + r.n + " วัน", "success", 2200);
+  } catch (e) {
+    if (typeof showToast === "function") showToast("ดึงจากแอปขายไม่ได้ — เช็กเน็ตแล้วลองใหม่ (" + ((e && (e.code || e.message)) || "") + ")", "warn", 4000);
+  }
+  _cmRedrawBuy();
+}
+window.cbRefetch = cbRefetch;
+// ชื่อในบิลแอปขาย → ชื่อหลักในรายชื่อ (ตรงกับตอนสร้างรายชื่อ)
+function _cbOwner(D, sn) {
+  const sr = _csSellRoot(sn);
+  const mp = (_cs && _cs.map) || {};
+  const mapped = mp[_ppKey(sr)] || mp[_ppKey(sn)];
+  if (mapped) { const m = custRoot(mapped); if (D.map.has(m)) return m; }
+  if (!D._norm) { D._norm = {}; D.map.forEach((g, m) => g.names.forEach(n => { D._norm[_spN(n)] = m; })); }
+  if (D._norm[_spN(sr)]) return D._norm[_spN(sr)];
+  if (D._norm[_spN(sn)]) return D._norm[_spN(sn)];
+  const r = custRoot(sr);
+  if (D.map.has(r) || D.sellOnly.has(r)) return r;
+  return null;
+}
+// ดัชนี: ชื่อหลัก → บิลแอปขาย [{d, k(วัน), id, l, p, t, it}]
+var _cbIdx = null, _cbIdxD = null;
+function cbIndex() {
+  const D = cmDir();
+  if (_cbIdx && _cbIdxD === D) return _cbIdx;
+  const m = new Map();
+  Object.keys((_cb && _cb.days) || {}).forEach(k => {
+    const dt = _cmBEday(k); if (!dt) return;
+    ((_cb.days[k] || {}).b || []).forEach(b => {
+      const o = _cbOwner(D, b.n); if (!o) return;
+      let a = m.get(o); if (!a) { a = []; m.set(o, a); }
+      a.push(Object.assign({ d: dt.getTime(), k }, b));
+    });
+  });
+  m.forEach(a => a.sort((x, y) => x.d - y.d));
+  _cbIdx = m; _cbIdxD = D;
+  return m;
+}
+function _cbFruitName(f) { try { const r = frOfSell(f); return r ? r.n : f; } catch (e) { return f; } }
+// ผลไม้ที่ซื้อบ่อยสุด (ทั้งหมด) — ใช้บนการ์ดและตัวกรอง
+function cbTopFruits(main, k) {
+  const a = cbIndex().get(main) || [];
+  const c = {};
+  a.forEach(b => { const seen = {}; b.it.forEach(x => { const f = _cbFruitName(x[0]); if (!seen[f]) { seen[f] = 1; c[f] = (c[f] || 0) + 1; } }); });
+  return Object.keys(c).sort((x, y) => c[y] - c[x]).slice(0, k || 99);
+}
+
+// ── ช่วงเวลา ──
+const CM_PER_LBL = { m0: "เดือนนี้", m1: "เดือนก่อน", y0: "ปีนี้", y1: "ปีที่แล้ว", all: "ทั้งหมด" };
+function cmPeriod(p) {
+  const n = new Date(), Y = n.getFullYear(), M = n.getMonth();
+  const be = y => String((y + 543) % 100).padStart(2, "0");
+  const MS = CM_MONTHS;
+  if (p === "m0") return { a: new Date(Y, M, 1).getTime(), b: new Date(Y, M + 1, 1).getTime(), lbl: "1–" + n.getDate() + " " + MS[M] + " " + be(Y), y: Y };
+  if (p === "m1") { const s = new Date(Y, M - 1, 1); return { a: s.getTime(), b: new Date(Y, M, 1).getTime(), lbl: MS[s.getMonth()] + " " + be(s.getFullYear()), y: s.getFullYear() }; }
+  if (p === "y0") return { a: new Date(Y, 0, 1).getTime(), b: new Date(Y + 1, 0, 1).getTime(), lbl: "1 ม.ค. – " + n.getDate() + " " + MS[M] + " " + be(Y), y: Y };
+  if (p === "y1") return { a: new Date(Y - 1, 0, 1).getTime(), b: new Date(Y, 0, 1).getTime(), lbl: "ทั้งปี " + (Y - 1 + 543), y: Y - 1 };
+  const mm = String(p || "").match(/^M:(\d{4})-(\d{2})$/);
+  if (mm) { const y = +mm[1], m = +mm[2] - 1; return { a: new Date(y, m, 1).getTime(), b: new Date(y, m + 1, 1).getTime(), lbl: MS[m] + " " + be(y), y }; }
+  return { a: 0, b: Infinity, lbl: "ทั้งหมดที่มีข้อมูล", y: Y };
+}
+const _cmIn = (t, P) => t >= P.a && t < P.b;
+function _cmPurT(x) { const d = cmParseDay(x.day); return d ? d.getTime() : 0; }
+var cmListPer = "all";
+try { cmListPer = localStorage.getItem("cm:per") || "all"; } catch (e) {}
+function cmSetListPeriod(p) { cmListPer = p || "all"; try { localStorage.setItem("cm:per", cmListPer); } catch (e) {} cmRenderList(); }
+window.cmSetListPeriod = cmSetListPeriod;
+
+// กลุ่มของรหัสที่ส่งมา: "g:ชื่อหลัก" · "s:ชื่อในแอปขาย" · รหัสโปรไฟล์ (ของเดิม)
+function cmGroupOf(id) {
+  const D = cmDir();
+  if (String(id).indexOf("g:") === 0) return D.map.get(id.slice(2)) || null;
+  if (String(id).indexOf("s:") === 0) {
+    const o = D.sellOnly.get(id.slice(2)); if (!o) return null;
+    return { main: o.main, names: o.names, pur: [], prof: null, phone: o.phone, sellOnly: o, hidden: o.hidden };
+  }
+  const c = (cmCustomers || {})[id]; if (!c) return null;
+  return D.map.get(custRoot(c.name || "")) || null;
+}
+// ส่วนท้ายหน้ารายละเอียด: ชื่อที่รวมไว้ · ซ่อน
+function _cmDetailExtra(G) {
+  const e = _frEsc, own = isOwner();
+  let h = "";
+  if (G.sellOnly) {
+    const ld = _cmBEday(G.sellOnly.sell.l);
+    h += '<div class="cm-xrow"><span>ในแอปขาย</span><b style="font-weight:600">' + G.sellOnly.sell.n + ' วันที่ซื้อ' + (ld ? ' · ล่าสุด ' + ld.getDate() + ' ' + CM_MONTHS[ld.getMonth()] : '') + '</b></div>';
+  }
+  G.names.filter(n => n !== G.main).forEach(n => {
+    const local = custCfg.a[_ppKey(n)];
+    h += '<div class="cm-xrow"><span>ชื่อที่รวมไว้: <b style="color:#1C1917;font-weight:600">' + e(n) + '</b></span>' +
+      (own && local ? '<button onclick="cmUnmerge(' + JSON.stringify(n).replace(/"/g, "&quot;") + ')">ยกเลิกรวม</button>' : (local ? "" : '<span style="font-size:11.5px">รวมไว้ในแอปขาย</span>')) + '</div>';
+  });
+  if (own) h += '<div class="cm-xrow"><span>ไม่ใช่ลูกค้า หรือไม่อยากให้ขึ้นในรายชื่อ</span><button class="red" onclick="cmSetHidden(' + JSON.stringify(G.main).replace(/"/g, "&quot;") + ',true)">ซ่อนชื่อนี้</button></div>';
+  return h ? '<div style="margin-top:12px">' + h + '</div>' : "";
 }
 
 function cmToggleQuiet() {
@@ -18372,50 +19663,110 @@ function cmToggleQuiet() {
   if (el) el.style.display = cmQuietOpen ? "block" : "none";
 }
 
-function cmOpenDetail(id) {
+var cmDetPer = "y0";
+function cmOpenDetail(id, keepPer) {
+  if (!keepPer && id !== cmDetailId) cmDetPer = "y0";
   cmDetailId = id;
-  const c = cmCustomers[id]; if(!c) return;
-  const pur = cmGetPurchases(c.name||"");
-  const tot = pur.reduce((s,x)=>s+x.amount,0);
-  const last = pur.length ? pur[pur.length-1].day : null;
-  const st = last ? cmGetStatus(last) : {label:"ไม่มีข้อมูล",color:"#D6D3D1"};
-  const mCounts={};
-  pur.forEach(x=>{const d=cmParseDay(x.day);if(d){const k=d.getMonth();mCounts[k]=(mCounts[k]||0)+1;}});
-  const maxM=Math.max(1,...Object.values(mCounts));
-  let baskets=0; pur.forEach(x=>{const m=(x.note||"").match(/[×x](\d+)/i);if(m)baskets+=parseInt(m[1]);});
-  let freq="-";
-  if(pur.length>=2){const f=cmParseDay(pur[0].day),l2=cmParseDay(pur[pur.length-1].day);if(f&&l2){const w=Math.max(1,Math.ceil((l2-f)/604800000));freq=(pur.length/w).toFixed(1)+" ครั้ง/อาทิตย์";}}
+  try { _cbLoadLocal(); _cbMaybeSync(); } catch (e) {}
+  // V5.90: รหัสเป็นได้ทั้งโปรไฟล์ (เดิม) และกลุ่มชื่อ — ยอดรวมทุกชื่อที่รวมไว้
+  const G = cmGroupOf(id); if (!G) return;
+  const c = Object.assign({}, G.prof ? G.prof.c : {}, { name: G.main });
+  if (!c.phone && G.phone) c.phone = G.phone;
+  const allPur = (G.pur || []).slice();
+  const sb = (cbIndex().get(G.main) || []);
+  const sellOnly = !!G.sellOnly;
+  const P = cmPeriod(cmDetPer);
+  // ยอดซื้อ/ครั้ง: บิลในตลาด (ชื่อที่มีแค่ในแอปขาย ใช้บิลแอปขาย)
+  const pur = allPur.filter(x => _cmIn(_cmPurT(x), P));
+  const sbP = sb.filter(x => _cmIn(x.d, P));
+  const tot = sellOnly ? sbP.reduce((t, x) => t + x.t, 0) : pur.reduce((t, x) => t + (+x.amount || 0), 0);
+  const cnt = sellOnly ? sbP.length : pur.length;
+  const bsk = sbP.reduce((t, x) => t + x.it.reduce((u, y) => u + y[2], 0), 0);
+  const last = allPur.length ? allPur[allPur.length - 1].day : null;
+  const st = last ? cmGetStatus(last) : {label: sellOnly ? "มีแค่ในแอปขาย" : "ไม่มีข้อมูล", color:"#D6D3D1"};
   const dotEl=document.getElementById("cmDetailDot"); if(dotEl) dotEl.style.background=st.color;
   const nameEl=document.getElementById("cmDetailName"); if(nameEl) nameEl.textContent=c.name||"-";
   const stEl=document.getElementById("cmDetailStatus"); if(stEl) stEl.textContent=st.label;
   const body=document.getElementById("cmDetailBody"); if(!body) return;
-  // V3: escape HTML helpers
-  const _cdEsc = s => String(s||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
-  // V3: encode phone for href (allow only digits + - + space)
+  const _cdEsc = s => String(s==null?"":s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
   const _cdPhoneEnc = s => String(s||"").replace(/[^0-9+\-\s()]/g, "");
   const safePhone = _cdEsc(c.phone||"");
   const phoneHref = _cdPhoneEnc(c.phone||"");
-  body.innerHTML=`
-    <div class="cd-stat-grid">
-      <div class="cd-stat"><div class="cd-stat-label">ยอดสะสม</div><div class="cd-stat-val">${cmFmt(tot)}</div></div>
-      <div class="cd-stat"><div class="cd-stat-label">จำนวนครั้ง</div><div class="cd-stat-val">${pur.length}</div></div>
-      <div class="cd-stat"><div class="cd-stat-label">ตะกร้า</div><div class="cd-stat-val">${baskets||"-"}</div></div>
-      <div class="cd-stat"><div class="cd-stat-label">ความถี่</div><div class="cd-stat-val" style="font-size:13px;padding-top:3px;">${_cdEsc(freq)}</div></div>
+  // แถบรายเดือนของปีที่เลือก
+  const yr = P.y, mon = {};
+  (sellOnly ? sb.map(x => ({ t: x.d, a: x.t })) : allPur.map(x => ({ t: _cmPurT(x), a: +x.amount || 0 }))).forEach(x => {
+    const d = new Date(x.t); if (d.getFullYear() !== yr) return;
+    mon[d.getMonth()] = (mon[d.getMonth()] || 0) + x.a;
+  });
+  const mKeys = Object.keys(mon).map(Number).sort((a, b) => a - b);
+  const mMax = Math.max(1, ...mKeys.map(k => mon[k]));
+  const selM = (String(cmDetPer).match(/^M:\d{4}-(\d{2})$/) || [])[1];
+  const curM = cmDetPer === "m0" ? new Date().getMonth() + 1 : (cmDetPer === "m1" ? new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).getMonth() + 1 : null);
+  const monHtml = mKeys.map(k => {
+    const on = (selM && +selM === k + 1) || (curM && curM === k + 1 && new Date(P.a).getFullYear() === yr);
+    return '<div class="cd-mb' + (on ? " on" : "") + '" onclick="cmDetSetPer(\'M:' + yr + '-' + String(k + 1).padStart(2, "0") + '\')"><span>' + CM_MONTHS[k] + '</span><span class="tr"><i style="width:' + Math.max(2, Math.round(mon[k] / mMax * 100)) + '%"></i></span><span>' + cmFmt(mon[k]) + '</span></div>';
+  }).join("");
+  // สินค้าแยกผลไม้ · เบอร์
+  const pm = {};
+  sbP.forEach(b => {
+    const seen = {};
+    b.it.forEach(x => {
+      const f = _cbFruitName(x[0]), key = f + "|" + x[1];
+      const r = pm[key] || (pm[key] = { f, g: x[1], n: 0, bk: 0, fr: 0, pr: 0, d: 0 });
+      if (!seen[key]) { r.n++; seen[key] = 1; }
+      r.bk += x[2]; r.fr += x[3];
+      if (b.d >= r.d) { r.d = b.d; r.pr = x[4]; }
+    });
+  });
+  const prows = Object.values(pm).sort((a, b) => (b.n - a.n) || (b.bk - a.bk));
+  const prodHtml = prows.length
+    ? '<div class="cd-pt"><div class="cd-pr h"><span>ผลไม้ · เบอร์</span><span>ครั้ง</span><span>ลัง</span><span>ราคา/โล</span></div>' +
+      prows.map(r => '<div class="cd-pr"><span class="f">' + fruitImg(r.f, 16) + _cdEsc(r.f) + (r.g ? ' <i>' + _cdEsc(r.g) + '</i>' : "") + '</span><span>' + r.n + '</span><span>' + r.bk + (r.fr ? '<small style="color:#A8A29E">+' + Math.round(r.fr) + 'ล</small>' : "") + '</span><span>' + cmFmt(r.pr) + '</span></div>').join("") + '</div>'
+    : '<div class="cd-note">' + (Object.keys(_cb.days || {}).length ? "ไม่มีรายการสินค้าในช่วงนี้" : (_cb.sync ? "กำลังดึงบิลจากแอปขาย…" : (_cb.err ? "ดึงบิลจากแอปขายไม่ได้ — กด \"ดึงใหม่\"" : "ยังไม่ได้ดึงบิลจากแอปขาย"))) + '</div>';
+  // บิลในช่วงนี้ (ล่าสุดก่อน) — บิลที่ดึงมาจากแอปขายมีรายการสินค้า
+  const bySrc = {}; sb.forEach(b => { bySrc["sell:" + b.k + ":" + b.id] = b; });
+  const usedSb = {};
+  const srcOf = x => { try { const d = allDays[x.day] || allClosed[x.day] || {}; const it = Object.values((d[x.g] || {})).find(i => i && i.name === x.n && (+i.amount || 0) === (+x.amount || 0) && i.src); return it ? it.src : null; } catch (e) { return null; } };
+  const lines = b => b.it.map(y => '<div class="l"><span>' + _cdEsc(_cbFruitName(y[0])) + (y[1] ? " " + _cdEsc(y[1]) : "") + ' · ' + y[2] + ' ลัง' + (y[3] ? " + " + Math.round(y[3]) + " โล" : "") + '</span><span>× ' + cmFmt(y[4]) + '</span></div>').join("");
+  let billHtml = "";
+  if (sellOnly) {
+    billHtml = sbP.slice(-8).reverse().map(b => '<div class="cd-bl"><div class="h">' + _cmFmtD(_cdDayFromBE(b.k)) + '<span class="s sl">แอปขาย</span><span class="a">' + cmFmt(b.t) + '</span></div>' + lines(b) + '</div>').join("");
+  } else {
+    billHtml = pur.slice(-8).reverse().map(x => {
+      const src = srcOf(x), b = src && bySrc[src];
+      if (b) usedSb[src] = 1;
+      const paid = /ชำระแล้ว|จ่ายแล้ว/.test(x.status || "");
+      return '<div class="cd-bl"><div class="h">' + _cdEsc(_cmFmtD(x.day)) + '<span class="s ' + (paid ? "ok" : "due") + '">' + _cdEsc(x.status || "") + '</span><span class="a">' + cmFmt(x.amount) + '</span></div>' +
+        (b ? lines(b) : '<div class="l e"><span>' + (x.note ? _cdEsc(x.note) : "พิมพ์ลงบอร์ดเอง ไม่มีรายการสินค้า") + '</span></div>') + '</div>';
+    }).join("");
+  }
+  const segBtn = p => '<button class="' + (cmDetPer === p ? "on" : "") + '" onclick="cmDetSetPer(\'' + p + '\')">' + CM_PER_LBL[p] + '</button>';
+  const upd = _cb.at ? (() => { const t = new Date(_cb.at); return "อัปเดต " + String(t.getHours()).padStart(2,"0") + ":" + String(t.getMinutes()).padStart(2,"0"); })() : "";
+  body.innerHTML = `<div class="cd-top">
+    <div class="cd-seg">${["m0","m1","y0","y1","all"].map(segBtn).join("")}</div>
+    <div class="cd-per">${_cdEsc(P.lbl)}</div>
+    <div class="cd-st3"><div><span>ยอดซื้อ</span><b>${cmFmt(tot)}</b></div><div><span>ครั้ง</span><b>${cnt}</b></div><div><span>ลัง</span><b>${bsk || "–"}</b></div></div>
+    ${mKeys.length ? `<div class="cd-h"><span>รายเดือน ปี ${yr + 543}</span></div>${monHtml}` : ""}
+    <div class="cd-h"><span>สินค้าที่ซื้อ · ${_cdEsc(CM_PER_LBL[cmDetPer] || P.lbl)}</span><button onclick="cbRefetch()">${upd ? upd + " · " : ""}ดึงใหม่</button></div>
+    ${prodHtml}
+    ${billHtml ? `<div class="cd-h"><span>บิลในช่วงนี้ ${sellOnly ? sbP.length : pur.length} ใบ</span></div>${billHtml}` : ""}
     </div>
-    ${c.phone?`<div class="cd-row"><span class="cd-key">โทร</span><a href="tel:${phoneHref}" style="background:#DCFCE7;color:#166534;padding:5px 14px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:5px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${safePhone}</a></div>`:""}
+    ${c.phone?`<div class="cd-row"><span class="cd-key">โทร</span><a href="tel:${phoneHref}" style="background:#DCFCE7;color:#166534;padding:5px 14px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;">${safePhone}</a></div>`:""}
     ${c.lineId?`<div class="cd-row"><span class="cd-key">Line</span><span style="font-weight:600;">${_cdEsc(c.lineId)}</span></div>`:""}
     ${c.address?`<div class="cd-row"><span class="cd-key">ที่อยู่</span><span style="font-weight:600;text-align:right;max-width:60%;">${_cdEsc(c.address)}</span></div>`:""}
     ${c.custType?`<div class="cd-row"><span class="cd-key">ประเภท</span><span class="cd-chip" style="background:#EFF6FF;color:#0369A1;">${_cdEsc(c.custType)}</span></div>`:""}
-    ${(c.fruits||[]).length?`<div class="cd-row"><span class="cd-key">ผลไม้</span><div>${(c.fruits||[]).map(f=>`<span class="cd-chip" style="display:inline-flex;align-items:center;gap:3px;">${fruitImg(f,15)}${_cdEsc(f)}</span>`).join("")}</div></div>`:""}
+    ${(c.fruits||[]).length?`<div class="cd-row"><span class="cd-key">ผลไม้ (ติ๊กไว้)</span><div>${(c.fruits||[]).map(f=>`<span class="cd-chip" style="display:inline-flex;align-items:center;gap:3px;">${fruitImg(f,15)}${_cdEsc(f)}</span>`).join("")}</div></div>`:""}
     ${(c.grades||[]).length?`<div class="cd-row"><span class="cd-key">เกรด</span><div>${(c.grades||[]).map(g=>`<span class="cd-chip">${_cdEsc(g)}</span>`).join("")}</div></div>`:""}
     ${(c.weekDays||[]).length?`<div class="cd-row"><span class="cd-key">วันประจำ</span><div>${(c.weekDays||[]).map(d=>`<span class="cd-chip">${_cdEsc(d)}</span>`).join("")}</div></div>`:""}
     ${(c.complain||[]).length?`<div class="cd-row"><span class="cd-key">พฤติกรรม</span><div>${(c.complain||[]).map(x=>`<span class="cd-chip" style="background:#FEF2F2;color:#991B1B;">${_cdEsc(x)}</span>`).join("")}</div></div>`:""}
     ${c.note?`<div class="cd-row"><span class="cd-key">หมายเหตุ</span><span>${_cdEsc(c.note)}</span></div>`:""}
-    ${Object.keys(mCounts).length?`<div style="font-size:11px;font-weight:700;color:#A8A29E;letter-spacing:1px;margin:12px 0 8px;">ช่วงเดือนที่ซื้อ</div>${Object.entries(mCounts).sort((a,b)=>+a[0]-+b[0]).map(([m,cnt])=>`<div class="cd-bar-row"><div class="cd-bar-name">${CM_MONTHS[+m]}</div><div class="cd-bar-track"><div class="cd-bar-fill" style="width:${Math.round(cnt/maxM*100)}%"></div></div><div style="width:22px;text-align:right;color:#78716C;font-size:12px;">${cnt}</div></div>`).join("")}`:""}
-    ${pur.length?`<div style="font-size:11px;font-weight:700;color:#A8A29E;letter-spacing:1px;margin:12px 0 8px;">บิล 5 รายการล่าสุด</div>${pur.slice(-5).reverse().map(x=>`<div class="cd-row"><span style="background:#FEF3C7;color:#92400E;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;">${_cdEsc(x.day)}</span><div style="text-align:right;"><div style="font-weight:700;">${cmFmt(x.amount)}</div><div style="font-size:10px;color:#A8A29E;">${_cdEsc(x.note||"-")}</div></div></div>`).join("")}`:""}
   `;
+  try { body.insertAdjacentHTML("beforeend", _cmDetailExtra(G)); } catch (e) {}   // V5.90
   document.getElementById("cmDetailModal").classList.add("show");
 }
+function _cdDayFromBE(k) { const d = _cmBEday(k); return d ? String(d.getDate()).padStart(2,"0") + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String((d.getFullYear()+543)%100).padStart(2,"0") : k; }
+function cmDetSetPer(p) { cmDetPer = p; if (cmDetailId) cmOpenDetail(cmDetailId, true); }
+window.cmDetSetPer = cmDetSetPer;
 
 function cmCloseDetail() {
   cmDetailId=null;
@@ -18423,7 +19774,14 @@ function cmCloseDetail() {
 }
 
 function cmEditFromDetail() {
-  const id=cmDetailId; cmCloseDetail(); cmOpenEditForm(id);
+  // V5.90: กลุ่มที่ยังไม่มีโปรไฟล์ → เปิดฟอร์มเพิ่ม ใส่ชื่อหลักไว้ให้
+  const id = cmDetailId, G = cmGroupOf(id);
+  cmCloseDetail();
+  if (G && G.prof) return cmOpenEditForm(G.prof.id);
+  if (cmCustomers[id]) return cmOpenEditForm(id);
+  cmOpenAddForm();
+  const n = document.getElementById("cmName");
+  if (n && G) { n.value = G.main; n.defaultValue = ""; if (G.phone) { const p = document.getElementById("cmPhone"); if (p) p.value = G.phone; } }
 }
 
 function cmOpenAddForm() {
@@ -18431,6 +19789,7 @@ function cmOpenAddForm() {
   const t=document.getElementById("cmFormTitle"); if(t) t.textContent="➕ เพิ่มลูกค้าใหม่";
   const d=document.getElementById("cmDelBtn"); if(d) d.style.display="none";
   cmClearForm();
+  _frRenderFormChecks([]);   // V5.89
   const m=document.getElementById("cmFormModal"); if(m) m.classList.add("show");
   cmBindCheckGroups();
   setTimeout(()=>{const e=document.getElementById("cmName");if(e)e.focus();},80);
@@ -18445,6 +19804,7 @@ function cmOpenEditForm(id) {
   const fields={cmName:c.name,cmPhone:c.phone,cmLine:c.lineId,cmAddr:c.address,cmNote:c.note};
   Object.entries(fields).forEach(([id2,val])=>{const e=document.getElementById(id2);if(e)e.value=val||"";});
   cmSetChecks("cmType",c.custType?[c.custType]:[]);
+  _frRenderFormChecks(c.fruits||[]);   // V5.89
   cmSetChecks("cmFruits",c.fruits||[]);
   cmSetChecks("cmGrades",c.grades||[]);
   cmSetChecks("cmWeekdays",c.weekDays||[]);
@@ -18678,7 +20038,7 @@ async function autoArchiveOldDays() {
       //              update() ก้อนเดียว Firebase รับประกันว่าสำเร็จหรือล้มพร้อมกัน ไม่ต้อง rollback เอง
       await db.ref().update({
         ["closed/" + d]:      closedData,
-        ["closedIndex/" + d]: true,
+        ["closedIndex/" + d]: Date.now(),   // V5.88: เวลาที่แก้ล่าสุด (เดิม true)
         ["days/" + d]:        null,
       });
       delete allDays[d];
@@ -18743,6 +20103,7 @@ function _dataMgrClosedReady() {
   return (typeof _lzState !== "function") || _lzState("closed") === "ok";
 }
 function _dataMgrFill() {
+  try { _clsRenderStat(); } catch (e) {}   // V5.88
   const sel=document.getElementById("dataMgrDaySelect");
   const prev=document.getElementById("dataMgr30Preview");
   if(!sel) return;
@@ -21163,11 +22524,12 @@ function renderAnalytics() {
   const maxA=Math.max(...Object.values(aging),1);
   const ag=document.getElementById("anAgingBars");
   if(ag)ag.innerHTML=Object.entries(aging).map(([lbl,amt])=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><div style="width:58px;font-size:11px;color:#78716C;flex-shrink:0;">${lbl}</div><div style="flex:1;height:10px;background:#F5F5F4;border-radius:99px;overflow:hidden;"><div style="width:${Math.round(amt/maxA*100)}%;height:100%;background:${agingCol[lbl]};border-radius:99px;"></div></div><div style="width:70px;text-align:right;font-size:11px;font-weight:700;color:${agingCol[lbl]};flex-shrink:0;">฿${cmFmt(amt)}</div></div>`).join("");
-  const FRUITS=["อิดอ","พวงทอง","มะยงชิด","ลิ้นจี่","ลองกอง"];
+  const FRUITS=frNames();   // V5.89: จากหน้าชนิดผลไม้
   const fc={};FRUITS.forEach(f=>fc[f]=0);
   Object.values(cmCustomers||{}).forEach(c=>{(c.fruits||[]).forEach(f=>{if(fc[f]!==undefined)fc[f]++;});});
   const maxF=Math.max(...Object.values(fc),1);
-  const fAcc={อิดอ:"#B8924A",พวงทอง:"#DAA520",มะยงชิด:"#D4820A",ลิ้นจี่:"#C0392B",ลองกอง:"#A88820"};
+  const _fAccIc={อิดอ:"#B8924A",พวงทอง:"#DAA520",มะยงชิด:"#D4820A",ลิ้นจี่:"#C0392B",ลองกอง:"#A88820"};
+  const fAcc={}; frList(true).forEach(r=>{ if(_fAccIc[r.ic]) fAcc[r.n]=_fAccIc[r.ic]; });   // V5.89: สีตามรูปที่เลือก
   const fb=document.getElementById("anFruitBars");
   if(fb)fb.innerHTML=Object.entries(fc).sort((a,b)=>b[1]-a[1]).map(([f,cnt])=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><div style="width:28px;height:28px;flex-shrink:0;">${fruitImg(f,28)}</div><div style="flex:1;"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="font-weight:600;">${f}</span><span style="font-weight:700;color:${fAcc[f]||"#78716C"};">${cnt} คน</span></div><div style="height:8px;background:#F5F5F4;border-radius:99px;overflow:hidden;"><div style="width:${Math.round(cnt/maxF*100)}%;height:100%;background:${fAcc[f]||"#E7E5E4"};border-radius:99px;"></div></div></div></div>`).join("");
 }
@@ -21319,6 +22681,13 @@ window._dirtyIn = _dirtyIn;
 window._dirtyBlock = _dirtyBlock;
 
 const _LAYERS = [
+  // V5.90: แผ่นรวมชื่อ / ชื่อที่ซ่อน
+  ["cmMergeSheet",         "exists", null],
+  ["cmHiddenSheet",        "exists", null],
+  // V5.89: หน้าชนิดผลไม้ (แผ่นแก้/แผ่นผูก ลอยทับหน้ารายการ)
+  ["frUnSheet",            "exists", null],
+  ["frEditSheet",          "exists", null],
+  ["frModal",              "exists", "frClose"],
   // V5.84: แผ่นดึงจัดส่งจากแอปขาย (แผ่นแก้แถวลอยทับแผ่นดึง)
   ["bpEditSheet",          "exists", null],
   ["bpModal",              "exists", "bpClose"],
@@ -26603,6 +27972,8 @@ function _spBuild(data) {
     const mk = _ppKey(sName), mapped = _sp.map[mk];
     if (mapped) m = { kind: "mm", name: String(mapped), cands: [] };
     else m = _spMatch(sName, known);
+    // V5.90: ชื่อที่รวมไว้แล้ว (ในตลาดหรือในแอปขาย) ลงเป็นชื่อหลัก
+    try { const r0 = custRoot(m.kind === "nw" ? sName : m.name); if (r0 && r0 !== m.name && (m.kind !== "nw" || byName[r0])) { m = Object.assign({}, m, { name: r0, kind: m.kind === "nw" ? "eq" : m.kind }); } } catch (e) {}
     const row = Object.assign(base, { kind: m.kind, name: m.name, cands: m.cands, mapped: mapped || null });
     _spConflict(row, today);
     _sp.rows.push(row);
