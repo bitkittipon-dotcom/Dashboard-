@@ -252,7 +252,7 @@ firebase.initializeApp({
 var AUTH = firebase.auth();
 var DB   = firebase.database();
 
-var APP_VERSION = "ลูกน้อง V3";
+var APP_VERSION = "ลูกน้อง V4";
 var BACK_DAYS   = 2;          // ดูย้อนหลังได้กี่วัน (แตะไม่ได้)
 
 /* ── ตัวช่วยเล็กๆ ─────────────────────────────────────── */
@@ -397,6 +397,7 @@ function checkAcl() {
     var first = _aclFirst; _aclFirst = false;
 
     if (!v) {
+      if (first && ME && ME.isAnonymous) { showGate("err", "บัญชีนี้ไม่มีอีเมล — กด \"ออกจากบัญชีนี้\" แล้วเข้าด้วยอีเมลที่เจ้าของให้"); return; }
       if (first) {
         // ยังไม่มีชื่อในรายชื่อ — ฝากคำขอไว้ ให้เจ้าของกดอนุมัติในแอปหลักได้เลย
         // ตั้ง active:false มาตั้งแต่ต้น เข้าอะไรไม่ได้จนกว่าเจ้าของจะเปลี่ยนเอง
@@ -452,7 +453,8 @@ function startApp() {
       // ข้ามวันตอนแอปค้างอยู่เบื้องหลัง ต้องสร้างวันใหม่ ไม่งั้นจะกรอกลงวันเมื่อวาน
       var nowKey = dayInfo(0).mk + dayInfo(0).dd;
       if (nowKey !== DAYS[0].mk + DAYS[0].dd) { rebuildDays(); return; }
-      loadBasket(false);
+      // V4: ข้อมูลตะกร้าเป็นก้อนเดียวทั้งปี สลับแอปไปมาทีไรโหลดทั้งก้อนทุกครั้ง → เว้นอย่างน้อย 2 นาที
+      if (Date.now() - _lastLoadAt > 120000) loadBasket(false);
     }
   });
   $("btnRefresh").addEventListener("click", function () { loadBasket(false); });
@@ -469,6 +471,7 @@ function rebuildDays() {
 }
 
 var _loading = false;
+var _lastLoadAt = 0;
 function loadBasket(first) {
   if (_loading) return;
   _loading = true;
@@ -481,6 +484,7 @@ function loadBasket(first) {
     try { BKDATA = JSON.parse(r[1].val() || "{}") || {}; } catch (e) { BKDATA = {}; }
     // เฉพาะคนที่เจ้าของเปิดสวิตช์ "ลูกน้องลงตะกร้า" ให้ · เรียงตามลำดับเดิมในแอปหลัก
     CUTTERS = all.filter(function (p) { return p && p.staff === true && p.id; });
+    _lastLoadAt = Date.now();
     $("rfTime").textContent = hhmm(Date.now());
     render();
   })
@@ -733,6 +737,12 @@ $("btnOut2").addEventListener("click", function () {
 });
 
 AUTH.onAuthStateChanged(function (u) {
+  // V4: แอปหลักอยู่เว็บเดียวกันและเข้าแบบไม่ระบุตัวตน เบราว์เซอร์จึงจำบัญชีนั้นไว้ให้หน้านี้ด้วย
+  //     ถ้าใช้ต่อ หน้านี้จะส่งคำขอสิทธิ์ชื่อ "ไม่มีอีเมล" ไปให้เจ้าของงง → ออกจากบัญชีนั้นแล้วให้ใส่อีเมล
+  if (u && u.isAnonymous) {
+    AUTH.signOut().catch(function () {});
+    u = null;
+  }
   ME = u;
   if (!u) {
     $("btnIn").disabled = false;

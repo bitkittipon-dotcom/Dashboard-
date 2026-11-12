@@ -5991,8 +5991,8 @@ input[name="cust-name-no-fill"]:-webkit-autofill {
 <!-- Chart.js + html2canvas: lazy-loaded on demand (saves ~410 KB on first paint) -->
 <script>
 // ═══ V4.38 (B.4): APP_VERSION — single source of truth ═══
-window.APP_VERSION = "V5.91";
-window.APP_VERSION_STRING = "V5.91"; // alias for compatibility
+window.APP_VERSION = "V5.93";
+window.APP_VERSION_STRING = "V5.93"; // alias for compatibility
 
 // ═══════════════════════════════════════════════════════════════════
 // V5.49: ดักคำเตือน "ไม่มี index" ของ Firebase
@@ -13418,7 +13418,20 @@ function bkSaveLocal() {
   // V3: timeout reset เพื่อกัน flag ค้าง (กรณี listener ไม่ trigger)
   if (window._bkSavingTimer) clearTimeout(window._bkSavingTimer);
   window._bkSavingTimer = setTimeout(() => { bkSaving = false; }, 3000);
-  db.ref("basket").set(payload).then(() => {
+  // V5.92: เขียนเฉพาะส่วนที่เปลี่ยน — เดิม set() ทั้ง 6 ส่วนทุกครั้ง
+  //        ทุกเครื่องที่เปิดตะกร้าค้างต้องโหลดทั้งก้อนใหม่ แม้จะแก้แค่ช่องเดียว
+  //        และถ้าอีกเครื่องเพิ่งแก้ส่วนอื่น set() ทั้งก้อนจะเขียนทับของเขาด้วย
+  const _last = window._bkLast;
+  const changed = {};
+  if (_last) { Object.keys(payload).forEach(k => { if (payload[k] !== _last[k]) changed[k] = payload[k]; }); }
+  if (_last && !Object.keys(changed).length) {
+    bkSaving = false;
+    if (window._bkSavingTimer) { clearTimeout(window._bkSavingTimer); window._bkSavingTimer = null; }
+    return;
+  }
+  const _w = _last ? db.ref("basket").update(changed) : db.ref("basket").set(payload);
+  _w.then(() => {
+    if (window._bkLast) Object.assign(window._bkLast, _last ? changed : payload);
     // V5.76: บันทึกแล้วอัปเดตสำเนาของคนตัดที่ออกลิงก์ไว้ (หน่วง 2.5 วิ กันเขียนรัว)
     try { _cvPublishAllSoon(); } catch(e) {}
     // success - listener จะ reset flag (เพราะ Firebase trigger value event)
@@ -13840,6 +13853,9 @@ function bkLoadLocal() {
   const _bkRef = db.ref("basket");
   window._lzRefs.basket = { ref:_bkRef, cb: _bkRef.on("value", snap => {
     const d = snap.val() || {};
+    // V5.92: จำของที่อยู่บนเซิร์ฟเวอร์ไว้เทียบตอนบันทึก (เขียนเฉพาะส่วนที่เปลี่ยน)
+    window._bkLast = { cutters: d.cutters || "[]", customers: d.customers || "[]", orders: d.orders || "[]",
+                       data: d.data || "{}", payStatus: d.payStatus || "รอชำระ", deposits: d.deposits || "{}" };
     try { bkCutters   = JSON.parse(d.cutters   || "[]"); } catch(e){ bkCutters=[]; }
     try { bkCustomers = JSON.parse(d.customers || "[]"); } catch(e){ bkCustomers=[]; }
     try { bkOrders    = JSON.parse(d.orders    || "[]"); } catch(e){ bkOrders=[]; }
@@ -19968,7 +19984,11 @@ window.addEventListener("orientationchange", function(){ setTimeout(bkSyncHeadOf
 //   เกณฑ์  60 → ย้าย 93 วัน · เหลือ 395 KB (ลด 41%) แต่เริ่มกระทบการแก้ย้อนหลัง
 // ของที่ย้ายไม่ได้หายไปไหน ไปอยู่แท็บ "ปิดยอด" ซึ่งโหลดเฉพาะตอนเปิดดูจริง
 // ตัวเก็บทำงานรอบละ 10 วัน (AUTO_ARCHIVE_BATCH) → ครั้งแรกใช้เวลาราว 8 รอบเปิดแอปจึงครบ
-const AUTO_ARCHIVE_DAYS  = 90;
+// ═══ V5.93: 90 → 60 วัน ═══
+// ตั้งแต่ V5.88 วันในคลังจำไว้ในเครื่องและดึงเฉพาะวันที่เปลี่ยน ย้ายเข้าคลังจึงแทบไม่กินโควตาแล้ว
+// ส่วนวันที่ยังเปิดอยู่ถูกโหลดทั้งก้อนทุกครั้งที่เปิดแอป (ราว 4 KB ต่อวัน จากไฟล์สำรองจริง ก.ย. 69)
+// เจ้าของเลือก 60 (ไม่ใช่ 30) เพื่อให้หน้ารวมบิลยังเห็นบิลที่จ่ายแล้วย้อนหลัง 2 เดือน
+const AUTO_ARCHIVE_DAYS  = 60;
 const AUTO_ARCHIVE_BATCH = 10;      // ครั้งละไม่เกินกี่วัน — ทยอยไป ไม่ยิง Firebase รัว
 const AUTO_ARCHIVE_LS    = "autoArchiveOff";
 
@@ -23708,7 +23728,11 @@ function _bugSendOne(entry, attempt) {
         _sentAt: Date.now(),
       };
       ref.set(payload)
-        .then(() => resolve({ ok: true, key: ref.key }))
+        .then(() => {
+          // V5.92: นับรายงานใหม่ให้ปุ่มเมนูของเจ้าของ (ไม่ต้องโหลดรายงานทั้งหมด)
+          if ((payload.status || "new") === "new") { try { db.ref("bugMeta/unread").transaction(n => (+n || 0) + 1); } catch (e) {} }
+          resolve({ ok: true, key: ref.key });
+        })
         .catch(err => {
           if (attempt < BUG_SYSTEM.FB_RETRY_MAX) {
             const wait = BUG_SYSTEM.FB_RETRY_BACKOFF_MS * Math.pow(2, attempt - 1);
@@ -23824,6 +23848,14 @@ function _bugStartAdminListener() {
         // นับ unread (status === "new")
         const unread = Object.values(data).filter(e => e && e.status === "new").length;
         _bug.admin.unreadCount = unread;
+        // V5.92: ตัวนับเล็กๆ ที่ปุ่มเมนูอ่าน — ซ่อมให้ตรงทุกครั้งที่เห็นข้อมูลจริง
+        try { if (_bug.admin.metaUnread !== unread) db.ref("bugMeta/unread").set(unread); } catch (e) {}
+        try { if (document.getElementById("bugAdminModal")) _bamRender(); } catch (e) {}
+        // ล้างของเก่าวันละครั้ง (ต้องมีข้อมูลจริงก่อน)
+        try {
+          const lc = +localStorage.getItem("_bug:cleanAt") || 0;
+          if (Date.now() - lc > 86400000) { localStorage.setItem("_bug:cleanAt", String(Date.now())); setTimeout(_bugAutoCleanup, 1500); }
+        } catch (e) {}
         // update badge บน UI
         _bugUpdateBadge();
       } catch(e) {
@@ -23836,6 +23868,18 @@ function _bugStartAdminListener() {
   }
 }
 
+// V5.92: ตัวนับรายงานใหม่ (bugMeta/unread) — ส่งรายงานใหม่ +1 · หน้ารายงานซ่อมให้ตรง
+function _bugStartBadge() {
+  if (_bug.admin.metaRef) return;
+  try {
+    _bug.admin.metaRef = db.ref("bugMeta/unread");
+    _bug.admin.metaRef.on("value", snap => {
+      const v = Math.max(0, +snap.val() || 0);
+      _bug.admin.metaUnread = v;
+      if (!_bug.admin.listener) { _bug.admin.unreadCount = v; _bugUpdateBadge(); }
+    }, () => {});
+  } catch (e) {}
+}
 // อัพเดต badge บนปุ่ม ☰
 function _bugUpdateBadge() {
   try {
@@ -23981,12 +24025,15 @@ function openBugAdmin() {
   document.body.appendChild(overlay);
   _bugAdminFilter = { severity: "all", category: "all", status: "all" };
   _bamRender();
+  try { _bugStartAdminListener(); } catch (e) {}   // V5.92: โหลดรายงานตอนเปิดหน้านี้เท่านั้น
 }
 
 function closeBugAdmin() {
   bugBreadcrumb("closeBugAdmin");
   const m = document.getElementById("bugAdminModal");
   if (m) m.remove();
+  // V5.92: ปิดหน้าแล้วเลิกฟัง — ไม่ต้องรับรายงานใหม่ทั้งก้อนต่อ
+  try { if (_bug.admin.listener) { db.ref(BUG_SYSTEM.FB_PATH).off("value", _bug.admin.listener); _bug.admin.listener = null; } } catch (e) {}
 }
 
 function _bamSetFilter(key, value) {
@@ -24171,10 +24218,9 @@ function _bugTimeAgo(t) {
         // รอ currentUser โหลดเสร็จ (login) แล้วค่อย start
         const tryStart = () => {
           if (typeof currentUser !== "undefined" && currentUser && _bugIsAdmin()) {
-            _bugStartAdminListener();
-            // schedule auto-cleanup ทุก 24 ชม.
-            setTimeout(_bugAutoCleanup, 60000); // ครั้งแรกหลัง 1 นาที
-            setInterval(_bugAutoCleanup, 86400000); // ทุก 24 ชม.
+            // V5.92: ไม่โหลดรายงานทั้งหมดตอนเปิดแอปแล้ว — ฟังแค่ตัวนับ (ไม่กี่ไบต์)
+            //        รายงานจริงโหลดตอนเปิดหน้ารายงานบั๊ก · การล้างของเก่าย้ายไปทำตอนนั้น
+            _bugStartBadge();
           } else {
             setTimeout(tryStart, 3000);
           }
