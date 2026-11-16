@@ -394,6 +394,51 @@ input:focus, textarea:focus, select:focus {
 @keyframes handleBreath { 0%,100% { transform: translateY(-50%) scaleY(1); opacity: 0.4; } 50% { transform: translateY(-50%) scaleY(1.1); opacity: 0.7; } }
 .edge-handle.active { opacity: 1; width: 6px; box-shadow: 0 4px 16px rgba(245,158,11,0.6); animation: none; }
 .edge-handle.hidden { opacity: 0 !important; pointer-events: none; }
+/* ═══ V5.97: ปุ่มแจ้งของใหม่ (แบบ ข1 กระจกใส · พัดโค้ง) ═══
+   ชั้น 1 พื้นโปร่งมาก + เบลอนิด + ดันสีด้านหลัง · ชั้น 2 แสงสะท้อนมุมบน · ชั้น 3 ขอบแก้วไล่แสง
+   ขยับด้วย transform/opacity เป็นหลัก (ลื่นบน iPhone) */
+.nf-lg { position: relative; isolation: isolate; background: rgba(255,255,255,.05);
+  -webkit-backdrop-filter: blur(1.4px) saturate(190%) brightness(1.04); backdrop-filter: blur(1.4px) saturate(190%) brightness(1.04);
+  box-shadow: inset 0 0 0 .5px rgba(255,255,255,.6), inset 0 -6px 10px rgba(28,25,23,.06), inset 0 3px 6px rgba(255,255,255,.35), 0 10px 24px rgba(28,25,23,.16), 0 1px 3px rgba(28,25,23,.12); }
+.nf-lg::before, .nf-lg::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; }
+.nf-lg::before { background: radial-gradient(55% 30% at 38% 10%, rgba(255,255,255,.75), rgba(255,255,255,0) 75%); }
+.nf-lg::after { padding: 1px; background: linear-gradient(140deg, rgba(255,255,255,.95), rgba(255,255,255,.12) 38%, rgba(255,255,255,0) 55%, rgba(255,255,255,.55) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+#nfTrg { position: fixed; right: 9px; top: calc(50% + 62px); width: 48px; height: 48px; border-radius: 50%; border: 0; padding: 0;
+  display: grid; place-items: center; z-index: 257; cursor: pointer; touch-action: none; -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+  transition: transform .45s cubic-bezier(.3,1.5,.5,1), opacity .3s; }
+#nfTrg.nf-none { opacity: 0; transform: scale(.4); pointer-events: none; }
+#nfTrg .nf-gl { position: relative; width: 21px; height: 21px; color: #2B2826; }
+#nfTrg .nf-gl svg { position: absolute; inset: 0; width: 21px; height: 21px; transition: opacity .2s, transform .45s cubic-bezier(.3,1.5,.5,1); }
+#nfTrg .nf-gl .nf-x { opacity: 0; transform: rotate(-90deg) scale(.6); }
+body.nf-open #nfTrg .nf-gl .nf-tray { opacity: 0; transform: rotate(90deg) scale(.6); }
+body.nf-open #nfTrg .nf-gl .nf-x { opacity: 1; transform: none; }
+.nf-cnt { position: absolute; top: -4px; left: -5px; min-width: 19px; height: 19px; padding: 0 5px; border-radius: 10px; background: rgba(32,30,28,.86);
+  color: #fff; font: 700 11px/19px -apple-system, "Noto Sans Thai", sans-serif; text-align: center; font-variant-numeric: tabular-nums;
+  box-shadow: 0 0 0 1.5px rgba(255,255,255,.85), 0 2px 6px rgba(0,0,0,.18); z-index: 2; transition: opacity .2s, transform .2s; }
+.nf-cnt.nf-pop { animation: nfPop .5s cubic-bezier(.3,1.6,.5,1); }
+@keyframes nfPop { 0% { transform: scale(.4); } 100% { transform: scale(1); } }
+body.nf-open #nfTrg .nf-cnt { opacity: 0; transform: scale(.5); }
+#nfDim { position: fixed; inset: 0; z-index: 255; background: rgba(28,25,23,.035); opacity: 0; pointer-events: none; transition: opacity .25s; }
+body.nf-open #nfDim { opacity: 1; pointer-events: auto; }
+#nfFan { position: fixed; inset: 0; z-index: 256; pointer-events: none; }
+.nf-it { position: absolute; display: flex; flex-direction: row-reverse; align-items: center; gap: 7px; opacity: 0; pointer-events: none; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; transition: transform .55s cubic-bezier(.28,1.45,.5,1), opacity .22s; will-change: transform; }
+body.nf-open .nf-it { opacity: 1; pointer-events: auto; }
+.nf-bub { position: relative; flex: none; width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; transition: transform .28s cubic-bezier(.3,1.6,.5,1); }
+.nf-bub svg { width: 24px; height: 24px; color: #2B2826; position: relative; z-index: 1; }
+.nf-it .nf-n { position: absolute; top: -3px; right: -3px; min-width: 19px; height: 19px; padding: 0 5px; border-radius: 10px; background: rgba(32,30,28,.86);
+  color: #fff; font: 700 11px/19px -apple-system, "Noto Sans Thai", sans-serif; text-align: center; box-shadow: 0 0 0 1.5px rgba(255,255,255,.85); z-index: 2; }
+.nf-lb { font: 600 11.5px/1.5 -apple-system, "Noto Sans Thai", sans-serif; color: #1C1917; padding: 2px 9px; border-radius: 10px; white-space: nowrap; }
+.nf-lb.nf-lg { background: rgba(255,255,255,.62); -webkit-backdrop-filter: blur(12px) saturate(180%); backdrop-filter: blur(12px) saturate(180%); }
+.nf-lb span { position: relative; z-index: 1; }
+.nf-it.nf-zero .nf-bub svg, .nf-it.nf-zero .nf-lb span { opacity: .45; }
+.nf-it.nf-hot .nf-bub { transform: scale(1.16); background: rgba(255,255,255,.38); }
+.nf-ghost { position: fixed; z-index: 9600; border-radius: 50%; pointer-events: none; }
+.nf-ghost svg { width: 24px; height: 24px; position: relative; z-index: 1; }
+
 /* hide handle on board page (has explicit hamburger btn) */
 body.tab-board .edge-handle { opacity: 0.18 !important; }
 body.tab-board .edge-handle.active { opacity: 1 !important; }
@@ -1904,10 +1949,19 @@ tr:last-child td { border-bottom: none; }
   transform: translate(-50%, -50%);
   /* V5.71 (แบบ ข): เดิม 13px หนา 700 สีเต็ม — ทั้งคอลัมน์แดงจนแย่งสายตาไปจากตัวเลข
      ลดเหลือ 10px น้ำหนัก 500 จาง 42% · ยังอ่านออกในที่ร่มและกลางแดด แต่เงียบลงมาก */
-  font-size: 10px;
-  font-weight: 500;
-  color: #DC2626;
-  opacity: 0.42;
+  /* V5.95 (แบบ ช): วงกลมแดงเข้ม ✕ ขาว 20px — กวาดตาแล้วเห็นทันที แต่ไม่ล้นช่องเหมือน ✕ ตัวใหญ่สมัยก่อน V5.71 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #B91C1C;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 1px 2px rgba(127,29,29,.35);
   pointer-events: none;
   z-index: 2;
 }
@@ -3235,6 +3289,36 @@ tr:last-child td { border-bottom: none; }
   transition: background .2s;
 }
 .bka-status:active { transform: scale(0.97); }
+/* V5.94: ยังไม่เลือกสถานะ */
+.bka-status[data-s=""] { background:rgba(118,118,128,0.12); color:#A8A29E; font-weight:600; }
+.bka-num[readonly] { cursor:pointer; -webkit-user-select:none; user-select:none; }
+.bka-num.kp-on { background:rgba(0,122,255,0.15); box-shadow:inset 0 0 0 1.5px #007AFF; }
+.bka-row.kp-row { background:rgba(0,122,255,0.04); }
+.bka-row.kp-done { background:rgba(52,199,89,0.12); transition:background .6s; }
+#bkAddModal.kp-open { align-items:flex-start; padding-top:max(12px, env(safe-area-inset-top)); }
+#bkAddModal.kp-open #bkAddModalBox { max-height:calc(100vh - var(--bkkp-h, 280px) - 24px); max-height:calc(100dvh - var(--bkkp-h, 280px) - 24px); }
+#bkaKp { position:fixed; left:0; right:0; bottom:0; z-index:640; background:#D1D3D9; border-top:0.5px solid #B4B7BE;
+  padding:6px max(6px, env(safe-area-inset-left)) calc(10px + env(safe-area-inset-bottom)) max(6px, env(safe-area-inset-right));
+  font-family:-apple-system,"SF Pro Text","Noto Sans Thai",sans-serif; animation:bkkpUp .18s ease; touch-action:manipulation; }
+@keyframes bkkpUp { from { transform:translateY(30%); opacity:.4 } to { transform:none; opacity:1 } }
+#bkaKp .kp-in { max-width:520px; margin:0 auto; }
+#bkaKp .kp-top { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:2px 6px 6px; font-size:13px; color:#3A3A3C; }
+#bkaKp .kp-top b { font-weight:700; color:#1C1917; }
+#bkaKp .kp-top button { border:0; background:none; color:#007AFF; font:600 13px inherit; font-family:inherit; padding:4px 2px; cursor:pointer; }
+#bkaKp .kp-g { display:grid; grid-template-columns:1fr 1fr 1fr 1.25fr; gap:6px; }
+#bkaKp .k { border:0; border-radius:8px; height:46px; background:#fff; color:#1C1917; font:500 21px inherit; font-family:inherit;
+  box-shadow:0 1px 0 #898A8D; cursor:pointer; -webkit-tap-highlight-color:transparent; display:flex; align-items:center; justify-content:center; }
+#bkaKp .k.fn { background:#AEB2BA; font-size:16px; }
+#bkaKp .k:active { background:#C9CDD3; }
+#bkaKp .ks { font-size:15px; font-weight:700; }
+#bkaKp .ks[data-s="รอเก็บ"] { background:#FCEBC7; color:#A16207; }
+#bkaKp .ks[data-s="รอจ่าย"] { background:#D6E8FF; color:#007AFF; }
+#bkaKp .ks[data-s="จ่าย"]   { background:#D3F2DA; color:#16A34A; }
+#bkaKp .ks[data-s="หัก"]    { background:#FFD9D6; color:#DC2626; }
+#bkaKp .ks.cur::after { content:""; width:5px; height:5px; border-radius:50%; background:currentColor; margin-left:6px; }
+#bkaKp.shake .kp-in { animation:bkkpShake .3s; }
+@keyframes bkkpShake { 25% { transform:translateX(-6px) } 75% { transform:translateX(6px) } }
+@media (prefers-reduced-motion: reduce) { #bkaKp, #bkaKp.shake .kp-in { animation:none; } }
 .bka-status[data-s="รอเก็บ"]  { background:rgba(245,158,11,0.15); color:#A16207; }
 .bka-status[data-s="รอจ่าย"] { background:rgba(0,122,255,0.12);  color:#007AFF; }
 .bka-status[data-s="จ่าย"]   { background:rgba(52,199,89,0.15);  color:#16A34A; }
@@ -3629,7 +3713,9 @@ tr:last-child td { border-bottom: none; }
 .bk-sum-cell.empty { background:#FAFAF9; border:1px dashed #E7E5E4; }
 .bk-sum-cell:active { background:#F5F5F4; }
 .bk-sum-tap { color:#C4C0BB; font-weight:400; font-size:11px; }
-.bk-sum-x { color:#DC2626; font-weight:500; font-size:10px; opacity:0.42; }   /* V5.71: เท่ากับ ✕ ในตาราง */
+.bk-sum-x { display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:50%;
+  background:#B91C1C; color:#fff !important; font-weight:800; font-size:11px; line-height:1; box-shadow:0 1px 2px rgba(127,29,29,.35); }   /* V5.95: เท่ากับ ✕ ในตาราง */
+.bk-sum-row.dep-done .bk-sum-x { background:#A8A29E; box-shadow:none; }   /* V5.95: แถวที่จบแล้วเป็นสีเทา ✕ ก็เทาตาม */
 .bk-sum-inp { width:100%; border:1.5px solid #F59E0B; border-radius:7px; background:#fff;
   text-align:center; font-family:inherit; font-size:13px; font-weight:700; padding:4px 2px;
   font-variant-numeric:tabular-nums; outline:none;
@@ -4161,7 +4247,21 @@ tr:last-child td { border-bottom: none; }
   font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; -webkit-tap-highlight-color: transparent; white-space: nowrap; }
 .bk-pull-btn svg { width: 15px; height: 15px; flex: 0 0 auto; }
 .bk-pull-btn:active { background: #E2EFFF; }
-td.bk-so { box-shadow: inset 0 0 0 1.5px #8EC0FF; border-radius: 6px; background: #F2F8FF !important; }
+/* V5.96 (แบบ ญ): เลิกกรอบฟ้าทั้งช่อง → ที่มาบอกด้วยแคปซูลที่ตัวเลขแทน (.bks ด้านล่าง) */
+/* ═══ V5.96: ที่มาของตัวเลขในตารางคนตัด ═══
+   ดึงจากแอป = แคปซูลสีจางตามสีคอลัมน์ · ดึงแล้วแก้เอง = แคปซูลเส้นเทา · พิมพ์เอง = เลขเปล่าเหมือนเดิม
+   ช่องกรอกมี style ในบรรทัดอยู่แล้ว จึงต้อง !important */
+.bk-table input.bks { width:30px !important; height:21px; padding:0; border-radius:11px; -webkit-appearance:none; appearance:none; }
+.bk-table input.bks-oa { background:#EDF2FB !important; }
+.bk-table input.bks-ia { background:#E8F4EC !important; }
+.bk-table input.bks-e  { background:#fff !important; box-shadow:inset 0 0 0 1px #CFC9C2; }
+.bks-pill { display:inline-flex; align-items:center; justify-content:center; min-width:30px; height:24px; padding:0 8px; border-radius:12px; }
+.bks-pill.bks-oa { background:#EDF2FB; } .bks-pill.bks-ia { background:#E8F4EC; }
+.bks-pill.bks-e { box-shadow:inset 0 0 0 1px #CFC9C2; }
+.bk-sum-row.dep-done .bks-pill.bks-oa, .bk-sum-row.dep-done .bks-pill.bks-ia { background:#E4E7E5; }
+.bks-leg { display:flex; flex-wrap:wrap; justify-content:center; gap:6px 14px; margin:12px 14px 0; font-size:11px; color:#8E8E93; }
+.bks-leg span { display:inline-flex; align-items:center; gap:6px; }
+.bks-leg i { font-style:normal; display:inline-flex; align-items:center; justify-content:center; min-width:24px; height:18px; padding:0 6px; border-radius:9px; font-size:11px; font-weight:600; font-variant-numeric:tabular-nums; }
 .bp-seg { display: flex; margin: 10px 12px 8px; background: #EFEEEC; border-radius: 10px; padding: 3px; }
 .bp-seg button { flex: 1; border: 0; background: none; border-radius: 8px; padding: 6px; font: 700 13px inherit; font-family: inherit; color: #78716C; cursor: pointer; }
 .bp-seg button.on { background: #fff; color: #1C1917; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
@@ -5991,8 +6091,8 @@ input[name="cust-name-no-fill"]:-webkit-autofill {
 <!-- Chart.js + html2canvas: lazy-loaded on demand (saves ~410 KB on first paint) -->
 <script>
 // ═══ V4.38 (B.4): APP_VERSION — single source of truth ═══
-window.APP_VERSION = "V5.93";
-window.APP_VERSION_STRING = "V5.93"; // alias for compatibility
+window.APP_VERSION = "V5.97";
+window.APP_VERSION_STRING = "V5.97"; // alias for compatibility
 
 // ═══════════════════════════════════════════════════════════════════
 // V5.49: ดักคำเตือน "ไม่มี index" ของ Firebase
@@ -7070,6 +7170,7 @@ db.ref("days").on("value", snap => { try {
   if (activeTab==="summary") renderSummary();
   // V4.72: recompute skipped-payment set on data change (before renders)
   _updateSkippedSet();
+  try { if (typeof _nfRecalcSoon === "function") _nfRecalcSoon(); } catch (e) {}   // V5.97
   // V4.72: re-render all view if open
   if (window._avOpen) avRender();
   } catch(e) { console.error("Firebase listener error:", e); }
@@ -13386,6 +13487,7 @@ function bkSetData(type,personId,dd,field,val) {
   const parsed = parseFloat(String(val).replace(/[,\s]/g, "")) || 0;   // V5.34 (B44): "1,200" เคยกลายเป็น 1
   bkData[mk][type][personId][dd][field] = Math.max(0, parsed);
   bkSaveLocal();
+  try { const _se = document.querySelector('#bkMatrix input[data-src="' + type + '|' + personId + '|' + mk + '|' + dd + '|' + field + '"]'); if (_se) _bkSrcPaint(_se); } catch (e) {}   // V5.96
   // อัปเดตเฉพาะ balance cells ของ row นี้ — ไม่ re-render ทั้งตาราง
   bkUpdateRowBalance(type, personId);
 }
@@ -14886,7 +14988,39 @@ function _bkInboxEnsure(mk) {
   }).catch(() => { bkInbox[mk] = {}; _bkInboxLoading[mk] = false; });
 }
 
+// V5.96: ที่มาของตัวเลขในช่อง (เฉพาะคนตัด) → "" พิมพ์เอง · "a" ดึงมาตรงๆ · "e" ดึงมาแล้วแก้เอง
+//   ออกไป = เทียบกับ so (จำนวนที่ดึงจากแอปขายครั้งล่าสุด)
+//   เก็บมา = เทียบกับผลรวมยอดลูกน้องที่กดลงแล้วของวันนั้น
+function _bkSrc(type, id, mk, dd, field, val) {
+  if (type !== "cutter" || !(val > 0)) return "";
+  let base = 0;
+  if (field === "out") {
+    const c = bkData[mk] && bkData[mk].cutter && bkData[mk].cutter[id] && bkData[mk].cutter[id][dd];
+    base = c ? (+c.so || 0) : 0;
+  } else {
+    try { base = _bkInboxAppliedSum(mk, dd, id); } catch (e) { base = 0; }
+  }
+  if (!(base > 0)) return "";
+  return Math.abs(val - base) < 1e-9 ? "a" : "e";
+}
+function _bkSrcCls(field, s) { return !s ? "" : s === "e" ? "bks bks-e" : (field === "out" ? "bks bks-oa" : "bks bks-ia"); }
+function _bkSrcPaint(el) {
+  const p = (el.getAttribute("data-src") || "").split("|");   // type|id|mk|dd|field
+  if (p.length !== 5) return;
+  const e = (bkData[p[2]] && bkData[p[2]][p[0]] && bkData[p[2]][p[0]][p[1]] && bkData[p[2]][p[0]][p[1]][p[3]]) || {};
+  const f = p[4], v = +e[f] || 0;
+  el.classList.remove("bks", "bks-oa", "bks-ia", "bks-e");
+  const c = _bkSrcCls(f, _bkSrc(p[0], p[1], p[2], p[3], f, v));
+  if (c) c.split(" ").forEach(k => el.classList.add(k));
+}
+function _bkSrcPaintAll() {
+  const els = document.querySelectorAll("#bkMatrix input[data-src]");
+  for (let i = 0; i < els.length; i++) _bkSrcPaint(els[i]);
+}
+
 function _bkInboxAfterChange() {
+  try { _nfRecalcSoon(); } catch(e) {}   // V5.97
+  try { _bkSrcPaintAll(); } catch(e) {}
   try { _bkInboxPaintDots(); } catch(e) {}
   try { _bkRepSyncBtn(); } catch(e) {}
   try { if (document.getElementById("bkRepModal")) _bkRepRender(); } catch(e) {}
@@ -15055,6 +15189,7 @@ function _bkInboxFull() {
 
 function bkRepOpen() {
   if (document.getElementById("bkRepModal")) return;
+  try { _nfMarkSeen("in"); } catch (e) {}   // V5.97
   _bkInboxBoot();
   _bkInboxFull();
   const ov = document.createElement("div");
@@ -15671,14 +15806,14 @@ function bkRenderMatrix(type) {
       
       html += `
         <td class="${divider}${entry.so > 0 ? " bk-so" : ""}" style="${bg}text-align:center;"${entry.so > 0 ? ` title="ดึงจากแอปขาย ${entry.so} ใบ"` : ""}>
-          <input type="text" inputmode="decimal" value="${out||""}" placeholder="-"
+          <input type="text" inputmode="decimal" value="${out||""}" placeholder="-" class="${_bkSrcCls("out", _bkSrc(type, person.id, _mkRow, dd, "out", out))}" data-src="${type}|${person.id}|${_mkRow}|${dd}|out"
             onchange="bkSetData('${type}','${person.id}','${dd}','out',this.value)"
             style="width:36px;border:none;background:transparent;text-align:center;font-family:inherit;font-size:11px;color:#1E3A8A;font-weight:${out?"600":"400"};">
         </td>
         <td data-inb="${type}|${person.id}|${_mkRow}|${dd}" style="${bg}text-align:center;position:relative;">
           ${type === "cutter" && _bkInboxPending(_mkRow, dd, person.id) > 0 ? '<span class="bk-inbox-dot"></span>' : ''}
           <div class="bk-cell-in-wrap${warnHtml.indexOf("bk-warn-x") >= 0 ? " has-x" : ""}">
-            <input type="text" inputmode="decimal" value="${inp||""}" placeholder="-"
+            <input type="text" inputmode="decimal" value="${inp||""}" placeholder="-" class="${_bkSrcCls("in", _bkSrc(type, person.id, _mkRow, dd, "in", inp))}" data-src="${type}|${person.id}|${_mkRow}|${dd}|in"
               onchange="bkSetData('${type}','${person.id}','${dd}','in',this.value)"
               style="width:36px;border:none;background:transparent;text-align:center;font-family:inherit;font-size:11px;color:#16A34A;font-weight:${inp?"600":"400"};">
             <span data-warn="${type}-${person.id}-${dd}">${warnHtml}</span>
@@ -15729,6 +15864,17 @@ function bkRenderMatrix(type) {
 
   // ปุ่มท้ายตาราง — V5.74 แบ่งครึ่งแถวเดียวกัน (แบบ ข ที่เลือกไว้)
   // ฝั่งซ้าย "ยอดลูกน้อง" ขึ้นเฉพาะตารางคนตัด เพราะลูกน้องกรอกได้แต่คนตัด
+  // V5.96: บรรทัดอธิบายแคปซูล + โหลดยอดลูกน้องของเดือนที่เปิดดู (เดือนละครั้ง ก้อนเล็ก)
+  if (type === "cutter") {
+    try { _bkInboxEnsure(bkMonthKey()); } catch (e) {}
+    const _leg = document.createElement("div");
+    _leg.className = "bks-leg";
+    _leg.innerHTML = '<span><i style="background:#EDF2FB;color:#1E3A8A">6</i>จากแอปขาย</span>' +
+      '<span><i style="background:#E8F4EC;color:#16A34A">6</i>จากลูกน้อง</span>' +
+      '<span><i style="box-shadow:inset 0 0 0 1px #CFC9C2;color:#57534E">8</i>แก้เอง</span>' +
+      '<span><i style="color:#57534E;padding:0 2px;min-width:0">8</i>พิมพ์เอง</span>';
+    container.appendChild(_leg);
+  }
   const _footRow = document.createElement("div");
   _footRow.className = "bk-foot-row";
   if (type === "cutter") {
@@ -16344,7 +16490,9 @@ function _bkSumRowsHtml(info, type, id, hideDep) {
     const cell = (field, val, cls) => {
       // 3 สภาพ: มีเลข · เป็น 0 ทั้งที่วันนั้นมีข้อมูล (แสดง ✕) · ยังไม่เคยกรอก (แสดง "แตะ")
       const isRealZero = val <= 0 && r.has;        // วันนั้นมีข้อมูล แต่ช่องนี้เป็น 0 จริง
-      const shown = val > 0 ? val
+      // V5.96: บอกที่มาด้วยแคปซูล — พรีวิวรูป (hideDep) ไม่ใส่ เพราะรูปจริงไม่มี
+      const _sc = (!hideDep && val > 0) ? _bkSrcCls(field, _bkSrc(type, id, info.year + "-" + String(info.month).padStart(2, "0"), String(r.d).padStart(2, "0"), field, val)) : "";
+      const shown = val > 0 ? (_sc ? '<span class="bks-pill ' + _sc.replace("bks ", "") + '">' + val + '</span>' : val)
         : isRealZero ? '<span class="bk-sum-x">✕</span>'
         : '<span class="bk-sum-tap">แตะ</span>';
       // กรอบประใช้เฉพาะช่องที่ยังไม่เคยกรอก — ช่องที่เป็น 0 จริงไม่ต้องมี
@@ -17710,6 +17858,7 @@ function bkAddOrder() {
 }
 
 function bkCloseAddModal(force) {
+  try { bkaKpHide(); } catch (e) {}   // V5.94
   // V4.14: ถ้ามี unsaved draft → ถามก่อน (เก็บไว้ / ทิ้ง / ยกเลิก)
   //   force=true → ปิดเลย ไม่ถาม (ใช้ตอน save สำเร็จ)
   if (!force && bkaHasUnsavedDraft()) {
@@ -17865,7 +18014,8 @@ function bkaScheduleDraftSave() {
 function bkaAddRow(inheritDate, inheritStatus) {
   const id=++bkaRowId;
   const lastRow=bkaRows[bkaRows.length-1];
-  bkaRows.push({id, date:inheritDate||lastRow?.date||bkTodayStr(), name:"", basket:"", status:inheritStatus||lastRow?.status||"รอเก็บ"});
+  // V5.94: เจ้าของให้กดสถานะเองทุกแถว — แถวใหม่จึงยังไม่มีสถานะ (เดิมสืบจากแถวก่อน / "รอเก็บ")
+  bkaRows.push({id, date:inheritDate||lastRow?.date||bkTodayStr(), name:"", basket:"", status:""});
   bkaRenderRows();
   requestAnimationFrame(() => {
     const focusBka = () => {
@@ -17895,14 +18045,14 @@ function bkaRenderRows(){
     // V5.62: แสดงวันและเดือน เช่น 25/9 — เพราะหมุนวันข้ามเดือนได้ เลขวันอย่างเดียวจะกำกวม
     div.innerHTML=`
       <button type="button" class="bka-date-btn" id="bka-dt-disp-${r.id}" data-row="${r.id}" onclick="bkaOpenDatePicker(${r.id})">${_bkaDayLabel(r.date)}</button>
-      <input class="bka-inp bka-name-inp" id="bka-nm-${r.id}" placeholder="ชื่อ *" value="${_attrEsc(r.name)}" autocomplete="off"
+      <input class="bka-inp bka-name-inp" id="bka-nm-${r.id}" placeholder="ชื่อ *" value="${_attrEsc(r.name)}" autocomplete="off" onfocus="if(document.getElementById('bkaKp'))bkaKpHide()"
         oninput="bkaOnName(${r.id},this)"
         onkeydown="bkaOnNameKey(event,${r.id})">
-      <input class="bka-inp bka-num" id="bka-bk-${r.id}" placeholder="0" value="${_attrEsc(r.basket)}" type="text" inputmode="decimal" min="0" step="0.5"
-        oninput="bkaRows.find(x=>x.id===${r.id}).basket=this.value;bkaUpdateSummary();"
+      <input class="bka-inp bka-num" id="bka-bk-${r.id}" placeholder="0" value="${_attrEsc(r.basket)}" type="text" inputmode="none" readonly
+        onclick="bkaKpOpen(${r.id})"
         onkeydown="bkaOnBkKey(event,${r.id})">
       <button class="bka-status" id="bka-st-${r.id}" data-row="${r.id}" data-s="${_attrEsc(r.status)}" type="button"
-        onclick="bkaOpenStatusPicker(${r.id})">${_attrEsc(r.status)}</button>
+        onclick="bkaOpenStatusPicker(${r.id})">${_attrEsc(r.status) || "สถานะ"}</button>
       <button class="bka-del" onclick="bkaRemoveRow(${r.id})" aria-label="ลบ">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>`;
@@ -18147,7 +18297,7 @@ async function bkaOpenStatusPicker(id) {
   const btn = document.getElementById("bka-st-" + id);
   if (btn) {
     btn.setAttribute("data-s", choice);
-    btn.textContent = choice;
+    btn.textContent = choice || "สถานะ";
   }
   bkaUpdateSummary();
   if (typeof bkaScheduleDraftSave === "function") bkaScheduleDraftSave();
@@ -18182,6 +18332,7 @@ function bkaOnStatus(id,el){
 }
 
 function bkaOnName(id,el){
+  if (document.getElementById("bkaKp")) bkaKpHide();   // V5.94
   const r=bkaRows.find(x=>x.id===id); if(!r) return;
   r.name=el.value;
   // autocomplete using existing showAutocomplete
@@ -18224,21 +18375,130 @@ function bkaOnNameKey(e,id){
     window._acActiveInput = null;
   }
 
-  // jump ไป basket field ของ row เดียวกัน
-  const jump = () => {
-    const nxt = document.getElementById("bka-bk-"+id);
-    if (nxt) { nxt.focus(); nxt.select?.(); }
-  };
-  jump();
-  setTimeout(jump, 80);
+  // V5.94: ไปช่องจำนวนของแถวเดียวกัน + เปิดแป้นตะกร้า
+  bkaKpOpen(id);
 }
 
 function bkaOnBkKey(e,id){
-  if(e.key!=="Enter") return;
+  // V5.94: ช่องจำนวนเป็นแบบอ่านอย่างเดียว (กันแป้นของเครื่องเด้ง) — คีย์บอร์ดจริงพิมพ์ผ่านตรงนี้
+  if (/^[0-9]$/.test(e.key)) { e.preventDefault(); bkaKpOpen(id); bkaKpKey(e.key); return; }
+  if (e.key === "." ) { e.preventDefault(); bkaKpOpen(id); bkaKpKey(".5"); return; }
+  if (e.key === "Backspace") { e.preventDefault(); bkaKpOpen(id); bkaKpKey("del"); return; }
+  if (e.key !== "Enter") return;
   e.preventDefault();
-  const r=bkaRows.find(x=>x.id===id);
-  bkaAddRow(r?.date,r?.status);
+  const r = bkaRows.find(x=>x.id===id);
+  if (r && r.status) bkaKpStatus(r.status);      // มีสถานะอยู่แล้ว = จบแถวด้วยสถานะเดิม
+  else { bkaKpOpen(id); _bkaKpWarn("เลือกสถานะก่อน — กดปุ่มสถานะด้านขวาของแป้น"); }
 }
+
+// ═══════════════════════════════════════════════════════════════
+// V5.94: แป้นตะกร้า
+// ═══════════════════════════════════════════════════════════════
+var _bkaKpId = null;
+function bkaKpOpen(id) {
+  const r = bkaRows.find(x => x.id === id); if (!r) return;
+  try { if (typeof removeAutocomplete === "function") removeAutocomplete(); } catch (e) {}
+  // ช่องชื่อตั้งเวลาเปิดรายการแนะนำไว้ 0.1 วิหลังพิมพ์/เลือก — ยกเลิก และกันอีกชั้นเผื่อหลุด
+  try { clearTimeout(_acTimeout); } catch (e) {}
+  setTimeout(() => { try { if (document.getElementById("bkaKp") && typeof removeAutocomplete === "function") removeAutocomplete(); } catch (e) {} }, 180);
+  try { const a = document.activeElement; if (a && a.blur && a.id !== "bka-bk-" + id) a.blur(); } catch (e) {}
+  _bkaKpId = id;
+  let kp = document.getElementById("bkaKp");
+  if (!kp) {
+    kp = document.createElement("div");
+    kp.id = "bkaKp";
+    kp.setAttribute("role", "group");
+    kp.setAttribute("aria-label", "แป้นจำนวนตะกร้า");
+    const key = (v, t, cls) => '<button type="button" class="k' + (cls ? " " + cls : "") + '" data-k="' + v + '">' + t + '</button>';
+    const st = s => '<button type="button" class="k ks" data-st="' + s + '" data-s="' + s + '">' + s + '</button>';
+    kp.innerHTML = '<div class="kp-in"><div class="kp-top"><span id="bkaKpWho"></span><button type="button" data-k="hide">ซ่อนแป้น</button></div>' +
+      '<div class="kp-g">' +
+        key("1","1") + key("2","2") + key("3","3") + st(BKA_STATUS[0]) +
+        key("4","4") + key("5","5") + key("6","6") + st(BKA_STATUS[1]) +
+        key("7","7") + key("8","8") + key("9","9") + st(BKA_STATUS[2]) +
+        key(".5",".5","fn") + key("0","0") + key("del",'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 5H9l-6 7 6 7h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z"/><path d="M17 9l-6 6M11 9l6 6"/></svg>',"fn") + st(BKA_STATUS[3]) +
+      '</div></div>';
+    // กดแล้วช่องจำนวนไม่หลุดโฟกัส และแตะเร็วๆ ไม่ซูม
+    kp.addEventListener("pointerdown", e => { if (e.target.closest("button")) e.preventDefault(); });
+    kp.addEventListener("click", e => {
+      const b = e.target.closest("button"); if (!b) return;
+      if (typeof hap === "function") hap(6);
+      if (b.dataset.st) return bkaKpStatus(b.dataset.st);
+      if (b.dataset.k === "hide") return bkaKpHide();
+      bkaKpKey(b.dataset.k);
+    });
+    document.body.appendChild(kp);
+  }
+  // ป้ายบนแป้น + จุดบอกสถานะปัจจุบัน
+  const who = document.getElementById("bkaKpWho");
+  if (who) who.innerHTML = '<b>' + _htmlEsc(r.name || "ยังไม่มีชื่อ") + '</b> · ' + _bkaDayLabel(r.date).replace(/<\/?em>/g, "");
+  kp.querySelectorAll(".ks").forEach(b => b.classList.toggle("cur", b.dataset.st === r.status));
+  document.querySelectorAll(".bka-num.kp-on").forEach(x => x.classList.remove("kp-on"));
+  document.querySelectorAll(".bka-row.kp-row").forEach(x => x.classList.remove("kp-row"));
+  const inp = document.getElementById("bka-bk-" + id);
+  if (inp) { inp.classList.add("kp-on"); const row = inp.closest(".bka-row"); if (row) row.classList.add("kp-row"); }
+  // หน้าต่างหลบขึ้นด้านบน ไม่ให้แป้นบังแถวที่กำลังกรอก
+  const md = document.getElementById("bkAddModal");
+  if (md) {
+    md.classList.add("kp-open");
+    md.style.setProperty("--bkkp-h", Math.round(kp.getBoundingClientRect().height || 280) + "px");
+  }
+  requestAnimationFrame(() => { try { if (inp) inp.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch (e) {} });
+}
+function bkaKpHide() {
+  const kp = document.getElementById("bkaKp"); if (kp) kp.remove();
+  document.querySelectorAll(".bka-num.kp-on").forEach(x => x.classList.remove("kp-on"));
+  document.querySelectorAll(".bka-row.kp-row").forEach(x => x.classList.remove("kp-row"));
+  const md = document.getElementById("bkAddModal"); if (md) md.classList.remove("kp-open");
+  _bkaKpId = null;
+}
+function _bkaKpWarn(msg) {
+  const kp = document.getElementById("bkaKp");
+  if (kp) { kp.classList.remove("shake"); void kp.offsetWidth; kp.classList.add("shake"); }
+  if (typeof hap === "function") hap(30);
+  if (typeof showToast === "function") showToast(msg, "warn", 2200);
+}
+function bkaKpKey(k) {
+  const r = bkaRows.find(x => x.id === _bkaKpId); if (!r) return;
+  let v = String(r.basket || "");
+  if (k === "del") v = v.slice(0, -1).replace(/\.$/, "");
+  else if (k === ".5") { if (v.indexOf(".") < 0) v = (v === "" ? "0" : v) + ".5"; }
+  else if (/^[0-9]$/.test(k)) {
+    if (v.indexOf(".") >= 0) return;                 // หลัง .5 ไม่รับตัวเลขต่อ
+    if (v === "0") v = "";
+    if (v.length >= 4) return;
+    v += k;
+  }
+  r.basket = v;
+  const inp = document.getElementById("bka-bk-" + r.id); if (inp) inp.value = v;
+  bkaUpdateSummary();
+}
+function bkaKpStatus(st) {
+  const id = _bkaKpId != null ? _bkaKpId : null;
+  const r = bkaRows.find(x => x.id === id); if (!r) return;
+  if (!String(r.name || "").trim()) {
+    _bkaKpWarn("ใส่ชื่อก่อน");
+    bkaKpHide();
+    const n = document.getElementById("bka-nm-" + r.id); if (n) n.focus();
+    return;
+  }
+  if (!(parseFloat(r.basket) > 0)) { _bkaKpWarn("ใส่จำนวนตะกร้าก่อน แล้วค่อยกดสถานะ"); return; }
+  r.status = st;
+  const btn = document.getElementById("bka-st-" + r.id);
+  if (btn) { btn.setAttribute("data-s", st); btn.textContent = st; }
+  const row = btn && btn.closest(".bka-row");
+  if (row) { row.classList.add("kp-done"); setTimeout(() => row.classList.remove("kp-done"), 900); }
+  bkaUpdateSummary();
+  bkaKpHide();
+  // ไปแถวถัดไป: แถวว่างที่อยู่ถัดลงไปก่อน ไม่มีก็เพิ่มแถวใหม่ (วันที่เดียวกัน)
+  const i = bkaRows.findIndex(x => x.id === r.id);
+  const nxt = bkaRows.slice(i + 1).find(x => !String(x.name || "").trim());
+  if (nxt) {
+    const n = document.getElementById("bka-nm-" + nxt.id);
+    if (n) { n.focus(); try { n.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) {} }
+  } else bkaAddRow(r.date);
+}
+window.bkaKpOpen = bkaKpOpen; window.bkaKpHide = bkaKpHide; window.bkaKpKey = bkaKpKey; window.bkaKpStatus = bkaKpStatus;
 
 function bkaUpdateSummary(){
   const count=bkaRows.filter(r=>r.name.trim()).length;
@@ -18250,6 +18510,13 @@ function bkaUpdateSummary(){
 }
 
 function bkDoSaveAll(){
+  // V5.94: ต้องกดสถานะเองทุกแถว — แถวที่กรอกครบแต่ยังไม่มีสถานะ ห้ามบันทึก แล้วพาไปแถวนั้น
+  const noSt = bkaRows.filter(r => r.name.trim() && parseFloat(r.basket) > 0 && !r.status);
+  if (noSt.length) {
+    if (typeof showToast === "function") showToast("ยังไม่ได้เลือกสถานะ " + noSt.length + " รายการ — เลือกให้ครบก่อนบันทึก", "warn", 3200);
+    try { bkaKpOpen(noSt[0].id); } catch (e) {}
+    return;
+  }
   const valid=bkaRows.filter(r=>r.name.trim()&&parseFloat(r.basket)>0);
   if(!valid.length){alert("กรุณากรอกชื่อและจำนวนตะกร้าอย่างน้อย 1 รายการ");return;}
   
@@ -22701,6 +22968,8 @@ window._dirtyIn = _dirtyIn;
 window._dirtyBlock = _dirtyBlock;
 
 const _LAYERS = [
+  // V5.94: แป้นตะกร้า ปิดก่อนหน้าต่างเพิ่มรายการ
+  ["bkaKp",                "exists", "bkaKpHide"],
   // V5.90: แผ่นรวมชื่อ / ชื่อที่ซ่อน
   ["cmMergeSheet",         "exists", null],
   ["cmHiddenSheet",        "exists", null],
@@ -24707,7 +24976,11 @@ function showAutocomplete(inputEl) {
         });
       }
       // V4.22: เรียก onSelect callback (ของ attachNameAutocomplete) ถ้ามี
-      if (inputEl._acOpts && typeof inputEl._acOpts.onSelect === "function") {
+      const _bkaM = String(inputEl.id || "").match(/^bka-nm-(\d+)$/);   // V5.94: หน้าต่างเพิ่มตะกร้า
+      if (_bkaM && typeof bkaKpOpen === "function") {
+        try { if (meta && meta.color) { const _r = bkaRows.find(x => x.id === +_bkaM[1]); if (_r) _r.nameColor = meta.color; } } catch (err) {}
+        requestAnimationFrame(() => { try { inputEl.blur(); } catch (e) {} bkaKpOpen(+_bkaM[1]); });
+      } else if (inputEl._acOpts && typeof inputEl._acOpts.onSelect === "function") {
         try { inputEl._acOpts.onSelect(name, meta); } catch(err) { console.error(err); }
       } else {
         // Legacy fallback: ไปช่องยอดเงินต่อ
@@ -26331,6 +26604,8 @@ function authSuccess(user) {
   } catch(e) { console.warn("[auth] จำ session ไม่ได้:", e.message); }
   // hide login screen
   document.getElementById("loginScreen").style.display = "none";
+  // V5.97: ปุ่มแจ้งของใหม่ — รอสคริปต์ทั้งไฟล์โหลดครบก่อน (ตอนเปิดแอปจำ session ไว้ บรรทัดนี้วิ่งก่อนส่วนท้ายไฟล์)
+  setTimeout(() => { try { _nfStart(); } catch (e) { console.warn("[แจ้งของใหม่] เริ่มไม่ได้", e); } }, 0);
   // V5.36 (B24): ลบโค้ดแสดงปุ่ม #logoutBtn ทิ้ง — ปุ่มถูกย้ายไปเมนูหลักแล้ว ไม่มี id นี้ใน HTML
   // apply role restrictions
   applyRoleUI();
@@ -27927,6 +28202,7 @@ async function spOpen() {
   try { if (typeof _lzNeed === "function") _lzNeed("customers"); } catch (e) {}
   _spClose(true);
   _sp = { day: activeDay, rows: [], skip: [], paid: [], state: "load", err: null, map: {} };
+  try { if (isToday(activeDay)) _nfMarkSeen("del"); } catch (e) {}   // V5.97
   const ov = document.createElement("div");
   ov.id = "spModal"; ov.className = "sp-ov";
   ov.addEventListener("click", e => { if (e.target === ov) spClose(); });
@@ -28309,6 +28585,7 @@ async function bpOpen() {
   const nd = bkGetDaysInMonth(bkYear, bkMonth), last = isCur ? now.getDate() : (isPast ? nd : 0);
   const dds = []; for (let d = 1; d <= last; d++) dds.push(String(d).padStart(2, "0"));
   _bp = { y: bkYear, m: bkMonth, mk: bkMonthKey(), nd, last, dds, mode: "day", sel: dds.length ? dds[dds.length - 1] : null, state: "load", err: null, pp: {}, dayCnt: {}, plans: {}, dayOn: {}, map: {} };
+  try { if (isCur) _nfMarkSeen("out"); } catch (e) {}   // V5.97
   const ov = document.createElement("div");
   ov.id = "bpModal"; ov.className = "sp-ov";
   ov.addEventListener("click", e => { if (e.target === ov) bpClose(); });
@@ -28603,9 +28880,340 @@ function bpApply() {
   if (Object.keys(mp).length) db.ref().update(mp).catch(e => console.warn("[ดึงตะกร้า] จำคู่ชื่อไม่สำเร็จ", e && e.message));
   const nc = Object.keys(created).length;
   bpClose();
+  try { _nfRecalcSoon(); } catch (e) {}   // V5.97
   if (typeof showToast === "function") showToast(`ลงตะกร้า ${nD} วัน · ${nP} ช่อง${nc ? " · เพิ่มคนตัดใหม่ " + nc + " คน" : ""}`, "success", 2800);
 }
 window.bpOpen = bpOpen; window.bpClose = bpClose; window._bpLoad = _bpLoad; window.bpApply = bpApply; window.bpEdit = bpEdit;
+
+// ══════════════════════════════════════════════════════════════
+// V5.97: ปุ่มแจ้งของใหม่ที่ขอบขวา (แบบ ข1 กระจกใส · พัดโค้ง · ฟองยืดเป็นแผ่น)
+//   รายการจัดส่ง = บิลจัดส่งวันนี้ในแอปขาย ที่ยังไม่จ่าย และยังไม่ได้ดึง/ยอดเปลี่ยน
+//   ตะกร้าออกไป = คนตัดที่วันนี้ยังต้องลงช่อง "ออกไป" (ตรรกะเดียวกับแผ่นดึงตะกร้า)
+//   ตะกร้าเก็บมา = ยอดลูกน้องที่ยังไม่ได้ลง (30 วัน)
+//   "ยังไม่ได้ดู" = เปิดหมวดนั้นแล้ว ตัวเลขหาย · ขึ้นใหม่เฉพาะตอนมีของเพิ่ม (จำแยกแต่ละเครื่อง)
+//   โควต้า: แอปขายเช็กทุก 3 นาทีเฉพาะตอนเปิดแอปอยู่ ถามแค่ "มีวันไหนเปลี่ยนไหม" ไม่เปลี่ยน = ไม่โหลดอะไร
+// ══════════════════════════════════════════════════════════════
+var _nf = { on: false, day: null, salesKey: null, data: null, mem: null, memAt: 0, map: null, lastAt: 0, mode: "q",
+            checking: false, lastCheck: 0, keys: { del: [], out: [], in: [] }, last: -1, open: false, busy: false, tm: 0 };
+const NF_EVERY = 180000, NF_SEEN = "nf:seen";
+const NF_IC = {
+  tray: '<svg class="nf-tray" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13.5V18a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4.5"/><path d="M4 13.5l2.2-7.2A2 2 0 0 1 8.1 5h7.8a2 2 0 0 1 1.9 1.3l2.2 7.2"/><path d="M4 13.5h4.5l1.2 2h4.6l1.2-2H20"/></svg>',
+  x: '<svg class="nf-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>',
+  del: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>',
+  out: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h16l-1.6 8.4A2 2 0 0 1 16.4 20H7.6a2 2 0 0 1-2-1.6L4 10z"/><path d="M12 3v4.5M9.5 5.5L12 3l2.5 2.5"/></svg>',
+  in: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h16l-1.6 8.4A2 2 0 0 1 16.4 20H7.6a2 2 0 0 1-2-1.6L4 10z"/><path d="M12 7.5V3M9.5 5L12 7.5 14.5 5"/></svg>'
+};
+const NF_CATS = [{ k: "del", t: "รายการจัดส่ง" }, { k: "out", t: "ตะกร้าออกไป" }, { k: "in", t: "ตะกร้าเก็บมา" }];
+const NF_EASE = "cubic-bezier(.32,.72,0,1)";   // แบบ iOS: ออกตัวไว แล้วค่อยๆ เข้าที่
+function _nfRM() { try { return matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) { return false; } }
+function _nfTodayKey() {
+  const n = new Date();
+  return String(n.getDate()).padStart(2, "0") + "-" + String(n.getMonth() + 1).padStart(2, "0") + "-" + String(n.getFullYear() + 543).slice(-2);
+}
+function _nfSeen() { try { const s = JSON.parse(localStorage.getItem(NF_SEEN) || "{}"); return (s && typeof s === "object") ? s : {}; } catch (e) { return {}; } }
+function _nfUnseen(cat) { const s = _nfSeen()[cat] || []; return (_nf.keys[cat] || []).filter(k => s.indexOf(k) < 0); }
+function _nfMarkSeen(cat) {
+  const s = _nfSeen(), old = Array.isArray(s[cat]) ? s[cat] : [];
+  s[cat] = old.concat((_nf.keys[cat] || []).filter(k => old.indexOf(k) < 0)).slice(-400);
+  try { localStorage.setItem(NF_SEEN, JSON.stringify(s)); } catch (e) {}
+  _nfPaint();
+}
+function _nfCounts() {
+  const r = {}; const ins = {};
+  _nfUnseen("in").forEach(k => { const p = k.split("|"); ins[p[0] + p[1] + p[2]] = 1; });   // นับเป็นรอบที่ส่งมา
+  r.del = _nfUnseen("del").length; r.out = _nfUnseen("out").length; r.in = Object.keys(ins).length;
+  return r;
+}
+
+// ── นับของใหม่ (คำนวณในเครื่อง ไม่ใช้เน็ต) ──
+function _nfCalcDel() {
+  const out = [], dd = allDays && allDays[_nf.day], data = _nf.data;
+  if (dd && data && Array.isArray(data.delivery)) {
+    const got = [];
+    GROUPS.forEach(g => Object.values(dd[g.key] || {}).forEach(it => { if (it && it.src) got.push(it); }));
+    data.delivery.forEach((b, i) => {
+      if (!b || !String(b.name || "").trim()) return;
+      const tot = _spBillTotal(b);
+      if (_spBillPaid(b) || !(tot > 0)) return;
+      const src = "sell:" + _nf.salesKey + ":" + String(b._id || ("i" + i + "_" + String(b.name).trim()));
+      const g = got.find(x => x.src === src);
+      if (g && (g.status !== "รอชำระ" || +g.srcAmt === tot)) return;   // ดึงแล้ว ยอดตรง / จ่ายแล้ว
+      out.push(src + "@" + tot);
+    });
+  }
+  _nf.keys.del = out;
+}
+function _nfCalcOut() {
+  if (!_nf.data) { _nf.keys.out = []; return; }
+  if (!window._bkFromServer || _bp) return;            // ยังไม่มีข้อมูลตะกร้า / แผ่นดึงเปิดอยู่ → ใช้ค่าเดิม
+  const n = new Date(), dd = String(n.getDate()).padStart(2, "0"), keep = _bp;
+  try {
+    _bp = { y: n.getFullYear(), m: n.getMonth() + 1, mk: _bkRealMk(), dds: [dd], map: _nf.map || {}, pp: {}, dayCnt: {}, plans: {}, dayOn: {} };
+    _bpBuild({ mem: _nf.mem || {}, days: [{ dd: dd, data: _nf.data }] });
+    _nf.keys.out = _bpActRows(dd).map(r => dd + "|" + (r.p.id || r.p.tgt) + "|" + r.c + "|" + r.mode);
+  } catch (e) { console.warn("[แจ้งของใหม่] นับตะกร้าไม่ได้", e); }
+  finally { _bp = keep; }
+}
+function _nfCalcIn() {
+  const out = [];
+  try { _bkRepDayList().forEach(d => _bkInboxRows(d.mk, d.dd, null, true).forEach(r => out.push(d.mk + "|" + d.dd + "|" + r.b + "|" + r.k))); } catch (e) {}
+  _nf.keys.in = out;
+}
+function _nfRecalc() {
+  if (!_nf.on) return;
+  if (_nf.day !== _nfTodayKey()) { _nf.day = _nfTodayKey(); _nf.salesKey = _spSalesKey(_nf.day); _nf.data = null; _nf.lastAt = 0; }
+  try { _nfCalcDel(); } catch (e) {}
+  try { _nfCalcOut(); } catch (e) {}
+  try { _nfCalcIn(); } catch (e) {}
+  _nfPaint();
+}
+function _nfRecalcSoon() { clearTimeout(_nf.rs); _nf.rs = setTimeout(_nfRecalc, 250); }
+
+// ── เช็กแอปขาย (วันนี้) ──
+async function _nfCheck(force) {
+  if (!_nf.on || _nf.checking) return;
+  if (!force && document.hidden) return;
+  if (navigator.onLine === false) return;
+  if (_nf.day !== _nfTodayKey()) { _nf.day = _nfTodayKey(); _nf.salesKey = _spSalesKey(_nf.day); _nf.data = null; _nf.lastAt = 0; }
+  _nf.checking = true; _nf.lastCheck = Date.now();
+  try {
+    await _spTimeout(_spLoadFs(), 15000);
+    const app = _spGetApp(), au = app.auth();
+    if (!au.currentUser) await _spTimeout(au.signInAnonymously(), 15000);
+    const st = app.firestore().collection("stores").doc(SP_STORE), col = st.collection("days");
+    let doc = null, changed = false;
+    if (!_nf.lastAt || _nf.mode === "doc") {
+      doc = await _spTimeout(col.doc(_nf.salesKey).get({ source: "server" }), 20000); changed = true;
+    } else {
+      try {
+        const snap = await _spTimeout(col.where("_at", ">", _nf.lastAt).get({ source: "server" }), 20000);
+        snap.forEach(d => { const a = +((d.data() || {})._at) || 0; if (a > _nf.lastAt) _nf.lastAt = a; if (d.id === _nf.salesKey) { doc = d; changed = true; } });
+      } catch (qe) {
+        // กฎแอปขายไม่ให้ค้นทั้งชุด → อ่านวันนี้ตรงๆ แทน (ทุก 3 นาทีเหมือนเดิม)
+        if (!/permission/i.test(String((qe && (qe.code || qe.message)) || ""))) throw qe;
+        _nf.mode = "doc";
+        doc = await _spTimeout(col.doc(_nf.salesKey).get({ source: "server" }), 20000); changed = true;
+      }
+    }
+    if (changed) {
+      const raw = (doc && doc.exists) ? (doc.data() || {}) : null;
+      _nf.data = raw ? _bpParse(raw.data) : null;
+      if (raw && +raw._at > _nf.lastAt) _nf.lastAt = +raw._at;
+      if (!_nf.lastAt) _nf.lastAt = Date.now() - 6 * 3600000;   // วันนี้ยังไม่มีบิล → เฝ้าตั้งแต่ 6 ชม.ก่อน
+      if (_nf.data) {
+        // ข้อมูลประกอบของตะกร้า: ชื่อที่รวมไว้/สวิตช์นับตะกร้า (แอปขาย) + คู่ชื่อที่จำไว้ (ตลาด) · ไม่เกินทุก 30 นาที
+        if (!_nf.mem || Date.now() - _nf.memAt > 1800000) {
+          const r = await Promise.all([
+            st.collection("meta").doc("memory").get({ source: "server" }).then(x => x.exists ? (_bpParse((x.data() || {}).data) || {}) : {}),
+            db.ref("config/sellBkMap").once("value").then(s => s.val() || {})
+          ]).catch(() => null);
+          if (r) { _nf.mem = r[0]; _nf.map = r[1]; _nf.memAt = Date.now(); }
+        }
+        if (!window._bkFromServer) { try { _lzNeed("basket"); } catch (e) {} _nfWaitBasket(); }
+      }
+    }
+  } catch (e) {
+    console.warn("[แจ้งของใหม่] เช็กแอปขายไม่ได้", e && (e.code || e.message));
+  } finally { _nf.checking = false; }
+  _nfRecalc();
+}
+function _nfWaitBasket() {
+  let n = 0; clearInterval(_nf.wb);
+  _nf.wb = setInterval(() => { if (window._bkFromServer || ++n > 30) { clearInterval(_nf.wb); _nfRecalc(); } }, 1000);
+}
+
+// ── วาดปุ่ม/พัด ──
+function _nfEnsureDom() {
+  if (document.getElementById("nfTrg")) return;
+  const dim = document.createElement("div"); dim.id = "nfDim";
+  const fan = document.createElement("div"); fan.id = "nfFan";
+  const t = document.createElement("button"); t.id = "nfTrg"; t.className = "nf-lg nf-none"; t.type = "button";
+  t.setAttribute("aria-label", "ของใหม่จากแอปอื่น");
+  t.innerHTML = '<span class="nf-gl">' + NF_IC.tray + NF_IC.x + '</span><span class="nf-cnt"></span>';
+  document.body.appendChild(dim); document.body.appendChild(fan); document.body.appendChild(t);
+  _nfBind(t, dim, fan);
+}
+function _nfPaint() {
+  if (!_nf.on) return;
+  _nfEnsureDom();
+  const t = document.getElementById("nfTrg"), c = _nfCounts(), sum = c.del + c.out + c.in, cnt = t.querySelector(".nf-cnt");
+  if (sum !== _nf.last) {
+    cnt.textContent = sum;
+    if (sum > _nf.last && _nf.last >= 0) { cnt.classList.remove("nf-pop"); void cnt.offsetWidth; cnt.classList.add("nf-pop"); }
+    _nf.last = sum;
+  }
+  t.setAttribute("aria-label", "ของใหม่ " + sum + " รายการ");
+  if (!_nf.open && !_nf.busy) t.classList.toggle("nf-none", !sum);
+}
+function _nfFanHtml() {
+  const c = _nfCounts();
+  return NF_CATS.map(x => '<div class="nf-it' + (c[x.k] ? "" : " nf-zero") + '" data-k="' + x.k + '"><div class="nf-bub nf-lg">' + NF_IC[x.k] +
+    (c[x.k] ? '<span class="nf-n">' + c[x.k] + '</span>' : '') + '</div><div class="nf-lb nf-lg"><span>' + x.t + '</span></div></div>').join("");
+}
+function _nfPlace(keep) {
+  const t = document.getElementById("nfTrg"), fan = document.getElementById("nfFan");
+  if (!t || !fan) return;
+  const tr = t.getBoundingClientRect(), cx = tr.left + tr.width / 2, cy = tr.top + tr.height / 2, R = 108, ANG = [238, 180, 122];
+  fan.querySelectorAll(".nf-it").forEach((it, i) => {
+    if (keep && it === keep) return;
+    const a = ANG[i] * Math.PI / 180, x = cx + Math.cos(a) * R, y = cy + Math.sin(a) * R;
+    it.style.right = (window.innerWidth - x - 30) + "px"; it.style.top = (y - 30) + "px";
+    it.style.transitionDelay = _nf.open ? (i * 0.035) + "s" : "0s";
+    it.style.transform = _nf.open ? "none" : "translate(" + (cx - x) + "px," + (cy - y) + "px) scale(.25)";
+  });
+}
+function _nfSetOpen(o, keep) {
+  const fan = document.getElementById("nfFan");
+  if (o && fan) { fan.innerHTML = _nfFanHtml(); _nf.open = false; _nfPlace(); void fan.offsetWidth; }
+  _nf.open = o;
+  document.body.classList.toggle("nf-open", o);
+  _nfPlace(keep);
+  if (!o) _nfHot(null);
+}
+function _nfHot(it) { if (_nf.hot === it) return; if (_nf.hot) _nf.hot.classList.remove("nf-hot"); _nf.hot = it; if (it) it.classList.add("nf-hot"); }
+function _nfBind(t, dim, fan) {
+  let drag = false, sx = 0, sy = 0, moved = false;
+  const itemAt = (x, y) => { const e = document.elementFromPoint(x, y); return e && e.closest ? e.closest("#nfFan .nf-it") : null; };
+  t.addEventListener("pointerdown", e => {
+    if (_nf.busy) return;
+    e.preventDefault(); sx = e.clientX; sy = e.clientY; moved = false;
+    if (!_nf.open) { _nfSetOpen(true); drag = true; } else { _nfSetOpen(false); drag = false; }
+    try { t.releasePointerCapture(e.pointerId); } catch (x) {}
+  });
+  document.addEventListener("pointermove", e => {
+    if (!drag) return;
+    if (Math.hypot(e.clientX - sx, e.clientY - sy) > 8) moved = true;
+    _nfHot(itemAt(e.clientX, e.clientY));
+  }, { passive: true });
+  document.addEventListener("pointerup", e => {
+    if (!drag) return;
+    drag = false;
+    const it = itemAt(e.clientX, e.clientY);
+    if (it && moved) _nfGo(it.dataset.k, it);       // กดค้าง ลาก ปล่อยบนฟอง = เปิดเลย
+    else if (moved) _nfSetOpen(false);               // ลากไปปล่อยที่ว่าง = ยกเลิก
+  });
+  document.addEventListener("pointercancel", () => { if (drag) { drag = false; _nfSetOpen(false); } });
+  fan.addEventListener("click", e => { const it = e.target.closest(".nf-it"); if (it && _nf.open && !_nf.busy) _nfGo(it.dataset.k, it); });
+  dim.addEventListener("click", () => { if (!_nf.busy) _nfSetOpen(false); });
+}
+function _nfCloseLayer() { if (_nf.open) { _nfSetOpen(false); return true; } return false; }
+
+// ── ไปหน้านั้นแบบนุ่มนวล ──
+const _nfWait = ms => new Promise(r => setTimeout(r, ms));
+async function _nfPage(cat) {
+  const RM = _nfRM(), tab = cat === "del" ? "board" : "basket", today = _nf.day || _nfTodayKey();
+  const needDay = cat === "del" && activeDay !== today && allDays && allDays[today];
+  const n = new Date(), needMonth = tab === "basket" && (bkYear !== n.getFullYear() || bkMonth !== n.getMonth() + 1);
+  if (activeTab === tab && !needDay && !needMonth) return;
+  const cur = document.getElementById(activeTab + "Tab"), dt = document.getElementById("dayTabs");
+  const dtOut = dt && tab === "basket" && activeTab !== "basket", dtIn = dt && tab !== "basket" && activeTab === "basket";
+  if (cur && !RM) {
+    // แถบวันอยู่นอกแท็บ — จางไปพร้อมกัน ไม่ให้หายวับตอนเข้าหน้าตะกร้า
+    if (dtOut) dt.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: "cubic-bezier(.4,0,1,1)", fill: "forwards" });
+    try { await cur.animate([{ opacity: 1, transform: "scale(1)" }, { opacity: 0, transform: "scale(.97)" }], { duration: 160, easing: "cubic-bezier(.4,0,1,1)", fill: "forwards" }).finished; } catch (e) {}
+  }
+  if (tab === "board") {
+    if (needDay) { activeDay = today; openForm = null; renderDayTabs(_sortDayKeys(Object.keys(allDays))); }
+    window._skipBoardNavToday = true; switchTab("board"); window._skipBoardNavToday = false;
+    renderBoard();
+  } else {
+    if (needMonth) { bkYear = n.getFullYear(); bkMonth = n.getMonth() + 1; }
+    switchTab("basket");
+    try { if (window._bkSubV2 && window._bkSubV2 !== "cutter") bkSwitchSubV2("cutter"); } catch (e) {}
+  }
+  if (cur) cur.getAnimations().forEach(a => a.cancel());
+  if (dt) dt.getAnimations().forEach(a => a.cancel());
+  const nx = document.getElementById(tab + "Tab");
+  if (nx && !RM) {
+    nx.classList.remove("tab-fade-in");
+    nx.animate([{ opacity: 0, transform: "scale(1.02)" }, { opacity: 1, transform: "scale(1)" }], { duration: 320, easing: NF_EASE });
+    if (dtIn) dt.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 320, easing: NF_EASE });
+  }
+}
+// แผ่นปลายทางขยายออกจากฟอง (กรอบตัดค่อยๆ เปิด + ย่อ→เต็ม) · เนื้อหาจางเข้าตามหลัง
+function _nfReveal(ov, box, br) {
+  if (!box || !br || _nfRM()) return;
+  const r = box.getBoundingClientRect();
+  if (!(r.width > 0 && r.height > 0)) return;
+  const t = Math.max(0, br.top - r.top), l = Math.max(0, br.left - r.left), rr = Math.max(0, r.right - br.right), b = Math.max(0, r.bottom - br.bottom);
+  const rad = getComputedStyle(box).borderRadius || "18px", D = 470;
+  box.style.animation = "none";
+  box.style.transformOrigin = (br.left + br.width / 2 - r.left) + "px " + (br.top + br.height / 2 - r.top) + "px";
+  const a = box.animate([
+    { clipPath: "inset(" + t + "px " + rr + "px " + b + "px " + l + "px round 30px)", transform: "scale(.94)" },
+    { clipPath: "inset(0px 0px 0px 0px round " + rad + ")", transform: "scale(1)" }
+  ], { duration: D, easing: NF_EASE });
+  Array.prototype.forEach.call(box.children, c => c.animate([{ opacity: 0 }, { opacity: 0, offset: .22 }, { opacity: 1 }], { duration: D, easing: "ease-out" }));
+  if (ov) {
+    const bg = getComputedStyle(ov).backgroundColor;
+    ov.animate([{ backgroundColor: "rgba(0,0,0,0)" }, { backgroundColor: bg }], { duration: 380, easing: "ease-out" });
+  }
+  a.finished.then(() => { box.style.transformOrigin = ""; }).catch(() => {});
+}
+async function _nfGo(cat, it) {
+  if (_nf.busy) return;
+  _nf.busy = true;
+  const RM = _nfRM(), t = document.getElementById("nfTrg");
+  const bub = it && it.querySelector(".nf-bub"), br = bub ? bub.getBoundingClientRect() : null;
+  let ghost = null;
+  try {
+    // 1) ยืนยัน: ฟองที่เลือกเด้งนิดหนึ่ง ฟองอื่นหดกลับ ปุ่มจาง
+    _nfHot(null);
+    if (bub && !RM) {
+      bub.animate([{ transform: "scale(1)" }, { transform: "scale(1.14)" }, { transform: "scale(1.06)" }], { duration: 200, easing: "ease-out", fill: "forwards" });
+      const lb = it.querySelector(".nf-lb"); if (lb) lb.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 150, fill: "forwards" });
+    }
+    _nfSetOpen(false, it);
+    if (t) t.classList.add("nf-none");
+    // ฟองเงา (อยู่บนสุด) ไว้เชื่อมฟองกับแผ่น
+    if (br && !RM) {
+      ghost = document.createElement("div"); ghost.className = "nf-ghost nf-lg"; ghost.innerHTML = NF_IC[cat];
+      Object.assign(ghost.style, { left: br.left + "px", top: br.top + "px", width: br.width + "px", height: br.height + "px", display: "grid", placeItems: "center", color: "#2B2826" });
+      document.body.appendChild(ghost);
+      if (it) it.style.opacity = "0";
+      await _nfWait(110);
+    }
+    // 2) เปลี่ยนหน้า (ถ้าต้อง)
+    await _nfPage(cat);
+    if (cat !== "del" && !window._bkFromServer) {
+      try { _lzNeed("basket"); } catch (e) {}
+      for (let i = 0; i < 40 && !window._bkFromServer; i++) await _nfWait(200);
+    }
+    // 3) เปิดแผ่น แล้วขยายออกจากฟอง
+    let box = null;
+    if (cat === "del") { spOpen(); box = document.querySelector("#spModal .sp-sh"); }
+    else if (cat === "out") { bpOpen(); box = document.querySelector("#bpModal .sp-sh"); }
+    else { bkRepOpen(); box = document.querySelector("#bkRepModal .bkrp-box"); }
+    if (box) _nfReveal(box.parentElement, box, br);
+    if (ghost) {
+      const gs = ghost.style, g = ghost;
+      g.animate([{ opacity: 1, transform: "scale(1)" }, { opacity: 0, transform: "scale(1.35)" }], { duration: 200, easing: "ease-out", fill: "forwards" })
+        .finished.then(() => g.remove()).catch(() => g.remove());
+      ghost = null;
+    }
+  } catch (e) {
+    console.warn("[แจ้งของใหม่] เปิดหน้าไม่สำเร็จ", e);
+  } finally {
+    if (ghost) ghost.remove();
+    setTimeout(() => { _nf.busy = false; const f = document.getElementById("nfFan"); if (f) f.innerHTML = ""; _nfPaint(); }, 480);
+  }
+}
+
+// ── เริ่มทำงาน (หลังเข้าสู่ระบบ) ──
+function _nfStart() {
+  if (_nf.on) return;
+  _nf.on = true;
+  _nf.day = _nfTodayKey(); _nf.salesKey = _spSalesKey(_nf.day);
+  _nfEnsureDom();
+  try { _bkInboxBoot(); } catch (e) {}                         // ยอดลูกน้อง: ฟังสดเดือนนี้ (ก้อนเล็ก)
+  setTimeout(() => _nfCheck(true), 4000);                       // รอแอปเปิดเสร็จก่อนค่อยเช็กแอปขาย
+  setInterval(() => { if (!document.hidden) _nfCheck(); }, NF_EVERY);
+  setInterval(() => { if (!document.hidden) _nfRecalc(); }, 20000);   // ตัวเลขฝั่งตลาดเปลี่ยน (คำนวณในเครื่อง ไม่ใช้เน็ต)
+  document.addEventListener("visibilitychange", () => { if (!document.hidden && Date.now() - _nf.lastCheck > 60000) _nfCheck(); });
+  window.addEventListener("resize", () => { if (_nf.open) _nfSetOpen(false); });
+  _nfRecalc();
+}
+window._nfStart = _nfStart; window._nfCheck = _nfCheck; window._nfRecalc = _nfRecalc;
 
 
 // ══════════════════════════════════════════════════════════════
