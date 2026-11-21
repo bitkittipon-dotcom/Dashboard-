@@ -2246,6 +2246,12 @@ tr:last-child td { border-bottom: none; }
 .bkrp-r .w { text-align: right; font-weight: 700; }
 .bkrp-r .w.new { color: #16A34A; } .bkrp-r .w.q { color: #B45309; }
 .bkrp-r .w.sk { color: #C7C7CC; font-weight: 400; font-size: 12px; }
+/* V5.98: เวลาที่ลูกน้องส่ง ใต้ชื่อ · หลายรอบ = สรุปบรรทัดเดียว 12:23 1 › 15:39 3 */
+.bkrp-r .n small { display: block; white-space: normal; font-weight: 400; font-size: 11px;
+  color: #2F6FDB; margin-top: 1px; line-height: 1.45; }
+.bkrp-r .n small b { color: #1C1917; font-weight: 600; }
+.bkrp-r .n small i { font-style: normal; color: #C7C7CC; padding: 0 1px; }
+.bkrp-r .n small span { white-space: nowrap; }   /* เวลากับจำนวนของรอบเดียวกันไม่แยกบรรทัด */
 .bkrp-btn { display: block; width: 100%; border: 0; margin: 0; padding: 12px 0;
   font-family: inherit; font-size: 15px; font-weight: 700; background: #44504B; color: #fff; }
 .bkrp-btn:active { opacity: .85; }
@@ -6091,7 +6097,7 @@ input[name="cust-name-no-fill"]:-webkit-autofill {
 <!-- Chart.js + html2canvas: lazy-loaded on demand (saves ~410 KB on first paint) -->
 <script>
 // ═══ V4.38 (B.4): APP_VERSION — single source of truth ═══
-window.APP_VERSION = "V5.97";
+window.APP_VERSION = "V5.98";
 window.APP_VERSION_STRING = "V5.97"; // alias for compatibility
 
 // ═══════════════════════════════════════════════════════════════════
@@ -15152,6 +15158,20 @@ function _bkRepRounds(mk, dd) {
   });
   return Object.keys(by).map(k => by[k]).sort((a, b) => a.t - b.t);
 }
+// V5.98: บรรทัดเวลาส่งของคนตัดหนึ่งคน · รวมตามรอบที่ส่ง (b) เผื่อรอบเดียวมีหลายรายการ
+function _bkRepSendLine(rows) {
+  const g = {}, list = [];
+  (rows || []).forEach(r => {
+    const k = r.b || r.k;
+    if (!g[k]) { g[k] = { t: r.t, q: 0 }; list.push(g[k]); }
+    g[k].q += r.q;
+    if (r.t && (!g[k].t || r.t < g[k].t)) g[k].t = r.t;
+  });
+  if (!list.length) return "";
+  list.sort((x, y) => x.t - y.t);
+  if (list.length === 1) return "<small>ส่ง " + _bkRepHHMM(list[0].t) + " น.</small>";
+  return "<small>ส่ง " + list.map(x => "<span>" + _bkRepHHMM(x.t) + " <b>" + x.q + "</b></span>").join(" <i>›</i> ") + "</small>";
+}
 function _bkRepHHMM(ms) { const d = new Date(+ms || 0); return _bkPad2(d.getHours()) + ":" + _bkPad2(d.getMinutes()); }
 
 // ── ปุ่มที่ท้ายตาราง ─────────────────────────────────────────
@@ -15237,7 +15257,8 @@ function _bkRepRender() {
     if (wait) {
       html += '<div class="bkrp-hd"><span>คนตัด</span><span>ลูกน้องส่ง</span><span>ช่องของคุณ</span><span>จะเป็น</span></div>';
       plan.forEach(p => {
-        html += '<div class="bkrp-r"><span class="n' + (p.gone ? " gone" : "") + '">' + _esc(p.name) + "</span>" +
+        html += '<div class="bkrp-r"><span class="n' + (p.gone ? " gone" : "") + '">' + _esc(p.name) +
+          _bkRepSendLine(_bkInboxRows(d.mk, d.dd, p.id, true)) + "</span>" +
           '<span class="s">' + p.q + "</span>" +
           '<span class="o' + (p.own > 0 ? " has" : "") + '">' + (p.cur > 0 ? "มี " + p.cur : "ว่าง") + "</span>" +
           '<span class="w ' + (p.need ? "q" : "new") + '">' + (p.need ? "ต้องเลือก" : String(p.vAdd)) + "</span></div>";
@@ -15263,7 +15284,7 @@ function _bkRepRender() {
       Object.keys(byId).forEach(id => {
         const p = (bkCutters || []).find(x => x.id === id);
         html += '<div class="bkrp-r"><span class="n' + (p ? "" : " gone") + '">' +
-          _esc(p ? p.name : "คนที่ถูกลบไปแล้ว") + "</span>" +
+          _esc(p ? p.name : "คนที่ถูกลบไปแล้ว") + _bkRepSendLine(done.filter(r => r.c === id)) + "</span>" +
           '<span class="s">' + byId[id].q + "</span>" +
           '<span class="o">ลง ' + _bkRepHHMM(byId[id].t) + " น.</span>" +
           '<span class="w sk">' + (byId[id].mode === "replace" ? "ทับ" : "บวกเพิ่ม") + "</span></div>";
