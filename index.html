@@ -6097,7 +6097,7 @@ input[name="cust-name-no-fill"]:-webkit-autofill {
 <!-- Chart.js + html2canvas: lazy-loaded on demand (saves ~410 KB on first paint) -->
 <script>
 // ═══ V4.38 (B.4): APP_VERSION — single source of truth ═══
-window.APP_VERSION = "V5.98";
+window.APP_VERSION = "V5.99";
 window.APP_VERSION_STRING = "V5.97"; // alias for compatibility
 
 // ═══════════════════════════════════════════════════════════════════
@@ -28915,7 +28915,8 @@ window.bpOpen = bpOpen; window.bpClose = bpClose; window._bpLoad = _bpLoad; wind
 //   โควต้า: แอปขายเช็กทุก 3 นาทีเฉพาะตอนเปิดแอปอยู่ ถามแค่ "มีวันไหนเปลี่ยนไหม" ไม่เปลี่ยน = ไม่โหลดอะไร
 // ══════════════════════════════════════════════════════════════
 var _nf = { on: false, day: null, salesKey: null, data: null, mem: null, memAt: 0, map: null, lastAt: 0, mode: "q",
-            checking: false, lastCheck: 0, keys: { del: [], out: [], in: [] }, last: -1, open: false, busy: false, tm: 0 };
+            checking: false, lastCheck: 0, keys: { del: [], out: [], in: [] }, last: -1, open: false, busy: false, tm: 0,
+            prev: {}, armed: false, armT: 0, okOnce: false, lastRing: 0, ac: null, out: null, live: null, liveKey: null };
 const NF_EVERY = 180000, NF_SEEN = "nf:seen";
 const NF_IC = {
   tray: '<svg class="nf-tray" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13.5V18a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4.5"/><path d="M4 13.5l2.2-7.2A2 2 0 0 1 8.1 5h7.8a2 2 0 0 1 1.9 1.3l2.2 7.2"/><path d="M4 13.5h4.5l1.2 2h4.6l1.2-2H20"/></svg>',
@@ -28948,8 +28949,13 @@ function _nfCounts() {
 
 // ── นับของใหม่ (คำนวณในเครื่อง ไม่ใช้เน็ต) ──
 function _nfCalcDel() {
-  const out = [], dd = allDays && allDays[_nf.day], data = _nf.data;
-  if (dd && data && Array.isArray(data.delivery)) {
+  // V5.99: วันนี้ยังไม่ถูกเปิดบนบอร์ด = ยังไม่มีบิลไหนถูกดึง → นับบิลที่ยังไม่จ่ายทั้งหมดเลย (เดิมนับเป็น 0)
+  //        วันนี้ปิดยอดไปแล้ว = ดึงเข้าไม่ได้ ไม่นับ · รอข้อมูลบอร์ดจริงก่อน กันนับบิลที่ดึงไปแล้วว่าเป็นของใหม่
+  if (!window._daysFromServer) return;
+  const out = [], data = _nf.data;
+  const closedToday = !!(allClosed && allClosed[_nf.day]) && !(allDays && allDays[_nf.day]);
+  const dd = (allDays && allDays[_nf.day]) || {};
+  if (!closedToday && data && Array.isArray(data.delivery)) {
     const got = [];
     GROUPS.forEach(g => Object.values(dd[g.key] || {}).forEach(it => { if (it && it.src) got.push(it); }));
     data.delivery.forEach((b, i) => {
@@ -29033,10 +29039,12 @@ async function _nfCheck(force) {
         if (!window._bkFromServer) { try { _lzNeed("basket"); } catch (e) {} _nfWaitBasket(); }
       }
     }
+    _nf.okOnce = true;
   } catch (e) {
     console.warn("[แจ้งของใหม่] เช็กแอปขายไม่ได้", e && (e.code || e.message));
   } finally { _nf.checking = false; }
   _nfRecalc();
+  _nfArm(); _nfLive();
 }
 function _nfWaitBasket() {
   let n = 0; clearInterval(_nf.wb);
@@ -29058,6 +29066,11 @@ function _nfPaint() {
   if (!_nf.on) return;
   _nfEnsureDom();
   const t = document.getElementById("nfTrg"), c = _nfCounts(), sum = c.del + c.out + c.in, cnt = t.querySelector(".nf-cnt");
+  // V5.99: ของใหม่ = มีรายการที่เมื่อกี้ยังไม่เคยเห็น (นับเป็นรายการ ไม่ใช่แค่ตัวเลขเพิ่ม) → ร้องเสียงเตือน
+  const cur = {}; let fresh = false;
+  NF_CATS.forEach(x => _nfUnseen(x.k).forEach(k => { const id = x.k + "#" + k; cur[id] = 1; if (!_nf.prev[id]) fresh = true; }));
+  _nf.prev = cur;
+  if (fresh && _nf.armed) _nfChime();
   if (sum !== _nf.last) {
     cnt.textContent = sum;
     if (sum > _nf.last && _nf.last >= 0) { cnt.classList.remove("nf-pop"); void cnt.offsetWidth; cnt.classList.add("nf-pop"); }
@@ -29065,6 +29078,78 @@ function _nfPaint() {
   }
   t.setAttribute("aria-label", "ของใหม่ " + sum + " รายการ");
   if (!_nf.open && !_nf.busy) t.classList.toggle("nf-none", !sum);
+}
+// ── เสียงเตือน "หยดน้ำ" (V5.99) · สร้างสดจากเครื่อง ไม่ใช้ไฟล์/เน็ต ──
+//   ดังเต็มที่ ใช้ตัวจำกัดเสียงกันแตกพร่า · ดังเฉพาะตอนเปิดแอปค้างหน้าจอ (iOS ไม่ให้เว็บส่งเสียงตอนล็อกจอ)
+//   iOS ต้องมีการแตะจอ 1 ครั้งก่อนถึงจะส่งเสียงได้ → ปลดล็อกตอนแตะครั้งแรก
+function _nfAudio() {
+  try {
+    if (!_nf.ac) {
+      const C = window.AudioContext || window.webkitAudioContext; if (!C) return null;
+      _nf.ac = new C();
+      const cp = _nf.ac.createDynamicsCompressor();
+      cp.threshold.value = -8; cp.knee.value = 6; cp.ratio.value = 12; cp.attack.value = 0.002; cp.release.value = 0.12;
+      const mg = _nf.ac.createGain(); mg.gain.value = 1.35;   // ยกระดับให้จุดสูงสุดเกือบเต็มสเกล (วัดแล้ว ~0.95 ไม่แตก)
+      cp.connect(mg); mg.connect(_nf.ac.destination); _nf.out = cp;
+    }
+    if (_nf.ac.state !== "running") _nf.ac.resume();
+    return _nf.ac;
+  } catch (e) { return null; }
+}
+function _nfTone(f, t0, dur, g, a, end) {
+  const c = _nf.ac, o = c.createOscillator(), gn = c.createGain();
+  o.type = "sine"; o.frequency.setValueAtTime(f, t0);
+  if (end) o.frequency.exponentialRampToValueAtTime(end, t0 + dur);
+  gn.gain.setValueAtTime(0.0001, t0); gn.gain.exponentialRampToValueAtTime(g, t0 + a); gn.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(gn); gn.connect(_nf.out || c.destination); o.start(t0); o.stop(t0 + dur + 0.05);
+}
+function _nfChime() {
+  if (document.hidden || Date.now() - _nf.lastRing < 10000) return;     // เข้ามารัว = ดังครั้งเดียว เว้น 10 วิ
+  const c = _nfAudio();
+  if (!c || c.state !== "running") return;                               // iOS ยังไม่ปลดล็อก (ยังไม่เคยแตะจอ)
+  _nf.lastRing = Date.now();
+  const t = c.currentTime + 0.02;
+  _nfTone(1250, t, 0.12, 0.9, 0.003, 520);       // หยด
+  _nfTone(520, t + 0.1, 0.5, 0.45, 0.01);        // ก้อง
+  _nfTone(780, t + 0.11, 0.35, 0.16, 0.01);
+}
+function _nfUnlockAudio() {
+  const un = () => {
+    const c = _nfAudio();
+    try { if (c) { const b = c.createBuffer(1, 1, 22050), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.start(0); } } catch (e) {}
+    setTimeout(() => { if (_nf.ac && _nf.ac.state === "running") ["touchend", "click", "keydown"].forEach(e => document.removeEventListener(e, un, true)); }, 150);
+  };
+  ["touchend", "click", "keydown"].forEach(e => document.addEventListener(e, un, true));
+}
+// พร้อมให้ร้อง = เช็กแอปขายสำเร็จแล้ว + ตะกร้าโหลดแล้ว · ของที่ค้างอยู่ก่อนหน้านั้นเป็นแค่ตัวเลข ไม่ร้อง
+function _nfArm() {
+  if (_nf.armed || _nf.armT || !_nf.okOnce) return;
+  _nf.armT = setTimeout(() => { _nf.armed = true; }, window._bkFromServer ? 1500 : 12000);
+}
+
+// ── ฟังบิลวันนี้ของแอปขายสด (เฉพาะตอนเปิดแอปอยู่) → บิลใหม่ขึ้นทันที ไม่ต้องรอรอบเช็ก ──
+//   อ่านเฉพาะเอกสารวันนี้ 1 ใบ · ได้ข้อมูลใหม่ก็ต่อเมื่อแอปขายบันทึก · ซ่อนแอป/ล็อกจอ = เลิกฟัง
+function _nfLiveStop() {
+  try { if (_nf.live) _nf.live(); } catch (e) {}
+  _nf.live = null; _nf.liveKey = null;
+}
+function _nfLive() {
+  if (!_nf.on || document.hidden || !_nf.okOnce) return;
+  if (_nf.live && _nf.liveKey === _nf.salesKey) return;
+  _nfLiveStop();
+  try {
+    const app = _spGetApp(); if (!app || !app.auth().currentUser) return;
+    const key = _nf.salesKey;
+    _nf.liveKey = key;
+    _nf.live = app.firestore().collection("stores").doc(SP_STORE).collection("days").doc(key).onSnapshot(snap => {
+      if (!_nf.on || _nf.liveKey !== key) return;
+      const raw = (snap && snap.exists) ? (snap.data() || {}) : null;
+      if (raw && +raw._at > _nf.lastAt) _nf.lastAt = +raw._at;
+      _nf.data = raw ? _bpParse(raw.data) : null;
+      if (_nf.data && !_nf.mem) { _nfCheck(true); return; }   // ยังไม่มีข้อมูลประกอบตะกร้า → ให้รอบเช็กโหลดให้
+      _nfRecalc();
+    }, err => { console.warn("[แจ้งของใหม่] ฟังแอปขายสดไม่ได้ (ใช้รอบเช็กทุก 3 นาทีแทน)", err && (err.code || err.message)); _nf.live = null; _nf.liveKey = null; });
+  } catch (e) { _nf.live = null; _nf.liveKey = null; }
 }
 function _nfFanHtml() {
   const c = _nfCounts();
@@ -29123,6 +29208,8 @@ function _nfCloseLayer() { if (_nf.open) { _nfSetOpen(false); return true; } ret
 const _nfWait = ms => new Promise(r => setTimeout(r, ms));
 async function _nfPage(cat) {
   const RM = _nfRM(), tab = cat === "del" ? "board" : "basket", today = _nf.day || _nfTodayKey();
+  // V5.99: วันนี้ยังไม่ถูกเปิด → เปิดให้เงียบๆ (ทางเดียวกับ "ไปวันนี้แทน") ไม่งั้นแผ่นดึงจัดส่งเด้งเตือน "ยังไม่ได้เปิดวัน"
+  if (cat === "del" && !(allDays && allDays[today]) && !(allClosed && allClosed[today])) { try { _createTodaySilent(); } catch (e) {} }
   const needDay = cat === "del" && activeDay !== today && allDays && allDays[today];
   const n = new Date(), needMonth = tab === "basket" && (bkYear !== n.getFullYear() || bkMonth !== n.getMonth() + 1);
   if (activeTab === tab && !needDay && !needMonth) return;
@@ -29229,8 +29316,12 @@ function _nfStart() {
   try { _bkInboxBoot(); } catch (e) {}                         // ยอดลูกน้อง: ฟังสดเดือนนี้ (ก้อนเล็ก)
   setTimeout(() => _nfCheck(true), 4000);                       // รอแอปเปิดเสร็จก่อนค่อยเช็กแอปขาย
   setInterval(() => { if (!document.hidden) _nfCheck(); }, NF_EVERY);
-  setInterval(() => { if (!document.hidden) _nfRecalc(); }, 20000);   // ตัวเลขฝั่งตลาดเปลี่ยน (คำนวณในเครื่อง ไม่ใช้เน็ต)
-  document.addEventListener("visibilitychange", () => { if (!document.hidden && Date.now() - _nf.lastCheck > 60000) _nfCheck(); });
+  setInterval(() => { if (!document.hidden) { _nfRecalc(); _nfLive(); } }, 20000);   // ตัวเลขฝั่งตลาดเปลี่ยน (คำนวณในเครื่อง ไม่ใช้เน็ต) · ข้ามเที่ยงคืน → ฟังเอกสารวันใหม่
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) { _nfLiveStop(); return; }
+    if (Date.now() - _nf.lastCheck > 60000) _nfCheck(); else _nfLive();
+  });
+  _nfUnlockAudio();
   window.addEventListener("resize", () => { if (_nf.open) _nfSetOpen(false); });
   _nfRecalc();
 }
